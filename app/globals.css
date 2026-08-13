@@ -489,13 +489,15 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: transparent;
 }
 
 .cat-icon img {
-  width: 100%;
-  height: 100%;
+  width: 56px;
+  height: 56px;
   display: block;
-  object-fit: cover;
-  border-radius: inherit;
+  object-fit: contain;
+  background: transparent;
+  border-radius: 0;
 }
 
