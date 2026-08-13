@@ -1174,3 +1174,15 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
     margin-top: 11px;
   }
 }
+
+/* ===== MOBILE BOTTOM NAV GAP FIX ===== */
+
+@media (max-width: 700px) {
+  body {
+    padding-bottom: 0 !important;
+  }
+
+  .bottom-nav {
+    bottom: 8px;
+  }
+}
