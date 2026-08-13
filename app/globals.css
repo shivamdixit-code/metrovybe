@@ -1027,3 +1027,11 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
     height: 20px !important;
   }
 }
+
+/* ===== MOBILE HERO ARROWS ===== */
+
+@media (max-width: 600px) {
+  .hero-arrow {
+    display: none !important;
+  }
+}
