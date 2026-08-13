@@ -4,30 +4,35 @@ export const categories = [
     name: "Stay",
     desc: "PGs, rooms & flatmates",
     color: "green",
+    image: "/category-images/stay.png",
   },
   {
     id: "eat",
     name: "Eat",
     desc: "Tiffin & home chefs",
     color: "pink",
+    image: "/category-images/eat.png",
   },
   {
     id: "live",
     name: "Live",
     desc: "Laundry & home help",
     color: "cyan",
+    image: "/category-images/live.png",
   },
   {
     id: "move",
     name: "Move",
     desc: "Movers & storage",
     color: "orange",
+    image: "/category-images/move.png",
   },
   {
     id: "go",
     name: "Go",
     desc: "Parking & rentals",
     color: "purple",
+    image: "/category-images/go.png",
   },
 ];
 

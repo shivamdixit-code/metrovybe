@@ -481,3 +481,21 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
   transform: translate(2px,2px);
   box-shadow: 2px 3px 0 #111;
 }
+
+/* ===== METROVYBE CATEGORY IMAGES ===== */
+
+.cat-icon {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cat-icon img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: inherit;
+}
+

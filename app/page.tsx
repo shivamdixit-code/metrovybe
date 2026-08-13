@@ -64,7 +64,7 @@ export default function Home() {
                 key={c.id}
               >
                 <div className={`cat-icon ${c.color}`}>
-                  {c.name.charAt(0)}
+                  <img src={c.image} alt={c.name} />
                 </div>
 
                 <div>
