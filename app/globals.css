@@ -138,6 +138,18 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
   min-height: 560px;
 }
 
+.hero-title {
+  font-style: italic;
+}
+
+.hero-title span {
+  display: block;
+}
+
+.hero-title span + span {
+  margin-top: 10px;
+}
+
 .hero-content {
   position: relative;
   z-index: 3;

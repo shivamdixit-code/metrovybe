@@ -18,7 +18,7 @@ export default function Home() {
      <div className="hero-content">
       <span className="eyebrow">EVERYTHING YOU NEED</span>
 
-      <h1>ONE APP.<br/>ALL VYBES.</h1>
+      <h1 className="hero-title"><span>ONE APP.</span><span>ALL VYBES.</span></h1>
 
       <p className="hero-copy">
        PGs, tiffin, laundry, movers, parking & more.
