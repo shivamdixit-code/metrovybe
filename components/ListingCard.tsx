@@ -36,7 +36,7 @@ export function ListingCard({ item }: { item: Listing }) {
 
           <span
             className="badge"
-            style={{ background: "var(--green)" }}
+            style={{ background: "#D4A017", color: "#111" }}
           >
             FEATURED
           </span>
