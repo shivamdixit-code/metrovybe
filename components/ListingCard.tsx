@@ -36,7 +36,13 @@ export function ListingCard({ item }: { item: Listing }) {
 
           <span
             className="badge"
-            style={{ background: "#D4A017", color: "#111" }}
+            style={{
+              background: "linear-gradient(135deg, #FFF3A3 0%, #FFD700 28%, #F5B700 55%, #FFF0A0 78%, #D99A00 100%)",
+              color: "#111",
+              border: "1px solid #FFE45C",
+              boxShadow: "0 2px 10px rgba(255, 193, 7, 0.45)",
+              textShadow: "0 1px 0 rgba(255,255,255,0.55)"
+            }}
           >
             FEATURED
           </span>
