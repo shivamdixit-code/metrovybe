@@ -1,5 +1,28 @@
-export function Footer(){
- return <footer style={{borderTop:"2px solid #111",marginTop:40,padding:"30px 0",fontWeight:700}}>
-   <div className="shell">metro<span style={{color:"#00e676"}}>vybe</span> ✦ — YOUR CITY. YOUR VYBE.</div>
- </footer>
+import Link from "next/link";
+
+export function Footer() {
+  return (
+    <footer className="site-footer">
+
+      <div className="footer-brand">
+        metro<span>vybe</span>
+      </div>
+
+      <p>
+        Your city. Your vybe.
+      </p>
+
+      <div className="footer-links">
+        <Link href="/explore">Explore</Link>
+        <Link href="/how-it-works">How it works</Link>
+        <Link href="/list">List a service</Link>
+        <Link href="/profile">Profile</Link>
+      </div>
+
+      <div className="footer-copy">
+        © {new Date().getFullYear()} MetroVybe. All rights reserved.
+      </div>
+
+    </footer>
+  );
 }

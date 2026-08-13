@@ -1,19 +1,79 @@
-import Link from "next/link";
-import { Home, Search, Heart, UserRound, Plus } from "lucide-react";
+"use client";
 
-export function BottomNav({active="home"}:{active?:string}){
-  const items=[["home","Home","/","home"],["explore","Explore","/explore","search"],["list","List","/list","plus"],["saved","Saved","/saved","heart"],["profile","Profile","/profile","user"]];
-  const icon=(name:string)=>{
-    if(name==="home") return <Home size={23}/>;
-    if(name==="search") return <Search size={23}/>;
-    if(name==="heart") return <Heart size={23}/>;
-    if(name==="user") return <UserRound size={23}/>;
-    return <Plus size={34}/>;
-  };
-  return <nav className="bottom-nav">{items.map(([id,label,href,ic])=>
-    <Link key={id} href={href} className={`nav-item ${active===id?"active":""}`}>
-      {id==="list"?<span className="nav-add">{icon(ic)}</span>:<span className="nav-icon">{icon(ic)}</span>}
-      <span>{label}</span>
-    </Link>
-  )}</nav>
+import Link from "next/link";
+import {
+  Home,
+  Search,
+  Plus,
+  Heart,
+  User,
+} from "lucide-react";
+
+type BottomNavProps = {
+  active?: "home" | "explore" | "list" | "saved" | "profile";
+};
+
+export function BottomNav({ active = "home" }: BottomNavProps) {
+  const items = [
+    {
+      id: "home",
+      label: "Home",
+      href: "/",
+      icon: Home,
+    },
+    {
+      id: "explore",
+      label: "Explore",
+      href: "/explore",
+      icon: Search,
+    },
+    {
+      id: "list",
+      label: "List",
+      href: "/list",
+      icon: Plus,
+    },
+    {
+      id: "saved",
+      label: "Saved",
+      href: "/saved",
+      icon: Heart,
+    },
+    {
+      id: "profile",
+      label: "Profile",
+      href: "/profile",
+      icon: User,
+    },
+  ];
+
+  return (
+    <nav className="bottom-nav">
+      {items.map((item) => {
+        const Icon = item.icon;
+        const isActive = active === item.id;
+
+        return (
+          <Link
+            key={item.id}
+            href={item.href}
+            className={`bottom-nav-item ${
+              isActive ? "active" : ""
+            }`}
+          >
+            <span className="bottom-nav-icon">
+              <Icon
+                size={24}
+                strokeWidth={isActive ? 2.8 : 2.2}
+              />
+            </span>
+
+            <span className="bottom-nav-label">
+              {item.label}
+            </span>
+          </Link>
+        );
+      })}
+    </nav>
+  );
 }

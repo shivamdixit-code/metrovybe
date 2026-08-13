@@ -1,25 +1,110 @@
 import Link from "next/link";
 import { Heart, MapPin, Star } from "lucide-react";
 
-export type Listing={id:string;title:string;category:string;emoji:string;price:string;period:string;location:string;rating:number;reviews:number;tags:string[];color:string};
+type Listing = {
+  id: string;
+  title: string;
+  category?: string;
+  location?: string;
+  price?: string;
+  rating?: number;
+  reviews?: number;
+  image?: string;
+  tags?: string[];
+};
 
-export function ListingCard({item}:{item:Listing}){
- return <article className="card">
-   <div className="card-image">
-     <div className="fake-img">{item.emoji}</div>
-     <span className="badge" style={{background:item.color}}>FEATURED</span>
-     <button className="heart" aria-label="Save"><Heart size={23}/></button>
-   </div>
-   <div className="card-body">
-     <div className="card-title-row">
-       <div className="card-title">{item.title}</div>
-       <div className="price">{item.price}<small>{item.period}</small></div>
-     </div>
-     <div className="meta"><MapPin size={14} style={{verticalAlign:"-2px"}}/> {item.location}
-       <span className="rating"><Star className="star" size={14} fill="currentColor" style={{verticalAlign:"-2px"}}/> {item.rating} ({item.reviews})</span>
-     </div>
-     <div className="tags">{item.tags.map(t=><span className="tag" key={t}>{t}</span>)}</div>
-     <Link href={`/listing/${item.id}`} style={{display:"block",marginTop:13,fontWeight:900}}>View listing →</Link>
-   </div>
- </article>
+type ListingCardProps = {
+  item: Listing;
+};
+
+export function ListingCard({ item }: ListingCardProps) {
+  return (
+    <Link
+      href={`/listing/${item.id}`}
+      className="listing-card"
+    >
+
+      <div className="listing-image-wrap">
+
+        {item.image ? (
+          <img
+            src={item.image}
+            alt={item.title}
+            className="listing-image"
+          />
+        ) : (
+          <div className="listing-image-placeholder">
+            MetroVybe
+          </div>
+        )}
+
+        <span className="featured-badge">
+          FEATURED
+        </span>
+
+        <button
+          type="button"
+          className="listing-heart"
+          onClick={(event) => {
+            event.preventDefault();
+          }}
+          aria-label="Save listing"
+        >
+          <Heart size={21} />
+        </button>
+
+      </div>
+
+      <div className="listing-body">
+
+        <div className="listing-title-row">
+
+          <h3>
+            {item.title}
+          </h3>
+
+          {item.price && (
+            <div className="listing-price">
+              {item.price}
+            </div>
+          )}
+
+        </div>
+
+        <div className="listing-location">
+          <MapPin size={15} />
+          <span>
+            {item.location || "Near you"}
+          </span>
+        </div>
+
+        {item.rating !== undefined && (
+          <div className="listing-rating">
+            <Star size={15} fill="currentColor" />
+            <span>
+              {item.rating}
+            </span>
+
+            {item.reviews !== undefined && (
+              <span>
+                ({item.reviews})
+              </span>
+            )}
+          </div>
+        )}
+
+        {item.tags && item.tags.length > 0 && (
+          <div className="listing-tags">
+            {item.tags.map((tag) => (
+              <span key={tag}>
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+
+      </div>
+
+    </Link>
+  );
 }

@@ -1,22 +1,55 @@
-import Link from "next/link";
-import { Search } from "lucide-react";
+"use client";
 
-export function Header(){
-  return <header className="header">
-    <div className="header-inner">
-      <Link href="/" aria-label="MetroVybe home">
-        <div className="logo">metro<span className="v">vybe</span><span className="logo-star">✦</span></div>
-        <div className="tagline">YOUR CITY. YOUR VYBE.</div>
-      </Link>
-      <div className="searchbar">
-        <Search size={23}/>
-        <input placeholder="Search PGs, food, laundry..." />
-        <span className="key">/</span>
+import Link from "next/link";
+import { Search, Plus } from "lucide-react";
+
+export function Header() {
+  return (
+    <header className="site-header">
+      <div className="header-inner">
+
+        <Link href="/" className="brand">
+          <div className="brand-name">
+            metro<span>vybe</span>
+            <sup>✦</sup>
+          </div>
+
+          <div className="brand-tagline">
+            YOUR CITY. YOUR VYBE.
+          </div>
+        </Link>
+
+        <div className="header-search">
+          <Search size={22} strokeWidth={2.5} />
+
+          <input
+            type="text"
+            placeholder="Search PGs, food, laundry..."
+          />
+
+          <span className="search-shortcut">
+            /
+          </span>
+        </div>
+
+        <div className="header-actions">
+          <Link
+            href="/login"
+            className="login-button"
+          >
+            Log in
+          </Link>
+
+          <Link
+            href="/list"
+            className="list-service-button"
+          >
+            List a service
+            <Plus size={20} strokeWidth={3} />
+          </Link>
+        </div>
+
       </div>
-      <div className="header-actions">
-        <Link className="btn" href="/profile">Log in</Link>
-        <Link className="btn btn-green" href="/list">List a service ＋</Link>
-      </div>
-    </div>
-  </header>
+    </header>
+  );
 }
