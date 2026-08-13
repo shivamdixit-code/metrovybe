@@ -24,12 +24,12 @@ img{max-width:100%;display:block}
 
 .shell{max-width:1380px;margin:0 auto;padding:0 24px}
 .page{min-height:100vh;padding-bottom:92px}
-.header{position:sticky;top:0;z-index:50;background:rgba(247,246,242,.96);backdrop-filter:blur(12px);border-bottom:var(--line)}
+.site-header{position:sticky;top:0;z-index:50;background:rgba(247,246,242,.96);backdrop-filter:blur(12px);border-bottom:var(--line)}
 .header-inner{height:96px;display:flex;align-items:center;gap:28px;max-width:1380px;margin:auto;padding:0 24px}
-.logo{font-weight:900;font-size:40px;line-height:.8;letter-spacing:-3px}
-.logo .v{color:var(--green2)}
-.logo-star{font-size:18px;vertical-align:top;margin-left:2px}
-.tagline{font-size:12px;font-weight:900;margin-top:8px;letter-spacing:.2px}
+.brand-name{font-weight:900;font-size:40px;line-height:.8;letter-spacing:-3px}
+.brand-name span{color:var(--green2)}
+.brand-name sup{font-size:18px;vertical-align:top;margin-left:2px}
+.brand-tagline{font-size:12px;font-weight:900;margin-top:8px;letter-spacing:.2px}
 .searchbar{height:58px;border:var(--line);border-radius:30px;background:#fff;box-shadow:var(--shadow);display:flex;align-items:center;padding:0 18px;gap:12px;flex:1;max-width:620px;margin:auto}
 .searchbar input{border:0;outline:0;flex:1;font-size:16px;background:transparent}
 .key{border-radius:7px;background:var(--green);padding:3px 8px;font-weight:900}
@@ -103,7 +103,7 @@ img{max-width:100%;display:block}
 
 .crm-shell{display:grid;grid-template-columns:245px 1fr;min-height:100vh}
 .crm-side{background:#111;color:#fff;padding:25px;position:sticky;top:0;height:100vh}
-.crm-side .logo{color:#fff}.crm-link{display:block;padding:12px 14px;border-radius:12px;margin-top:8px;font-weight:700}.crm-link:hover,.crm-link.active{background:var(--green);color:#111}
+.crm-side .brand-name{color:#fff}.crm-link{display:block;padding:12px 14px;border-radius:12px;margin-top:8px;font-weight:700}.crm-link:hover,.crm-link.active{background:var(--green);color:#111}
 .crm-main{padding:30px}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .stat{background:#fff;border:var(--line);border-radius:18px;padding:20px;box-shadow:3px 4px 0 #111}.stat b{display:block;font-size:32px}
@@ -111,7 +111,7 @@ img{max-width:100%;display:block}
 table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;padding:14px;border-bottom:1px solid #ddd}th{font-weight:900;background:#f1f1ee}
 
 @media(max-width:900px){
- .header-inner{height:76px;padding:0 14px;gap:12px}.logo{font-size:30px}.tagline{display:none}.header-actions{display:none}
+ .header-inner{height:76px;padding:0 14px;gap:12px}.brand-name{font-size:30px}.brand-tagline{display:none}.header-actions{display:none}
  .searchbar{max-width:none;height:50px}.key{display:none}
  .shell{padding:0 14px}.hero-grid{grid-template-columns:1fr;min-height:auto;padding:55px 0 20px}.hero-art{min-height:280px}.blob{width:330px;height:230px}.person{font-size:145px}
  .categories{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:1fr}
@@ -122,4 +122,402 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
  .hero h1{font-size:62px}.categories{grid-template-columns:1fr}.cat{min-height:80px}
  .bottom-nav{width:calc(100% - 14px);bottom:7px}.nav-item{font-size:11px}.nav-add{width:50px;height:50px}
  .page-title{font-size:50px}.stats{grid-template-columns:1fr}
+}
+/* ===== METROVYBE HERO REDESIGN ===== */
+
+.hero {
+  position: relative;
+  background: #39ff14;
+  overflow: hidden;
+}
+
+.hero-grid {
+  position: relative;
+  min-height: 500px;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 5;
+}
+
+.hero-art-new {
+  position: relative;
+  min-height: 430px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-card-main {
+  position: relative;
+  width: 390px;
+  height: 330px;
+  background: #ff72b6;
+  border: 4px solid #111;
+  box-shadow: 7px 8px 0 #111;
+  transform: rotate(-5deg);
+  clip-path: polygon(
+    8% 3%,
+    92% 0,
+    100% 18%,
+    96% 86%,
+    86% 100%,
+    10% 95%,
+    0 75%,
+    3% 15%
+  );
+}
+
+.hero-person {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.person-head {
+  position: absolute;
+  top: 42px;
+  font-size: 130px;
+  z-index: 3;
+  filter: drop-shadow(4px 5px 0 #111);
+}
+
+.person-body {
+  position: absolute;
+  bottom: 0;
+  width: 190px;
+  height: 210px;
+  background: #111;
+  border-radius: 90px 90px 15px 15px;
+  transform: rotate(3deg);
+}
+
+.hero-service {
+  position: absolute;
+  z-index: 8;
+  width: 78px;
+  height: 78px;
+  display: grid;
+  place-items: center;
+  border: 4px solid #111;
+  border-radius: 18px;
+  box-shadow: 4px 5px 0 #111;
+  font-size: 38px;
+  background: white;
+}
+
+.service-bed {
+  top: 42px;
+  left: 12%;
+  transform: rotate(-9deg);
+}
+
+.service-laundry {
+  top: 35px;
+  right: 5%;
+  background: #72e7ff;
+  transform: rotate(8deg);
+}
+
+.service-moving {
+  bottom: 28px;
+  left: 12%;
+  background: #ff9b42;
+  transform: rotate(7deg);
+}
+
+.service-parking {
+  bottom: 22px;
+  right: 12%;
+  background: #b28cff;
+  transform: rotate(-8deg);
+}
+
+.hero-spark {
+  position: absolute;
+  z-index: 9;
+  font-size: 38px;
+  font-weight: 1000;
+}
+
+.spark-one {
+  top: 12%;
+  left: 43%;
+}
+
+.spark-two {
+  bottom: 10%;
+  right: 42%;
+}
+
+@media (max-width: 900px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    padding-top: 45px;
+    padding-bottom: 35px;
+  }
+
+  .hero-art-new {
+    min-height: 350px;
+  }
+
+  .hero-card-main {
+    width: 330px;
+    height: 280px;
+  }
+
+  .service-bed {
+    left: 4%;
+  }
+
+  .service-laundry {
+    right: 1%;
+  }
+
+  .service-moving {
+    left: 3%;
+  }
+
+  .service-parking {
+    right: 5%;
+  }
+}
+
+@media (max-width: 520px) {
+  .hero-art-new {
+    min-height: 300px;
+  }
+
+  .hero-card-main {
+    width: 280px;
+    height: 230px;
+  }
+
+  .person-head {
+    font-size: 95px;
+    top: 25px;
+  }
+
+  .person-body {
+    width: 145px;
+    height: 155px;
+  }
+
+  .hero-service {
+    width: 58px;
+    height: 58px;
+    font-size: 28px;
+  }
+
+  .spark-one,
+  .spark-two {
+    font-size: 25px;
+  }
+}
+
+/* ===== METROVYBE HEADER FINAL OVERRIDE ===== */
+
+.header {
+  width: 100%;
+  height: 86px;
+  background: #f7f6f2;
+  border-bottom: 2px solid #111;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-inner {
+  width: 100%;
+  max-width: 1380px;
+  height: 86px;
+  margin: 0 auto;
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.header .brand {
+  width: 205px;
+  flex-shrink: 0;
+  display: block;
+}
+
+.header .logo {
+  font-size: 36px;
+  line-height: .8;
+  font-weight: 900;
+  letter-spacing: -2.5px;
+}
+
+.header .logo .v {
+  color: #16b52b;
+}
+
+.header .logo-star {
+  font-size: 15px;
+  margin-left: 3px;
+  vertical-align: top;
+}
+
+.header .tagline {
+  margin-top: 9px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .5px;
+}
+
+/* SEARCH */
+
+.header .searchbar {
+  height: 52px;
+  max-width: none;
+  flex: 1;
+  margin: 0;
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 28px;
+  box-shadow: 3px 4px 0 #111;
+  padding: 0 17px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.header .searchbar svg {
+  flex-shrink: 0;
+  color: #111;
+}
+
+.header .searchbar input {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: 15px;
+  font-weight: 600;
+  color: #111;
+}
+
+.header .searchbar input::placeholder {
+  color: #777;
+}
+
+.header .key {
+  flex-shrink: 0;
+  background: #f0f0ed;
+  border: 1px solid #ccc;
+  color: #444;
+  border-radius: 6px;
+  padding: 4px 7px;
+  font-size: 11px;
+}
+
+/* HEADER BUTTONS */
+
+.header .header-actions {
+  width: 245px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.header .header-actions .btn {
+  height: 46px;
+  padding: 0 17px;
+  border-radius: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  font-size: 14px;
+  border: 2px solid #111;
+  box-shadow: 3px 4px 0 #111;
+}
+
+.header .header-actions .btn:hover {
+  transform: translate(1px, 2px);
+  box-shadow: 2px 2px 0 #111;
+}
+
+.header .header-actions .btn-green {
+  background: #b8f36b;
+}
+
+@media (max-width: 900px) {
+  .header-inner {
+    padding: 0 14px;
+    gap: 12px;
+  }
+
+  .header .brand {
+    width: auto;
+  }
+
+  .header .tagline {
+    display: none;
+  }
+
+  .header .logo {
+    font-size: 30px;
+  }
+
+  .header .header-actions {
+    width: auto;
+  }
+
+  .header .header-actions .btn-green {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .header {
+    height: 70px;
+  }
+
+  .header-inner {
+    height: 70px;
+  }
+
+  .header .logo {
+    font-size: 27px;
+  }
+
+  .header .searchbar {
+    height: 45px;
+  }
+
+  .header .searchbar input {
+    font-size: 13px;
+  }
+
+  .header .key {
+    display: none;
+  }
+
+  .header .header-actions .btn {
+    height: 40px;
+    padding: 0 11px;
+    font-size: 12px;
+  }
+}
+
+/* Restore original MetroVybe green button */
+.header .header-actions .btn-green {
+  background: var(--green) !important;
+  color: #111 !important;
+  border: var(--line);
+  box-shadow: var(--shadow);
+}
+
+.header .header-actions .btn-green:hover {
+  transform: translate(2px,2px);
+  box-shadow: 2px 3px 0 #111;
 }

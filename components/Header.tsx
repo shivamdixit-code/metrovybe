@@ -5,47 +5,32 @@ import { Search, Plus } from "lucide-react";
 
 export function Header() {
   return (
-    <header className="site-header">
+    <header className="header">
       <div className="header-inner">
 
-        <Link href="/" className="brand">
-          <div className="brand-name">
-            metro<span>vybe</span>
-            <sup>✦</sup>
+        <Link href="/" className="brand" style={{ textDecoration: "none", color: "#111" }}>
+          <div className="logo">
+            metro<span className="v">vybe</span><span className="logo-star">✦</span>
           </div>
-
-          <div className="brand-tagline">
-            YOUR CITY. YOUR VYBE.
-          </div>
+          <div className="tagline">YOUR CITY. YOUR VYBE.</div>
         </Link>
 
-        <div className="header-search">
-          <Search size={22} strokeWidth={2.5} />
-
+        <div className="searchbar">
+          <Search size={21} />
           <input
-            type="text"
-            placeholder="Search PGs, food, laundry..."
+            type="search"
+            placeholder="Search services, places, neighborhoods..."
           />
-
-          <span className="search-shortcut">
-            /
-          </span>
-        </div>
+         </div>
 
         <div className="header-actions">
-          <Link
-            href="/login"
-            className="login-button"
-          >
+          <Link href="/login" className="btn">
             Log in
           </Link>
 
-          <Link
-            href="/list"
-            className="list-service-button"
-          >
+          <Link href="/list" className="btn btn-green">
+            <Plus size={17} style={{ verticalAlign: "middle", marginRight: 5 }} />
             List a service
-            <Plus size={20} strokeWidth={3} />
           </Link>
         </div>
 
