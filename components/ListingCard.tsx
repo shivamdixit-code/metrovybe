@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Heart, MapPin, Star } from "lucide-react";
+import { Heart, MapPin, Star, Home, Utensils, BedDouble, BookOpen, Briefcase, ShoppingBag } from "lucide-react";
 
 type Listing = {
   id: string;
@@ -32,6 +32,88 @@ export function ListingCard({ item }: { item: Listing }) {
             />
           ) : (
             <div className="fake-img">🏠</div>
+          )}
+
+          {item.category && (
+            <span
+              style={{
+                position: "absolute",
+                left: 10,
+                bottom: 10,
+                width: 38,
+                height: 38,
+                borderRadius: "50%",
+                background: "rgba(255,255,255,0.97)",
+                border: "1px solid rgba(255,255,255,0.85)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "0 3px 14px rgba(0,0,0,0.28)",
+                zIndex: 3,
+              }}
+              title={item.category}
+            >
+              {item.category.toLowerCase().includes("food") ||
+              item.category.toLowerCase().includes("tiffin") ? (
+                <Utensils size={20} color="#F97316" strokeWidth={2.5} />
+              ) : item.category.toLowerCase().includes("room") ||
+                item.category.toLowerCase().includes("pg") ||
+                item.category.toLowerCase().includes("stay") ? (
+                <BedDouble size={20} color="#2563EB" strokeWidth={2.5} />
+              ) : item.category.toLowerCase().includes("study") ||
+                item.category.toLowerCase().includes("education") ? (
+                <BookOpen size={20} color="#7C3AED" strokeWidth={2.5} />
+              ) : item.category.toLowerCase().includes("job") ||
+                item.category.toLowerCase().includes("work") ? (
+                <Briefcase size={20} color="#16A34A" strokeWidth={2.5} />
+              ) : item.category.toLowerCase().includes("shop") ||
+                item.category.toLowerCase().includes("buy") ? (
+                <ShoppingBag size={20} color="#DB2777" strokeWidth={2.5} />
+              ) : (
+                <Home size={20} color="#2563EB" strokeWidth={2.5} />
+              )}
+            </span>
+          )}
+
+          {item.category && (
+            <span
+              style={{
+                position: "absolute",
+                left: 10,
+                bottom: 10,
+                width: 38,
+                height: 38,
+                borderRadius: "50%",
+                background: "rgba(255,255,255,0.97)",
+                border: "1px solid rgba(255,255,255,0.85)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "0 3px 14px rgba(0,0,0,0.28)",
+                zIndex: 3,
+              }}
+              title={item.category}
+            >
+              {item.category.toLowerCase().includes("food") ||
+              item.category.toLowerCase().includes("tiffin") ? (
+                <Utensils size={20} color="#F97316" strokeWidth={2.5} />
+              ) : item.category.toLowerCase().includes("room") ||
+                item.category.toLowerCase().includes("pg") ||
+                item.category.toLowerCase().includes("stay") ? (
+                <BedDouble size={20} color="#2563EB" strokeWidth={2.5} />
+              ) : item.category.toLowerCase().includes("study") ||
+                item.category.toLowerCase().includes("education") ? (
+                <BookOpen size={20} color="#7C3AED" strokeWidth={2.5} />
+              ) : item.category.toLowerCase().includes("job") ||
+                item.category.toLowerCase().includes("work") ? (
+                <Briefcase size={20} color="#16A34A" strokeWidth={2.5} />
+              ) : item.category.toLowerCase().includes("shop") ||
+                item.category.toLowerCase().includes("buy") ? (
+                <ShoppingBag size={20} color="#DB2777" strokeWidth={2.5} />
+              ) : (
+                <Home size={20} color="#2563EB" strokeWidth={2.5} />
+              )}
+            </span>
           )}
 
           <span
