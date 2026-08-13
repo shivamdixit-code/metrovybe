@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, PlayCircle } from "lucide-react";
+import { ArrowRight, MapPin, PlayCircle } from "lucide-react";
 
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
@@ -28,7 +28,7 @@ export default function Home() {
 
       <div className="hero-buttons">
        <Link href="/explore" className="btn btn-black">
-        Explore Near You <span style={{color:"#39ff14"}}>●</span>
+        Explore Near You <MapPin size={18} style={{verticalAlign:"-4px", color:"#39ff14"}} />
        </Link>
 
        <Link href="/how-it-works" className="btn">
