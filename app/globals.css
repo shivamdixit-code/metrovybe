@@ -1186,3 +1186,15 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
     bottom: 8px;
   }
 }
+
+/* ===== MOBILE HERO TITLE LINE GAP ===== */
+
+@media (max-width: 600px) {
+  .hero-title {
+    line-height: .82 !important;
+  }
+
+  .hero-title span + span {
+    margin-top: 14px !important;
+  }
+}
