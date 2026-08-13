@@ -28,7 +28,7 @@ export default function Home() {
 
       <div className="hero-buttons">
        <Link href="/explore" className="btn btn-black">
-        Explore Near You <MapPin size={18} style={{verticalAlign:"-4px", color:"#39ff14"}} />
+        Explore Near You <MapPin size={19} strokeWidth={2.5} style={{verticalAlign:"-4px", color:"#39ff14", marginLeft:"4px"}} />
        </Link>
 
        <Link href="/how-it-works" className="btn">
