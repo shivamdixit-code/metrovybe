@@ -315,33 +315,108 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
 }
 
 @media (max-width: 600px) {
+
+  .hero {
+    background: #39ff14;
+  }
+
+  .hero-grid {
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+    padding: 34px 0 0;
+  }
+
+  .hero-content {
+    width: 100%;
+    padding: 0 14px;
+    text-align: left;
+  }
+
+  .hero-title {
+    font-size: clamp(48px, 15vw, 68px);
+    line-height: .82;
+    letter-spacing: -1.5px;
+    margin: 0;
+  }
+
+  .hero-title span + span {
+    margin-top: 7px;
+  }
+
+  .hero-copy {
+    font-size: 15px;
+    line-height: 1.35;
+    max-width: 330px;
+    margin: 16px 0;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 9px;
+    flex-wrap: nowrap;
+  }
+
+  .hero-buttons .btn {
+    flex: 1;
+    min-width: 0;
+    padding: 11px 9px;
+    font-size: 13px;
+    text-align: center;
+  }
+
   .hero-art-new {
-    min-height: 380px;
+    width: 100%;
+    min-height: 285px;
+    height: 285px;
+    margin-top: 4px;
+    align-items: flex-end;
   }
 
   .hero-girl {
-    width: 105%;
-    max-height: 420px;
+    width: min(92%, 355px);
+    max-height: 310px;
+    object-fit: contain;
+    object-position: bottom center;
+  }
+
+  .hero-decoration {
+    z-index: 4;
   }
 
   .hero-star {
-    font-size: 28px;
+    font-size: 25px;
   }
 
   .star-one {
-    left: 4%;
+    top: 13%;
+    left: 8%;
   }
 
   .star-two {
-    right: 4%;
+    top: 27%;
+    right: 7%;
+    font-size: 22px;
   }
 
   .star-three {
-    right: 22%;
+    top: 8%;
+    right: 28%;
+    font-size: 19px;
   }
 
   .hero-arrow {
-    font-size: 38px;
+    font-size: 32px;
+  }
+
+  .arrow-one {
+    top: 38%;
+    left: 5%;
+  }
+
+  .arrow-two {
+    bottom: 18%;
+    right: 4%;
   }
 }
 
