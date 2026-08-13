@@ -3,7 +3,6 @@ import { ArrowRight, MapPin, PlayCircle } from "lucide-react";
 
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
-import { Footer } from "@/components/Footer";
 import { categories, listings } from "@/lib/data";
 import { ListingCard } from "@/components/ListingCard";
 
@@ -120,7 +119,6 @@ export default function Home() {
         </section>
       </main>
 
-      <Footer />
 
       <BottomNav active="home" />
     </div>
