@@ -1,0 +1,2 @@
+import { Header } from "@/components/Header"; import { BottomNav } from "@/components/BottomNav";
+export default function Bookings(){return <div className="page"><Header/><main className="shell inner"><h1 className="page-title">BOOKINGS.</h1><div className="panel"><h2>No bookings yet.</h2><p className="subtle">Your confirmed PG, food and service bookings will show here.</p></div></main><BottomNav/></div>}

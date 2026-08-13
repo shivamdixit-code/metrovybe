@@ -1,0 +1,2 @@
+import { Header } from "@/components/Header"; import { BottomNav } from "@/components/BottomNav";
+export default function Saved(){return <div className="page"><Header/><main className="shell inner"><h1 className="page-title">SAVED.</h1><div className="panel"><h2>Your saved listings will appear here.</h2><p className="subtle">Tap the ♡ button on any listing to save it for later.</p></div></main><BottomNav active="saved"/></div>}
