@@ -145,9 +145,9 @@ img{max-width:100%;display:block}
   border-color:#FBCFE8;
 }
 
-.bottom-nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:min(1260px,calc(100% - 32px));background:#fff;border:var(--line);border-radius:24px;box-shadow:4px 5px 0 #111;z-index:60;display:grid;grid-template-columns:repeat(5,1fr);padding:8px 12px}
-.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:13px;font-weight:800;padding:5px}
-.nav-item.active{color:#12b928}.nav-icon{font-size:24px}.nav-add{width:56px;height:56px;border:var(--line);border-radius:50%;background:var(--green);display:grid;place-items:center;font-size:34px;box-shadow:3px 4px 0 #111;margin-top:-27px}
+
+
+
 
 .inner{padding:32px 0}
 .page-title{font-family:Anton,Impact,sans-serif;font-size:64px;line-height:.9;margin:0 0 10px}
@@ -187,7 +187,7 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
 }
 @media(max-width:520px){
  .hero h1{font-size:62px}.categories{grid-template-columns:1fr}.cat{min-height:80px}
- .bottom-nav{width:calc(100% - 14px);bottom:7px}.nav-item{font-size:11px}.nav-add{width:50px;height:50px}
+ 
  .page-title{font-size:50px}.stats{grid-template-columns:1fr}
 }
 /* ===== METROVYBE HERO REDESIGN ===== */
@@ -665,4 +665,365 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
 
 .card-image {
   position: relative;
+}
+
+/* =========================================================
+   METROVYBE APP NAVIGATION
+   Desktop + Mobile
+   ========================================================= */
+
+.bottom-nav {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 100;
+
+  width: min(620px, calc(100% - 40px));
+  height: 68px;
+
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: center;
+
+  padding: 6px 10px;
+
+  background: rgba(255,255,255,.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  border: 2px solid #111;
+  border-radius: 24px;
+
+  box-shadow: 5px 6px 0 #111;
+}
+
+.bottom-nav-item {
+  position: relative;
+
+  height: 56px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 3px;
+
+  color: #555;
+  text-decoration: none;
+
+  border-radius: 16px;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  transition:
+    transform .15s ease,
+    color .15s ease,
+    background .15s ease;
+}
+
+.bottom-nav-item:hover {
+  transform: translateY(-2px);
+  color: #111;
+}
+
+.bottom-nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  line-height: 1;
+}
+
+.bottom-nav-label {
+  line-height: 1;
+}
+
+.bottom-nav-item.active {
+  color: #111;
+  background: #E9FFD9;
+}
+
+.bottom-nav-item.active::after {
+  content: "";
+  position: absolute;
+
+  bottom: 5px;
+
+  width: 5px;
+  height: 5px;
+
+  border-radius: 50%;
+  background: #39FF14;
+}
+
+/* Center List button */
+
+.bottom-nav-item:nth-child(3) {
+  margin-top: -20px;
+}
+
+.bottom-nav-item:nth-child(3) .bottom-nav-icon {
+  width: 52px;
+  height: 52px;
+
+  border-radius: 50%;
+
+  background: #39FF14;
+
+  border: 2px solid #111;
+
+  box-shadow: 3px 4px 0 #111;
+
+  color: #111;
+
+  transition:
+    transform .15s ease,
+    box-shadow .15s ease;
+}
+
+.bottom-nav-item:nth-child(3):hover .bottom-nav-icon {
+  transform: translateY(2px);
+  box-shadow: 1px 2px 0 #111;
+}
+
+.bottom-nav-item:nth-child(3) .bottom-nav-label {
+  margin-top: 5px;
+  color: #111;
+  font-weight: 900;
+}
+
+/* Mobile */
+
+@media (max-width: 700px) {
+
+  body {
+    padding-bottom: 88px;
+  }
+
+  .bottom-nav {
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+
+    transform: none;
+
+    width: auto;
+    height: 64px;
+
+    padding: 5px 5px;
+
+    border-radius: 20px;
+
+    box-shadow: 3px 4px 0 #111;
+  }
+
+  .bottom-nav-item {
+    height: 54px;
+
+    gap: 3px;
+
+    font-size: 9px;
+
+    border-radius: 14px;
+  }
+
+  .bottom-nav-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .bottom-nav-item.active::after {
+    bottom: 3px;
+    width: 4px;
+    height: 4px;
+  }
+
+  .bottom-nav-item:nth-child(3) {
+    margin-top: -18px;
+  }
+
+  .bottom-nav-item:nth-child(3) .bottom-nav-icon {
+    width: 48px;
+    height: 48px;
+
+    box-shadow: 2px 3px 0 #111;
+  }
+
+  .bottom-nav-item:nth-child(3) .bottom-nav-label {
+    margin-top: 4px;
+  }
+}
+
+/* Small phones */
+
+@media (max-width: 380px) {
+
+  .bottom-nav {
+    left: 6px;
+    right: 6px;
+    bottom: 6px;
+  }
+
+  .bottom-nav-item {
+    font-size: 8px;
+  }
+
+  .bottom-nav-icon svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .bottom-nav-item:nth-child(3) .bottom-nav-icon {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+
+/* ===== METROVYBE LIST BUTTON FINAL ===== */
+
+.bottom-nav-item:nth-child(3) {
+  margin-top: -24px;
+  z-index: 5;
+  background: transparent;
+}
+
+.bottom-nav-item:nth-child(3) .bottom-nav-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #39FF14;
+  color: #111;
+
+  border: 3px solid #111;
+  box-shadow: 3px 4px 0 #111;
+
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.bottom-nav-item:nth-child(3) .bottom-nav-icon svg {
+  width: 27px;
+  height: 27px;
+  stroke-width: 3;
+}
+
+.bottom-nav-item:nth-child(3) .bottom-nav-label {
+  margin-top: 7px;
+  color: #111;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.bottom-nav-item:nth-child(3):hover .bottom-nav-icon {
+  transform: translateY(2px);
+  box-shadow: 1px 2px 0 #111;
+}
+
+.bottom-nav-item:nth-child(3).active {
+  background: transparent;
+}
+
+.bottom-nav-item:nth-child(3).active::after {
+  display: none;
+}
+
+@media (max-width: 700px) {
+
+  .bottom-nav-item:nth-child(3) {
+    margin-top: -23px;
+  }
+
+  .bottom-nav-item:nth-child(3) .bottom-nav-icon {
+    width: 52px;
+    height: 52px;
+    border-width: 2px;
+    box-shadow: 2px 3px 0 #111;
+  }
+
+  .bottom-nav-item:nth-child(3) .bottom-nav-icon svg {
+    width: 25px;
+    height: 25px;
+  }
+
+  .bottom-nav-item:nth-child(3) .bottom-nav-label {
+    margin-top: 6px;
+    font-size: 9px;
+  }
+}
+
+/* ===== LIST BUTTON CLEAN APP STYLE ===== */
+
+.bottom-nav-item:nth-child(3) {
+  margin-top: 0 !important;
+  background: transparent !important;
+}
+
+.bottom-nav-item:nth-child(3) .bottom-nav-icon {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 13px !important;
+
+  background: #39FF14 !important;
+  color: #111 !important;
+
+  border: 2px solid #111 !important;
+  box-shadow: 2px 3px 0 #111 !important;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 2px;
+}
+
+.bottom-nav-item:nth-child(3) .bottom-nav-icon svg {
+  width: 21px !important;
+  height: 21px !important;
+  stroke-width: 3 !important;
+}
+
+.bottom-nav-item:nth-child(3) .bottom-nav-label {
+  margin-top: 0 !important;
+  color: #111 !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+}
+
+.bottom-nav-item:nth-child(3):hover .bottom-nav-icon {
+  transform: translateY(1px);
+  box-shadow: 1px 2px 0 #111 !important;
+}
+
+.bottom-nav-item:nth-child(3).active {
+  background: transparent !important;
+}
+
+.bottom-nav-item:nth-child(3).active::after {
+  display: none !important;
+}
+
+@media (max-width: 700px) {
+
+  .bottom-nav-item:nth-child(3) {
+    margin-top: 0 !important;
+  }
+
+  .bottom-nav-item:nth-child(3) .bottom-nav-icon {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 11px !important;
+  }
+
+  .bottom-nav-item:nth-child(3) .bottom-nav-icon svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
 }
