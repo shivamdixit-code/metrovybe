@@ -572,3 +572,354 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
 .card-image {
   position: relative;
 }
+
+/* =========================================================
+   MetroVybe Mobile App UI
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    padding-bottom: 88px;
+  }
+
+  /* ---------- Header ---------- */
+
+  .site-header,
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-inner {
+    height: 68px !important;
+    padding: 0 14px !important;
+    gap: 10px !important;
+  }
+
+  .header .brand,
+  .brand {
+    flex-shrink: 0;
+  }
+
+  .header .logo,
+  .brand-name {
+    font-size: 25px !important;
+  }
+
+  .header .tagline,
+  .brand-tagline {
+    display: none !important;
+  }
+
+  .header .searchbar {
+    flex: 1;
+    min-width: 0;
+    height: 42px;
+    border-radius: 14px;
+  }
+
+  .header .searchbar input {
+    width: 100%;
+    min-width: 0;
+    font-size: 13px;
+  }
+
+  .header .key {
+    display: none !important;
+  }
+
+  .header .header-actions {
+    display: none !important;
+  }
+
+  /* ---------- Main shell ---------- */
+
+  .shell {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  /* ---------- Hero ---------- */
+
+  .hero {
+    min-height: auto !important;
+  }
+
+  .hero-grid {
+    display: flex !important;
+    flex-direction: column;
+    min-height: auto !important;
+    padding: 38px 0 24px !important;
+    gap: 12px !important;
+  }
+
+  .hero-content {
+    width: 100%;
+  }
+
+  .hero h1,
+  .hero-title {
+    font-size: clamp(48px, 15vw, 70px) !important;
+    line-height: .86 !important;
+    letter-spacing: -1.5px;
+    max-width: 100%;
+  }
+
+  .hero-copy {
+    font-size: 15px !important;
+    line-height: 1.4;
+    margin: 14px 0 !important;
+  }
+
+  .hero-buttons {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px !important;
+  }
+
+  .hero-buttons .btn {
+    width: 100%;
+    text-align: center;
+    padding: 12px 8px;
+  }
+
+  .hero-art {
+    min-height: 220px !important;
+    width: 100%;
+  }
+
+  .blob {
+    width: 285px !important;
+    height: 195px !important;
+  }
+
+  .person {
+    font-size: 120px !important;
+  }
+
+  /* ---------- Categories ---------- */
+
+  .categories {
+    display: flex !important;
+    overflow-x: auto;
+    gap: 10px !important;
+    padding: 14px 0 18px !important;
+    margin-right: -14px;
+    padding-right: 14px !important;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .categories::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cat {
+    flex: 0 0 145px;
+    min-height: 88px !important;
+    padding: 13px !important;
+    border-radius: 17px;
+    gap: 8px;
+  }
+
+  .cat-icon {
+    font-size: 31px !important;
+  }
+
+  .cat h3 {
+    font-size: 16px !important;
+  }
+
+  .cat p {
+    font-size: 11px !important;
+  }
+
+  .cat-arrow {
+    display: none;
+  }
+
+  /* ---------- Section headings ---------- */
+
+  .section-head {
+    margin: 16px 0 10px !important;
+  }
+
+  .section-head h2 {
+    font-size: 21px !important;
+  }
+
+  .section-head a {
+    font-size: 13px;
+  }
+
+  /* ---------- Listing cards ---------- */
+
+  .cards {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .card {
+    width: 100%;
+    min-width: 0;
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  .card-image {
+    height: 220px !important;
+  }
+
+  .card-body {
+    padding: 14px !important;
+  }
+
+  .card-title-row {
+    gap: 8px;
+  }
+
+  .card-title {
+    font-size: 18px;
+    line-height: 1.15;
+  }
+
+  .price {
+    font-size: 15px;
+    white-space: nowrap;
+  }
+
+  .meta {
+    font-size: 13px;
+    line-height: 1.5;
+    margin-top: 7px;
+  }
+
+  .tags {
+    gap: 6px !important;
+    margin-top: 10px !important;
+  }
+
+  .tag {
+    font-size: 11px !important;
+    padding: 5px 9px !important;
+  }
+
+  /* ---------- View listing CTA ---------- */
+
+  .card-body .btn-small {
+    width: 100%;
+    display: block !important;
+    text-align: center;
+    padding: 12px 14px !important;
+    border-radius: 13px;
+    font-size: 14px;
+  }
+
+  /* ---------- Featured badge ---------- */
+
+  .card-image .badge {
+    top: 10px;
+    right: 10px;
+    font-size: 10px;
+    padding: 6px 9px;
+    border-radius: 9px;
+  }
+
+  /* ---------- Bottom app navigation ---------- */
+
+  .bottom-nav {
+    position: fixed !important;
+    left: 7px !important;
+    right: 7px !important;
+    bottom: 7px !important;
+    transform: none !important;
+    width: auto !important;
+    max-width: none !important;
+    height: 66px;
+    border-radius: 20px;
+    padding: 6px 7px !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    background: rgba(255,255,255,.97);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 3px 4px 0 #111;
+  }
+
+  .nav-item {
+    min-width: 0;
+    padding: 4px 2px !important;
+    gap: 2px !important;
+    font-size: 10px !important;
+    justify-content: center;
+  }
+
+  .nav-icon {
+    font-size: 21px !important;
+    line-height: 1;
+  }
+
+  .nav-add {
+    width: 48px !important;
+    height: 48px !important;
+    margin-top: -19px !important;
+    font-size: 28px !important;
+  }
+
+  /* ---------- Images ---------- */
+
+  img {
+    max-width: 100%;
+  }
+
+  /* ---------- General touch targets ---------- */
+
+  a,
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+}
+
+/* Smaller phones */
+
+@media (max-width: 380px) {
+
+  .header-inner {
+    padding: 0 10px !important;
+  }
+
+  .header .logo,
+  .brand-name {
+    font-size: 22px !important;
+  }
+
+  .hero-grid {
+    padding-top: 30px !important;
+  }
+
+  .hero h1,
+  .hero-title {
+    font-size: 46px !important;
+  }
+
+  .cat {
+    flex-basis: 135px;
+  }
+
+  .card-image {
+    height: 205px !important;
+  }
+
+}
