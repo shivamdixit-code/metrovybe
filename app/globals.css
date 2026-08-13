@@ -38,7 +38,20 @@ img{max-width:100%;display:block}
 .btn:hover{transform:translate(2px,2px);box-shadow:2px 3px 0 #111}
 .btn-green{background:var(--green)}
 .btn-black{background:#111;color:#fff}
-.btn-small{padding:10px 15px;border-radius:13px}
+.btn-small{
+  padding:10px 15px;
+  border-radius:13px;
+  background:#3B82F6;
+  color:#fff;
+  border:var(--line);
+  font-weight:900;
+  box-shadow:3px 4px 0 #111;
+}
+
+.btn-small:hover{
+  transform:translate(2px,2px);
+  box-shadow:1px 2px 0 #111;
+}
 
 .hero{background:var(--green);border-bottom:var(--line);min-height:430px;overflow:hidden}
 .hero-grid{display:grid;grid-template-columns:1fr 1fr;min-height:430px;align-items:center;gap:20px}
