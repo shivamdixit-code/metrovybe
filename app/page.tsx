@@ -39,20 +39,18 @@ export default function Home() {
      </div>
 
      <div className="hero-art-new">
-      <div className="hero-card hero-card-main">
-       <div className="hero-person">
-        <div className="person-head">👩🏻‍🎓</div>
-        <div className="person-body"></div>
-       </div>
-      </div>
+      <img
+       src="/hero-girl.png"
+       alt="MetroVybe student"
+       className="hero-girl"
+      />
 
-      <div className="hero-service service-bed">🛏️</div>
-      <div className="hero-service service-laundry">🧺</div>
-      <div className="hero-service service-moving">🚚</div>
-      <div className="hero-service service-parking">🅿️</div>
+      <div className="hero-decoration hero-star star-one">✦</div>
+      <div className="hero-decoration hero-star star-two">✦</div>
+      <div className="hero-decoration hero-star star-three">✦</div>
 
-      <div className="hero-spark spark-one">✦</div>
-      <div className="hero-spark spark-two">✦</div>
+      <div className="hero-decoration hero-arrow arrow-one">↗</div>
+      <div className="hero-decoration hero-arrow arrow-two">↙</div>
      </div>
     </div>
    </section>

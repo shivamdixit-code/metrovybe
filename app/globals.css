@@ -127,194 +127,142 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
 
 .hero {
   position: relative;
-  background: #39ff14;
   overflow: hidden;
+  background: #39ff14;
 }
 
 .hero-grid {
-  position: relative;
-  min-height: 500px;
+  display: grid;
+  grid-template-columns: 1fr 0.95fr;
+  align-items: center;
+  min-height: 560px;
 }
 
 .hero-content {
   position: relative;
-  z-index: 5;
+  z-index: 3;
 }
 
 .hero-art-new {
   position: relative;
-  min-height: 430px;
+  min-height: 560px;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
+  overflow: hidden;
 }
 
-.hero-card-main {
+.hero-girl {
   position: relative;
-  width: 390px;
-  height: 330px;
-  background: #ff72b6;
-  border: 4px solid #111;
-  box-shadow: 7px 8px 0 #111;
-  transform: rotate(-5deg);
-  clip-path: polygon(
-    8% 3%,
-    92% 0,
-    100% 18%,
-    96% 86%,
-    86% 100%,
-    10% 95%,
-    0 75%,
-    3% 15%
-  );
+  z-index: 2;
+  display: block;
+  background: transparent;
+  width: min(100%, 570px);
+  height: auto;
+  max-height: 600px;
+  object-fit: contain;
+  object-position: bottom center;
+  filter: drop-shadow(0 18px 20px rgba(0, 0, 0, 0.12));
 }
 
-.hero-person {
+.hero-decoration {
   position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.person-head {
-  position: absolute;
-  top: 42px;
-  font-size: 130px;
   z-index: 3;
-  filter: drop-shadow(4px 5px 0 #111);
+  pointer-events: none;
+  font-weight: 900;
+  line-height: 1;
 }
 
-.person-body {
-  position: absolute;
-  bottom: 0;
-  width: 190px;
-  height: 210px;
-  background: #111;
-  border-radius: 90px 90px 15px 15px;
-  transform: rotate(3deg);
+.hero-star {
+  font-size: 42px;
 }
 
-.hero-service {
-  position: absolute;
-  z-index: 8;
-  width: 78px;
-  height: 78px;
-  display: grid;
-  place-items: center;
-  border: 4px solid #111;
-  border-radius: 18px;
-  box-shadow: 4px 5px 0 #111;
-  font-size: 38px;
-  background: white;
+.star-one {
+  top: 15%;
+  left: 8%;
+  transform: rotate(-15deg);
 }
 
-.service-bed {
-  top: 42px;
-  left: 12%;
-  transform: rotate(-9deg);
+.star-two {
+  top: 30%;
+  right: 8%;
+  font-size: 30px;
+  transform: rotate(15deg);
 }
 
-.service-laundry {
-  top: 35px;
-  right: 5%;
-  background: #72e7ff;
-  transform: rotate(8deg);
+.star-three {
+  top: 8%;
+  right: 28%;
+  font-size: 24px;
+  transform: rotate(-10deg);
 }
 
-.service-moving {
-  bottom: 28px;
-  left: 12%;
-  background: #ff9b42;
-  transform: rotate(7deg);
+.hero-arrow {
+  font-size: 54px;
+  font-weight: 700;
 }
 
-.service-parking {
-  bottom: 22px;
-  right: 12%;
-  background: #b28cff;
-  transform: rotate(-8deg);
+.arrow-one {
+  top: 38%;
+  left: 2%;
+  transform: rotate(-10deg);
 }
 
-.hero-spark {
-  position: absolute;
-  z-index: 9;
-  font-size: 38px;
-  font-weight: 1000;
-}
-
-.spark-one {
-  top: 12%;
-  left: 43%;
-}
-
-.spark-two {
-  bottom: 10%;
-  right: 42%;
+.arrow-two {
+  bottom: 24%;
+  right: 3%;
+  transform: rotate(10deg);
 }
 
 @media (max-width: 900px) {
   .hero-grid {
     grid-template-columns: 1fr;
-    padding-top: 45px;
-    padding-bottom: 35px;
+    min-height: auto;
+  }
+
+  .hero-content {
+    text-align: center;
   }
 
   .hero-art-new {
-    min-height: 350px;
+    min-height: 480px;
+    margin-top: 20px;
   }
 
-  .hero-card-main {
-    width: 330px;
-    height: 280px;
-  }
-
-  .service-bed {
-    left: 4%;
-  }
-
-  .service-laundry {
-    right: 1%;
-  }
-
-  .service-moving {
-    left: 3%;
-  }
-
-  .service-parking {
-    right: 5%;
+  .hero-girl {
+    width: min(92%, 520px);
+    max-height: 520px;
   }
 }
 
-@media (max-width: 520px) {
+@media (max-width: 600px) {
   .hero-art-new {
-    min-height: 300px;
+    min-height: 380px;
   }
 
-  .hero-card-main {
-    width: 280px;
-    height: 230px;
+  .hero-girl {
+    width: 105%;
+    max-height: 420px;
   }
 
-  .person-head {
-    font-size: 95px;
-    top: 25px;
-  }
-
-  .person-body {
-    width: 145px;
-    height: 155px;
-  }
-
-  .hero-service {
-    width: 58px;
-    height: 58px;
+  .hero-star {
     font-size: 28px;
   }
 
-  .spark-one,
-  .spark-two {
-    font-size: 25px;
+  .star-one {
+    left: 4%;
+  }
+
+  .star-two {
+    right: 4%;
+  }
+
+  .star-three {
+    right: 22%;
+  }
+
+  .hero-arrow {
+    font-size: 38px;
   }
 }
 
