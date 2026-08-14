@@ -1,7 +1,23 @@
+export type Listing = {
+  id: string;
+  title: string;
+  category?: string;
+  description?: string;
+  location?: string;
+  price?: string;
+  image?: string;
+  images?: string[];
+  tags?: string[];
+  rating?: number;
+  reviews?: number;
+  featured?: boolean;
+  status?: string;
+};
+
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
 
-function normalizeListing(item: any) {
+function normalizeListing(item: any): Listing {
   return {
     ...item,
     id: String(item._id || item.id),
@@ -10,7 +26,7 @@ function normalizeListing(item: any) {
 
 export async function getListings(
   params: Record<string, string> = {}
-) {
+): Promise<Listing[]> {
   const query = new URLSearchParams(params).toString();
 
   const response = await fetch(
@@ -29,7 +45,7 @@ export async function getListings(
   return data.map(normalizeListing);
 }
 
-export async function getListing(id: string) {
+export async function getListing(id: string): Promise<Listing> {
   const response = await fetch(`${API_URL}/api/listings/${id}`, {
     cache: "no-store",
   });

@@ -1,4 +1,4 @@
-import { listings } from "@/lib/data";
+import { getListing } from "@/lib/api";
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
 import { notFound } from "next/navigation";
@@ -11,7 +11,7 @@ export default async function Listing({
 }) {
   const { id } = await params;
 
-  const item = listings.find((x) => x.id === id);
+  const item = await getListing(id);
 
   if (!item) {
     notFound();
@@ -78,7 +78,7 @@ export default async function Listing({
             </h2>
 
             <div className="tags">
-              {item.tags.map((tag) => (
+              {(item.tags || []).map((tag) => (
                 <span className="tag" key={tag}>
                   {tag}
                 </span>
