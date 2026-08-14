@@ -3591,7 +3591,7 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
     flex-direction: column !important;
     height: auto !important;
     min-height: 0 !important;
-    margin-bottom: 96px !important;
+    margin-bottom: 40px !important;
     gap: 14px !important;
   }
 
