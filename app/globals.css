@@ -3365,3 +3365,289 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
     width: 135px;
   }
 }
+
+/* =========================================================
+   EXPLORE PAGE — REMOVE EXTRA EDGE SPACE
+   ========================================================= */
+
+.page:has(.metro-map-shell) {
+  padding-bottom: 0;
+}
+
+.page:has(.metro-map-shell) > main.shell.inner {
+  padding-top: 0;
+}
+
+.page:has(.metro-map-shell) > main.shell.inner > section:first-child {
+  margin-top: 24px !important;
+  margin-bottom: 28px !important;
+}
+
+@media (max-width: 700px) {
+  .page:has(.metro-map-shell) {
+    padding-bottom: 0;
+  }
+
+  .page:has(.metro-map-shell) > main.shell.inner {
+    padding-top: 0;
+  }
+
+  .page:has(.metro-map-shell) > main.shell.inner > section:first-child {
+    margin-top: 14px !important;
+  }
+}
+
+/* =========================================================
+   EXPLORE — BOTTOM NAV CLEARANCE
+   ========================================================= */
+
+@media (max-width: 700px) {
+  .page:has(.metro-map-shell) {
+    padding-bottom: 92px !important;
+  }
+}
+
+/* =========================================================
+   EXPLORE — EQUAL LIST / MAP HEIGHT
+   ========================================================= */
+
+@media (min-width: 901px) {
+  .page:has(.metro-map-shell) .explore-results-grid {
+    height: 560px;
+    align-items: stretch !important;
+  }
+
+  .page:has(.metro-map-shell) .explore-list-column {
+    height: 560px;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page:has(.metro-map-shell) .explore-list-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .page:has(.metro-map-shell) .explore-list-scroll::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 70px;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      rgba(247,246,242,0),
+      rgba(247,246,242,0.96)
+    );
+  }
+
+  .page:has(.metro-map-shell) .explore-show-more {
+    position: relative;
+    z-index: 5;
+    flex-shrink: 0;
+    align-self: center;
+    margin-top: -4px;
+    padding: 11px 20px;
+    border: 2px solid #111;
+    border-radius: 999px;
+    background: #fff;
+    color: #111;
+    box-shadow: 3px 3px 0 #111;
+    font-size: 13px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .page:has(.metro-map-shell) .explore-show-more:hover {
+    background: var(--green);
+  }
+
+  .page:has(.metro-map-shell) .metro-map-shell {
+    height: 560px;
+  }
+}
+
+@media (max-width: 900px) {
+  .page:has(.metro-map-shell) .explore-results-grid,
+  .page:has(.metro-map-shell) .explore-list-column,
+  .page:has(.metro-map-shell) .explore-list-scroll {
+    height: auto;
+    overflow: visible;
+  }
+
+  .page:has(.metro-map-shell) .explore-show-more {
+    display: none;
+  }
+}
+
+
+/* MetroVybe: scrollable listings beside fixed map */
+.explore-list-column {
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 8px;
+  scrollbar-width: thin;
+}
+
+.explore-list-column::-webkit-scrollbar {
+  width: 6px;
+}
+
+.explore-list-column::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.explore-list-column::-webkit-scrollbar-thumb {
+  background: #b8b8b8;
+  border-radius: 999px;
+}
+
+.explore-list-column::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+
+/* MetroVybe: listings scroll independently at map height */
+.explore-results-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: stretch;
+  height: 600px;
+  min-height: 0;
+}
+
+.explore-list-column {
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-right: 8px;
+  scrollbar-width: thin;
+}
+
+.explore-list-column::-webkit-scrollbar {
+  width: 6px;
+}
+
+.explore-list-column::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.explore-list-column::-webkit-scrollbar-thumb {
+  background: #aaa;
+  border-radius: 10px;
+}
+
+.explore-list-column::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+
+/* Extra breathing room above fixed footer */
+.explore-results-grid {
+  margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+  .explore-results-grid {
+    margin-bottom: 20px;
+  }
+}
+
+
+/* Explore page: mobile-app style safe space above bottom navigation */
+.explore-results-grid {
+  margin-bottom: 72px !important;
+}
+
+@media (max-width: 768px) {
+  .explore-results-grid {
+    margin-bottom: 88px !important;
+  }
+
+  .explore-list-column {
+    padding-bottom: 16px;
+  }
+}
+
+
+/* =========================================
+   MetroVybe Explore - Mobile Layout
+   ========================================= */
+
+@media (max-width: 768px) {
+
+  /* Stack listings and map cleanly on mobile */
+  .explore-results-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin-bottom: 96px !important;
+    gap: 14px !important;
+  }
+
+  /* Make listings visible on phone */
+  .explore-list-column {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 55vh !important;
+    min-height: 280px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 4px 8px 18px 0 !important;
+  }
+
+  /* Keep map visible below listings */
+  .explore-results-grid > *:last-child {
+    width: 100% !important;
+    min-height: 360px !important;
+    height: 360px !important;
+  }
+
+  /* Prevent listing cards from being squeezed */
+  .explore-list-column > * {
+    flex-shrink: 0 !important;
+  }
+
+  /* Better mobile scrollbar */
+  .explore-list-column::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .explore-list-column::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,.45);
+    border-radius: 999px;
+  }
+
+  /* Find your local vibe text */
+  .explore-results-grid h1,
+  .explore-results-grid h2,
+  .explore-results-grid h3 {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Give the Explore intro/text a clean white outline */
+  .explore-results-grid .explore-title,
+  .explore-results-grid .explore-heading {
+    border: 1px solid rgba(255,255,255,.8) !important;
+    border-radius: 10px;
+    padding: 8px 12px !important;
+    background: rgba(0,0,0,.12);
+    box-sizing: border-box;
+  }
+
+  /* Bottom navigation safe area */
+  .explore-results-grid {
+    padding-bottom: 12px !important;
+  }
+}
