@@ -10,8 +10,8 @@
   --ink:#111;
   --cream:#f7f6f2;
   --white:#fff;
-  --line:2px solid #111;
-  --shadow:4px 5px 0 #111;
+  --line:1px solid rgba(255,255,255,0.85);
+  --shadow:0 4px 12px rgba(0,0,0,0.12);
 }
 
 *{box-sizing:border-box}
@@ -1776,3 +1776,18 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
   }
 }
 
+
+/* White outline for Home hero title */
+.hero-title {
+  color: #111;
+  -webkit-text-stroke: 1px #fff;
+  paint-order: stroke fill;
+}
+
+/* MetroVybe hero title — thin white outline */
+.hero .hero-title,
+.hero .hero-title span {
+  color: #111 !important;
+  -webkit-text-stroke: 1px #fff !important;
+  paint-order: stroke fill;
+}
