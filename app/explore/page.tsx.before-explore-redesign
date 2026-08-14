@@ -1,0 +1,326 @@
+import Link from "next/link";
+import { MapPin, SlidersHorizontal, ArrowUpRight } from "lucide-react";
+
+import { Header } from "@/components/Header";
+import { BottomNav } from "@/components/BottomNav";
+import { getListings } from "@/lib/api";
+
+export default async function ExplorePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>;
+}) {
+  const params = await searchParams;
+
+  const listings = await getListings(
+    params.category ? { category: params.category } : {}
+  );
+
+  return (
+    <div className="page">
+      <Header />
+
+      <main className="shell inner">
+
+        {/* EXPLORE INTRO — PROFILE STYLE */}
+        <section
+          style={{
+            padding: "54px 0 38px",
+            borderBottom: "2px solid #111",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-end",
+              gap: 30,
+            }}
+          >
+            <div>
+              <div
+                style={{
+                  display: "inline-block",
+                  background: "#111",
+                  color: "#fff",
+                  padding: "7px 12px",
+                  borderRadius: 8,
+                  fontSize: 11,
+                  fontWeight: 900,
+                  letterSpacing: 1.2,
+                  marginBottom: 16,
+                  transform: "rotate(-2deg)",
+                }}
+              >
+                DISCOVER NEAR YOU
+              </div>
+
+              <h1
+                style={{
+                  margin: 0,
+                  fontSize: "clamp(58px, 9vw, 110px)",
+                  lineHeight: ".82",
+                  letterSpacing: "-5px",
+                  fontWeight: 900,
+                }}
+              >
+                EXPLORE
+                <span
+                  style={{
+                    display: "block",
+                    color: "var(--green)",
+                  }}
+                >
+                  YOUR VYBE.
+                </span>
+              </h1>
+
+              <p
+                style={{
+                  maxWidth: 540,
+                  fontSize: 18,
+                  lineHeight: 1.45,
+                  fontWeight: 600,
+                  margin: "24px 0 0",
+                  color: "#444",
+                }}
+              >
+                Find places, services and everyday essentials
+                around you — all in one place.
+              </p>
+            </div>
+
+            <div
+              style={{
+                width: 150,
+                height: 150,
+                flexShrink: 0,
+                border: "2px solid #111",
+                borderRadius: "50%",
+                background: "var(--green)",
+                boxShadow: "5px 6px 0 #111",
+                display: "grid",
+                placeItems: "center",
+                transform: "rotate(7deg)",
+              }}
+            >
+              <MapPin size={54} strokeWidth={2.5} />
+            </div>
+          </div>
+        </section>
+
+        {/* SEARCH / FILTER */}
+        <section style={{ padding: "28px 0 10px" }}>
+          <div
+            style={{
+              display: "flex",
+              gap: 12,
+              alignItems: "center",
+            }}
+          >
+            <div
+              style={{
+                flex: 1,
+                height: 54,
+                background: "#fff",
+                border: "2px solid #111",
+                borderRadius: 16,
+                boxShadow: "3px 4px 0 #111",
+                display: "flex",
+                alignItems: "center",
+                padding: "0 17px",
+              }}
+            >
+              <MapPin size={18} />
+
+              <input
+                placeholder="Search places, services or locations..."
+                style={{
+                  border: 0,
+                  outline: 0,
+                  background: "transparent",
+                  width: "100%",
+                  marginLeft: 10,
+                  fontSize: 15,
+                }}
+              />
+            </div>
+
+            <button
+              type="button"
+              className="btn"
+              style={{
+                height: 54,
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+              }}
+            >
+              <SlidersHorizontal size={18} />
+              Filters
+            </button>
+          </div>
+        </section>
+
+        {/* CATEGORY STRIP */}
+        <section
+          style={{
+            display: "flex",
+            gap: 10,
+            overflowX: "auto",
+            padding: "14px 0 24px",
+          }}
+        >
+          {[
+            ["All", ""],
+            ["🏠 Stay", "stay"],
+            ["🍱 Food", "food"],
+            ["🧺 Laundry", "laundry"],
+            ["🚚 Move", "move"],
+          ].map(([label, value]) => {
+            const active =
+              value === (params.category || "");
+
+            return (
+              <Link
+                key={label}
+                href={
+                  value
+                    ? `/explore?category=${value}`
+                    : "/explore"
+                }
+                style={{
+                  padding: "10px 17px",
+                  border: "2px solid #111",
+                  borderRadius: 14,
+                  background: active
+                    ? "var(--green)"
+                    : "#fff",
+                  boxShadow: "2px 3px 0 #111",
+                  fontWeight: 900,
+                  whiteSpace: "nowrap",
+                  fontSize: 13,
+                }}
+              >
+                {label}
+              </Link>
+            );
+          })}
+        </section>
+
+        {/* CONTENT */}
+        <section>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "end",
+              marginBottom: 16,
+            }}
+          >
+            <div>
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: 28,
+                  fontWeight: 900,
+                }}
+              >
+                Around you.
+              </h2>
+
+              <p
+                className="subtle"
+                style={{ margin: "4px 0 0" }}
+              >
+                Trusted listings in your area.
+              </p>
+            </div>
+
+            <span
+              style={{
+                fontSize: 13,
+                fontWeight: 800,
+              }}
+            >
+              {listings.length} listings
+            </span>
+          </div>
+
+          <div className="cards">
+            {listings.map((x) => (
+              <Link
+                href={`/listing/${x.id}`}
+                className="card"
+                key={x.id}
+              >
+                <div className="card-image">
+                  <img
+                    src={x.image}
+                    alt={x.title}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+
+                  {x.featured && (
+                    <span
+                      className="badge"
+                      style={{
+                        background: "var(--green)",
+                      }}
+                    >
+                      FEATURED
+                    </span>
+                  )}
+                </div>
+
+                <div className="card-body">
+                  <div className="card-title-row">
+                    <div>
+                      <div className="card-title">
+                        {x.title}
+                      </div>
+
+                      <div className="meta">
+                        <MapPin
+                          size={13}
+                          style={{
+                            verticalAlign: "-2px",
+                            marginRight: 3,
+                          }}
+                        />
+                        {x.location}
+                      </div>
+                    </div>
+
+                    <ArrowUpRight size={18} />
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      marginTop: 12,
+                    }}
+                  >
+                    <strong>{x.price}</strong>
+
+                    <span className="rating">
+                      ★ {x.rating}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+      </main>
+
+      <BottomNav active="explore" />
+    </div>
+  );
+}

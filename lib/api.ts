@@ -11,6 +11,8 @@ export type Listing = {
   rating?: number;
   reviews?: number;
   featured?: boolean;
+  latitude?: number | null;
+  longitude?: number | null;
   status?: string;
 };
 
