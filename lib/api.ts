@@ -4,7 +4,7 @@ const API_URL =
 function normalizeListing(item: any) {
   return {
     ...item,
-    id: item._id || item.id,
+    id: String(item._id || item.id),
   };
 }
 
