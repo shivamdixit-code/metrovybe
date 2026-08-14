@@ -16,6 +16,9 @@ export default async function Home() {
 
       <main>
         <section className="hero">
+    <div className="home-hero-green-circle" />
+    <div className="home-hero-white-circle" />
+
     <div className="shell hero-grid">
      <div className="hero-content">
       <span className="eyebrow">EVERYTHING YOU NEED</span>

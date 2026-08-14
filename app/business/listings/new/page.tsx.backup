@@ -1,0 +1,1641 @@
+"use client";
+
+import Link from "next/link";
+import dynamic from "next/dynamic";
+import { FormEvent, useEffect, useState } from "react";
+import { getToken } from "@/lib/auth";
+
+const LocationPicker = dynamic(
+  () => import("@/components/ListingLocationPicker"),
+  { ssr: false }
+);
+
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
+
+type Business = {
+  businessName: string;
+  verificationStatus?: string;
+};
+
+type SelectedLocation = {
+  latitude: number;
+  longitude: number;
+  address: string;
+};
+
+export default function NewBusinessListing() {
+  const [business, setBusiness] = useState<Business | null>(null);
+  const [loadingBusiness, setLoadingBusiness] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
+  const [locationPickerOpen, setLocationPickerOpen] =
+    useState(false);
+
+  const [selectedLocation, setSelectedLocation] =
+    useState<SelectedLocation | null>(null);
+
+  const [listingCategory, setListingCategory] = useState("");
+  const [listingType, setListingType] = useState("");
+
+  const [form, setForm] = useState({
+    title: "",
+    category: "",
+    subcategory: "",
+    description: "",
+    location: "",
+    price: "",
+    image: "",
+    images: "",
+    tags: "",
+  });
+
+  const [serviceDetails, setServiceDetails] =
+    useState<Record<string, string>>({});
+
+  const [availability, setAvailability] =
+    useState<Record<string, string>>({});
+
+  useEffect(() => {
+    async function loadBusiness() {
+      try {
+        const token = getToken();
+
+        if (!token) {
+          window.location.href = "/login";
+          return;
+        }
+
+        const response = await fetch(
+          `${API_URL}/api/business/me`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            "Unable to load business profile"
+          );
+        }
+
+        const data = await response.json();
+        setBusiness(data.business);
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Unable to load business profile"
+        );
+      } finally {
+        setLoadingBusiness(false);
+      }
+    }
+
+    loadBusiness();
+  }, []);
+
+  function updateField(
+    field: keyof typeof form,
+    value: string
+  ) {
+    setForm((current) => ({
+      ...current,
+      [field]: value,
+    }));
+  }
+
+  function handleLocationConfirm(
+    location: SelectedLocation
+  ) {
+    setSelectedLocation(location);
+
+    setForm((current) => ({
+      ...current,
+      location: location.address,
+    }));
+
+    setLocationPickerOpen(false);
+  }
+
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
+
+    setError("");
+    setMessage("");
+
+    const token = getToken();
+
+    if (!token) {
+      window.location.href = "/login";
+      return;
+    }
+
+    if (!selectedLocation) {
+      setError(
+        "Please select your business location on the map."
+      );
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const payload = {
+        title: form.title.trim(),
+        category: form.category.trim(),
+        description: form.description.trim(),
+        location: form.location.trim(),
+        price: form.price.trim(),
+        image: form.image.trim(),
+        images: form.images
+          .split(",")
+          .map((x) => x.trim())
+          .filter(Boolean),
+        tags: form.tags
+          .split(",")
+          .map((x) => x.trim())
+          .filter(Boolean),
+
+        serviceDetails: {
+          type: listingType,
+          ...serviceDetails,
+        },
+
+        availability: {
+          ...availability,
+        },
+
+        latitude: selectedLocation.latitude,
+        longitude: selectedLocation.longitude,
+      };
+
+      const response = await fetch(
+        `${API_URL}/api/listings`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Failed to submit listing"
+        );
+      }
+
+      setMessage(
+        "Your listing has been submitted for MetroVybe review."
+      );
+
+      setForm({
+        title: "",
+        category: "",
+        subcategory: "",
+        description: "",
+        location: "",
+        price: "",
+        image: "",
+        images: "",
+        tags: "",
+      });
+
+      setSelectedLocation(null);
+      setListingCategory("");
+      setListingType("");
+      setServiceDetails({});
+      setAvailability({});
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to submit listing"
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  if (loadingBusiness) {
+    return (
+      <main className="listing-page">
+        <div className="listing-loading">
+          <div className="spinner" />
+          <p>Loading your business profile...</p>
+        </div>
+      </main>
+    );
+  }
+
+  const verified =
+    business?.verificationStatus === "verified";
+
+  return (
+    <main className="listing-page">
+      <div className="listing-container">
+
+        <Link
+          href="/business/dashboard"
+          className="back-link"
+        >
+          ← Business Dashboard
+        </Link>
+
+        <div className="page-header">
+          <span>BUSINESS CENTER</span>
+
+          <h1>Create a listing</h1>
+
+          <p>
+            Add your business or service to MetroVybe and
+            help nearby customers discover you.
+          </p>
+        </div>
+
+        {business && (
+          <div className="business-card">
+            <div className="business-avatar">
+              {business.businessName
+                .charAt(0)
+                .toUpperCase()}
+            </div>
+
+            <div className="business-details">
+              <small>BUSINESS</small>
+              <strong>{business.businessName}</strong>
+            </div>
+
+            <div
+              className={
+                verified
+                  ? "verification verified"
+                  : "verification pending"
+              }
+            >
+              {verified ? "✓ Verified" : "Pending"}
+            </div>
+          </div>
+        )}
+
+        {!verified ? (
+          <section className="verification-card">
+            <div className="verification-icon">
+              !
+            </div>
+
+            <div>
+              <h2>Verification required</h2>
+
+              <p>
+                Your business must be verified by MetroVybe
+                before you can create a listing.
+              </p>
+
+              <Link
+                href="/business/dashboard"
+                className="dashboard-button"
+              >
+                Go to Dashboard
+              </Link>
+            </div>
+          </section>
+        ) : (
+          <form
+            onSubmit={handleSubmit}
+            className="listing-form"
+          >
+
+            <section className="form-section">
+              <div className="section-title">
+                <b>01</b>
+
+                <div>
+                  <h2>What are you listing?</h2>
+                  <p>
+                    Start by choosing the MetroVybe category.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid">
+                <div className="field full">
+                  <label>
+                    MetroVybe category <i>*</i>
+                  </label>
+
+                  <div className="category-grid">
+                    {[
+                      ["stay", "STAY", "PGs, rooms & flatmates", "🏠"],
+                      ["eat", "EAT", "Tiffin & home chefs", "🍽️"],
+                      ["live", "LIVE", "Laundry & home help", "🧺"],
+                      ["move", "MOVE", "Movers & storage", "📦"],
+                      ["go", "GO", "Parking & rentals", "🚗"],
+                    ].map(([value, name, description, icon]) => (
+                      <button
+                        key={value}
+                        type="button"
+                        className={
+                          form.category === value
+                            ? "category-card active"
+                            : "category-card"
+                        }
+                        onClick={() => {
+                          updateField("category", value);
+                          updateField("subcategory", "");
+                        }}
+                      >
+                        <span className="category-icon">
+                          {icon}
+                        </span>
+
+                        <span className="category-copy">
+                          <strong>{name}</strong>
+                          <small>{description}</small>
+                        </span>
+
+                        <span className="category-check">
+                          {form.category === value ? "✓" : "›"}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {form.category && (
+                  <div className="field full">
+                    <label>
+                      What are you offering? <i>*</i>
+                    </label>
+
+                    <select
+                      required
+                      value={form.subcategory}
+                      onChange={(event) =>
+                        updateField(
+                          "subcategory",
+                          event.target.value
+                        )
+                      }
+                    >
+                      <option value="">
+                        Select a service type
+                      </option>
+
+                      {form.category === "stay" && (
+                        <>
+                          <option value="pg">
+                            PG
+                          </option>
+                          <option value="room">
+                            Room
+                          </option>
+                          <option value="flatmate">
+                            Flatmate
+                          </option>
+                        </>
+                      )}
+
+                      {form.category === "eat" && (
+                        <>
+                          <option value="tiffin">
+                            Tiffin Service
+                          </option>
+                          <option value="home-chef">
+                            Home Chef
+                          </option>
+                        </>
+                      )}
+
+                      {form.category === "live" && (
+                        <>
+                          <option value="laundry">
+                            Laundry
+                          </option>
+                          <option value="home-help">
+                            Home Help
+                          </option>
+                        </>
+                      )}
+
+                      {form.category === "move" && (
+                        <>
+                          <option value="movers">
+                            Movers
+                          </option>
+                          <option value="storage">
+                            Storage
+                          </option>
+                        </>
+                      )}
+
+                      {form.category === "go" && (
+                        <>
+                          <option value="parking">
+                            Parking
+                          </option>
+                          <option value="rental">
+                            Rental
+                          </option>
+                        </>
+                      )}
+                    </select>
+                  </div>
+                )}
+
+                <div className="field full">
+                  <label>
+                    Description <i>*</i>
+                  </label>
+
+                  <textarea
+                    required
+                    value={form.description}
+                    onChange={(event) =>
+                      updateField(
+                        "description",
+                        event.target.value
+                      )
+                    }
+                    placeholder="Describe your service..."
+                    rows={6}
+                  />
+                </div>
+
+                <Field
+                  label="Price"
+                  value={form.price}
+                  onChange={(value) =>
+                    updateField("price", value)
+                  }
+                  placeholder="e.g. ₹8,500/month"
+                />
+              </div>
+            </section>
+
+            <section className="form-section">
+              <div className="section-title">
+                <b>04</b>
+
+                <div>
+                  <h2>Business location</h2>
+
+                  <p>
+                    Pinpoint your exact location on the map.
+                  </p>
+                </div>
+              </div>
+
+              {!selectedLocation ? (
+                <button
+                  type="button"
+                  className="location-button"
+                  onClick={() =>
+                    setLocationPickerOpen(true)
+                  }
+                >
+                  <span className="location-pin">
+                    ⌖
+                  </span>
+
+                  <span>
+                    <strong>
+                      Select location on map
+                    </strong>
+
+                    <small>
+                      Move the pin to your exact business
+                      location
+                    </small>
+                  </span>
+
+                  <b>→</b>
+                </button>
+              ) : (
+                <div className="selected-location">
+                  <div className="selected-location-icon">
+                    ✓
+                  </div>
+
+                  <div className="selected-location-info">
+                    <small>BUSINESS LOCATION</small>
+
+                    <strong>
+                      {selectedLocation.address}
+                    </strong>
+
+                    <span>
+                      {selectedLocation.latitude.toFixed(
+                        6
+                      )}
+                      ,{" "}
+                      {selectedLocation.longitude.toFixed(
+                        6
+                      )}
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setLocationPickerOpen(true)
+                    }
+                  >
+                    Change
+                  </button>
+                </div>
+              )}
+            </section>
+
+            <section className="form-section">
+              <div className="section-title">
+                <b>03</b>
+
+                <div>
+                  <h2>Listing details</h2>
+                  <p>
+                    Give your listing a clear customer-friendly name.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid">
+                <Field
+                  label="Listing title"
+                  required
+                  value={form.title}
+                  onChange={(value) =>
+                    updateField("title", value)
+                  }
+                  placeholder={
+                    form.category === "eat"
+                      ? "e.g. Ghar Ka Tiffin Service"
+                      : form.category === "stay"
+                      ? "e.g. Premium Student PG"
+                      : form.category === "live"
+                      ? "e.g. Express Laundry Service"
+                      : form.category === "move"
+                      ? "e.g. Citywide Movers"
+                      : form.category === "go"
+                      ? "e.g. Secure Monthly Parking"
+                      : "e.g. Your business listing"
+                  }
+                  full
+                />
+              </div>
+            </section>
+
+            <section className="form-section">
+              <div className="section-title">
+                <b>04</b>
+
+                <div>
+                  <h2>Photos</h2>
+
+                  <p>
+                    Add images that represent your business.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid">
+                <Field
+                  label="Main image URL"
+                  value={form.image}
+                  onChange={(value) =>
+                    updateField("image", value)
+                  }
+                  placeholder="https://..."
+                  full
+                />
+
+                <Field
+                  label="Additional image URLs"
+                  value={form.images}
+                  onChange={(value) =>
+                    updateField("images", value)
+                  }
+                  placeholder="https://..., https://..."
+                  full
+                />
+
+                <Field
+                  label="Tags"
+                  value={form.tags}
+                  onChange={(value) =>
+                    updateField("tags", value)
+                  }
+                  placeholder="wifi, furnished, student-friendly"
+                  full
+                />
+              </div>
+            </section>
+
+            {error && (
+              <div className="alert error">
+                <b>!</b>
+                <span>{error}</span>
+              </div>
+            )}
+
+            {message && (
+              <div className="alert success">
+                <b>✓</b>
+                <span>{message}</span>
+              </div>
+            )}
+
+            <div className="submit-box">
+              <div>
+                <strong>
+                  Ready to submit your listing?
+                </strong>
+
+                <p>
+                  MetroVybe will review it before it appears
+                  publicly.
+                </p>
+              </div>
+
+              <button
+                type="submit"
+                disabled={submitting}
+              >
+                {submitting
+                  ? "Submitting..."
+                  : "Submit for Review"}
+                {!submitting && <span>→</span>}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+
+      {locationPickerOpen && (
+        <div className="location-overlay">
+          <div className="location-modal">
+            <div className="location-modal-header">
+              <div>
+                <strong>
+                  Select business location
+                </strong>
+
+                <span>
+                  Move the pin to your exact location
+                </span>
+              </div>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setLocationPickerOpen(false)
+                }
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="picker-map">
+              <LocationPicker
+                initialLocation={
+                  selectedLocation
+                    ? {
+                        latitude:
+                          selectedLocation.latitude,
+                        longitude:
+                          selectedLocation.longitude,
+                      }
+                    : undefined
+                }
+                onConfirm={handleLocationConfirm}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style jsx>{`
+        .listing-page {
+          min-height: 100vh;
+          background: #f5f7f6;
+          color: #151918;
+          padding: 18px 14px 110px;
+        }
+
+        .listing-container {
+          width: 100%;
+          max-width: 680px;
+          margin: 0 auto;
+        }
+
+        .back-link {
+          display: inline-flex;
+          align-items: center;
+          min-height: 42px;
+          color: #202522;
+          text-decoration: none;
+          font-size: 14px;
+          font-weight: 800;
+        }
+
+        .page-header {
+          padding: 20px 2px 18px;
+        }
+
+        .page-header span {
+          color: #176b55;
+          font-size: 10px;
+          font-weight: 900;
+          letter-spacing: 1.5px;
+        }
+
+        .page-header h1 {
+          margin: 6px 0 7px;
+          font-size: clamp(32px, 9vw, 44px);
+          line-height: .98;
+          letter-spacing: -1.8px;
+        }
+
+        .page-header p {
+          max-width: 560px;
+          margin: 0;
+          color: #727b77;
+          font-size: 14px;
+          line-height: 1.55;
+        }
+
+        .business-card {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 12px;
+          margin-bottom: 12px;
+          background: rgba(255,255,255,.92);
+          border: 1px solid #e1e7e4;
+          border-radius: 18px;
+          box-shadow: 0 4px 18px rgba(20,35,29,.035);
+        }
+
+        .business-avatar {
+          width: 44px;
+          height: 44px;
+          flex: 0 0 44px;
+          display: grid;
+          place-items: center;
+          border-radius: 14px;
+          background: #176b55;
+          color: white;
+          font-size: 17px;
+          font-weight: 900;
+        }
+
+        .business-details {
+          min-width: 0;
+          flex: 1;
+          display: grid;
+          gap: 2px;
+        }
+
+        .business-details small {
+          color: #929a97;
+          font-size: 9px;
+          font-weight: 900;
+          letter-spacing: 1px;
+        }
+
+        .business-details strong {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          font-size: 14px;
+        }
+
+        .verification {
+          flex-shrink: 0;
+          padding: 7px 9px;
+          border-radius: 999px;
+          font-size: 10px;
+          font-weight: 900;
+        }
+
+        .verification.verified {
+          color: #176b55;
+          background: #e6f5ef;
+        }
+
+        .verification.pending {
+          color: #946516;
+          background: #fff3d5;
+        }
+
+        .category-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 12px;
+        }
+
+        .category-card {
+          min-height: 130px;
+          padding: 18px;
+          border: 1px solid #dfe7e3;
+          border-radius: 16px;
+          background: #fff;
+          text-align: left;
+          cursor: pointer;
+          display: grid;
+          align-content: center;
+          gap: 5px;
+          transition: 0.18s ease;
+        }
+
+        .category-card:hover,
+        .category-card.active {
+          border-color: #176b55;
+          background: #f1f9f6;
+          box-shadow: 0 5px 18px rgba(23,107,85,.10);
+        }
+
+        .category-icon {
+          font-size: 25px;
+          margin-bottom: 5px;
+        }
+
+        .category-card strong {
+          font-size: 15px;
+        }
+
+        .category-card small {
+          color: #7a8580;
+          font-size: 11px;
+        }
+
+        .type-block {
+          margin-top: 18px;
+        }
+
+        .type-block > label {
+          display: block;
+          margin-bottom: 9px;
+          font-size: 13px;
+          font-weight: 800;
+        }
+
+        .type-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 10px;
+        }
+
+        .type-card {
+          padding: 14px;
+          border: 1px solid #d8e1dd;
+          border-radius: 12px;
+          background: #fff;
+          text-align: left;
+          font-weight: 750;
+          cursor: pointer;
+        }
+
+        .type-card.active {
+          border-color: #176b55;
+          background: #eaf6f1;
+          color: #176b55;
+        }
+
+        .listing-form {
+          display: grid;
+          gap: 12px;
+        }
+
+        .form-section {
+          padding: 18px 15px;
+          background: white;
+          border: 1px solid #e1e7e4;
+          border-radius: 20px;
+          box-shadow: 0 5px 20px rgba(20,35,29,.035);
+        }
+
+        .section-title {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 17px;
+        }
+
+        .section-title > b {
+          width: 32px;
+          height: 32px;
+          flex: 0 0 32px;
+          display: grid;
+          place-items: center;
+          border-radius: 11px;
+          background: #eaf5f1;
+          color: #176b55;
+          font-size: 10px;
+          font-weight: 900;
+        }
+
+        .section-title h2 {
+          margin: 0;
+          font-size: 17px;
+          letter-spacing: -.3px;
+        }
+
+        .section-title p {
+          margin: 3px 0 0;
+          color: #858d89;
+          font-size: 11px;
+          line-height: 1.4;
+        }
+
+        .grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 13px;
+        }
+
+        .field {
+          display: grid;
+          gap: 7px;
+        }
+
+        .field.full {
+          grid-column: 1 / -1;
+        }
+
+        .field label {
+          font-size: 11px;
+          font-weight: 900;
+          color: #303735;
+        }
+
+        .field label i {
+          color: #d64545;
+          font-style: normal;
+        }
+
+        .field input,
+        .field textarea,
+        .field select {
+          width: 100%;
+          box-sizing: border-box;
+          border: 1px solid #dce3e0;
+          border-radius: 13px;
+          background: #fbfcfc;
+          color: #151918;
+          padding: 0 13px;
+          font: inherit;
+          font-size: 14px;
+          outline: none;
+          -webkit-appearance: none;
+        }
+
+        .field input,
+        .field select {
+          height: 50px;
+        }
+
+        .field textarea {
+          padding: 13px;
+          resize: vertical;
+          min-height: 125px;
+          line-height: 1.5;
+        }
+
+        .field input::placeholder,
+        .field textarea::placeholder {
+          color: #a2aaa7;
+        }
+
+        .field input:focus,
+        .field textarea:focus,
+        .field select:focus {
+          border-color: #176b55;
+          background: white;
+          box-shadow: 0 0 0 4px rgba(23,107,85,.08);
+        }
+
+        .category-grid {
+          display: flex;
+          gap: 9px;
+          overflow-x: auto;
+          padding: 2px 1px 7px;
+          margin-right: -3px;
+          scrollbar-width: none;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .category-grid::-webkit-scrollbar {
+          display: none;
+        }
+
+        .category-card {
+          width: 122px;
+          min-width: 122px;
+          min-height: 112px;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: space-between;
+          padding: 13px;
+          border: 1px solid #dfe7e3;
+          border-radius: 17px;
+          background: #fbfcfc;
+          color: #202725;
+          text-align: left;
+          cursor: pointer;
+          -webkit-tap-highlight-color: transparent;
+          transition: transform .15s ease, border-color .15s ease;
+        }
+
+        .category-card:active {
+          transform: scale(.97);
+        }
+
+        .category-card.active {
+          border: 1.5px solid #176b55;
+          background: #eef8f4;
+          box-shadow: 0 4px 14px rgba(23,107,85,.08);
+        }
+
+        .category-icon {
+          width: 38px;
+          height: 38px;
+          display: grid;
+          place-items: center;
+          border-radius: 12px;
+          background: #edf2ef;
+          font-size: 18px;
+        }
+
+        .category-card.active .category-icon {
+          background: #176b55;
+        }
+
+        .category-copy {
+          display: grid;
+          gap: 3px;
+        }
+
+        .category-copy strong {
+          font-size: 12px;
+          font-weight: 900;
+        }
+
+        .category-copy small {
+          color: #7b8581;
+          font-size: 9px;
+          line-height: 1.3;
+        }
+
+        .category-check {
+          position: absolute;
+          opacity: 0;
+        }
+
+        .category-card.active .category-check {
+          opacity: 1;
+        }
+
+        .location-button {
+          width: 100%;
+          min-height: 70px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 12px;
+          border: 1px solid #d7e4df;
+          border-radius: 16px;
+          background: #f5faf8;
+          text-align: left;
+          cursor: pointer;
+          -webkit-tap-highlight-color: transparent;
+        }
+
+        .location-button:active {
+          transform: scale(.99);
+        }
+
+        .location-pin {
+          width: 44px;
+          height: 44px;
+          flex: 0 0 44px;
+          display: grid;
+          place-items: center;
+          border-radius: 13px;
+          background: #176b55;
+          color: white;
+          font-size: 21px;
+        }
+
+        .location-button span:nth-child(2) {
+          flex: 1;
+          min-width: 0;
+          display: grid;
+          gap: 4px;
+        }
+
+        .location-button strong {
+          font-size: 13px;
+        }
+
+        .location-button small {
+          color: #78827e;
+          font-size: 10px;
+        }
+
+        .location-button > b {
+          color: #176b55;
+          font-size: 20px;
+        }
+
+        .selected-location {
+          display: flex;
+          align-items: center;
+          gap: 11px;
+          padding: 12px;
+          border: 1px solid #cde6dc;
+          border-radius: 16px;
+          background: #f3faf7;
+        }
+
+        .selected-location-icon {
+          width: 38px;
+          height: 38px;
+          flex: 0 0 38px;
+          display: grid;
+          place-items: center;
+          border-radius: 12px;
+          background: #176b55;
+          color: white;
+          font-weight: 900;
+        }
+
+        .selected-location-info {
+          flex: 1;
+          min-width: 0;
+          display: grid;
+          gap: 3px;
+        }
+
+        .selected-location-info small {
+          color: #176b55;
+          font-size: 8px;
+          font-weight: 900;
+          letter-spacing: 1px;
+        }
+
+        .selected-location-info strong {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          font-size: 12px;
+        }
+
+        .selected-location-info span {
+          color: #7a8580;
+          font-size: 9px;
+        }
+
+        .selected-location button {
+          border: 0;
+          background: white;
+          color: #176b55;
+          font-weight: 900;
+          padding: 9px 11px;
+          border-radius: 10px;
+          cursor: pointer;
+        }
+
+        .alert {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 13px;
+          border-radius: 14px;
+          font-size: 12px;
+        }
+
+        .alert b {
+          width: 23px;
+          height: 23px;
+          flex: 0 0 23px;
+          display: grid;
+          place-items: center;
+          border-radius: 50%;
+          color: white;
+        }
+
+        .alert.error {
+          background: #fff0f0;
+          color: #8e2525;
+        }
+
+        .alert.error b {
+          background: #c83c3c;
+        }
+
+        .alert.success {
+          background: #eaf7f2;
+          color: #176b55;
+        }
+
+        .alert.success b {
+          background: #176b55;
+        }
+
+        .submit-box {
+          position: sticky;
+          bottom: 10px;
+          z-index: 20;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 12px;
+          border: 1px solid rgba(255,255,255,.12);
+          border-radius: 19px;
+          background: rgba(21,25,24,.96);
+          color: white;
+          box-shadow: 0 12px 35px rgba(0,0,0,.18);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+        }
+
+        .submit-box > div {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .submit-box strong {
+          display: block;
+          font-size: 12px;
+        }
+
+        .submit-box p {
+          margin: 3px 0 0;
+          color: #aeb7b3;
+          font-size: 9px;
+          line-height: 1.35;
+        }
+
+        .submit-box button {
+          min-height: 46px;
+          flex-shrink: 0;
+          border: 0;
+          border-radius: 13px;
+          padding: 0 15px;
+          background: #176b55;
+          color: white;
+          font-size: 12px;
+          font-weight: 900;
+          cursor: pointer;
+        }
+
+        .submit-box button:disabled {
+          opacity: .55;
+          cursor: not-allowed;
+        }
+
+        .submit-box button span {
+          margin-left: 7px;
+          font-size: 15px;
+        }
+
+        .verification-card {
+          display: flex;
+          gap: 13px;
+          padding: 17px;
+          background: white;
+          border: 1px solid #eadfb8;
+          border-radius: 19px;
+        }
+
+        .verification-icon {
+          width: 38px;
+          height: 38px;
+          flex: 0 0 38px;
+          display: grid;
+          place-items: center;
+          border-radius: 12px;
+          background: #fff3d5;
+          color: #946516;
+          font-weight: 900;
+        }
+
+        .verification-card h2 {
+          margin: 0 0 5px;
+          font-size: 17px;
+        }
+
+        .verification-card p {
+          margin: 0 0 13px;
+          color: #747d79;
+          font-size: 12px;
+          line-height: 1.5;
+        }
+
+        .dashboard-button {
+          display: inline-flex;
+          min-height: 40px;
+          align-items: center;
+          padding: 0 14px;
+          border-radius: 11px;
+          background: #151918;
+          color: white;
+          text-decoration: none;
+          font-size: 12px;
+          font-weight: 900;
+        }
+
+        .listing-loading {
+          min-height: 80vh;
+          display: grid;
+          place-items: center;
+          align-content: center;
+          gap: 10px;
+          color: #707a76;
+          font-size: 13px;
+        }
+
+        .spinner {
+          width: 25px;
+          height: 25px;
+          border: 3px solid #dce7e2;
+          border-top-color: #176b55;
+          border-radius: 50%;
+          animation: spin .8s linear infinite;
+        }
+
+        .location-overlay {
+          position: fixed;
+          inset: 0;
+          z-index: 1000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 12px;
+          background: rgba(8,14,12,.58);
+          backdrop-filter: blur(7px);
+          -webkit-backdrop-filter: blur(7px);
+        }
+
+        .location-modal {
+          width: min(100%, 720px);
+          height: min(88vh, 720px);
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          border-radius: 24px;
+          background: white;
+          box-shadow: 0 25px 70px rgba(0,0,0,.25);
+        }
+
+        .location-modal-header {
+          min-height: 64px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 10px 14px;
+          border-bottom: 1px solid #edf0ef;
+        }
+
+        .location-modal-header > div {
+          flex: 1;
+          display: grid;
+          gap: 3px;
+        }
+
+        .location-modal-header strong {
+          font-size: 14px;
+        }
+
+        .location-modal-header span {
+          color: #7b8581;
+          font-size: 10px;
+        }
+
+        .location-modal-header button {
+          width: 38px;
+          height: 38px;
+          border: 0;
+          border-radius: 50%;
+          background: #f1f4f3;
+          color: #252a28;
+          font-size: 23px;
+          cursor: pointer;
+        }
+
+        .picker-map {
+          flex: 1;
+          min-height: 0;
+          position: relative;
+        }
+
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        @media (max-width: 640px) {
+          .listing-page {
+            padding: 8px 10px 100px;
+          }
+
+          .listing-container {
+            max-width: 100%;
+          }
+
+          .back-link {
+            min-height: 45px;
+            padding-left: 2px;
+          }
+
+          .page-header {
+            padding: 13px 3px 16px;
+          }
+
+          .page-header h1 {
+            font-size: 34px;
+          }
+
+          .page-header p {
+            font-size: 13px;
+          }
+
+          .business-card {
+            border-radius: 17px;
+          }
+
+          .form-section {
+            padding: 17px 13px;
+            border-radius: 19px;
+          }
+
+          .grid {
+            grid-template-columns: 1fr;
+            gap: 13px;
+          }
+
+          .field.full {
+            grid-column: auto;
+          }
+
+          .category-grid {
+            margin-right: -13px;
+            padding-right: 13px;
+          }
+
+          .category-card {
+            width: 116px;
+            min-width: 116px;
+            min-height: 108px;
+          }
+
+          .submit-box {
+            bottom: 8px;
+            border-radius: 17px;
+          }
+
+          .submit-box > div {
+            display: none;
+          }
+
+          .submit-box button {
+            width: 100%;
+            min-height: 50px;
+            font-size: 13px;
+          }
+
+          .location-overlay {
+            padding: 0;
+            align-items: flex-end;
+          }
+
+          .location-modal {
+            width: 100%;
+            height: 92vh;
+            border-radius: 24px 24px 0 0;
+          }
+
+          .location-modal-header {
+            min-height: 66px;
+          }
+        }
+
+        @media (max-width: 650px) {
+          .listing-page {
+            padding: 20px 12px 70px;
+          }
+
+          .form-section {
+            padding: 18px;
+            border-radius: 16px;
+          }
+
+          .grid {
+            grid-template-columns: 1fr;
+          }
+
+          .category-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .category-card {
+            min-height: 82px;
+            grid-template-columns: 42px 1fr;
+            align-items: center;
+          }
+
+          .category-icon {
+            grid-row: span 2;
+          }
+
+          .type-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .submit-box {
+            align-items: stretch;
+            flex-direction: column;
+          }
+
+          .submit-box button {
+            width: 100%;
+          }
+        }
+
+      `}</style>
+    </main>
+  );
+}
+
+
+function DetailField({
+  label,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+}) {
+  return (
+    <div className="field">
+      <label>{label}</label>
+      <input
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+      />
+    </div>
+  );
+}
+
+function Field({
+  label,
+  required,
+  value,
+  onChange,
+  placeholder,
+  full,
+}: {
+  label: string;
+  required?: boolean;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  full?: boolean;
+}) {
+  return (
+    <div className={full ? "field full" : "field"}>
+      <label>
+        {label}
+        {required && <i>*</i>}
+      </label>
+
+      <input
+        type="text"
+        required={required}
+        value={value}
+        onChange={(event) =>
+          onChange(event.target.value)
+        }
+        placeholder={placeholder}
+      />
+    </div>
+  );
+}
