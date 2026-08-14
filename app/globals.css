@@ -3682,3 +3682,37 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
   }
 }
 
+
+@media (max-width: 768px) {
+  /* Keep listing rating readable on mobile */
+  .rating {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 2px !important;
+    margin-left: 8px !important;
+    white-space: nowrap !important;
+    position: relative !important;
+    z-index: 3 !important;
+    color: #111 !important;
+  }
+
+  .rating .star {
+    flex-shrink: 0 !important;
+  }
+
+  /* Keep the listing metadata on its own readable line */
+  .meta {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 3px !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Don't let hero heading overlap listing content */
+  .explore-results-grid h1,
+  .explore-results-grid h2,
+  .explore-results-grid h3 {
+    z-index: 1 !important;
+  }
+}
