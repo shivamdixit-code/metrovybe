@@ -327,49 +327,49 @@ export default function ListingLocationPicker({
 
   return (
     <div className="listing-location-picker">
-      <div className="picker-top">
-        <div className="search-row">
-          <div className="search-box">
-            <span className="search-icon">⌕</span>
-
-            <input
-              value={search}
-              onChange={(event) =>
-                setSearch(event.target.value)
-              }
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  event.preventDefault();
-                  searchAddress();
-                }
-              }}
-              placeholder="Search your business address"
-            />
-
-            {search && (
-              <button
-                type="button"
-                className="clear-search"
-                onClick={() => setSearch("")}
-              >
-                ×
-              </button>
-            )}
-          </div>
-
-          <button
-            type="button"
-            className="search-button"
-            onClick={searchAddress}
-            disabled={searching}
-          >
-            {searching ? "..." : "Search"}
-          </button>
-        </div>
-
-      </div>
+      <div className="picker-top"></div>
 
       <div className="map-area">
+        <div className="map-search-overlay">
+          <div className="search-row">
+            <div className="search-box">
+              <span className="search-icon">⌕</span>
+
+              <input
+                value={search}
+                onChange={(event) =>
+                  setSearch(event.target.value)
+                }
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    searchAddress();
+                  }
+                }}
+                placeholder="Search your business address"
+              />
+
+              {search && (
+                <button
+                  type="button"
+                  className="clear-search"
+                  onClick={() => setSearch("")}
+                >
+                  ×
+                </button>
+              )}
+            </div>
+
+            <button
+              type="button"
+              className="search-button"
+              onClick={searchAddress}
+              disabled={searching}
+            >
+              {searching ? "..." : "Search"}
+            </button>
+          </div>
+        </div>
         <MapContainer
           center={[
             position.latitude,
@@ -513,6 +513,145 @@ export default function ListingLocationPicker({
           border-bottom: 1px solid #e7ebe9;
           position: relative;
           z-index: 1000;
+        }
+
+        .map-area {
+          position: relative;
+          flex: 1;
+          min-height: 0;
+          overflow: hidden;
+        }
+
+        .map-search-overlay {
+          position: absolute !important;
+          top: 12px !important;
+          right: 12px !important;
+          left: auto !important;
+          width: min(360px, calc(100% - 24px)) !important;
+          z-index: 2000 !important;
+          pointer-events: none;
+        }
+
+        .map-search-overlay .search-row {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          gap: 7px;
+          margin: 0;
+          pointer-events: auto;
+        }
+
+        .map-search-overlay .search-box {
+          flex: 1;
+          min-width: 0;
+          height: 42px;
+          display: flex;
+          align-items: center;
+          box-sizing: border-box;
+          background: rgba(255,255,255,.97);
+          border: 1px solid rgba(0,0,0,.08);
+          border-radius: 13px;
+          box-shadow: 0 4px 16px rgba(0,0,0,.14);
+          overflow: hidden;
+        }
+
+        .map-search-overlay .search-button {
+          flex-shrink: 0;
+          height: 42px;
+          padding: 0 14px;
+          border: 0;
+          border-radius: 13px;
+          background: #176b55;
+          color: #fff;
+          font-size: 12px;
+          font-weight: 800;
+          box-shadow: 0 4px 14px rgba(23,107,85,.25);
+          cursor: pointer;
+        }
+
+        @media (max-width: 600px) {
+          .map-search-overlay {
+            top: 10px !important;
+            right: 10px !important;
+            left: auto !important;
+            width: calc(100% - 20px) !important;
+          }
+
+          .map-search-overlay .search-box,
+          .map-search-overlay .search-button {
+            height: 40px;
+          }
+
+          .map-search-overlay .search-button {
+            padding: 0 12px;
+          }
+        }
+
+        .map-area .listing-picker-map {
+          width: 100%;
+          height: 100%;
+          min-height: 420px;
+        }
+
+        .map-area .floating-location-button {
+          position: absolute;
+          z-index: 1000;
+        }
+
+        .map-area .map-mode-control {
+          position: absolute;
+          z-index: 1000;
+          pointer-events: auto;
+        }
+
+        .map-area .map-help {
+          position: absolute;
+          z-index: 1000;
+        }
+
+        .map-mode-control button {
+          cursor: pointer;
+        }
+
+        .map-mode-control button.active {
+          font-weight: 800;
+        }
+
+        @media (max-width: 600px) {
+          .map-area .listing-picker-map {
+            min-height: 390px;
+          }
+        }
+
+        .map-search-overlay {
+          position: absolute;
+          top: 12px;
+          left: 12px;
+          right: 12px;
+          z-index: 1000;
+          pointer-events: none;
+        }
+
+        .map-search-overlay .search-row {
+          margin: 0;
+          pointer-events: auto;
+        }
+
+        .map-search-overlay .search-box {
+          background: rgba(255, 255, 255, 0.97);
+          border: 1px solid rgba(0, 0, 0, 0.07);
+          border-radius: 16px;
+          box-shadow: 0 5px 18px rgba(0, 0, 0, 0.14);
+          backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
+        }
+
+        @media (max-width: 600px) {
+          .map-search-overlay {
+            top: 10px;
+            left: 10px;
+            right: 10px;
+          }
         }
 
         .search-row {
