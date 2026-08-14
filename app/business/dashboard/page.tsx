@@ -131,7 +131,7 @@ export default function BusinessDashboard() {
                 fontWeight: 800,
               }}
             >
-              metro<span style={{ color: "#16a34a" }}>vybe</span>✦
+              metro<span style={{ color: "#29AB87" }}>vybe</span>✦
             </Link>
 
             <h1 style={{ margin: "18px 0 5px" }}>
@@ -192,11 +192,11 @@ export default function BusinessDashboard() {
                   borderRadius: 999,
                   background:
                     business.verificationStatus === "verified"
-                      ? "#dcfce7"
+                      ? "#DDF5EE"
                       : "#fef3c7",
                   color:
                     business.verificationStatus === "verified"
-                      ? "#166534"
+                      ? "#176B55"
                       : "#92400e",
                   fontWeight: 700,
                   fontSize: 14,
@@ -283,7 +283,7 @@ export default function BusinessDashboard() {
             <Link
               href="/business/listings/new"
               style={{
-                background: "#16a34a",
+                background: "#29AB87",
                 color: "#fff",
                 padding: "11px 16px",
                 borderRadius: 9,
@@ -308,7 +308,7 @@ export default function BusinessDashboard() {
               <Link
                 href="/business/listings/new"
                 style={{
-                  color: "#16a34a",
+                  color: "#29AB87",
                   fontWeight: 700,
                 }}
               >

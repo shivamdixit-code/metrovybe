@@ -3,9 +3,17 @@ import { MapPin, SlidersHorizontal } from "lucide-react";
 
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
-import { listings } from "@/lib/data";
+import { getListings } from "@/lib/api";
 
-export default function ExplorePage() {
+export default async function ExplorePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>;
+}) {
+  const params = await searchParams;
+  const listings = await getListings(
+    params.category ? { category: params.category } : {}
+  );
   const pins = [
     [18, 28],
     [42, 45],

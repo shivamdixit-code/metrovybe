@@ -3,10 +3,13 @@ import { ArrowRight, MapPin, PlayCircle } from "lucide-react";
 
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
-import { categories, listings } from "@/lib/data";
+import { categories } from "@/lib/data";
+import { getListings } from "@/lib/api";
 import { ListingCard } from "@/components/ListingCard";
 
-export default function Home() {
+export default async function Home() {
+  const listings = await getListings();
+
   return (
     <div className="page">
       <Header />
@@ -27,7 +30,7 @@ export default function Home() {
 
       <div className="hero-buttons">
        <Link href="/explore" className="btn btn-black">
-        Explore Near You <MapPin size={19} strokeWidth={2.5} style={{verticalAlign:"-4px", color:"#39ff14", marginLeft:"4px"}} />
+        Explore Near You <MapPin size={19} strokeWidth={2.5} style={{verticalAlign:"-4px", color:"var(--green)", marginLeft:"4px"}} />
        </Link>
 
        <Link href="/how-it-works" className="btn">

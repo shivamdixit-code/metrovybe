@@ -79,7 +79,7 @@ export default function LoginPage() {
               fontWeight: 800,
             }}
           >
-            metro<span style={{ color: "#16a34a" }}>vybe</span>✦
+            metro<span style={{ color: "#29AB87" }}>vybe</span>✦
           </div>
 
           <div
@@ -216,7 +216,7 @@ export default function LoginPage() {
           <Link
             href="/business/login"
             style={{
-              color: "#16a34a",
+              color: "#29AB87",
               fontWeight: 700,
               textDecoration: "none",
               display: "inline-block",
