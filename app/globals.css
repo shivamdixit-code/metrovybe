@@ -3716,3 +3716,28 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
     z-index: 1 !important;
   }
 }
+
+@media (max-width: 768px) {
+  /* Keep hero artwork behind all hero text */
+  .explore-hero {
+    position: relative !important;
+    isolation: isolate !important;
+    overflow: hidden !important;
+  }
+
+  .explore-hero .hero-art,
+  .explore-hero .hero-icon,
+  .explore-hero [class*="art"],
+  .explore-hero [class*="icon"] {
+    position: absolute !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+  }
+
+  .explore-hero h1,
+  .explore-hero h1 *,
+  .explore-hero p {
+    position: relative !important;
+    z-index: 20 !important;
+  }
+}
