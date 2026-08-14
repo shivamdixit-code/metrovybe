@@ -120,7 +120,7 @@ export default async function ExplorePage({
               }}
             >
               <MapPin size={15} strokeWidth={3} />
-              NEAR YOU
+              <span className="explore-hero-near-you">NEAR YOU</span>
             </div>
 
             <h1
@@ -134,7 +134,7 @@ export default async function ExplorePage({
             >
               Find your
               <br />
-              <span style={{ color: "var(--green)" }}>
+              <span className="explore-hero-vibe" style={{ color: "var(--green)" }}>
                 local vibe.
               </span>
             </h1>
@@ -471,6 +471,7 @@ export default async function ExplorePage({
                     </div>
 
                     <div
+                      className="explore-rating-pill"
                       style={{
                         display: "inline-flex",
                         alignItems: "center",
