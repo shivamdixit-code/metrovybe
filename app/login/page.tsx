@@ -118,28 +118,6 @@ export default function LoginPage() {
           </div>
         </Link>
 
-        <h1
-          style={{
-            fontSize: "28px",
-            lineHeight: 1.1,
-            letterSpacing: "-0.7px",
-            margin: "0 0 7px",
-            color: "#111318",
-          }}
-        >
-          Welcome back
-        </h1>
-
-        <p
-          style={{
-            color: "#747A82",
-            fontSize: "14px",
-            margin: "0 0 22px",
-          }}
-        >
-          Log in to your MetroVybe account.
-        </p>
-
         {error && (
           <div
             style={{
@@ -159,6 +137,28 @@ export default function LoginPage() {
 
         {!selectedRole ? (
           <div>
+        <h1
+          style={{
+            fontSize: "28px",
+            lineHeight: 1.1,
+            letterSpacing: "-0.7px",
+            margin: "0 0 7px",
+            color: "#111318",
+          }}
+        >
+          How will you log in?
+        </h1>
+
+        <p
+          style={{
+            color: "#747A82",
+            fontSize: "14px",
+            margin: "0 0 22px",
+          }}
+        >
+          Select your MetroVybe account type.
+        </p>
+
             <div
               style={{
                 fontSize: "11px",
@@ -299,6 +299,29 @@ export default function LoginPage() {
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
+            <h2
+              style={{
+                fontSize: "24px",
+                lineHeight: 1.15,
+                fontWeight: 800,
+                letterSpacing: "-0.5px",
+                color: "#111318",
+                margin: "0 0 6px",
+              }}
+            >
+              Welcome back
+            </h2>
+
+            <p
+              style={{
+                color: "#747A82",
+                fontSize: "14px",
+                margin: "0 0 22px",
+              }}
+            >
+              Log in to your MetroVybe account.
+            </p>
+
             <div
               style={{
                 display: "flex",
