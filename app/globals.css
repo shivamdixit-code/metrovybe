@@ -6349,3 +6349,22 @@ body {
 
 /* ===== END PUBLIC LOGIN PAGE ===== */
 
+
+/* ===== CRM LOGIN LOGO STAR — MATCH HOME LOGO ===== */
+
+.crm-logo-star {
+  display: inline-block !important;
+  position: relative !important;
+  top: -6px !important;
+  margin-left: 5px !important;
+  margin-right: 8px !important;
+  color: #111318 !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
+  font-weight: 950 !important;
+  transform: none !important;
+  rotate: 0deg !important;
+}
+
+/* ===== END CRM LOGIN LOGO STAR ===== */
+
