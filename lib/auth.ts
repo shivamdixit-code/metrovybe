@@ -19,7 +19,8 @@ const API_URL =
 
 export async function login(
   email: string,
-  password: string
+  password: string,
+  selectedRole: "customer" | "business" | "admin"
 ): Promise<LoginResponse> {
   const response = await fetch(`${API_URL}/api/auth/login`, {
     method: "POST",
@@ -29,6 +30,7 @@ export async function login(
     body: JSON.stringify({
       email,
       password,
+      selectedRole,
     }),
   });
 
