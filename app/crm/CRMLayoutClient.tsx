@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   BarChart3,
@@ -10,9 +10,9 @@ import {
   ClipboardList,
   CircleDollarSign,
   UserRound,
-  MapPin,
   Home,
 } from "lucide-react";
+import { getUser, logout } from "@/lib/auth";
 
 const nav = [
   { label: "Overview", href: "/crm", icon: BarChart3 },
@@ -29,10 +29,35 @@ export default function CRMLayoutClient({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const isLoginPage = pathname === "/crm/login";
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [routeReady, setRouteReady] = useState(false);
+  const [authReady, setAuthReady] = useState(isLoginPage);
+  const [routeReady, setRouteReady] = useState(isLoginPage);
 
   useEffect(() => {
+    if (isLoginPage) {
+      setAuthReady(true);
+      setRouteReady(true);
+      return;
+    }
+
+    const user = getUser();
+
+    if (!user || user.role !== "admin") {
+      logout();
+      router.replace("/crm/login");
+      return;
+    }
+
+    setAuthReady(true);
+  }, [isLoginPage, router]);
+
+  useEffect(() => {
+    if (!authReady) return;
+
     setRouteReady(false);
 
     const frame = requestAnimationFrame(() => {
@@ -40,7 +65,22 @@ export default function CRMLayoutClient({
     });
 
     return () => cancelAnimationFrame(frame);
-  }, [pathname]);
+  }, [pathname, authReady]);
+
+  if (isLoginPage) {
+    return <>{children}</>;
+  }
+
+  if (!authReady) {
+    return (
+      <main
+        style={{
+          minHeight: "100vh",
+          background: "#f7f8fa",
+        }}
+      />
+    );
+  }
 
   return (
     <div className="mv-crm-root">
