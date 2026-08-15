@@ -4763,11 +4763,11 @@ body {
 .mv-logo-star {
   display: inline-block !important;
   position: relative !important;
-  top: -6px !important;
+  top: -9px !important;
   margin-left: 5px !important;
   margin-right: 8px !important;
   color: #111318 !important;
-  font-size: 11px !important;
+  font-size: 9px !important;
   line-height: 1 !important;
   font-weight: 950 !important;
 }
@@ -6284,14 +6284,35 @@ body {
 
 /* ===== PUBLIC LOGIN PAGE ===== */
 
+/* Premium login positioning */
 .public-login-page {
-  min-height: 100vh;
+  min-height: 100svh;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
-  background: var(--cream);
+  box-sizing: border-box;
+  padding: 24px 16px;
 }
+
+.public-login-card {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+@media (max-width: 480px) {
+  .public-login-page {
+    align-items: flex-start;
+    padding: 20px 14px;
+  }
+
+  .public-login-card {
+    max-width: 100%;
+  }
+}
+
 
 .public-login-card {
   width: min(100%, 460px);
@@ -6386,4 +6407,6 @@ body {
 }
 
 /* ===== END CRM LOGIN LOGO ===== */
+
+
 
