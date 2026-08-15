@@ -3,13 +3,16 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Building2, Eye, EyeOff, UserRound, ArrowLeft } from "lucide-react";
 
 import { login } from "@/lib/auth";
-import { Eye, EyeOff } from "lucide-react";
+
+type Role = "customer" | "business";
 
 export default function LoginPage() {
   const router = useRouter();
 
+  const [selectedRole, setSelectedRole] = useState<Role | "">("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -19,11 +22,16 @@ export default function LoginPage() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
+    if (!selectedRole) {
+      setError("Please select an account type.");
+      return;
+    }
+
     setError("");
     setLoading(true);
 
     try {
-      const result = await login(email, password);
+      const result = await login(email.trim(), password, selectedRole);
 
       if (result.user.role === "business") {
         router.push("/business/dashboard");
@@ -31,7 +39,7 @@ export default function LoginPage() {
       }
 
       if (result.user.role === "admin") {
-        router.push("/crm/login");
+        setError("Admin accounts must use the CRM login.");
         return;
       }
 
@@ -46,30 +54,51 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="public-login-page">
-      <div className="public-login-card">
+    <main
+      className="public-login-page"
+      style={{
+        minHeight: "100dvh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "18px",
+        boxSizing: "border-box",
+      }}
+    >
+      <div
+        className="public-login-card"
+        style={{
+          width: "100%",
+          maxWidth: "410px",
+          boxSizing: "border-box",
+        }}
+      >
         <Link
           href="/"
           style={{
             textDecoration: "none",
-            color: "#111",
+            color: "#111318",
             display: "block",
-            marginBottom: "30px",
+            marginBottom: "25px",
           }}
         >
           <div
             style={{
               fontSize: "28px",
-              fontWeight: 800,
+              fontWeight: 850,
+              letterSpacing: "-1.2px",
+              lineHeight: 1,
             }}
           >
-            metro<span style={{ color: "#29AB87" }}>vybe</span>
+            metro
+            <span style={{ color: "#29AB87" }}>vybe</span>
             <span
               style={{
-                fontSize: "12px",
+                fontSize: "11px",
                 position: "relative",
-                top: "-9px",
+                top: "-10px",
                 marginLeft: "3px",
+                color: "#D9AA32",
               }}
             >
               ✦
@@ -78,10 +107,11 @@ export default function LoginPage() {
 
           <div
             style={{
-              fontSize: "11px",
-              letterSpacing: "1.5px",
-              color: "#777",
-              marginTop: "4px",
+              fontSize: "9px",
+              letterSpacing: "1.7px",
+              color: "#8A9097",
+              marginTop: "6px",
+              fontWeight: 700,
             }}
           >
             YOUR CITY. YOUR VYBE.
@@ -90,8 +120,11 @@ export default function LoginPage() {
 
         <h1
           style={{
-            fontSize: "30px",
-            marginBottom: "8px",
+            fontSize: "28px",
+            lineHeight: 1.1,
+            letterSpacing: "-0.7px",
+            margin: "0 0 7px",
+            color: "#111318",
           }}
         >
           Welcome back
@@ -99,8 +132,9 @@ export default function LoginPage() {
 
         <p
           style={{
-            color: "#666",
-            marginBottom: "28px",
+            color: "#747A82",
+            fontSize: "14px",
+            margin: "0 0 22px",
           }}
         >
           Log in to your MetroVybe account.
@@ -109,165 +143,378 @@ export default function LoginPage() {
         {error && (
           <div
             style={{
-              background: "#fff1f2",
-              color: "#be123c",
-              padding: "12px 14px",
-              borderRadius: "10px",
-              marginBottom: "18px",
-              fontSize: "14px",
+              background: "#FFF4F5",
+              border: "1px solid #FFD9DE",
+              color: "#B4233C",
+              padding: "11px 13px",
+              borderRadius: "11px",
+              marginBottom: "16px",
+              fontSize: "13px",
+              lineHeight: 1.4,
             }}
           >
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
-          <label
-            style={{
-              display: "block",
-              fontWeight: 600,
-              marginBottom: "7px",
-            }}
-          >
-            Email
-          </label>
-
-          <input
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="you@example.com"
-            required
-            style={{
-              width: "100%",
-              padding: "13px 14px",
-              border: "1px solid #ddd",
-              borderRadius: "10px",
-              marginBottom: "18px",
-              fontSize: "15px",
-              boxSizing: "border-box",
-            }}
-          />
-
-          <label
-            style={{
-              display: "block",
-              fontWeight: 600,
-              marginBottom: "7px",
-            }}
-          >
-            Password
-          </label>
-
-          <div
-            style={{
-              position: "relative",
-              width: "100%",
-              marginBottom: "22px",
-            }}
-          >
-            <input
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="Enter your password"
-              required
+        {!selectedRole ? (
+          <div>
+            <div
               style={{
-                width: "100%",
-                padding: "13px 48px 13px 14px",
-                border: "1px solid #ddd",
-                borderRadius: "10px",
-                fontSize: "15px",
-                boxSizing: "border-box",
+                fontSize: "11px",
+                fontWeight: 800,
+                color: "#2563EB",
+                letterSpacing: "0.9px",
+                textTransform: "uppercase",
+                marginBottom: "10px",
               }}
-            />
+            >
+              Account type
+            </div>
 
             <button
               type="button"
-              onClick={() => setShowPassword((value) => !value)}
-              aria-label={showPassword ? "Hide password" : "Show password"}
+              onClick={() => {
+                setError("");
+                setSelectedRole("customer");
+              }}
               style={{
-                position: "absolute",
-                top: 0,
-                right: "8px",
-                width: "36px",
-                height: "100%",
+                width: "100%",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
-                padding: 0,
-                border: 0,
-                background: "transparent",
-                color: "#777",
+                gap: "12px",
+                padding: "13px",
+                marginBottom: "10px",
+                border: "1px solid #E5EAF2",
+                borderRadius: "14px",
+                background: "#FFFFFF",
                 cursor: "pointer",
+                textAlign: "left",
+                boxShadow: "0 5px 18px rgba(17,24,39,0.045)",
               }}
             >
-              {showPassword ? (
-                <EyeOff size={18} strokeWidth={2} />
-              ) : (
-                <Eye size={18} strokeWidth={2} />
-              )}
+              <span
+                style={{
+                  width: "38px",
+                  height: "38px",
+                  flexShrink: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "11px",
+                  background: "#EEF9F5",
+                  color: "#29AB87",
+                }}
+              >
+                <UserRound size={19} strokeWidth={2.1} />
+              </span>
+
+              <span style={{ flex: 1 }}>
+                <span
+                  style={{
+                    display: "block",
+                    color: "#15181D",
+                    fontSize: "14px",
+                    fontWeight: 800,
+                    marginBottom: "2px",
+                  }}
+                >
+                  Customer
+                </span>
+                <span
+                  style={{
+                    display: "block",
+                    color: "#8A9097",
+                    fontSize: "11px",
+                  }}
+                >
+                  Discover places and manage your bookings
+                </span>
+              </span>
+
+              <span style={{ color: "#B3B9C1", fontSize: "20px" }}>›</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setError("");
+                setSelectedRole("business");
+              }}
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+                padding: "13px",
+                border: "1px solid #E5EAF2",
+                borderRadius: "14px",
+                background: "#FFFFFF",
+                cursor: "pointer",
+                textAlign: "left",
+                boxShadow: "0 5px 18px rgba(17,24,39,0.045)",
+              }}
+            >
+              <span
+                style={{
+                  width: "38px",
+                  height: "38px",
+                  flexShrink: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "11px",
+                  background: "#FFF7E2",
+                  color: "#B78317",
+                }}
+              >
+                <Building2 size={19} strokeWidth={2.1} />
+              </span>
+
+              <span style={{ flex: 1 }}>
+                <span
+                  style={{
+                    display: "block",
+                    color: "#15181D",
+                    fontSize: "14px",
+                    fontWeight: 800,
+                    marginBottom: "2px",
+                  }}
+                >
+                  Business
+                </span>
+                <span
+                  style={{
+                    display: "block",
+                    color: "#8A9097",
+                    fontSize: "11px",
+                  }}
+                >
+                  Manage your business and listings
+                </span>
+              </span>
+
+              <span style={{ color: "#B3B9C1", fontSize: "20px" }}>›</span>
             </button>
           </div>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "12px",
+                marginBottom: "19px",
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => {
+                  setError("");
+                  setSelectedRole("");
+                  setEmail("");
+                  setPassword("");
+                }}
+                aria-label="Change account type"
+                style={{
+                  width: "auto",
+                  height: "34px",
+                  padding: "0",
+                  border: "none",
+                  background: "transparent",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
+                  gap: "5px",
+                  margin: 0,
+                  color: "#2563EB",
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  lineHeight: 1,
+                  cursor: "pointer",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <img
+                  src="/icons/back-arrow.png"
+                  alt=""
+                  width={20}
+                  height={20}
+                  style={{
+                    display: "block",
+                    width: "20px",
+                    height: "20px",
+                    objectFit: "contain",
+                    transform: "translateY(-2px)",
+                    flexShrink: 0,
+                    filter:
+                      "brightness(0) saturate(100%) invert(36%) sepia(45%) saturate(1050%) hue-rotate(183deg) brightness(88%)",
+                  }}
+                />
+                <span>Change Account Type</span>
+              </button>
 
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              width: "100%",
-              padding: "14px",
-              border: "none",
-              borderRadius: "10px",
-              background: "#111",
-              color: "#fff",
-              fontSize: "16px",
-              fontWeight: 700,
-              cursor: loading ? "not-allowed" : "pointer",
-              opacity: loading ? 0.7 : 1,
-            }}
-          >
-            {loading ? "Logging in..." : "Log in"}
-          </button>
-        </form>
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  padding: "6px 10px",
+                  borderRadius: "999px",
+                  background:
+                    "linear-gradient(135deg,#FFF9E8 0%,#F7D978 48%,#D9AA32 100%)",
+                  color: "#72550D",
+                  fontSize: "10px",
+                  fontWeight: 850,
+                  letterSpacing: "0.6px",
+                  textTransform: "uppercase",
+                  whiteSpace: "nowrap",
+                  border: "1px solid rgba(207,163,43,.35)",
+                  boxShadow:
+                    "0 2px 8px rgba(217,170,50,.16), inset 0 1px 0 rgba(255,255,255,.8)",
+                }}
+              >
+                {selectedRole}
+              </span>
+            </div>
+
+            <label
+              style={{
+                display: "block",
+                color: "#252A31",
+                fontSize: "13px",
+                fontWeight: 700,
+                marginBottom: "7px",
+              }}
+            >
+              Email
+            </label>
+
+            <input
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="you@example.com"
+              autoComplete="email"
+              required
+              style={{
+                width: "100%",
+                height: "46px",
+                padding: "0 13px",
+                border: "1px solid #DDE2E9",
+                borderRadius: "11px",
+                marginBottom: "15px",
+                fontSize: "14px",
+                boxSizing: "border-box",
+                outline: "none",
+                color: "#15181D",
+                background: "#fff",
+              }}
+            />
+
+            <label
+              style={{
+                display: "block",
+                color: "#252A31",
+                fontSize: "13px",
+                fontWeight: 700,
+                marginBottom: "7px",
+              }}
+            >
+              Password
+            </label>
+
+            <div
+              style={{
+                position: "relative",
+                width: "100%",
+                marginBottom: "17px",
+              }}
+            >
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Enter your password"
+                autoComplete="current-password"
+                required
+                style={{
+                  width: "100%",
+                  height: "46px",
+                  padding: "0 45px 0 13px",
+                  border: "1px solid #DDE2E9",
+                  borderRadius: "11px",
+                  fontSize: "14px",
+                  boxSizing: "border-box",
+                  outline: "none",
+                  color: "#15181D",
+                  background: "#fff",
+                }}
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword((value) => !value)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  right: "4px",
+                  width: "40px",
+                  height: "46px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  border: 0,
+                  background: "transparent",
+                  color: "#777F88",
+                  cursor: "pointer",
+                }}
+              >
+                {showPassword ? (
+                  <EyeOff size={18} strokeWidth={2} />
+                ) : (
+                  <Eye size={18} strokeWidth={2} />
+                )}
+              </button>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                width: "100%",
+                height: "46px",
+                border: "none",
+                borderRadius: "11px",
+                background: "linear-gradient(135deg, #111318 0%, #18201E 100%)",
+                color: "#fff",
+                fontSize: "14px",
+                fontWeight: 750,
+                cursor: loading ? "not-allowed" : "pointer",
+                opacity: loading ? 0.7 : 1,
+                boxShadow: "0 7px 18px rgba(17,19,24,.14)",
+              }}
+            >
+              {loading ? "Logging in..." : "Log in"}
+            </button>
+          </form>
+        )}
 
         <div
           style={{
             textAlign: "center",
-            marginTop: "24px",
-            color: "#666",
-            fontSize: "14px",
-          }}
-        >
-          Are you a business?
-          <br />
-
-          <Link
-            href="/business/login"
-            style={{
-              color: "#29AB87",
-              fontWeight: 700,
-              textDecoration: "none",
-              display: "inline-block",
-              marginTop: "6px",
-            }}
-          >
-            Business login →
-          </Link>
-        </div>
-
-        <div
-          style={{
-            textAlign: "center",
-            marginTop: "14px",
-            fontSize: "14px",
+            marginTop: "19px",
+            fontSize: "12px",
+            color: "#8A9097",
           }}
         >
           Don't have an account?{" "}
           <Link
             href="/signup"
             style={{
-              color: "#111",
-              fontWeight: 700,
+              color: "#2563EB",
+              fontWeight: 750,
               textDecoration: "none",
             }}
           >
