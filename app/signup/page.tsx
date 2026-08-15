@@ -157,7 +157,7 @@ export default function SignupPage() {
                     flexShrink: 0,
                   }}
                 >
-                  <UserRound size={19} strokeWidth={2} />
+                  <UserRound size={19} strokeWidth={2} color="#29AB87" />
                 </span>
 
                 <span
@@ -196,7 +196,7 @@ export default function SignupPage() {
                     flexShrink: 0,
                   }}
                 >
-                  <Building2 size={19} strokeWidth={2} />
+                  <Building2 size={19} strokeWidth={2} color="#D9AA32" />
                 </span>
 
                 <span

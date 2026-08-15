@@ -330,7 +330,7 @@ export default function ListingLocationPicker({
       <div className="picker-top"></div>
 
       <div className="map-area">
-        <div className="map-search-overlay">
+        <div className="map-search-overlay customer-map-search">
           <div className="search-row">
             <div className="search-box">
               <span className="search-icon">⌕</span>
@@ -381,7 +381,6 @@ export default function ListingLocationPicker({
           className="listing-picker-map"
         >
           <TileLayer
-            key={mapMode}
             attribution={tile.attribution}
             url={tile.url}
           />
@@ -418,7 +417,7 @@ export default function ListingLocationPicker({
 
         <button
           type="button"
-          className="floating-location-button"
+          className="floating-location-button customer-location-button"
           onClick={useMyLocation}
           disabled={locating}
           aria-label="Use my location"
@@ -718,7 +717,107 @@ export default function ListingLocationPicker({
           min-height: 360px;
         }
 
-        .listing-picker-map {
+        .customer-map-search {
+        position: absolute !important;
+        top: 10px !important;
+        left: 10px !important;
+        right: 10px !important;
+        z-index: 400 !important;
+        pointer-events: none !important;
+      }
+
+      .customer-map-search .search-row {
+        pointer-events: auto !important;
+      }
+
+      .customer-map-search .search-box {
+        min-width: 0 !important;
+      }
+
+      .customer-map-search input {
+        min-width: 0 !important;
+      }
+
+      .customer-location-button {
+        position: absolute !important;
+        right: 12px !important;
+        bottom: 52px !important;
+        z-index: 1000 !important;
+        width: 42px !important;
+        height: 42px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        background: #ffffff !important;
+        border: 1px solid #d9dee5 !important;
+        border-radius: 50% !important;
+        box-shadow: 0 4px 14px rgba(0,0,0,.18) !important;
+        color: #168a6a !important;
+      }
+
+      .customer-location-button span {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        height: 100% !important;
+        font-size: 22px !important;
+        line-height: 1 !important;
+      }
+
+      .customer-map-search {
+        position: absolute !important;
+        top: 10px !important;
+        left: 10px !important;
+        right: 10px !important;
+        z-index: 400 !important;
+        pointer-events: none !important;
+      }
+
+      .customer-map-search .search-row {
+        pointer-events: auto !important;
+      }
+
+      .customer-map-search .search-box {
+        min-width: 0 !important;
+      }
+
+      .customer-map-search input {
+        min-width: 0 !important;
+      }
+
+      .customer-location-button {
+        position: absolute !important;
+        right: 12px !important;
+        bottom: 52px !important;
+        z-index: 1000 !important;
+        width: 42px !important;
+        height: 42px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        background: #ffffff !important;
+        border: 1px solid #d9dee5 !important;
+        border-radius: 50% !important;
+        box-shadow: 0 4px 14px rgba(0,0,0,.18) !important;
+        color: #168a6a !important;
+      }
+
+      .customer-location-button span {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        height: 100% !important;
+        font-size: 22px !important;
+        line-height: 1 !important;
+      }
+
+      .listing-picker-map {
           width: 100%;
           height: 100%;
           min-height: 360px;

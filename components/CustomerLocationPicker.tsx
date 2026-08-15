@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   MapContainer,
   Marker,
@@ -143,13 +143,19 @@ export default function CustomerLocationPicker({
     [mapMode]
   );
 
+  const geocodeRequestRef = useRef(0);
+
   async function reverseGeocode(
     latitude: number,
     longitude: number
-  ) {
+  ): Promise<string> {
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`,
+        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(
+          latitude
+        )}&lon=${encodeURIComponent(
+          longitude
+        )}&zoom=18&addressdetails=1`,
         {
           headers: {
             Accept: "application/json",
@@ -162,25 +168,75 @@ export default function CustomerLocationPicker({
       }
 
       const data = await response.json();
+      const a = data.address || {};
 
-      setAddress(
-        data.display_name ||
-          `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`
+      /*
+       * Build a useful human-readable Indian location.
+       *
+       * Prefer locality-level information over tiny map features,
+       * while keeping city/town/village available when present.
+       */
+      const locality =
+        a.suburb ||
+        a.neighbourhood ||
+        a.quarter ||
+        a.village ||
+        "";
+
+      const city =
+        a.city ||
+        a.town ||
+        a.municipality ||
+        a.city_district ||
+        a.county ||
+        "";
+
+      const state = a.state || "";
+      const postcode = a.postcode || "";
+
+      const parts = [
+        locality,
+        city,
+        state,
+        postcode,
+      ].filter(Boolean);
+
+      const uniqueParts = parts.filter(
+        (value, index, array) =>
+          array.findIndex(
+            (item) =>
+              item.toLowerCase() === value.toLowerCase()
+          ) === index
       );
+
+      const nextAddress =
+        uniqueParts.length > 0
+          ? uniqueParts.join(", ")
+          : data.display_name ||
+            `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+
+      setAddress(nextAddress);
+
+      return nextAddress;
     } catch {
-      setAddress(
-        `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`
-      );
+      const fallbackAddress =
+        `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+
+      setAddress(fallbackAddress);
+
+      return fallbackAddress;
     }
   }
 
-  function movePin(next: LocationValue) {
+  async function movePin(next: LocationValue) {
     const lat = Number(next.latitude);
     const lng = Number(next.longitude);
 
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
       return;
     }
+
+    const requestId = ++geocodeRequestRef.current;
 
     setPosition({
       latitude: lat,
@@ -189,19 +245,22 @@ export default function CustomerLocationPicker({
 
     setLocationVersion((value) => value + 1);
     setError("");
+    setAddress("Finding this location…");
 
-    reverseGeocode(lat, lng).then(() => {
-      onConfirm({
-        latitude: lat,
-        longitude: lng,
-        address:
-          address ||
-          `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
-        accuracy:
-          typeof locationAccuracy === "number"
-            ? locationAccuracy
-            : undefined,
-      });
+    const nextAddress = await reverseGeocode(lat, lng);
+
+    if (requestId !== geocodeRequestRef.current) {
+      return;
+    }
+
+    onConfirm({
+      latitude: lat,
+      longitude: lng,
+      address: nextAddress,
+      accuracy:
+        typeof locationAccuracy === "number"
+          ? locationAccuracy
+          : undefined,
     });
   }
 
@@ -210,6 +269,8 @@ export default function CustomerLocationPicker({
       position.latitude,
       position.longitude
     );
+    // Initial location only.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function searchAddress() {
@@ -245,14 +306,25 @@ export default function CustomerLocationPicker({
         longitude: Number(results[0].lon),
       };
 
+      const requestId = ++geocodeRequestRef.current;
+
       setPosition(next);
-      const nextAddress = results[0].display_name || query;
-      setAddress(nextAddress);
       setLocationVersion((value) => value + 1);
+      setAddress("Finding this location…");
+
+      const resultAddress = await reverseGeocode(
+        next.latitude,
+        next.longitude
+      );
+
+      if (requestId !== geocodeRequestRef.current) {
+        return;
+      }
+
       onConfirm({
         latitude: next.latitude,
         longitude: next.longitude,
-        address: nextAddress,
+        address: resultAddress,
         accuracy:
           typeof locationAccuracy === "number"
             ? locationAccuracy
@@ -277,70 +349,165 @@ export default function CustomerLocationPicker({
       return;
     }
 
+    if (locating) {
+      return;
+    }
+
     setLocating(true);
     setError("");
+    setAddress("Finding your exact location…");
 
-    navigator.geolocation.getCurrentPosition(
-      (location) => {
-        const next = {
-          latitude: Number(location.coords.latitude),
-          longitude: Number(location.coords.longitude),
-        };
+    let watchId: number | null = null;
+    let bestAccuracy = Infinity;
+    let bestPosition: GeolocationPosition | null = null;
+    let finished = false;
 
-        if (
-          !Number.isFinite(next.latitude) ||
-          !Number.isFinite(next.longitude)
-        ) {
-          setLocating(false);
-          setError("Invalid GPS coordinates received.");
-          return;
-        }
+    const finish = async (location: GeolocationPosition) => {
+      if (finished) return;
 
-        // Update the marker and force MapController to
-        // recenter the actual Leaflet map on this GPS point.
-        setPosition(next);
-        setLocationVersion((value) => value + 1);
-        setLocationAccuracy(location.coords.accuracy);
+      const lat = Number(location.coords.latitude);
+      const lng = Number(location.coords.longitude);
+      const accuracy = Number(location.coords.accuracy);
 
-        reverseGeocode(
-          next.latitude,
-          next.longitude
-        ).then(() => {
-          onConfirm({
-            latitude: next.latitude,
-            longitude: next.longitude,
-            address:
-              address ||
-              `${next.latitude.toFixed(6)}, ${next.longitude.toFixed(6)}`,
-            accuracy: location.coords.accuracy,
-          });
-        }).finally(() => {
-          setLocating(false);
+      if (
+        !Number.isFinite(lat) ||
+        !Number.isFinite(lng)
+      ) {
+        return;
+      }
+
+      finished = true;
+
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+      }
+
+      const next = {
+        latitude: lat,
+        longitude: lng,
+      };
+
+      setPosition(next);
+      setLocationVersion((value) => value + 1);
+      setLocationAccuracy(
+        Number.isFinite(accuracy) ? accuracy : null
+      );
+      setAddress("Finding this location…");
+
+      const requestId = ++geocodeRequestRef.current;
+
+      const nextAddress = await reverseGeocode(lat, lng);
+
+      if (requestId === geocodeRequestRef.current) {
+        onConfirm({
+          latitude: lat,
+          longitude: lng,
+          address: nextAddress,
+          accuracy: Number.isFinite(accuracy)
+            ? accuracy
+            : undefined,
         });
-      },
-      (err) => {
-        setLocating(false);
+      }
 
-        if (err.code === 1) {
-          setError(
-            "Location permission was denied. Please allow location access in your browser."
-          );
-        } else if (err.code === 2) {
-          setError(
-            "Your current location could not be determined."
-          );
-        } else {
-          setError(
-            "Unable to get your current location. Please try again."
-          );
-        }
-      },
+      setLocating(false);
+    };
+
+    const handlePosition = (location: GeolocationPosition) => {
+      const accuracy = Number(location.coords.accuracy);
+
+      if (!Number.isFinite(accuracy)) {
+        return;
+      }
+
+      /*
+       * Keep improving the GPS reading.
+       *
+       * <= 30m  = very good
+       * <= 50m  = good enough
+       *
+       * On desktop browsers the first reading can easily be
+       * 100m+ because it comes from Wi-Fi/IP positioning.
+       */
+      if (
+        bestPosition === null ||
+        accuracy < bestAccuracy
+      ) {
+        bestAccuracy = accuracy;
+        bestPosition = location;
+      }
+
+      if (accuracy <= 30) {
+        finish(location);
+      }
+    };
+
+    const handleError = (err: GeolocationPositionError) => {
+      if (finished) return;
+
+      if (bestPosition) {
+        finish(bestPosition);
+        return;
+      }
+
+      finished = true;
+
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+      }
+
+      setLocating(false);
+
+      if (err.code === 1) {
+        setError(
+          "Location permission was denied. Please allow location access in your browser."
+        );
+      } else if (err.code === 2) {
+        setError(
+          "Your current location could not be determined."
+        );
+      } else {
+        setError(
+          "Unable to get your current location. Please try again."
+        );
+      }
+    };
+
+    watchId = navigator.geolocation.watchPosition(
+      handlePosition,
+      handleError,
       {
         enableHighAccuracy: true,
-        timeout: 15000,
+        timeout: 20000,
         maximumAge: 0,
       }
     );
+
+    /*
+     * Do not wait forever. After 8 seconds use the best GPS
+     * reading received so far.
+     */
+    window.setTimeout(() => {
+      if (finished) return;
+
+      if (bestPosition) {
+        finish(bestPosition);
+        return;
+      }
+
+      finished = true;
+
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+      }
+
+      setLocating(false);
+      setError(
+        "We couldn't get your current location. Please try again."
+      );
+    }, 8000);
   }
 
   function confirmLocation() {

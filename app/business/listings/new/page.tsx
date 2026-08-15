@@ -1348,7 +1348,65 @@ export default function NewBusinessListing() {
         .grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 17px;
+          gap: 16px;
+        }
+
+        /* Category-specific fields */
+        .category-fields {
+          margin-top: 4px;
+          padding: 18px;
+          border: 1px solid #e2e8e5;
+          border-radius: 16px;
+          background: #fbfcfc;
+        }
+
+        .category-fields-header {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 16px;
+        }
+
+        .category-fields-icon {
+          width: 34px;
+          height: 34px;
+          display: grid;
+          place-items: center;
+          flex-shrink: 0;
+          border-radius: 10px;
+          background: #eaf5f1;
+          color: #176b55;
+          font-size: 16px;
+          font-weight: 900;
+        }
+
+        .category-fields-header strong {
+          display: block;
+          font-size: 14px;
+          letter-spacing: -0.2px;
+        }
+
+        .category-fields-header span {
+          display: block;
+          margin-top: 2px;
+          color: #7a8380;
+          font-size: 11px;
+        }
+
+        @media (max-width: 640px) {
+          .category-fields {
+            padding: 14px;
+            border-radius: 14px;
+          }
+
+          .grid {
+            grid-template-columns: 1fr;
+            gap: 14px;
+          }
+
+          .field.full {
+            grid-column: auto;
+          }
         }
 
         .field {

@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
@@ -10,11 +10,14 @@ const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
 
 const CustomerLocationPicker = dynamic(
-  () => import("@/components/CustomerLocationPicker"),
+  () =>
+    import("@/components/CustomerLocationPicker").then(
+      (mod) => mod.default
+    ),
   { ssr: false }
 );
 
-type Step = 1 | 2 | 3 | 4 | 5;
+type Step = 1 | 2 | 3 | 4 | 5 | 6;
 
 const PHONE_COUNTRIES = {
   IN: {
@@ -104,13 +107,59 @@ export default function CustomerSignupPage() {
     useState(false);
 
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpSending, setOtpSending] = useState(false);
+  const [otpVerifying, setOtpVerifying] = useState(false);
+  const [otpResendSeconds, setOtpResendSeconds] = useState(0);
+
+  useEffect(() => {
+    if (otpResendSeconds <= 0) {
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      setOtpResendSeconds((seconds) =>
+        seconds > 0 ? seconds - 1 : 0
+      );
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [otpResendSeconds]);
+
+  // Clear step-specific messages whenever the signup screen changes.
+  // An error from email/phone/location must never appear on another step.
+  useEffect(() => {
+    setError("");
+    setSuccess("");
+  }, [step]);
+
+  // Automatically hide temporary success/error messages
+  // after 5 seconds. OTP countdown remains independent.
+  useEffect(() => {
+    if (!success && !error) return;
+
+    const timer = window.setTimeout(() => {
+      setSuccess("");
+      setError("");
+    }, 5000);
+
+    return () => window.clearTimeout(timer);
+  }, [success, error]);
 
   function handleBack() {
     setError("");
 
     if (step === 1) {
       router.push("/signup");
+      return;
+    }
+
+    if (step === 6) {
+      setSuccess("");
+      setOtp("");
+      setStep(3);
       return;
     }
 
@@ -209,6 +258,9 @@ export default function CustomerSignupPage() {
       return;
     }
 
+    // Email is valid — explicitly clear any previous email error.
+    setError("");
+
     if (cleanPhone.length !== selectedCountry.digits) {
       setError(
         `Please enter a valid ${selectedCountry.digits}-digit phone number.`
@@ -291,21 +343,13 @@ export default function CustomerSignupPage() {
     setStep(3);
   }
 
-  function continueFromStepThree(event: FormEvent<HTMLFormElement>) {
+  async function continueFromStepThree(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
 
     const cleanEmail = email.trim().toLowerCase();
     const cleanPhone = phone.replace(/\D/g, "");
     const selectedCountry = PHONE_COUNTRIES[country];
-
-    const emailPattern =
-      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
-
-    if (!emailPattern.test(cleanEmail)) {
-      setError("Please enter a valid email address.");
-      return;
-    }
 
     if (cleanPhone.length !== selectedCountry.digits) {
       setError(
@@ -314,9 +358,7 @@ export default function CustomerSignupPage() {
       return;
     }
 
-    const phonePatterns: Partial<
-      Record<PhoneCountry, RegExp>
-    > = {
+    const phonePatterns: Partial<Record<PhoneCountry, RegExp>> = {
       IN: /^[6-9]\d{9}$/,
       GB: /^7\d{9}$/,
       US: /^[2-9]\d{9}$/,
@@ -351,7 +393,10 @@ export default function CustomerSignupPage() {
 
     setEmail(cleanEmail);
     setPhone(cleanPhone);
-    setStep(4);
+
+    // The single OTP sender handles the request, rate limit,
+    // countdown, and navigation to the verification screen.
+    await sendPhoneOtp();
   }
 
   function continueFromStepFour(event: FormEvent<HTMLFormElement>) {
@@ -365,6 +410,12 @@ export default function CustomerSignupPage() {
       return;
     }
 
+    // Clear any previous step-specific error before opening
+    // the password screen.
+    // Step 5 must never inherit an error from the email/phone
+    // or location steps.
+    setError("");
+    setSuccess("");
     setStep(5);
   }
 
@@ -471,7 +522,8 @@ export default function CustomerSignupPage() {
         JSON.stringify(data.user)
       );
 
-      router.push("/");
+      setSuccess("Account created successfully!");
+      router.push("/profile");
     } catch (err) {
       setError(
         err instanceof Error
@@ -480,6 +532,113 @@ export default function CustomerSignupPage() {
       );
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function sendPhoneOtp() {
+    setError("");
+    setSuccess("");
+    setOtpSending(true);
+
+    try {
+      const phoneNumber = `${PHONE_COUNTRIES[country].code}${phone}`;
+
+      const response = await fetch(
+        `${API_URL}/api/auth/send-signup-phone-otp`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            phone: phoneNumber,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 429) {
+          setError(
+            data.message ||
+              "Please wait before requesting another OTP."
+          );
+          setOtpResendSeconds(60);
+          setStep(6);
+          return;
+        }
+
+        throw new Error(data.message || "Unable to send OTP.");
+      }
+
+      setSuccess("OTP sent successfully. Please check your phone.");
+      setOtpResendSeconds(60);
+      setStep(6);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Unable to send OTP."
+      );
+    } finally {
+      setOtpSending(false);
+    }
+  }
+
+  async function verifyPhoneOtp(
+    event: FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
+    setError("");
+    setSuccess("");
+
+    const cleanOtp = otp.replace(/\D/g, "");
+
+    if (!/^\d{6}$/.test(cleanOtp)) {
+      setError("Please enter the 6-digit OTP.");
+      return;
+    }
+
+    setOtpVerifying(true);
+
+    try {
+      const phoneNumber = `${PHONE_COUNTRIES[country].code}${phone}`;
+
+      const response = await fetch(
+        `${API_URL}/api/auth/verify-signup-phone-otp`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            phone: phoneNumber,
+            otp: cleanOtp,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Invalid OTP.");
+      }
+
+      setSuccess("Phone number verified successfully!");
+
+      setTimeout(() => {
+        setSuccess("");
+        setStep(4);
+      }, 500);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Phone verification failed."
+      );
+    } finally {
+      setOtpVerifying(false);
     }
   }
 
@@ -594,7 +753,9 @@ export default function CustomerSignupPage() {
                 ? "How can we reach you?"
                 : step === 4
                   ? "Where are you located?"
-                  : "Create your password"}
+                  : step === 5
+                    ? "Create your password"
+                    : ""}
         </h1>
 
         <p
@@ -612,7 +773,9 @@ export default function CustomerSignupPage() {
                 ? "We'll use these details to keep your account secure."
                 : step === 4
                   ? "Used to show listings and people near you."
-                  : "Choose a secure password for your account."}
+                  : step === 5
+                    ? "Choose a secure password for your account."
+                    : ""}
         </p>
 
         {step === 1 && (
@@ -636,7 +799,12 @@ export default function CustomerSignupPage() {
               />
             </div>
 
-            {error && <div style={errorStyle}>{error}</div>}
+            {error && (
+  <div role="alert" style={errorStyle}>
+    <span style={errorIconStyle}>!</span>
+    <span>{error}</span>
+  </div>
+)}
 
             <button
               type="submit"
@@ -871,7 +1039,12 @@ export default function CustomerSignupPage() {
               </div>
             </div>
 
-            {error && <div style={errorStyle}>{error}</div>}
+            {error && (
+  <div role="alert" style={errorStyle}>
+    <span style={errorIconStyle}>!</span>
+    <span>{error}</span>
+  </div>
+)}
 
             <button
               type="submit"
@@ -890,7 +1063,7 @@ export default function CustomerSignupPage() {
               </label>
 
               <input
-                type="email"
+                type="text"
                 inputMode="email"
                 autoCapitalize="none"
                 autoCorrect="off"
@@ -992,7 +1165,12 @@ export default function CustomerSignupPage() {
               </div>
             </div>
 
-            {error && <div style={errorStyle}>{error}</div>}
+            {error && (
+  <div role="alert" style={errorStyle}>
+    <span style={errorIconStyle}>!</span>
+    <span>{error}</span>
+  </div>
+)}
 
             <button
               type="submit"
@@ -1076,7 +1254,12 @@ export default function CustomerSignupPage() {
               )}
             </div>
 
-            {error && <div style={errorStyle}>{error}</div>}
+            {error && (
+  <div role="alert" style={errorStyle}>
+    <span style={errorIconStyle}>!</span>
+    <span>{error}</span>
+  </div>
+)}
 
             <button
               type="submit"
@@ -1085,6 +1268,256 @@ export default function CustomerSignupPage() {
               Continue
             </button>
           </form>
+        )}
+
+        {step === 6 && (
+          <>
+            <h2
+              style={{
+                fontSize: "24px",
+                lineHeight: 1.15,
+                fontWeight: 850,
+                letterSpacing: "-0.5px",
+                color: "#111318",
+                margin: "0 0 6px",
+              }}
+            >
+              Verify your phone
+            </h2>
+
+            <p
+              style={{
+                color: "#747A82",
+                fontSize: "14px",
+                lineHeight: 1.5,
+                margin: "0 0 22px",
+              }}
+            >
+              We sent a 6-digit verification code to{" "}
+              <strong>
+                {PHONE_COUNTRIES[country].code}
+                {phone}
+              </strong>
+              .
+            </p>
+
+            {success && (
+              <div
+                role="status"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "11px",
+                  marginBottom: "15px",
+                  padding: "12px 14px",
+                  borderRadius: "12px",
+                  background:
+                    "linear-gradient(135deg, #F7FCFA 0%, #ECF9F4 100%)",
+                  border: "1px solid #C8E8DC",
+                  boxShadow:
+                    "0 3px 12px rgba(24, 128, 95, 0.055)",
+                }}
+              >
+                <div
+                  style={{
+                    width: "23px",
+                    height: "23px",
+                    minWidth: "23px",
+                    borderRadius: "7px",
+                    background: "#DDF4EA",
+                    border: "1px solid #BFE6D5",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#16805D",
+                    fontSize: "12px",
+                    fontWeight: 900,
+                  }}
+                >
+                  ✓
+                </div>
+
+                <div
+                  style={{
+                    flex: 1,
+                    color: "#176B51",
+                    fontSize: "12px",
+                    lineHeight: 1.45,
+                    fontWeight: 650,
+                  }}
+                >
+                  {success}
+                </div>
+              </div>
+            )}
+
+            {error && (
+  <div role="alert" style={errorStyle}>
+    <span style={errorIconStyle}>!</span>
+    <span>{error}</span>
+  </div>
+)}
+
+            <form onSubmit={verifyPhoneOtp}>
+              <div style={fieldGroupStyle}>
+                <label style={labelStyle}>
+                  Verification code
+                </label>
+
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  value={otp}
+                  onChange={(event) =>
+                    setOtp(
+                      event.target.value
+                        .replace(/\D/g, "")
+                        .slice(0, 6)
+                    )
+                  }
+                  placeholder="Enter 6-digit OTP"
+                  style={{
+                    ...inputStyle,
+                    textAlign: "center",
+                    letterSpacing: "6px",
+                    fontSize: "20px",
+                    fontWeight: 700,
+                  }}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={otpVerifying}
+                style={{
+                  ...continueButtonStyle,
+                  background: otpVerifying
+                    ? "#555"
+                    : "#111",
+                  cursor: otpVerifying
+                    ? "not-allowed"
+                    : "pointer",
+                }}
+              >
+                {otpVerifying
+                  ? "Verifying..."
+                  : "Verify phone"}
+              </button>
+            </form>
+
+            <div
+              style={{
+                width: "100%",
+                marginTop: "15px",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              {otpResendSeconds > 0 ? (
+                <div
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    padding: "9px 12px",
+                    borderRadius: "12px",
+                    background: "#FAFAFB",
+                    border: "1px solid #E5E7EB",
+                    boxShadow:
+                      "0 2px 8px rgba(17, 19, 24, 0.035)",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "28px",
+                      height: "28px",
+                      borderRadius: "50%",
+                      background: "#F1F3F5",
+                      border: "1px solid #DEE2E6",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#111318",
+                      fontSize: "10px",
+                      fontWeight: 850,
+                      fontVariantNumeric: "tabular-nums",
+                    }}
+                  >
+                    {String(otpResendSeconds).padStart(2, "0")}
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "1px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: "#4F565E",
+                        fontSize: "11px",
+                        fontWeight: 700,
+                      }}
+                    >
+                      Resend code
+                    </span>
+
+                    <span
+                      style={{
+                        color: "#9AA0A6",
+                        fontSize: "10px",
+                        fontWeight: 500,
+                      }}
+                    >
+                      Available in {otpResendSeconds}s
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={sendPhoneOtp}
+                  disabled={otpSending}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "7px",
+                    border: "1px solid #D7E1FF",
+                    background:
+                      "linear-gradient(135deg, #F8FAFF 0%, #F2F6FF 100%)",
+                    color: "#2563EB",
+                    borderRadius: "11px",
+                    padding: "10px 15px",
+                    fontSize: "12px",
+                    fontWeight: 800,
+                    boxShadow:
+                      "0 2px 8px rgba(37, 99, 235, 0.06)",
+                    cursor: otpSending
+                      ? "not-allowed"
+                      : "pointer",
+                    opacity: otpSending ? 0.65 : 1,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "14px",
+                      lineHeight: 1,
+                    }}
+                  >
+                    ↻
+                  </span>
+
+                  {otpSending
+                    ? "Sending new code..."
+                    : "Resend verification code"}
+                </button>
+              )}
+            </div>
+          </>
         )}
 
         {step === 5 && (
@@ -1174,7 +1607,69 @@ export default function CustomerSignupPage() {
               </div>
             </div>
 
-            {error && <div style={errorStyle}>{error}</div>}
+            {success && (
+              <div
+                role="status"
+                style={{
+                  marginBottom: "12px",
+                  padding: "12px 13px",
+                  borderRadius: "11px",
+                  background: "linear-gradient(180deg, #F4FCF8 0%, #ECF9F4 100%)",
+                  border: "1px solid #C9E9DC",
+                  boxShadow: "0 1px 2px rgba(17, 19, 24, 0.03)",
+                  color: "#167357",
+                  fontSize: "13px",
+                  lineHeight: 1.45,
+                  fontWeight: 700,
+                  textAlign: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "7px",
+                  }}
+                >
+                  <span
+                    style={{
+                      width: "20px",
+                      height: "20px",
+                      borderRadius: "50%",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      background: "#DDF4EA",
+                      color: "#16815F",
+                      fontSize: "12px",
+                      fontWeight: 900,
+                    }}
+                  >
+                    ✓
+                  </span>
+                  {success}
+                </div>
+
+                <div
+                  style={{
+                    marginTop: "5px",
+                    fontSize: "11px",
+                    fontWeight: 550,
+                    color: "#668078",
+                  }}
+                >
+                  Redirecting you to MetroVybe...
+                </div>
+              </div>
+            )}
+
+            {error && (
+  <div role="alert" style={errorStyle}>
+    <span style={errorIconStyle}>!</span>
+    <span>{error}</span>
+  </div>
+)}
 
             <button
               type="submit"
@@ -1292,12 +1787,32 @@ const continueButtonStyle = {
 };
 
 const errorStyle = {
-  marginBottom: "12px",
-  padding: "10px 12px",
-  borderRadius: "9px",
-  background: "#FFF1F1",
-  border: "1px solid #FFD4D4",
-  color: "#C62828",
+  display: "flex",
+  alignItems: "center",
+  gap: "10px",
+  marginBottom: "14px",
+  padding: "12px 14px",
+  borderRadius: "12px",
+  background: "linear-gradient(135deg, #FFF9F9 0%, #FFF3F3 100%)",
+  border: "1px solid #F0D1D1",
+  boxShadow: "0 3px 12px rgba(180, 35, 24, 0.055)",
+  color: "#A52A24",
   fontSize: "12px",
-  lineHeight: 1.4,
+  lineHeight: 1.45,
+  fontWeight: 600,
+};
+
+const errorIconStyle = {
+  width: "20px",
+  height: "20px",
+  minWidth: "20px",
+  borderRadius: "50%",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  background: "#FBE3E3",
+  border: "1px solid #F1CCCC",
+  color: "#B43A40",
+  fontSize: "12px",
+  fontWeight: 900,
 };

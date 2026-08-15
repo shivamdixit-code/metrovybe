@@ -22,7 +22,7 @@ export default function CRMLoginPage() {
     setLoading(true);
 
     try {
-      const result = await login(email.trim(), password);
+      const result = await login(email.trim(), password, "admin");
 
       if (result.user.role !== "admin") {
         logout();

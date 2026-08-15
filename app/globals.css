@@ -6410,3 +6410,9 @@ body {
 
 
 
+
+/* Customer signup phone placeholder */
+.mv-customer-phone-input::placeholder {
+  color: #A0A6AE;
+  opacity: 1;
+}
