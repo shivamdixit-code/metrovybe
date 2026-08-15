@@ -141,10 +141,22 @@ export default function SignupPage() {
             >
               <button
                 type="button"
-                onClick={() => selectAccountType("customer")}
+                onClick={() => router.push("/signup/customer")}
                 style={accountButtonStyle}
               >
-                <span style={accountIconStyle}>
+                <span
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "10px",
+                    background: "#EAF8F3",
+                    color: "#29AB87",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
                   <UserRound size={19} strokeWidth={2} />
                 </span>
 
@@ -171,7 +183,19 @@ export default function SignupPage() {
                 onClick={() => selectAccountType("business")}
                 style={accountButtonStyle}
               >
-                <span style={accountIconStyle}>
+                <span
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "10px",
+                    background: "#FFF7DF",
+                    color: "#D9AA32",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
                   <Building2 size={19} strokeWidth={2} />
                 </span>
 
@@ -322,88 +346,6 @@ export default function SignupPage() {
                 </button>
               ))}
             </div>
-          </>
-        ) : accountType === "customer" ? (
-          <>
-            <div style={{ marginBottom: "19px" }}>
-              <button
-                type="button"
-                onClick={goBack}
-                style={{
-                  width: "auto",
-                  height: "34px",
-                  padding: 0,
-                  border: "none",
-                  background: "transparent",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "5px",
-                  color: "#2563EB",
-                  fontSize: "12px",
-                  fontWeight: 700,
-                  cursor: "pointer",
-                }}
-              >
-                <img
-                  src="/icons/back-arrow.png"
-                  alt=""
-                  width={20}
-                  height={20}
-                  style={{
-                    display: "block",
-                    width: "20px",
-                    height: "20px",
-                    objectFit: "contain",
-                    transform: "translateY(-2px)",
-                    flexShrink: 0,
-                    filter:
-                      "brightness(0) saturate(100%) invert(36%) sepia(45%) saturate(1050%) hue-rotate(183deg) brightness(88%)",
-                  }}
-                />
-                <span>Change Account Type</span>
-              </button>
-            </div>
-
-            <h2
-              style={{
-                fontSize: "24px",
-                lineHeight: 1.15,
-                fontWeight: 800,
-                letterSpacing: "-0.5px",
-                color: "#111318",
-                margin: "0 0 6px",
-              }}
-            >
-              Create your account
-            </h2>
-
-            <p
-              style={{
-                color: "#747A82",
-                fontSize: "14px",
-                margin: "0 0 22px",
-              }}
-            >
-              Create your MetroVybe customer account.
-            </p>
-
-            <button
-              type="button"
-              onClick={() => router.push("/signup/customer")}
-              style={{
-                width: "100%",
-                height: "46px",
-                border: "none",
-                borderRadius: "11px",
-                background: "#111",
-                color: "#fff",
-                fontSize: "14px",
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-            >
-              Continue
-            </button>
           </>
         ) : (
           <>
