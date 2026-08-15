@@ -1,0 +1,1303 @@
+"use client";
+
+import { FormEvent, useState } from "react";
+import dynamic from "next/dynamic";
+import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
+
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
+
+const CustomerLocationPicker = dynamic(
+  () => import("@/components/CustomerLocationPicker"),
+  { ssr: false }
+);
+
+type Step = 1 | 2 | 3 | 4 | 5;
+
+const PHONE_COUNTRIES = {
+  IN: {
+    code: "+91",
+    digits: 10,
+    placeholder: "9876543210",
+    label: "🇮🇳 +91",
+  },
+  GB: {
+    code: "+44",
+    digits: 10,
+    placeholder: "7911123456",
+    label: "🇬🇧 +44",
+  },
+  US: {
+    code: "+1",
+    digits: 10,
+    placeholder: "2015550123",
+    label: "🇺🇸 +1",
+  },
+  CA: {
+    code: "+1",
+    digits: 10,
+    placeholder: "4165550123",
+    label: "🇨🇦 +1",
+  },
+  AU: {
+    code: "+61",
+    digits: 9,
+    placeholder: "412345678",
+    label: "🇦🇺 +61",
+  },
+  NZ: {
+    code: "+64",
+    digits: 9,
+    placeholder: "211234567",
+    label: "🇳🇿 +64",
+  },
+  SG: {
+    code: "+65",
+    digits: 8,
+    placeholder: "81234567",
+    label: "🇸🇬 +65",
+  },
+  MY: {
+    code: "+60",
+    digits: 9,
+    placeholder: "123456789",
+    label: "🇲🇾 +60",
+  },
+  AE: {
+    code: "+971",
+    digits: 9,
+    placeholder: "501234567",
+    label: "🇦🇪 +971",
+  },
+} as const;
+
+type PhoneCountry = keyof typeof PHONE_COUNTRIES;
+
+export default function CustomerSignupPage() {
+  const router = useRouter();
+
+  const [step, setStep] = useState<Step>(1);
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [country, setCountry] = useState<PhoneCountry>("IN");
+
+  const [gender, setGender] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [dobDay, setDobDay] = useState("");
+  const [dobMonth, setDobMonth] = useState("");
+  const [dobYear, setDobYear] = useState("");
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const [locationAccuracy, setLocationAccuracy] = useState<number | null>(null);
+  const [locationLabel, setLocationLabel] = useState("");
+  const [locationLoading, setLocationLoading] = useState(false);
+
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState(false);
+
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  function handleBack() {
+    setError("");
+
+    if (step === 1) {
+      router.push("/signup");
+      return;
+    }
+
+    setStep((current) => (current - 1) as Step);
+  }
+
+  function continueFromStepOne(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+
+    const cleanName = name.trim();
+
+    if (!cleanName) {
+      setError("Please enter your first name.");
+      return;
+    }
+
+    // Only letters and spaces are allowed.
+    // Hyphens, apostrophes, numbers and symbols are rejected.
+    if (!/^[A-Za-z]{3,}(?: [A-Za-z]{3,})*$/.test(cleanName)) {
+      setError(
+        "First name must contain at least 3 letters and can contain spaces only. Hyphens, numbers, and special characters are not allowed."
+      );
+      return;
+    }
+
+    // Reject names containing suspicious internal capitalization,
+    // e.g. "aSivam". Normal names such as "Shivam" are accepted.
+    if (/[a-z][A-Z]/.test(cleanName)) {
+      setError(
+        "Please capitalize your first name correctly, for example: Joe."
+      );
+      return;
+    }
+
+    // Automatically capitalize the first letter and normalize
+    // the remaining letters to lowercase.
+    const formattedName = cleanName
+      .toLowerCase()
+      .replace(/^[a-z]/, (letter) => letter.toUpperCase());
+
+    setName(formattedName);
+    setStep(2);
+  }
+
+  function getPreciseLocation() {
+    setError("");
+    setLocationLoading(true);
+
+    if (!navigator.geolocation) {
+      setLocationLoading(false);
+      setError("Precise location is not supported by this browser.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLatitude(position.coords.latitude);
+        setLongitude(position.coords.longitude);
+
+        setLocationLabel(
+          `Location captured (${position.coords.latitude.toFixed(
+            5
+          )}, ${position.coords.longitude.toFixed(5)})`
+        );
+
+        setLocationLoading(false);
+      },
+      () => {
+        setLocationLoading(false);
+        setError(
+          "Please allow location access so MetroVybe can show nearby listings."
+        );
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0,
+      }
+    );
+  }
+
+  function continueFromStepTwo(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPhone = phone.replace(/\D/g, "");
+    const selectedCountry = PHONE_COUNTRIES[country];
+
+    const emailPattern =
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+
+    if (!emailPattern.test(cleanEmail)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    if (cleanPhone.length !== selectedCountry.digits) {
+      setError(
+        `Please enter a valid ${selectedCountry.digits}-digit phone number.`
+      );
+      return;
+    }
+
+    const phonePatterns: Partial<
+      Record<PhoneCountry, RegExp>
+    > = {
+      IN: /^[6-9]\d{9}$/,
+      GB: /^7\d{9}$/,
+      US: /^[2-9]\d{9}$/,
+      CA: /^[2-9]\d{9}$/,
+      AU: /^4\d{8}$/,
+      NZ: /^2\d{8}$/,
+      SG: /^[89]\d{7}$/,
+      MY: /^1\d{8}$/,
+      AE: /^5\d{8}$/,
+    };
+
+    const phonePattern = phonePatterns[country];
+
+    if (phonePattern && !phonePattern.test(cleanPhone)) {
+      const countryNames: Record<PhoneCountry, string> = {
+        IN: "Indian",
+        GB: "UK",
+        US: "US",
+        CA: "Canadian",
+        AU: "Australian",
+        NZ: "New Zealand",
+        SG: "Singapore",
+        MY: "Malaysian",
+        AE: "UAE",
+      };
+
+      setError(
+        `Please enter a valid ${selectedCountry.digits}-digit ${countryNames[country]} mobile number.`
+      );
+      return;
+    }
+
+    if (!gender) {
+      setError("Please select your gender.");
+      return;
+    }
+
+    if (!dateOfBirth) {
+      setError("Please enter your date of birth.");
+      return;
+    }
+
+    const dob = new Date(dateOfBirth);
+    const today = new Date();
+
+    const minimumAgeDate = new Date(
+      today.getFullYear() - 17,
+      today.getMonth(),
+      today.getDate()
+    );
+
+    if (
+      Number.isNaN(dob.getTime()) ||
+      dob > minimumAgeDate
+    ) {
+      setError("You must be at least 17 years old to register.");
+      return;
+    }
+
+    if (latitude === null || longitude === null) {
+      setError(
+        "Please allow precise location access to continue."
+      );
+      return;
+    }
+
+    setEmail(cleanEmail);
+    setPhone(cleanPhone);
+
+    setStep(3);
+  }
+
+  function continueFromStepThree(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPhone = phone.replace(/\D/g, "");
+    const selectedCountry = PHONE_COUNTRIES[country];
+
+    const emailPattern =
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+
+    if (!emailPattern.test(cleanEmail)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    if (cleanPhone.length !== selectedCountry.digits) {
+      setError(
+        `Please enter a valid ${selectedCountry.digits}-digit phone number.`
+      );
+      return;
+    }
+
+    const phonePatterns: Partial<
+      Record<PhoneCountry, RegExp>
+    > = {
+      IN: /^[6-9]\d{9}$/,
+      GB: /^7\d{9}$/,
+      US: /^[2-9]\d{9}$/,
+      CA: /^[2-9]\d{9}$/,
+      AU: /^4\d{8}$/,
+      NZ: /^2\d{8}$/,
+      SG: /^[89]\d{7}$/,
+      MY: /^1\d{8}$/,
+      AE: /^5\d{8}$/,
+    };
+
+    const phonePattern = phonePatterns[country];
+
+    if (phonePattern && !phonePattern.test(cleanPhone)) {
+      const countryNames: Record<PhoneCountry, string> = {
+        IN: "Indian",
+        GB: "UK",
+        US: "US",
+        CA: "Canadian",
+        AU: "Australian",
+        NZ: "New Zealand",
+        SG: "Singapore",
+        MY: "Malaysian",
+        AE: "UAE",
+      };
+
+      setError(
+        `Please enter a valid ${selectedCountry.digits}-digit ${countryNames[country]} mobile number.`
+      );
+      return;
+    }
+
+    setEmail(cleanEmail);
+    setPhone(cleanPhone);
+    setStep(4);
+  }
+
+  function continueFromStepFour(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+
+    if (latitude === null || longitude === null) {
+      setError(
+        "Please allow precise location access to continue."
+      );
+      return;
+    }
+
+    setStep(5);
+  }
+
+  function requestPreciseLocation() {
+    setError("");
+    setLocationAccuracy(null);
+    setLocationLabel("");
+    setLocationLoading(true);
+
+    if (!navigator.geolocation) {
+      setLocationLoading(false);
+      setError("Location services are not supported by this browser.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const accuracy = position.coords.accuracy;
+
+        if (!Number.isFinite(accuracy) || accuracy > 100) {
+          setLatitude(null);
+          setLongitude(null);
+          setLocationAccuracy(null);
+          setLocationLabel("");
+          setLocationLoading(false);
+
+          setError(
+            `Location accuracy is too low (${Math.round(
+              accuracy
+            )} m). Please move near a window or outdoors and try again.`
+          );
+          return;
+        }
+
+        setLatitude(position.coords.latitude);
+        setLongitude(position.coords.longitude);
+        setLocationAccuracy(accuracy);
+        setLocationLabel("Location captured");
+        setLocationLoading(false);
+        setError("");
+      },
+      (error) => {
+        setLocationLoading(false);
+        setError(
+          error.code === error.PERMISSION_DENIED
+            ? "Location permission was denied. Please allow location access and try again."
+            : "We couldn't access your location. Please try again."
+        );
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0,
+      }
+    );
+  }
+
+  async function createAccount(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    setError("");
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch(`${API_URL}/api/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim().toLowerCase(),
+          phone: `${PHONE_COUNTRIES[country].code}${phone}`,
+          gender,
+          dateOfBirth,
+          latitude,
+          longitude,
+          locationLabel,
+          password,
+          role: "customer",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Registration failed");
+      }
+
+      localStorage.setItem("metrovybe_token", data.token);
+      localStorage.setItem(
+        "metrovybe_user",
+        JSON.stringify(data.user)
+      );
+
+      router.push("/");
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Registration failed"
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+
+    <main className="public-login-page">
+      <div className="public-login-card">
+        <Link
+          href="/"
+          style={{
+            textDecoration: "none",
+            color: "#111",
+            display: "block",
+            marginBottom: "25px",
+          }}
+        >
+          <div
+            style={{
+              fontSize: "28px",
+              fontWeight: 850,
+              letterSpacing: "-1.2px",
+              lineHeight: 1,
+            }}
+          >
+            metro
+            <span style={{ color: "#29AB87" }}>
+              vybe
+            </span>
+            <span
+              style={{
+                fontSize: "11px",
+                position: "relative",
+                top: "-10px",
+                color: "#D9AA32",
+                marginLeft: "3px",
+              }}
+            >
+              ✦
+            </span>
+          </div>
+
+          <div
+            style={{
+              fontSize: "9px",
+              letterSpacing: "1.7px",
+              color: "#8A9097",
+              marginTop: "6px",
+              fontWeight: 700,
+            }}
+          >
+            YOUR CITY. YOUR VYBE.
+          </div>
+        </Link>
+
+        <div style={{ marginBottom: "19px" }}>
+          <button
+            type="button"
+            onClick={handleBack}
+            style={{
+              width: "auto",
+              height: "34px",
+              padding: 0,
+              border: "none",
+              background: "transparent",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "5px",
+              color: "#2563EB",
+              fontSize: "12px",
+              fontWeight: 700,
+              lineHeight: 1,
+              cursor: "pointer",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <img
+              src="/icons/back-arrow.png"
+              alt=""
+              width={20}
+              height={20}
+              style={{
+                display: "block",
+                width: "20px",
+                height: "20px",
+                objectFit: "contain",
+                transform: "translateY(-2px)",
+                flexShrink: 0,
+                filter:
+                  "brightness(0) saturate(100%) invert(36%) sepia(45%) saturate(1050%) hue-rotate(183deg) brightness(88%)",
+              }}
+            />
+            <span>
+              Back
+            </span>
+          </button>
+        </div>
+
+        <h1
+          style={{
+            fontSize: "28px",
+            lineHeight: 1.1,
+            letterSpacing: "-0.7px",
+            margin: "0 0 7px",
+            color: "#111318",
+          }}
+        >
+          {step === 1
+            ? "What's your first name?"
+            : step === 2
+              ? "Tell us about you"
+              : step === 3
+                ? "How can we reach you?"
+                : step === 4
+                  ? "Where are you located?"
+                  : "Create your password"}
+        </h1>
+
+        <p
+          style={{
+            color: "#747A82",
+            fontSize: "14px",
+            margin: "0 0 22px",
+          }}
+        >
+          {step === 1
+            ? "Let's start with the basics."
+            : step === 2
+              ? "A few details to personalize your MetroVybe experience."
+              : step === 3
+                ? "We'll use these details to keep your account secure."
+                : step === 4
+                  ? "Used to show listings and people near you."
+                  : "Choose a secure password for your account."}
+        </p>
+
+        {step === 1 && (
+          <form onSubmit={continueFromStepOne}>
+            <div style={fieldGroupStyle}>
+              <label style={labelStyle}>
+                First name
+              </label>
+
+              <input
+                type="text"
+                value={name}
+                onChange={(event) =>
+                  setName(event.target.value)
+                }
+                placeholder="Enter your first name"
+                autoComplete="given-name"
+                autoFocus
+                required
+                style={inputStyle}
+              />
+            </div>
+
+            {error && <div style={errorStyle}>{error}</div>}
+
+            <button
+              type="submit"
+              style={continueButtonStyle}
+            >
+              Continue
+            </button>
+          </form>
+        )}
+
+        {step === 2 && (
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              setError("");
+
+              if (!gender) {
+                setError("Please select your gender.");
+                return;
+              }
+
+              if (!dateOfBirth) {
+                setError("Please enter your date of birth.");
+                return;
+              }
+
+              const dob = new Date(dateOfBirth);
+              const today = new Date();
+
+              const minimumAgeDate = new Date(
+                today.getFullYear() - 17,
+                today.getMonth(),
+                today.getDate()
+              );
+
+              if (
+                Number.isNaN(dob.getTime()) ||
+                dob > minimumAgeDate
+              ) {
+                setError(
+                  "You must be at least 17 years old to register."
+                );
+                return;
+              }
+
+              setStep(3);
+            }}
+          >
+            <div style={fieldGroupStyle}>
+              <label style={labelStyle}>
+                Gender
+              </label>
+
+              <select
+                value={gender}
+                onChange={(event) =>
+                  setGender(event.target.value)
+                }
+                required
+                style={inputStyle}
+              >
+                <option value="">
+                  Select your gender
+                </option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="non-binary">
+                  Non-binary
+                </option>
+                <option value="prefer-not-to-say">
+                  Prefer not to say
+                </option>
+              </select>
+            </div>
+
+            <div style={fieldGroupStyle}>
+              <label style={labelStyle}>
+                Date of birth
+              </label>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "0.85fr 1.15fr 1.1fr",
+                  gap: "8px",
+                  width: "100%",
+                }}
+              >
+                <select
+                  value={dobDay}
+                  onChange={(event) => {
+                    const day = event.target.value;
+                    setDobDay(day);
+
+                    if (day && dobMonth && dobYear) {
+                      setDateOfBirth(
+                        `${dobYear}-${dobMonth}-${day.padStart(2, "0")}`
+                      );
+                    } else {
+                      setDateOfBirth("");
+                    }
+                  }}
+                  required
+                  aria-label="Birth day"
+                  style={{
+                    ...inputStyle,
+                    width: "100%",
+                    minWidth: 0,
+                    height: "52px",
+                    padding: "0 12px",
+                    appearance: "none",
+                    WebkitAppearance: "none",
+                    background: "#fff",
+                    fontSize: "15px",
+                    fontWeight: 600,
+                    color: dobDay ? "#151918" : "#8b9298",
+                    cursor: "pointer",
+                  }}
+                >
+                  <option value="">Day</option>
+                  {Array.from({ length: 31 }, (_, index) => {
+                    const day = String(index + 1);
+                    return (
+                      <option key={day} value={day}>
+                        {day}
+                      </option>
+                    );
+                  })}
+                </select>
+
+                <select
+                  value={dobMonth}
+                  onChange={(event) => {
+                    const month = event.target.value;
+                    setDobMonth(month);
+
+                    if (dobDay && month && dobYear) {
+                      setDateOfBirth(
+                        `${dobYear}-${month}-${dobDay.padStart(2, "0")}`
+                      );
+                    } else {
+                      setDateOfBirth("");
+                    }
+                  }}
+                  required
+                  aria-label="Birth month"
+                  style={{
+                    ...inputStyle,
+                    width: "100%",
+                    minWidth: 0,
+                    height: "52px",
+                    padding: "0 12px",
+                    appearance: "none",
+                    WebkitAppearance: "none",
+                    background: "#fff",
+                    fontSize: "15px",
+                    fontWeight: 600,
+                    color: dobMonth ? "#151918" : "#8b9298",
+                    cursor: "pointer",
+                  }}
+                >
+                  <option value="">Month</option>
+                  <option value="01">January</option>
+                  <option value="02">February</option>
+                  <option value="03">March</option>
+                  <option value="04">April</option>
+                  <option value="05">May</option>
+                  <option value="06">June</option>
+                  <option value="07">July</option>
+                  <option value="08">August</option>
+                  <option value="09">September</option>
+                  <option value="10">October</option>
+                  <option value="11">November</option>
+                  <option value="12">December</option>
+                </select>
+
+                <select
+                  value={dobYear}
+                  onChange={(event) => {
+                    const year = event.target.value;
+                    setDobYear(year);
+
+                    if (dobDay && dobMonth && year) {
+                      setDateOfBirth(
+                        `${year}-${dobMonth}-${dobDay.padStart(2, "0")}`
+                      );
+                    } else {
+                      setDateOfBirth("");
+                    }
+                  }}
+                  required
+                  aria-label="Birth year"
+                  style={{
+                    ...inputStyle,
+                    width: "100%",
+                    minWidth: 0,
+                    height: "52px",
+                    padding: "0 12px",
+                    appearance: "none",
+                    WebkitAppearance: "none",
+                    background: "#fff",
+                    fontSize: "15px",
+                    fontWeight: 600,
+                    color: dobYear ? "#151918" : "#8b9298",
+                    cursor: "pointer",
+                  }}
+                >
+                  <option value="">Year</option>
+                  {Array.from(
+                    { length: new Date().getFullYear() - 17 - (new Date().getFullYear() - 100) + 1 },
+                    (_, index) => {
+                      const year = String(new Date().getFullYear() - 17 - index);
+                      return (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      );
+                    }
+                  )}
+                </select>
+              </div>
+
+              <div
+                style={{
+                  marginTop: "7px",
+                  fontSize: "12px",
+                  color: "#8b9298",
+                  lineHeight: 1.35,
+                }}
+              >
+                You must be at least 17 years old.
+              </div>
+            </div>
+
+            {error && <div style={errorStyle}>{error}</div>}
+
+            <button
+              type="submit"
+              style={continueButtonStyle}
+            >
+              Continue
+            </button>
+          </form>
+        )}
+
+        {step === 3 && (
+          <form onSubmit={continueFromStepThree}>
+            <div style={fieldGroupStyle}>
+              <label style={labelStyle}>
+                Email address
+              </label>
+
+              <input
+                type="email"
+                inputMode="email"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                value={email}
+                onChange={(event) =>
+                  setEmail(event.target.value)
+                }
+                placeholder="you@example.com"
+                autoComplete="email"
+                autoFocus
+                required
+                style={inputStyle}
+              />
+            </div>
+
+            <div style={fieldGroupStyle}>
+              <label style={labelStyle}>
+                Phone number
+              </label>
+
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  ...inputStyle,
+                  padding: 0,
+                  overflow: "hidden",
+                }}
+              >
+                <select
+                  value={country}
+                  onChange={(event) => {
+                    setCountry(
+                      event.target.value as PhoneCountry
+                    );
+                    setPhone("");
+                    setError("");
+                  }}
+                  aria-label="Country"
+                  style={{
+                    flex: "0 0 auto",
+                    width: "104px",
+                    height: "100%",
+                    border: "none",
+                    borderRight: "1px solid #E1E5EA",
+                    outline: "none",
+                    background: "#FFFFFF",
+                    padding: "0 6px 0 10px",
+                    fontSize: "13px",
+                    fontWeight: 700,
+                    color: "#252A31",
+                    cursor: "pointer",
+                  }}
+                >
+                  {Object.entries(PHONE_COUNTRIES).map(
+                    ([key, value]) => (
+                      <option key={key} value={key}>
+                        {value.label}
+                      </option>
+                    )
+                  )}
+                </select>
+
+                <input
+                  className="mv-customer-phone-input"
+                  type="tel"
+                  value={phone}
+                  onChange={(event) => {
+                    const maxDigits =
+                      PHONE_COUNTRIES[country].digits;
+
+                    const digits = event.target.value
+                      .replace(/\D/g, "")
+                      .slice(0, maxDigits);
+
+                    setPhone(digits);
+                  }}
+                  placeholder={
+                    PHONE_COUNTRIES[country].placeholder
+                  }
+                  inputMode="numeric"
+                  autoComplete="tel-national"
+                  maxLength={
+                    PHONE_COUNTRIES[country].digits
+                  }
+                  required
+                  style={{
+                    flex: 1,
+                    minWidth: 0,
+                    border: "none",
+                    outline: "none",
+                    background: "transparent",
+                    padding: "13px 12px",
+                    fontSize: "14px",
+                    color: "#111318",
+                  }}
+                />
+              </div>
+            </div>
+
+            {error && <div style={errorStyle}>{error}</div>}
+
+            <button
+              type="submit"
+              style={continueButtonStyle}
+            >
+              Continue
+            </button>
+          </form>
+        )}
+
+        {step === 4 && (
+          <form onSubmit={continueFromStepFour}>
+            <div style={fieldGroupStyle}>
+              <label style={labelStyle}>
+                Precise location
+              </label>
+
+              <p
+                style={{
+                  margin: "0 0 13px",
+                  color: "#747A82",
+                  fontSize: "13px",
+                  lineHeight: 1.5,
+                }}
+              >
+                Search your location, use your current location,
+                or move the pin exactly where you are.
+              </p>
+
+              <div
+                style={{
+                  width: "100%",
+                  height: "205px",
+                  maxHeight: "205px",
+                  border: "1px solid #D9DEE5",
+                  borderRadius: "14px",
+                  overflow: "hidden",
+                  background: "#F5F7F6",
+                }}
+              >
+                <CustomerLocationPicker
+                  initialLocation={
+                    latitude !== null && longitude !== null
+                      ? {
+                          latitude,
+                          longitude,
+                        }
+                      : undefined
+                  }
+                  onConfirm={(location) => {
+                    setLatitude(location.latitude);
+                    setLongitude(location.longitude);
+                    setLocationLabel(location.address);
+                    setLocationAccuracy(
+                      typeof location.accuracy === "number"
+                        ? location.accuracy
+                        : null
+                    );
+                    setError("");
+                  }}
+                />
+              </div>
+
+              {latitude !== null && longitude !== null && (
+                <div
+                  style={{
+                    marginTop: "8px",
+                    padding: "8px 10px",
+                    borderRadius: "9px",
+                    background: "#F0FAF7",
+                    border: "1px solid #D6EEE6",
+                    color: "#168A6A",
+                    fontSize: "12px",
+                    lineHeight: 1.45,
+                  }}
+                >
+                  ✓ Location selected
+                  <br />
+                  {locationLabel || "Precise location captured"}
+                </div>
+              )}
+            </div>
+
+            {error && <div style={errorStyle}>{error}</div>}
+
+            <button
+              type="submit"
+              style={continueButtonStyle}
+            >
+              Continue
+            </button>
+          </form>
+        )}
+
+        {step === 5 && (
+          <form onSubmit={createAccount}>
+            <div style={fieldGroupStyle}>
+              <label style={labelStyle}>
+                Password
+              </label>
+
+              <div style={passwordWrapperStyle}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(event) =>
+                    setPassword(event.target.value)
+                  }
+                  placeholder="Create a password"
+                  autoComplete="new-password"
+                  autoFocus
+                  required
+                  style={passwordInputStyle}
+                />
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowPassword((value) => !value)
+                  }
+                  aria-label={
+                    showPassword
+                      ? "Hide password"
+                      : "Show password"
+                  }
+                  style={eyeButtonStyle}
+                >
+                  {showPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div style={fieldGroupStyle}>
+              <label style={labelStyle}>
+                Confirm password
+              </label>
+
+              <div style={passwordWrapperStyle}>
+                <input
+                  type={
+                    showConfirmPassword
+                      ? "text"
+                      : "password"
+                  }
+                  value={confirmPassword}
+                  onChange={(event) =>
+                    setConfirmPassword(event.target.value)
+                  }
+                  placeholder="Confirm your password"
+                  autoComplete="new-password"
+                  required
+                  style={passwordInputStyle}
+                />
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowConfirmPassword(
+                      (value) => !value
+                    )
+                  }
+                  aria-label={
+                    showConfirmPassword
+                      ? "Hide password"
+                      : "Show password"
+                  }
+                  style={eyeButtonStyle}
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {error && <div style={errorStyle}>{error}</div>}
+
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                ...continueButtonStyle,
+                background: loading ? "#555" : "#111",
+                cursor: loading
+                  ? "not-allowed"
+                  : "pointer",
+              }}
+            >
+              {loading
+                ? "Creating account..."
+                : "Create account"}
+            </button>
+          </form>
+        )}
+
+        <div
+          style={{
+            textAlign: "center",
+            marginTop: "24px",
+            color: "#666",
+            fontSize: "14px",
+          }}
+        >
+          Already have an account?{" "}
+          <Link
+            href="/login"
+            style={{
+              color: "#111",
+              fontWeight: 700,
+              textDecoration: "none",
+            }}
+          >
+            Log in
+          </Link>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+const fieldGroupStyle = {
+  marginBottom: "15px",
+};
+
+const labelStyle = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  color: "#111318",
+  fontSize: "13px",
+  fontWeight: 700,
+  marginBottom: "7px",
+};
+
+const optionalStyle = {
+  color: "#8A9097",
+  fontSize: "11px",
+  fontWeight: 500,
+};
+
+const inputStyle = {
+  width: "100%",
+  height: "46px",
+  boxSizing: "border-box" as const,
+  border: "1px solid #E1E5EA",
+  borderRadius: "11px",
+  background: "#fff",
+  color: "#111318",
+  padding: "0 13px",
+  fontSize: "14px",
+  outline: "none",
+};
+
+const passwordWrapperStyle = {
+  position: "relative" as const,
+};
+
+const passwordInputStyle = {
+  ...inputStyle,
+  paddingRight: "46px",
+};
+
+const eyeButtonStyle = {
+  position: "absolute" as const,
+  right: "12px",
+  top: "50%",
+  transform: "translateY(-50%)",
+  width: "28px",
+  height: "28px",
+  border: "none",
+  background: "transparent",
+  color: "#747A82",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: 0,
+  cursor: "pointer",
+};
+
+const continueButtonStyle = {
+  width: "100%",
+  height: "46px",
+  border: "none",
+  borderRadius: "11px",
+  background: "#111",
+  color: "#fff",
+  fontSize: "14px",
+  fontWeight: 700,
+  cursor: "pointer",
+  marginTop: "4px",
+};
+
+const errorStyle = {
+  marginBottom: "12px",
+  padding: "10px 12px",
+  borderRadius: "9px",
+  background: "#FFF1F1",
+  border: "1px solid #FFD4D4",
+  color: "#C62828",
+  fontSize: "12px",
+  lineHeight: 1.4,
+};
