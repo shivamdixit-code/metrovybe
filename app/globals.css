@@ -6282,3 +6282,25 @@ body {
   }
 }
 
+
+html,
+body {
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  body {
+    overflow: hidden !important;
+  }
+
+  .crm-login-page {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  .crm-login-card {
+    max-height: calc(100dvh - 32px) !important;
+  }
+}
+
