@@ -6304,3 +6304,25 @@ body {
   }
 }
 
+
+@media (max-width: 600px) {
+  .public-login-page {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    box-sizing: border-box !important;
+    padding: 16px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    overflow: hidden !important;
+  }
+
+  .public-login-page > div {
+    width: 100% !important;
+    max-height: calc(100dvh - 32px) !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+  }
+}
