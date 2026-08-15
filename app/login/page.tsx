@@ -46,32 +46,8 @@ export default function LoginPage() {
   }
 
   return (
-    <main
-      style={{
-        height: "100dvh",
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "16px",
-        boxSizing: "border-box",
-        background: "#f7f8fa",
-        overflow: "hidden",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "430px",
-          background: "#fff",
-          borderRadius: "20px",
-          padding: "32px",
-          boxSizing: "border-box",
-          maxHeight: "calc(100dvh - 32px)",
-          overflow: "hidden",
-          boxShadow: "0 12px 40px rgba(0,0,0,0.08)",
-        }}
-      >
+    <main className="public-login-page">
+      <div className="public-login-card">
         <Link
           href="/"
           style={{
