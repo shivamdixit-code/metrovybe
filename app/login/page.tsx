@@ -5,12 +5,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { login } from "@/lib/auth";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -29,7 +31,7 @@ export default function LoginPage() {
       }
 
       if (result.user.role === "admin") {
-        router.push("/crm");
+        router.push("/crm/login");
         return;
       }
 
@@ -165,22 +167,56 @@ export default function LoginPage() {
             Password
           </label>
 
-          <input
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="Enter your password"
-            required
+          <div
             style={{
+              position: "relative",
               width: "100%",
-              padding: "13px 14px",
-              border: "1px solid #ddd",
-              borderRadius: "10px",
               marginBottom: "22px",
-              fontSize: "15px",
-              boxSizing: "border-box",
             }}
-          />
+          >
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="Enter your password"
+              required
+              style={{
+                width: "100%",
+                padding: "13px 48px 13px 14px",
+                border: "1px solid #ddd",
+                borderRadius: "10px",
+                fontSize: "15px",
+                boxSizing: "border-box",
+              }}
+            />
+
+            <button
+              type="button"
+              onClick={() => setShowPassword((value) => !value)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              style={{
+                position: "absolute",
+                top: 0,
+                right: "8px",
+                width: "36px",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 0,
+                border: 0,
+                background: "transparent",
+                color: "#777",
+                cursor: "pointer",
+              }}
+            >
+              {showPassword ? (
+                <EyeOff size={18} strokeWidth={2} />
+              ) : (
+                <Eye size={18} strokeWidth={2} />
+              )}
+            </button>
+          </div>
 
           <button
             type="submit"

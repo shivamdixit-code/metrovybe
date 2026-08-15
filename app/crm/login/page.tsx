@@ -4,12 +4,14 @@ import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { login, logout } from "@/lib/auth";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function CRMLoginPage() {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -73,15 +75,32 @@ export default function CRMLoginPage() {
           />
 
           <label htmlFor="crm-password">Password</label>
-          <input
-            id="crm-password"
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="Enter your password"
-            autoComplete="current-password"
-            required
-          />
+
+          <div className="crm-password-wrap">
+            <input
+              id="crm-password"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="Enter your password"
+              autoComplete="current-password"
+              required
+            />
+
+            <button
+              type="button"
+              className="crm-password-toggle"
+              onClick={() => setShowPassword((value) => !value)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              tabIndex={0}
+            >
+              {showPassword ? (
+                <EyeOff size={18} strokeWidth={2} />
+              ) : (
+                <Eye size={18} strokeWidth={2} />
+              )}
+            </button>
+          </div>
 
           <button type="submit" disabled={loading}>
             {loading ? "Signing in..." : "Sign in to CRM"}

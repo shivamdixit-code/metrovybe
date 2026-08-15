@@ -6199,6 +6199,45 @@ body {
   box-shadow: 0 0 0 3px rgba(41, 171, 135, 0.1);
 }
 
+.crm-password-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.crm-password-wrap input {
+  padding-right: 52px !important;
+}
+
+.crm-password-toggle {
+  position: absolute !important;
+  top: 0 !important;
+  right: 8px !important;
+  width: 36px !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  border-radius: 9px !important;
+  background: transparent !important;
+  color: #7c838d !important;
+  cursor: pointer !important;
+  z-index: 2 !important;
+}
+
+.crm-password-toggle:hover {
+  background: transparent !important;
+  color: #111318 !important;
+}
+
+.crm-password-toggle:focus-visible {
+  outline: 2px solid #29ab87 !important;
+  outline-offset: 1px !important;
+}
+
 .crm-login-form button {
   width: 100%;
   min-height: 50px;
