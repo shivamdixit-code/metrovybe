@@ -63,7 +63,17 @@ export default function LoginPage() {
               fontWeight: 800,
             }}
           >
-            metro<span style={{ color: "#29AB87" }}>vybe</span>✦
+            metro<span style={{ color: "#29AB87" }}>vybe</span>
+            <span
+              style={{
+                fontSize: "12px",
+                position: "relative",
+                top: "-9px",
+                marginLeft: "3px",
+              }}
+            >
+              ✦
+            </span>
           </div>
 
           <div
