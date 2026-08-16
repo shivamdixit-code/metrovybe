@@ -78,6 +78,26 @@ const PHONE_COUNTRIES = {
 
 type PhoneCountry = keyof typeof PHONE_COUNTRIES;
 
+const PHONE_DIAL_CODES: Record<PhoneCountry, string> = {
+  IN: "91",
+  GB: "44",
+  US: "1",
+  CA: "1",
+  AU: "61",
+  NZ: "64",
+  SG: "65",
+  MY: "60",
+  AE: "971",
+};
+
+function getInternationalPhone(
+  country: PhoneCountry,
+  phone: string
+): string {
+  const national = phone.replace(/\D/g, "");
+  return `+${PHONE_DIAL_CODES[country]}${national}`;
+}
+
 export default function CustomerSignupPage() {
   const router = useRouter();
 
@@ -113,6 +133,25 @@ export default function CustomerSignupPage() {
   const [otpSending, setOtpSending] = useState(false);
   const [otpVerifying, setOtpVerifying] = useState(false);
   const [otpResendSeconds, setOtpResendSeconds] = useState(0);
+
+  // Force-clear any browser-restored OTP whenever the OTP screen opens.
+  useEffect(() => {
+    if (step !== 6) return;
+
+    setOtp("");
+
+    const clearOtpField = window.setTimeout(() => {
+      const input = document.querySelector(
+        'input[key="otp-input-6"]'
+      ) as HTMLInputElement | null;
+
+      if (input) {
+        input.value = "";
+      }
+    }, 0);
+
+    return () => window.clearTimeout(clearOtpField);
+  }, [step]);
 
   useEffect(() => {
     if (otpResendSeconds <= 0) {
@@ -248,7 +287,6 @@ export default function CustomerSignupPage() {
 
     const cleanEmail = email.trim().toLowerCase();
     const cleanPhone = phone.replace(/\D/g, "");
-    const selectedCountry = PHONE_COUNTRIES[country];
 
     const emailPattern =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
@@ -260,48 +298,6 @@ export default function CustomerSignupPage() {
 
     // Email is valid — explicitly clear any previous email error.
     setError("");
-
-    if (cleanPhone.length !== selectedCountry.digits) {
-      setError(
-        `Please enter a valid ${selectedCountry.digits}-digit phone number.`
-      );
-      return;
-    }
-
-    const phonePatterns: Partial<
-      Record<PhoneCountry, RegExp>
-    > = {
-      IN: /^[6-9]\d{9}$/,
-      GB: /^7\d{9}$/,
-      US: /^[2-9]\d{9}$/,
-      CA: /^[2-9]\d{9}$/,
-      AU: /^4\d{8}$/,
-      NZ: /^2\d{8}$/,
-      SG: /^[89]\d{7}$/,
-      MY: /^1\d{8}$/,
-      AE: /^5\d{8}$/,
-    };
-
-    const phonePattern = phonePatterns[country];
-
-    if (phonePattern && !phonePattern.test(cleanPhone)) {
-      const countryNames: Record<PhoneCountry, string> = {
-        IN: "Indian",
-        GB: "UK",
-        US: "US",
-        CA: "Canadian",
-        AU: "Australian",
-        NZ: "New Zealand",
-        SG: "Singapore",
-        MY: "Malaysian",
-        AE: "UAE",
-      };
-
-      setError(
-        `Please enter a valid ${selectedCountry.digits}-digit ${countryNames[country]} mobile number.`
-      );
-      return;
-    }
 
     if (!gender) {
       setError("Please select your gender.");
@@ -349,54 +345,18 @@ export default function CustomerSignupPage() {
 
     const cleanEmail = email.trim().toLowerCase();
     const cleanPhone = phone.replace(/\D/g, "");
-    const selectedCountry = PHONE_COUNTRIES[country];
-
-    if (cleanPhone.length !== selectedCountry.digits) {
-      setError(
-        `Please enter a valid ${selectedCountry.digits}-digit phone number.`
-      );
-      return;
-    }
-
-    const phonePatterns: Partial<Record<PhoneCountry, RegExp>> = {
-      IN: /^[6-9]\d{9}$/,
-      GB: /^7\d{9}$/,
-      US: /^[2-9]\d{9}$/,
-      CA: /^[2-9]\d{9}$/,
-      AU: /^4\d{8}$/,
-      NZ: /^2\d{8}$/,
-      SG: /^[89]\d{7}$/,
-      MY: /^1\d{8}$/,
-      AE: /^5\d{8}$/,
-    };
-
-    const phonePattern = phonePatterns[country];
-
-    if (phonePattern && !phonePattern.test(cleanPhone)) {
-      const countryNames: Record<PhoneCountry, string> = {
-        IN: "Indian",
-        GB: "UK",
-        US: "US",
-        CA: "Canadian",
-        AU: "Australian",
-        NZ: "New Zealand",
-        SG: "Singapore",
-        MY: "Malaysian",
-        AE: "UAE",
-      };
-
-      setError(
-        `Please enter a valid ${selectedCountry.digits}-digit ${countryNames[country]} mobile number.`
-      );
-      return;
-    }
 
     setEmail(cleanEmail);
     setPhone(cleanPhone);
 
+    // Build the complete phone number in E.164 format.
+    // Country code + national number must always be sent
+    // together as one E.164 international number.
+    const phoneNumber = getInternationalPhone(country, cleanPhone);
+
     // The single OTP sender handles the request, rate limit,
     // countdown, and navigation to the verification screen.
-    await sendPhoneOtp();
+    await sendPhoneOtp(phoneNumber);
   }
 
   function continueFromStepFour(event: FormEvent<HTMLFormElement>) {
@@ -499,7 +459,7 @@ export default function CustomerSignupPage() {
         body: JSON.stringify({
           name: name.trim(),
           email: email.trim().toLowerCase(),
-          phone: `${PHONE_COUNTRIES[country].code}${phone}`,
+          phone: getInternationalPhone(country, phone),
           gender,
           dateOfBirth,
           latitude,
@@ -535,14 +495,12 @@ export default function CustomerSignupPage() {
     }
   }
 
-  async function sendPhoneOtp() {
+  async function sendPhoneOtp(phoneNumber: string) {
     setError("");
     setSuccess("");
     setOtpSending(true);
 
     try {
-      const phoneNumber = `${PHONE_COUNTRIES[country].code}${phone}`;
-
       const response = await fetch(
         `${API_URL}/api/auth/send-signup-phone-otp`,
         {
@@ -573,6 +531,7 @@ export default function CustomerSignupPage() {
       }
 
       setSuccess("OTP sent successfully. Please check your phone.");
+      setOtp("");
       setOtpResendSeconds(60);
       setStep(6);
     } catch (err) {
@@ -603,7 +562,12 @@ export default function CustomerSignupPage() {
     setOtpVerifying(true);
 
     try {
-      const phoneNumber = `${PHONE_COUNTRIES[country].code}${phone}`;
+      // Always verify using the exact same E.164 number
+      // that was used when requesting the OTP.
+      const normalizedPhoneNumber = getInternationalPhone(
+        country,
+        phone
+      );
 
       const response = await fetch(
         `${API_URL}/api/auth/verify-signup-phone-otp`,
@@ -613,7 +577,7 @@ export default function CustomerSignupPage() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            phone: phoneNumber,
+            phone: normalizedPhoneNumber,
             otp: cleanOtp,
           }),
         }
@@ -1136,6 +1100,8 @@ export default function CustomerSignupPage() {
                     const maxDigits =
                       PHONE_COUNTRIES[country].digits;
 
+                    // The country code is already selected separately.
+                    // Store only the national number in phone state.
                     const digits = event.target.value
                       .replace(/\D/g, "")
                       .slice(0, maxDigits);
@@ -1365,9 +1331,10 @@ export default function CustomerSignupPage() {
                 </label>
 
                 <input
+                  key={`otp-input-${step}`}
                   type="text"
                   inputMode="numeric"
-                  autoComplete="one-time-code"
+                  autoComplete="new-password"
                   maxLength={6}
                   value={otp}
                   onChange={(event) =>
@@ -1420,92 +1387,47 @@ export default function CustomerSignupPage() {
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
-                    gap: "10px",
-                    padding: "9px 12px",
-                    borderRadius: "12px",
-                    background: "#FAFAFB",
-                    border: "1px solid #E5E7EB",
-                    boxShadow:
-                      "0 2px 8px rgba(17, 19, 24, 0.035)",
+                    gap: "5px",
+                    color: "#6B7280",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    lineHeight: 1.3,
                   }}
                 >
-                  <div
+                  <span style={{ color: "#4F565E" }}>
+                    Didn't get the code?
+                  </span>
+
+                  <span
                     style={{
-                      width: "28px",
-                      height: "28px",
-                      borderRadius: "50%",
-                      background: "#F1F3F5",
-                      border: "1px solid #DEE2E6",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "#111318",
-                      fontSize: "10px",
-                      fontWeight: 850,
+                      color: "#2563EB",
+                      fontWeight: 700,
                       fontVariantNumeric: "tabular-nums",
                     }}
                   >
-                    {String(otpResendSeconds).padStart(2, "0")}
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "1px",
-                    }}
-                  >
-                    <span
-                      style={{
-                        color: "#4F565E",
-                        fontSize: "11px",
-                        fontWeight: 700,
-                      }}
-                    >
-                      Resend code
-                    </span>
-
-                    <span
-                      style={{
-                        color: "#9AA0A6",
-                        fontSize: "10px",
-                        fontWeight: 500,
-                      }}
-                    >
-                      Available in {otpResendSeconds}s
-                    </span>
-                  </div>
+                    Available in {otpResendSeconds}s
+                  </span>
                 </div>
               ) : (
                 <button
                   type="button"
-                  onClick={sendPhoneOtp}
+                  className="mv-resend-plain"
+                  onClick={() =>
+                    sendPhoneOtp(
+                      `${PHONE_COUNTRIES[country].code}${phone.replace(/\D/g, "")}`
+                    )
+                  }
                   disabled={otpSending}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "7px",
-                    border: "1px solid #D7E1FF",
-                    background:
-                      "linear-gradient(135deg, #F8FAFF 0%, #F2F6FF 100%)",
-                    color: "#2563EB",
-                    borderRadius: "11px",
-                    padding: "10px 15px",
-                    fontSize: "12px",
-                    fontWeight: 800,
-                    boxShadow:
-                      "0 2px 8px rgba(37, 99, 235, 0.06)",
-                    cursor: otpSending
-                      ? "not-allowed"
-                      : "pointer",
-                    opacity: otpSending ? 0.65 : 1,
-                  }}
                 >
                   <span
                     style={{
-                      fontSize: "14px",
+                      fontSize: "17px",
                       lineHeight: 1,
+                      fontWeight: 800,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      marginRight: "9px",
+                      transform: "translateY(-0.5px)",
                     }}
                   >
                     ↻

@@ -6416,3 +6416,89 @@ body {
   color: #A0A6AE;
   opacity: 1;
 }
+
+
+/* ===== METROVYBE RESEND CODE FINAL ===== */
+
+.mv-resend-code {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 5px 8px !important;
+  margin: 0 !important;
+  color: #2563eb !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 1.4 !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  transition:
+    color .18s ease,
+    background-color .18s ease,
+    transform .18s ease !important;
+}
+
+.mv-resend-code:hover {
+  color: #1d4ed8 !important;
+  background: rgba(37, 99, 235, .08) !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+}
+
+.mv-resend-code:active {
+  transform: scale(.97) !important;
+}
+
+.mv-resend-code:focus-visible {
+  outline: 2px solid rgba(37, 99, 235, .35) !important;
+  outline-offset: 3px !important;
+}
+
+.mv-resend-code:disabled {
+  color: #9ca3af !important;
+  background: transparent !important;
+  cursor: not-allowed !important;
+  opacity: .7 !important;
+  transform: none !important;
+}
+
+
+/* METROVYBE PLAIN RESEND OVERRIDE */
+.mv-resend-plain,
+.mv-resend-plain:hover,
+.mv-resend-plain:active,
+.mv-resend-plain:focus,
+.mv-resend-plain:focus-visible {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  border-width: 0 !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  outline-offset: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  width: auto !important;
+  color: #2563eb !important;
+  cursor: pointer !important;
+  transform: none !important;
+}
+
+
+/* METROVYBE RESEND ARROW POLISH */
+.mv-resend-plain {
+  gap: 8px !important;
+}
+
+.mv-resend-plain svg {
+  width: 16px !important;
+  height: 16px !important;
+  flex-shrink: 0 !important;
+}
