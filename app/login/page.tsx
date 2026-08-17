@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Building2, Eye, EyeOff, UserRound, ArrowLeft } from "lucide-react";
+import { Building2, Eye, EyeOff, UserRound, ArrowLeft, Mail, MessageCircle } from "lucide-react";
 
 import {
   login,
@@ -667,11 +667,12 @@ export default function LoginPage() {
               style={{
                 display: "grid",
                 gridTemplateColumns: "1fr 1fr",
-                gap: "8px",
+                gap: "6px",
                 marginBottom: "18px",
                 padding: "4px",
-                borderRadius: "12px",
-                background: "#F2F4F6",
+                borderRadius: "14px",
+                background: "#F6F7F9",
+                border: "1px solid #E7EAF0",
               }}
             >
               <button
@@ -683,23 +684,35 @@ export default function LoginPage() {
                   setError("");
                 }}
                 style={{
-                  height: "38px",
-                  border: "none",
-                  borderRadius: "9px",
+                  height: "42px",
+                  border: loginMethod === "password"
+                    ? "1px solid #D7E5FF"
+                    : "1px solid transparent",
+                  borderRadius: "11px",
                   background:
-                    loginMethod === "password" ? "#fff" : "transparent",
+                    loginMethod === "password"
+                      ? "#EFF6FF"
+                      : "transparent",
                   color:
-                    loginMethod === "password" ? "#111318" : "#747A82",
+                    loginMethod === "password" ? "#2563EB" : "#747A82",
                   fontSize: "12px",
                   fontWeight: 750,
                   cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "7px",
                   boxShadow:
                     loginMethod === "password"
                       ? "0 2px 7px rgba(37,99,235,.10)"
                       : "none",
                 }}
               >
-                Email & Password
+                <Mail
+                  size={16}
+                  strokeWidth={2.2}
+                />
+                <span>Email & Password</span>
               </button>
 
               <button
@@ -709,23 +722,35 @@ export default function LoginPage() {
                   setError("");
                 }}
                 style={{
-                  height: "38px",
-                  border: "none",
-                  borderRadius: "9px",
+                  height: "42px",
+                  border: loginMethod === "whatsapp"
+                    ? "1px solid #D4F3DF"
+                    : "1px solid transparent",
+                  borderRadius: "11px",
                   background:
-                    loginMethod === "whatsapp" ? "#fff" : "transparent",
+                    loginMethod === "whatsapp"
+                      ? "#F0FDF4"
+                      : "transparent",
                   color:
-                    loginMethod === "whatsapp" ? "#111318" : "#747A82",
+                    loginMethod === "whatsapp" ? "#16A34A" : "#747A82",
                   fontSize: "12px",
                   fontWeight: 750,
                   cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "7px",
                   boxShadow:
                     loginMethod === "whatsapp"
                       ? "0 2px 7px rgba(22,163,74,.10)"
                       : "none",
                 }}
               >
-                WhatsApp OTP
+                <MessageCircle
+                  size={16}
+                  strokeWidth={2.2}
+                />
+                <span>WhatsApp OTP</span>
               </button>
             </div>
 
