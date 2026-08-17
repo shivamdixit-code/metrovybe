@@ -6574,8 +6574,12 @@ body {
   position: relative !important;
   width: min(410px, calc(100vw - 28px)) !important;
   max-width: 410px !important;
+  min-height: 72vh !important;
   margin: 0 !important;
   box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
 }
 
 @supports (-webkit-touch-callout: none) {
