@@ -6502,3 +6502,56 @@ body {
   height: 16px !important;
   flex-shrink: 0 !important;
 }
+
+/* MetroVybe iPhone viewport stability */
+
+/* Safe global rules: prevent accidental horizontal overflow everywhere. */
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Login-only layout: keep the page visually stable when iOS Safari
+   opens the software keyboard. Other pages are not affected. */
+.mv-login-page {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100dvh;
+  height: 100dvh;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.mv-login-page *,
+.mv-login-page *::before,
+.mv-login-page *::after {
+  box-sizing: border-box;
+}
+
+.mv-login-page .public-login-card {
+  max-width: min(560px, calc(100vw - 32px));
+  width: 100%;
+}
+
+/* iOS Safari */
+@supports (-webkit-touch-callout: none) {
+  .mv-login-page {
+    min-height: 100svh;
+    height: 100svh;
+    overflow: hidden;
+  }
+
+  .mv-login-page .public-login-card {
+    max-width: calc(100vw - 32px);
+  }
+
+  .mv-login-page input,
+  .mv-login-page textarea,
+  .mv-login-page select {
+    font-size: 16px;
+  }
+}
+

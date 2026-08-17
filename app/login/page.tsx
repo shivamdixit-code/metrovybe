@@ -55,7 +55,7 @@ export default function LoginPage() {
 
   return (
     <main
-      className="public-login-page"
+      className="public-login-page mv-login-page"
       style={{
         minHeight: "100dvh",
         display: "flex",
