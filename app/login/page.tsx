@@ -126,8 +126,10 @@ export default function LoginPage() {
     if (token && resetEmail) {
       setResetToken(token);
       setEmail(resetEmail);
+      setForgotEmail(resetEmail);
       setResetMode(true);
       setForgotMode(true);
+      setSelectedRole("customer");
       setLoginMethod("password");
       setError("");
       setForgotMessage("");
