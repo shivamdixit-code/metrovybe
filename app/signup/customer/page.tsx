@@ -363,11 +363,10 @@ export default function CustomerSignupPage() {
     setOtp("");
     setOtpResendSeconds(60);
 
-    try {
-      await sendPhoneOtp(phoneNumber);
-    } catch (error) {
+    // Send OTP in the background so Continue never waits for WhatsApp.
+    void sendPhoneOtp(phoneNumber).catch((error) => {
       console.error("PHONE OTP SUBMIT ERROR:", error);
-    }
+    });
   }
 
   async function createAccount(event: FormEvent<HTMLFormElement>) {
