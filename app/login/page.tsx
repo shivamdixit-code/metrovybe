@@ -5,7 +5,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Building2, Eye, EyeOff, UserRound, ArrowLeft } from "lucide-react";
 
-import { login } from "@/lib/auth";
+import {
+  login,
+  sendLoginPhoneOtp,
+  verifyLoginPhoneOtp,
+  forgotPassword,
+  resetPassword,
+} from "@/lib/auth";
 
 type Role = "customer" | "business";
 
@@ -16,8 +22,26 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loginMethod, setLoginMethod] = useState<"password" | "whatsapp">(
+    "whatsapp"
+  );
+  const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [resendCountdown, setResendCountdown] = useState(0);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [forgotMode, setForgotMode] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotSent, setForgotSent] = useState(false);
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [resetMode, setResetMode] = useState(false);
+  const [resetToken, setResetToken] = useState("");
+  const [resetPasswordValue, setResetPasswordValue] = useState("");
+  const [confirmResetPassword, setConfirmResetPassword] = useState("");
+
+  const [forgotMessage, setForgotMessage] = useState("");
 
   useEffect(() => {
     const body = document.body;
@@ -77,6 +101,116 @@ export default function LoginPage() {
     };
   }, []);
 
+  useEffect(() => {
+    if (resendCountdown <= 0) return;
+
+    const timer = window.setInterval(() => {
+      setResendCountdown((value) => {
+        if (value <= 1) {
+          window.clearInterval(timer);
+          return 0;
+        }
+
+        return value - 1;
+      });
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [resendCountdown]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("resetToken");
+    const resetEmail = params.get("email");
+
+    if (token && resetEmail) {
+      setResetToken(token);
+      setEmail(resetEmail);
+      setResetMode(true);
+      setForgotMode(true);
+      setLoginMethod("password");
+      setError("");
+      setForgotMessage("");
+    }
+  }, []);
+
+  async function handleForgotPassword() {
+    if (!email.trim()) {
+      setError("Please enter your email address.");
+      return;
+    }
+
+    setError("");
+    setForgotMessage("");
+    setForgotLoading(true);
+
+    try {
+      await forgotPassword(email.trim());
+
+      setForgotMessage(
+        "If an account exists with this email, a password reset link has been sent."
+      );
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Unable to send password reset email."
+      );
+    } finally {
+      setForgotLoading(false);
+    }
+  }
+
+  async function handleResetPassword() {
+    if (!resetPasswordValue) {
+      setError("Please enter a new password.");
+      return;
+    }
+
+    if (resetPasswordValue.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+
+    if (resetPasswordValue !== confirmResetPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    setError("");
+    setForgotMessage("");
+    setForgotLoading(true);
+
+    try {
+      await resetPassword(
+        email.trim(),
+        resetToken,
+        resetPasswordValue
+      );
+
+      setForgotMessage(
+        "Password reset successfully. You can now log in."
+      );
+
+      setResetMode(false);
+      setForgotMode(false);
+      setResetToken("");
+      setResetPasswordValue("");
+      setConfirmResetPassword("");
+      setPassword("");
+
+      window.history.replaceState({}, "", "/login");
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Unable to reset password."
+      );
+    } finally {
+      setForgotLoading(false);
+    }
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -86,6 +220,73 @@ export default function LoginPage() {
     }
 
     setError("");
+
+    if (loginMethod === "whatsapp") {
+      if (!phone.trim()) {
+        setError("Please enter your WhatsApp number.");
+        return;
+      }
+
+      if (otpSent) {
+        if (!otp.trim()) {
+          setError("Please enter the OTP.");
+          return;
+        }
+
+        setLoading(true);
+
+        try {
+          const result = await verifyLoginPhoneOtp(
+            phone.trim(),
+            otp.trim(),
+            selectedRole
+          );
+
+          if (result.user.role === "business") {
+            router.push("/business/dashboard");
+          } else {
+            router.push("/profile");
+          }
+        } catch (error) {
+          setError(
+            error instanceof Error ? error.message : "OTP verification failed"
+          );
+        } finally {
+          setLoading(false);
+        }
+
+        return;
+      }
+
+      if (resendCountdown > 0) {
+        return;
+      }
+
+      setOtpLoading(true);
+
+      try {
+        await sendLoginPhoneOtp(phone.trim(), selectedRole);
+        setOtpSent(true);
+        setOtp("");
+        setResendCountdown(60);
+      } catch (error) {
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Unable to send WhatsApp OTP"
+        );
+      } finally {
+        setOtpLoading(false);
+      }
+
+      return;
+    }
+
+    if (!email.trim() || !password) {
+      setError("Please enter your email and password.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -457,126 +658,616 @@ export default function LoginPage() {
               </span>
             </div>
 
-            <label
-              style={{
-                display: "block",
-                color: "#252A31",
-                fontSize: "13px",
-                fontWeight: 700,
-                marginBottom: "7px",
-              }}
-            >
-              Email
-            </label>
-
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="you@example.com"
-              autoComplete="email"
-              required
-              style={{
-                width: "100%",
-                height: "46px",
-                padding: "0 13px",
-                border: "1px solid #DDE2E9",
-                borderRadius: "11px",
-                marginBottom: "15px",
-                fontSize: "14px",
-                boxSizing: "border-box",
-                outline: "none",
-                color: "#15181D",
-                background: "#fff",
-              }}
-            />
-
-            <label
-              style={{
-                display: "block",
-                color: "#252A31",
-                fontSize: "13px",
-                fontWeight: 700,
-                marginBottom: "7px",
-              }}
-            >
-              Password
-            </label>
-
             <div
               style={{
-                position: "relative",
-                width: "100%",
-                marginBottom: "17px",
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "8px",
+                marginBottom: "18px",
+                padding: "4px",
+                borderRadius: "12px",
+                background: "#F2F4F6",
               }}
             >
-              <input
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder="Enter your password"
-                autoComplete="current-password"
-                required
-                style={{
-                  width: "100%",
-                  height: "46px",
-                  padding: "0 45px 0 13px",
-                  border: "1px solid #DDE2E9",
-                  borderRadius: "11px",
-                  fontSize: "14px",
-                  boxSizing: "border-box",
-                  outline: "none",
-                  color: "#15181D",
-                  background: "#fff",
+              <button
+                type="button"
+                onClick={() => {
+                  setLoginMethod("password");
+                  setOtpSent(false);
+                  setOtp("");
+                  setError("");
                 }}
-              />
+                style={{
+                  height: "38px",
+                  border: "none",
+                  borderRadius: "9px",
+                  background:
+                    loginMethod === "password" ? "#fff" : "transparent",
+                  color:
+                    loginMethod === "password" ? "#111318" : "#747A82",
+                  fontSize: "12px",
+                  fontWeight: 750,
+                  cursor: "pointer",
+                  boxShadow:
+                    loginMethod === "password"
+                      ? "0 2px 7px rgba(0,0,0,.08)"
+                      : "none",
+                }}
+              >
+                Email & Password
+              </button>
 
               <button
                 type="button"
-                onClick={() => setShowPassword((value) => !value)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
+                onClick={() => {
+                  setLoginMethod("whatsapp");
+                  setError("");
+                }}
                 style={{
-                  position: "absolute",
-                  top: 0,
-                  right: "4px",
-                  width: "40px",
-                  height: "46px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  border: 0,
-                  background: "transparent",
-                  color: "#777F88",
+                  height: "38px",
+                  border: "none",
+                  borderRadius: "9px",
+                  background:
+                    loginMethod === "whatsapp" ? "#fff" : "transparent",
+                  color:
+                    loginMethod === "whatsapp" ? "#111318" : "#747A82",
+                  fontSize: "12px",
+                  fontWeight: 750,
                   cursor: "pointer",
+                  boxShadow:
+                    loginMethod === "whatsapp"
+                      ? "0 2px 7px rgba(0,0,0,.08)"
+                      : "none",
                 }}
               >
-                {showPassword ? (
-                  <EyeOff size={18} strokeWidth={2} />
-                ) : (
-                  <Eye size={18} strokeWidth={2} />
-                )}
+                WhatsApp OTP
               </button>
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                width: "100%",
-                height: "46px",
-                border: "none",
-                borderRadius: "11px",
-                background: "linear-gradient(135deg, #111318 0%, #18201E 100%)",
-                color: "#fff",
-                fontSize: "14px",
-                fontWeight: 750,
-                cursor: loading ? "not-allowed" : "pointer",
-                opacity: loading ? 0.7 : 1,
-                boxShadow: "0 7px 18px rgba(17,19,24,.14)",
-              }}
-            >
-              {loading ? "Logging in..." : "Log in"}
-            </button>
+            {forgotMode ? (
+              <>
+                <h2
+                  style={{
+                    fontSize: "22px",
+                    fontWeight: 800,
+                    color: "#111318",
+                    margin: "0 0 7px",
+                  }}
+                >
+                  {resetMode ? "Reset password" : "Forgot password?"}
+                </h2>
+
+                <p
+                  style={{
+                    color: "#747A82",
+                    fontSize: "13px",
+                    lineHeight: 1.5,
+                    margin: "0 0 20px",
+                  }}
+                >
+                  {resetMode
+                    ? "Create a new password for your account."
+                    : "Enter your email and we'll send you a password reset link."}
+                </p>
+
+                {!resetMode ? (
+                  <>
+                    <label
+                      style={{
+                        display: "block",
+                        color: "#252A31",
+                        fontSize: "13px",
+                        fontWeight: 700,
+                        marginBottom: "7px",
+                      }}
+                    >
+                      Email
+                    </label>
+
+                    <input
+                      type="email"
+                      value={forgotEmail}
+                      onChange={(event) => {
+                        setForgotEmail(event.target.value);
+                        setEmail(event.target.value);
+                      }}
+                      placeholder="you@example.com"
+                      autoComplete="email"
+                      required
+                      style={{
+                        width: "100%",
+                        height: "46px",
+                        padding: "0 13px",
+                        border: "1px solid #DDE2E9",
+                        borderRadius: "11px",
+                        marginBottom: "15px",
+                        fontSize: "14px",
+                        boxSizing: "border-box",
+                        outline: "none",
+                        color: "#15181D",
+                        background: "#fff",
+                      }}
+                    />
+
+                    {forgotMessage && (
+                      <div
+                        style={{
+                          marginBottom: "14px",
+                          padding: "11px 12px",
+                          borderRadius: "9px",
+                          background: "#F0FDF4",
+                          color: "#166534",
+                          fontSize: "12px",
+                          lineHeight: 1.45,
+                        }}
+                      >
+                        {forgotMessage}
+                      </div>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={handleForgotPassword}
+                      disabled={forgotLoading}
+                      style={{
+                        width: "100%",
+                        height: "46px",
+                        border: "none",
+                        borderRadius: "11px",
+                        background:
+                          "linear-gradient(135deg, #111318 0%, #18201E 100%)",
+                        color: "#fff",
+                        fontSize: "14px",
+                        fontWeight: 750,
+                        cursor: forgotLoading ? "not-allowed" : "pointer",
+                        opacity: forgotLoading ? 0.7 : 1,
+                      }}
+                    >
+                      {forgotLoading ? "Sending..." : "Send reset link"}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <label
+                      style={{
+                        display: "block",
+                        color: "#252A31",
+                        fontSize: "13px",
+                        fontWeight: 700,
+                        marginBottom: "7px",
+                      }}
+                    >
+                      New password
+                    </label>
+
+                    <input
+                      type="password"
+                      value={resetPasswordValue}
+                      onChange={(event) =>
+                        setResetPasswordValue(event.target.value)
+                      }
+                      placeholder="Enter new password"
+                      autoComplete="new-password"
+                      required
+                      style={{
+                        width: "100%",
+                        height: "46px",
+                        padding: "0 13px",
+                        border: "1px solid #DDE2E9",
+                        borderRadius: "11px",
+                        marginBottom: "15px",
+                        fontSize: "14px",
+                        boxSizing: "border-box",
+                        outline: "none",
+                        color: "#15181D",
+                        background: "#fff",
+                      }}
+                    />
+
+                    <label
+                      style={{
+                        display: "block",
+                        color: "#252A31",
+                        fontSize: "13px",
+                        fontWeight: 700,
+                        marginBottom: "7px",
+                      }}
+                    >
+                      Confirm password
+                    </label>
+
+                    <input
+                      type="password"
+                      value={confirmResetPassword}
+                      onChange={(event) =>
+                        setConfirmResetPassword(event.target.value)
+                      }
+                      placeholder="Confirm new password"
+                      autoComplete="new-password"
+                      required
+                      style={{
+                        width: "100%",
+                        height: "46px",
+                        padding: "0 13px",
+                        border: "1px solid #DDE2E9",
+                        borderRadius: "11px",
+                        marginBottom: "15px",
+                        fontSize: "14px",
+                        boxSizing: "border-box",
+                        outline: "none",
+                        color: "#15181D",
+                        background: "#fff",
+                      }}
+                    />
+
+                    <button
+                      type="button"
+                      onClick={handleResetPassword}
+                      disabled={forgotLoading}
+                      style={{
+                        width: "100%",
+                        height: "46px",
+                        border: "none",
+                        borderRadius: "11px",
+                        background:
+                          "linear-gradient(135deg, #111318 0%, #18201E 100%)",
+                        color: "#fff",
+                        fontSize: "14px",
+                        fontWeight: 750,
+                        cursor: forgotLoading ? "not-allowed" : "pointer",
+                        opacity: forgotLoading ? 0.7 : 1,
+                      }}
+                    >
+                      {forgotLoading ? "Resetting..." : "Reset password"}
+                    </button>
+                  </>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setForgotMode(false);
+                    setResetMode(false);
+                    setError("");
+                    setForgotMessage("");
+                  }}
+                  style={{
+                    width: "100%",
+                    height: "42px",
+                    marginTop: "10px",
+                    border: "none",
+                    background: "transparent",
+                    color: "#2563EB",
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                  }}
+                >
+                  Back to login
+                </button>
+              </>
+            ) : loginMethod === "password" ? (
+              <>
+                <label
+                  style={{
+                    display: "block",
+                    color: "#252A31",
+                    fontSize: "13px",
+                    fontWeight: 700,
+                    marginBottom: "7px",
+                  }}
+                >
+                  Email
+                </label>
+
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  required
+                  style={{
+                    width: "100%",
+                    height: "46px",
+                    padding: "0 13px",
+                    border: "1px solid #DDE2E9",
+                    borderRadius: "11px",
+                    marginBottom: "15px",
+                    fontSize: "14px",
+                    boxSizing: "border-box",
+                    outline: "none",
+                    color: "#15181D",
+                    background: "#fff",
+                  }}
+                />
+
+                <label
+                  style={{
+                    display: "block",
+                    color: "#252A31",
+                    fontSize: "13px",
+                    fontWeight: 700,
+                    marginBottom: "7px",
+                  }}
+                >
+                  Password
+                </label>
+
+                <div
+                  style={{
+                    position: "relative",
+                    width: "100%",
+                    marginBottom: "17px",
+                  }}
+                >
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    placeholder="Enter your password"
+                    autoComplete="current-password"
+                    required
+                    style={{
+                      width: "100%",
+                      height: "46px",
+                      padding: "0 45px 0 13px",
+                      border: "1px solid #DDE2E9",
+                      borderRadius: "11px",
+                      fontSize: "14px",
+                      boxSizing: "border-box",
+                      outline: "none",
+                      color: "#15181D",
+                      background: "#fff",
+                    }}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((value) => !value)}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      right: "4px",
+                      width: "40px",
+                      height: "46px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      border: 0,
+                      background: "transparent",
+                      color: "#777F88",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {showPassword ? (
+                      <EyeOff size={18} strokeWidth={2} />
+                    ) : (
+                      <Eye size={18} strokeWidth={2} />
+                    )}
+                  </button>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    marginTop: "-7px",
+                    marginBottom: "16px",
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setForgotMode(true);
+                      setForgotEmail(email);
+                      setError("");
+                      setForgotSent(false);
+                    }}
+                    style={{
+                      border: "none",
+                      background: "transparent",
+                      padding: 0,
+                      color: "#2563EB",
+                      fontSize: "12px",
+                      fontWeight: 700,
+                      cursor: "pointer",
+                    }}
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  style={{
+                    width: "100%",
+                    height: "46px",
+                    border: "none",
+                    borderRadius: "11px",
+                    background:
+                      "linear-gradient(135deg, #111318 0%, #18201E 100%)",
+                    color: "#fff",
+                    fontSize: "14px",
+                    fontWeight: 750,
+                    cursor: loading ? "not-allowed" : "pointer",
+                    opacity: loading ? 0.7 : 1,
+                    boxShadow: "0 7px 18px rgba(17,19,24,.14)",
+                  }}
+                >
+                  {loading ? "Logging in..." : "Log in"}
+                </button>
+              </>
+            ) : (
+              <>
+                <label
+                  style={{
+                    display: "block",
+                    color: "#252A31",
+                    fontSize: "13px",
+                    fontWeight: 700,
+                    marginBottom: "7px",
+                  }}
+                >
+                  WhatsApp Number
+                </label>
+
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(event) => setPhone(event.target.value)}
+                  placeholder="+91 9876543210"
+                  autoComplete="tel"
+                  disabled={otpSent}
+                  required
+                  style={{
+                    width: "100%",
+                    height: "46px",
+                    padding: "0 13px",
+                    border: "1px solid #DDE2E9",
+                    borderRadius: "11px",
+                    marginBottom: "15px",
+                    fontSize: "14px",
+                    boxSizing: "border-box",
+                    outline: "none",
+                    color: "#15181D",
+                    background: otpSent ? "#F5F6F7" : "#fff",
+                  }}
+                />
+
+                {otpSent && (
+                  <>
+                    <label
+                      style={{
+                        display: "block",
+                        color: "#252A31",
+                        fontSize: "13px",
+                        fontWeight: 700,
+                        marginBottom: "7px",
+                      }}
+                    >
+                      WhatsApp OTP
+                    </label>
+
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={otp}
+                      onChange={(event) =>
+                        setOtp(
+                          event.target.value
+                            .replace(/\D/g, "")
+                            .slice(0, 6)
+                        )
+                      }
+                      placeholder="Enter 6-digit OTP"
+                      autoComplete="one-time-code"
+                      maxLength={6}
+                      required
+                      style={{
+                        width: "100%",
+                        height: "46px",
+                        padding: "0 13px",
+                        border: "1px solid #DDE2E9",
+                        borderRadius: "11px",
+                        marginBottom: "17px",
+                        fontSize: "18px",
+                        letterSpacing: "4px",
+                        textAlign: "center",
+                        boxSizing: "border-box",
+                        outline: "none",
+                        color: "#15181D",
+                        background: "#fff",
+                      }}
+                    />
+                  </>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={otpLoading || loading}
+                  style={{
+                    width: "100%",
+                    height: "46px",
+                    border: "none",
+                    borderRadius: "11px",
+                    background:
+                      "linear-gradient(135deg, #111318 0%, #18201E 100%)",
+                    color: "#fff",
+                    fontSize: "14px",
+                    fontWeight: 750,
+                    cursor:
+                      otpLoading || loading ? "not-allowed" : "pointer",
+                    opacity: otpLoading || loading ? 0.7 : 1,
+                    boxShadow: "0 7px 18px rgba(17,19,24,.14)",
+                  }}
+                >
+                  {otpLoading
+                    ? "Sending OTP..."
+                    : loading
+                    ? "Verifying..."
+                    : otpSent
+                    ? "Verify & Log in"
+                    : "Send WhatsApp OTP"}
+                </button>
+
+                {otpSent && (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      marginTop: "12px",
+                    }}
+                  >
+                    <button
+                      type="button"
+                      disabled={resendCountdown > 0 || otpLoading}
+                      onClick={async () => {
+                        if (!selectedRole || resendCountdown > 0) return;
+
+                        setError("");
+                        setOtpLoading(true);
+
+                        try {
+                          await sendLoginPhoneOtp(
+                            phone.trim(),
+                            selectedRole
+                          );
+                          setOtp("");
+                          setResendCountdown(60);
+                        } catch (error) {
+                          setError(
+                            error instanceof Error
+                              ? error.message
+                              : "Unable to resend OTP"
+                          );
+                        } finally {
+                          setOtpLoading(false);
+                        }
+                      }}
+                      style={{
+                        border: "none",
+                        background: "transparent",
+                        color:
+                          resendCountdown > 0 ? "#9AA0A8" : "#2563EB",
+                        fontSize: "12px",
+                        fontWeight: 750,
+                        cursor:
+                          resendCountdown > 0 ? "not-allowed" : "pointer",
+                      }}
+                    >
+                      {resendCountdown > 0
+                        ? `Resend OTP in ${resendCountdown}s`
+                        : "Resend OTP"}
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
           </form>
         )}
 

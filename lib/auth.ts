@@ -53,6 +53,78 @@ export async function login(
   return data;
 }
 
+
+export async function sendLoginPhoneOtp(
+  phone: string,
+  selectedRole: "customer" | "business"
+): Promise<{ message: string; sent: boolean }> {
+  const response = await fetch(
+    `${API_URL}/api/auth/send-login-phone-otp`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        phone,
+        selectedRole,
+      }),
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Unable to send WhatsApp OTP");
+  }
+
+  return data;
+}
+
+export async function verifyLoginPhoneOtp(
+  phone: string,
+  otp: string,
+  selectedRole: "customer" | "business"
+): Promise<LoginResponse> {
+  const response = await fetch(
+    `${API_URL}/api/auth/verify-login-phone-otp`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        phone,
+        otp,
+        selectedRole,
+      }),
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Invalid WhatsApp OTP");
+  }
+
+  localStorage.setItem("metrovybe_token", data.token);
+  localStorage.setItem(
+    "metrovybe_user",
+    JSON.stringify(data.user)
+  );
+
+  if (data.business) {
+    localStorage.setItem(
+      "metrovybe_business",
+      JSON.stringify(data.business)
+    );
+  } else {
+    localStorage.removeItem("metrovybe_business");
+  }
+
+  return data;
+}
+
 export function getToken(): string | null {
   if (typeof window === "undefined") {
     return null;
@@ -108,3 +180,55 @@ export async function authenticatedFetch(
 }
 
 
+
+export async function forgotPassword(email: string) {
+  const response = await fetch(
+    `${API_URL}/api/auth/forgot-password`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+      }),
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Unable to send password reset email");
+  }
+
+  return data;
+}
+
+export async function resetPassword(
+  email: string,
+  token: string,
+  password: string
+) {
+  const response = await fetch(
+    `${API_URL}/api/auth/reset-password`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        token,
+        password,
+      }),
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Unable to reset password");
+  }
+
+  return data;
+}
