@@ -139,8 +139,7 @@ export default function LoginPage() {
             color: "#111318",
             display: "block",
             marginBottom: "25px",
-            position: "relative",
-            top: "-45px",
+            transform: "translateY(-25px)",
           }}
         >
           <div
