@@ -368,6 +368,80 @@ export default function CustomerSignupPage() {
     });
   }
 
+  function continueFromStepFour(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+
+    if (latitude === null || longitude === null) {
+      setError(
+        "Please allow precise location access to continue."
+      );
+      return;
+    }
+
+    // Clear any previous step-specific error before opening
+    // the password screen.
+    // Step 5 must never inherit an error from the email/phone
+    // or location steps.
+    setError("");
+    setSuccess("");
+    setStep(5);
+  }
+
+  function requestPreciseLocation() {
+    setError("");
+    setLocationAccuracy(null);
+    setLocationLabel("");
+    setLocationLoading(true);
+
+    if (!navigator.geolocation) {
+      setLocationLoading(false);
+      setError("Location services are not supported by this browser.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const accuracy = position.coords.accuracy;
+
+        if (!Number.isFinite(accuracy) || accuracy > 100) {
+          setLatitude(null);
+          setLongitude(null);
+          setLocationAccuracy(null);
+          setLocationLabel("");
+          setLocationLoading(false);
+
+          setError(
+            `Location accuracy is too low (${Math.round(
+              accuracy
+            )} m). Please move near a window or outdoors and try again.`
+          );
+          return;
+        }
+
+        setLatitude(position.coords.latitude);
+        setLongitude(position.coords.longitude);
+        setLocationAccuracy(accuracy);
+        setLocationLabel("Location captured");
+        setLocationLoading(false);
+        setError("");
+      },
+      (error) => {
+        setLocationLoading(false);
+        setError(
+          error.code === error.PERMISSION_DENIED
+            ? "Location permission was denied. Please allow location access and try again."
+            : "We couldn't access your location. Please try again."
+        );
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0,
+      }
+    );
+  }
+
   async function createAccount(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
