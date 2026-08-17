@@ -662,6 +662,7 @@ export default function LoginPage() {
               </span>
             </div>
 
+            {!forgotMode && (
             <div
               style={{
                 display: "grid",
@@ -694,7 +695,7 @@ export default function LoginPage() {
                   cursor: "pointer",
                   boxShadow:
                     loginMethod === "password"
-                      ? "0 2px 7px rgba(0,0,0,.08)"
+                      ? "0 2px 7px rgba(37,99,235,.10)"
                       : "none",
                 }}
               >
@@ -720,13 +721,15 @@ export default function LoginPage() {
                   cursor: "pointer",
                   boxShadow:
                     loginMethod === "whatsapp"
-                      ? "0 2px 7px rgba(0,0,0,.08)"
+                      ? "0 2px 7px rgba(22,163,74,.10)"
                       : "none",
                 }}
               >
                 WhatsApp OTP
               </button>
             </div>
+
+            )}
 
             {forgotMode ? (
               <>
@@ -798,10 +801,12 @@ export default function LoginPage() {
                         style={{
                           marginBottom: "14px",
                           padding: "11px 12px",
-                          borderRadius: "9px",
+                          borderRadius: "11px",
                           background: "#F0FDF4",
                           color: "#166534",
+                          border: "1px solid #BBF7D0",
                           fontSize: "12px",
+                          fontWeight: 600,
                           lineHeight: 1.45,
                         }}
                       >
