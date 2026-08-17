@@ -343,6 +343,7 @@ export default function CustomerSignupPage() {
   }
 
   async function continueFromStepThree(event: FormEvent<HTMLFormElement>) {
+    console.log("STEP 3 CONTINUE CLICK", performance.now());
     event.preventDefault();
 
     if (otpSending) return;
