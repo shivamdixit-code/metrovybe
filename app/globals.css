@@ -6572,7 +6572,7 @@ body {
 
 .mv-login-page .public-login-card {
   position: absolute !important;
-  top: 45% !important;
+  top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
   width: min(410px, calc(100vw - 28px)) !important;
