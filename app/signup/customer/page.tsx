@@ -1163,6 +1163,8 @@ export default function CustomerSignupPage() {
                 style={{
                   display: "flex",
                   alignItems: "center",
+                  maxWidth: "100%",
+                  minWidth: 0,
                   ...inputStyle,
                   padding: 0,
                   overflow: "hidden",
@@ -1228,13 +1230,16 @@ export default function CustomerSignupPage() {
                   }
                   required
                   style={{
-                    flex: 1,
+                    flex: "1 1 0%",
+                    width: "0",
                     minWidth: 0,
+                    maxWidth: "100%",
+                    boxSizing: "border-box",
                     border: "none",
                     outline: "none",
                     background: "transparent",
                     padding: "13px 12px",
-                    fontSize: "14px",
+                    fontSize: "16px",
                     color: "#111318",
                   }}
                 />
