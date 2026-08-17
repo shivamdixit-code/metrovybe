@@ -6571,11 +6571,14 @@ body {
 }
 
 .mv-login-page .public-login-card {
-  position: relative !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
   width: min(410px, calc(100vw - 28px)) !important;
   max-width: 410px !important;
   min-height: 72vh !important;
-  margin: auto !important;
+  margin: 0 !important;
   box-sizing: border-box !important;
   display: flex !important;
   flex-direction: column !important;
