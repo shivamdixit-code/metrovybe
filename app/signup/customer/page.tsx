@@ -133,6 +133,9 @@ export default function CustomerSignupPage() {
   const [otpSending, setOtpSending] = useState(false);
   const [otpVerifying, setOtpVerifying] = useState(false);
   const [otpResendSeconds, setOtpResendSeconds] = useState(0);
+  const [emailVerificationRequired, setEmailVerificationRequired] =
+    useState(false);
+  const [createdAccountEmail, setCreatedAccountEmail] = useState("");
 
   // Force-clear any browser-restored OTP whenever the OTP screen opens.
   useEffect(() => {
@@ -476,14 +479,10 @@ export default function CustomerSignupPage() {
         throw new Error(data.message || "Registration failed");
       }
 
-      localStorage.setItem("metrovybe_token", data.token);
-      localStorage.setItem(
-        "metrovybe_user",
-        JSON.stringify(data.user)
-      );
-
-      setSuccess("Account created successfully!");
-      router.push("/profile");
+      setCreatedAccountEmail(data.user?.email || email);
+      setEmailVerificationRequired(true);
+      setSuccess("");
+      setError("");
     } catch (err) {
       setError(
         err instanceof Error
@@ -589,7 +588,7 @@ export default function CustomerSignupPage() {
         throw new Error(data.message || "Invalid OTP.");
       }
 
-      setSuccess("Phone number verified successfully!");
+      setSuccess("WhatsApp Number verified successfully!");
 
       setTimeout(() => {
         setSuccess("");
@@ -604,6 +603,102 @@ export default function CustomerSignupPage() {
     } finally {
       setOtpVerifying(false);
     }
+  }
+
+  if (emailVerificationRequired) {
+    return (
+      <main className="public-login-page">
+        <div className="public-login-card">
+          <div
+            style={{
+              width: "64px",
+              height: "64px",
+              borderRadius: "50%",
+              background: "#E8F8F2",
+              color: "#29AB87",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "30px",
+              fontWeight: 800,
+              margin: "0 auto 20px",
+            }}
+          >
+            ✓
+          </div>
+
+          <h1
+            style={{
+              fontSize: "28px",
+              lineHeight: 1.1,
+              letterSpacing: "-0.7px",
+              margin: "0 0 10px",
+              textAlign: "center",
+              color: "#111318",
+            }}
+          >
+            Verify your email
+          </h1>
+
+          <p
+            style={{
+              color: "#747A82",
+              fontSize: "14px",
+              lineHeight: 1.6,
+              textAlign: "center",
+              margin: "0 0 20px",
+            }}
+          >
+            Your MetroVybe account has been created. We sent a
+            verification link to:
+          </p>
+
+          <p
+            style={{
+              fontWeight: 800,
+              textAlign: "center",
+              margin: "0 0 24px",
+              wordBreak: "break-word",
+            }}
+          >
+            {createdAccountEmail}
+          </p>
+
+          <div
+            style={{
+              background: "#F7F8F9",
+              borderRadius: "10px",
+              padding: "14px",
+              fontSize: "13px",
+              lineHeight: 1.5,
+              color: "#666",
+              marginBottom: "20px",
+            }}
+          >
+            Open your email and click <strong>Verify my email</strong>.
+            You must verify your email before logging in.
+          </div>
+
+          <Link
+            href="/login"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "100%",
+              height: "50px",
+              borderRadius: "8px",
+              background: "#29AB87",
+              color: "#fff",
+              textDecoration: "none",
+              fontWeight: 800,
+            }}
+          >
+            Go to Login
+          </Link>
+        </div>
+      </main>
+    );
   }
 
   return (
@@ -1046,7 +1141,7 @@ export default function CustomerSignupPage() {
 
             <div style={fieldGroupStyle}>
               <label style={labelStyle}>
-                Phone number
+                WhatsApp Number
               </label>
 
               <div
