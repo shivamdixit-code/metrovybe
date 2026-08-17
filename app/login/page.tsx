@@ -844,29 +844,68 @@ export default function LoginPage() {
                       New password
                     </label>
 
-                    <input
-                      type={showResetPassword ? "text" : "password"}
-                      value={resetPasswordValue}
-                      onChange={(event) =>
-                        setResetPasswordValue(event.target.value)
-                      }
-                      placeholder="Enter new password"
-                      autoComplete="new-password"
-                      required
+                    <div
                       style={{
+                        position: "relative",
                         width: "100%",
-                        height: "46px",
-                        padding: "0 45px 0 13px",
-                        border: "1px solid #DDE2E9",
-                        borderRadius: "11px",
                         marginBottom: "15px",
-                        fontSize: "14px",
-                        boxSizing: "border-box",
-                        outline: "none",
-                        color: "#15181D",
-                        background: "#fff",
                       }}
-                    />
+                    >
+                      <input
+                        type={showResetPassword ? "text" : "password"}
+                        value={resetPasswordValue}
+                        onChange={(event) =>
+                          setResetPasswordValue(event.target.value)
+                        }
+                        placeholder="Enter new password"
+                        autoComplete="new-password"
+                        required
+                        style={{
+                          width: "100%",
+                          height: "46px",
+                          padding: "0 45px 0 13px",
+                          border: "1px solid #DDE2E9",
+                          borderRadius: "11px",
+                          fontSize: "14px",
+                          boxSizing: "border-box",
+                          outline: "none",
+                          color: "#15181D",
+                          background: "#fff",
+                        }}
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowResetPassword((value) => !value)
+                        }
+                        aria-label={
+                          showResetPassword
+                            ? "Hide password"
+                            : "Show password"
+                        }
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          right: "4px",
+                          width: "40px",
+                          height: "46px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          border: 0,
+                          background: "transparent",
+                          color: "#777F88",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {showResetPassword ? (
+                          <EyeOff size={18} strokeWidth={2} />
+                        ) : (
+                          <Eye size={18} strokeWidth={2} />
+                        )}
+                      </button>
+                    </div>
 
                     <label
                       style={{
@@ -880,59 +919,68 @@ export default function LoginPage() {
                       Confirm password
                     </label>
 
-                    <input
-                      type={showConfirmResetPassword ? "text" : "password"}
-                      value={confirmResetPassword}
-                      onChange={(event) =>
-                        setConfirmResetPassword(event.target.value)
-                      }
-                      placeholder="Confirm new password"
-                      autoComplete="new-password"
-                      required
+                    <div
                       style={{
+                        position: "relative",
                         width: "100%",
-                        height: "46px",
-                        padding: "0 45px 0 13px",
-                        border: "1px solid #DDE2E9",
-                        borderRadius: "11px",
                         marginBottom: "15px",
-                        fontSize: "14px",
-                        boxSizing: "border-box",
-                        outline: "none",
-                        color: "#15181D",
-                        background: "#fff",
-                      }}
-                    />
-
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmResetPassword((value) => !value)}
-                      aria-label={
-                        showConfirmResetPassword
-                          ? "Hide password"
-                          : "Show password"
-                      }
-                      style={{
-                        position: "absolute",
-                        marginTop: "-61px",
-                        right: "4px",
-                        width: "40px",
-                        height: "46px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        border: 0,
-                        background: "transparent",
-                        color: "#777F88",
-                        cursor: "pointer",
                       }}
                     >
-                      {showConfirmResetPassword ? (
-                        <EyeOff size={18} strokeWidth={2} />
-                      ) : (
-                        <Eye size={18} strokeWidth={2} />
-                      )}
-                    </button>
+                      <input
+                        type={showConfirmResetPassword ? "text" : "password"}
+                        value={confirmResetPassword}
+                        onChange={(event) =>
+                          setConfirmResetPassword(event.target.value)
+                        }
+                        placeholder="Confirm new password"
+                        autoComplete="new-password"
+                        required
+                        style={{
+                          width: "100%",
+                          height: "46px",
+                          padding: "0 45px 0 13px",
+                          border: "1px solid #DDE2E9",
+                          borderRadius: "11px",
+                          fontSize: "14px",
+                          boxSizing: "border-box",
+                          outline: "none",
+                          color: "#15181D",
+                          background: "#fff",
+                        }}
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowConfirmResetPassword((value) => !value)
+                        }
+                        aria-label={
+                          showConfirmResetPassword
+                            ? "Hide password"
+                            : "Show password"
+                        }
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          right: "4px",
+                          width: "40px",
+                          height: "46px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          border: 0,
+                          background: "transparent",
+                          color: "#777F88",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {showConfirmResetPassword ? (
+                          <EyeOff size={18} strokeWidth={2} />
+                        ) : (
+                          <Eye size={18} strokeWidth={2} />
+                        )}
+                      </button>
+                    </div>
 
                     <button
                       type="button"
