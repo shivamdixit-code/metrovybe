@@ -113,7 +113,7 @@ export default function LoginPage() {
 
   return (
     <main
-      className="public-login-page mv-login-page"
+      className="public-login-page"
       style={{
         minHeight: "100dvh",
         display: "flex",
@@ -126,9 +126,6 @@ export default function LoginPage() {
       <div
         className="public-login-card"
         style={{
-          width: "100%",
-          maxWidth: "410px",
-          minHeight: "72vh",
           boxSizing: "border-box",
         }}
       >
@@ -139,7 +136,6 @@ export default function LoginPage() {
             color: "#111318",
             display: "block",
             marginBottom: "25px",
-            transform: "translateY(-25px)",
           }}
         >
           <div
