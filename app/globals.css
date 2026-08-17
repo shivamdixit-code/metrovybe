@@ -6531,6 +6531,15 @@ body {
   box-sizing: border-box;
 }
 
+.mv-login-page .public-login-card > a:first-child {
+  position: absolute !important;
+  top: 32px !important;
+  left: 36px !important;
+  right: 36px !important;
+  margin-bottom: 0 !important;
+  transform: none !important;
+}
+
 .mv-login-page .public-login-card {
   max-width: min(560px, calc(100vw - 32px));
   width: 100%;
@@ -6582,7 +6591,7 @@ body {
   box-sizing: border-box !important;
   display: flex !important;
   flex-direction: column !important;
-  justify-content: flex-start !important;
+  justify-content: center !important;
 }
 
 @supports (-webkit-touch-callout: none) {
