@@ -128,6 +128,7 @@ export default function LoginPage() {
         style={{
           width: "100%",
           maxWidth: "410px",
+          minHeight: "72vh",
           boxSizing: "border-box",
         }}
       >
