@@ -875,9 +875,14 @@ export default function CustomerSignupPage() {
 
             <button
               type="submit"
-              style={continueButtonStyle}
+              disabled={otpSending}
+              style={{
+                ...continueButtonStyle,
+                opacity: otpSending ? 0.7 : 1,
+                cursor: otpSending ? "not-allowed" : "pointer",
+              }}
             >
-              Continue
+              {otpSending ? "Sending OTP..." : "Continue"}
             </button>
           </form>
         )}
