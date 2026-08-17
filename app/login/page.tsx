@@ -40,6 +40,8 @@ export default function LoginPage() {
   const [resetToken, setResetToken] = useState("");
   const [resetPasswordValue, setResetPasswordValue] = useState("");
   const [confirmResetPassword, setConfirmResetPassword] = useState("");
+  const [showResetPassword, setShowResetPassword] = useState(false);
+  const [showConfirmResetPassword, setShowConfirmResetPassword] = useState(false);
 
   const [forgotMessage, setForgotMessage] = useState("");
 
@@ -779,7 +781,7 @@ export default function LoginPage() {
                       style={{
                         width: "100%",
                         height: "46px",
-                        padding: "0 13px",
+                        padding: "0 45px 0 13px",
                         border: "1px solid #DDE2E9",
                         borderRadius: "11px",
                         marginBottom: "15px",
@@ -843,7 +845,7 @@ export default function LoginPage() {
                     </label>
 
                     <input
-                      type="password"
+                      type={showResetPassword ? "text" : "password"}
                       value={resetPasswordValue}
                       onChange={(event) =>
                         setResetPasswordValue(event.target.value)
@@ -854,7 +856,7 @@ export default function LoginPage() {
                       style={{
                         width: "100%",
                         height: "46px",
-                        padding: "0 13px",
+                        padding: "0 45px 0 13px",
                         border: "1px solid #DDE2E9",
                         borderRadius: "11px",
                         marginBottom: "15px",
@@ -879,7 +881,7 @@ export default function LoginPage() {
                     </label>
 
                     <input
-                      type="password"
+                      type={showConfirmResetPassword ? "text" : "password"}
                       value={confirmResetPassword}
                       onChange={(event) =>
                         setConfirmResetPassword(event.target.value)
@@ -890,7 +892,7 @@ export default function LoginPage() {
                       style={{
                         width: "100%",
                         height: "46px",
-                        padding: "0 13px",
+                        padding: "0 45px 0 13px",
                         border: "1px solid #DDE2E9",
                         borderRadius: "11px",
                         marginBottom: "15px",
@@ -901,6 +903,36 @@ export default function LoginPage() {
                         background: "#fff",
                       }}
                     />
+
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmResetPassword((value) => !value)}
+                      aria-label={
+                        showConfirmResetPassword
+                          ? "Hide password"
+                          : "Show password"
+                      }
+                      style={{
+                        position: "absolute",
+                        marginTop: "-61px",
+                        right: "4px",
+                        width: "40px",
+                        height: "46px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        border: 0,
+                        background: "transparent",
+                        color: "#777F88",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {showConfirmResetPassword ? (
+                        <EyeOff size={18} strokeWidth={2} />
+                      ) : (
+                        <Eye size={18} strokeWidth={2} />
+                      )}
+                    </button>
 
                     <button
                       type="button"
