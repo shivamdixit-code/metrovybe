@@ -479,10 +479,18 @@ export default function CustomerSignupPage() {
         throw new Error(data.message || "Registration failed");
       }
 
-      setCreatedAccountEmail(data.user?.email || email);
+      const registeredEmail = data.user?.email || email;
+
+      setCreatedAccountEmail(registeredEmail);
       setEmailVerificationRequired(true);
-      setSuccess("");
       setError("");
+      setSuccess(
+        `Account created successfully! A verification link has been sent to ${registeredEmail}. Please check your email to verify your account.`
+      );
+
+      window.setTimeout(() => {
+        router.push("/profile");
+      }, 5000);
     } catch (err) {
       setError(
         err instanceof Error
