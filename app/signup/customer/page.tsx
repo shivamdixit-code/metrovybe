@@ -345,8 +345,12 @@ export default function CustomerSignupPage() {
   async function continueFromStepThree(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
+    console.log("[OTP DEBUG] Continue clicked:", performance.now());
+
     // Switch screens FIRST. Do not wait for OTP or any network work.
     setStep(6);
+
+    console.log("[OTP DEBUG] setStep(6) called:", performance.now());
 
     const cleanEmail = email.trim().toLowerCase();
     const cleanPhone = phone.replace(/\\D/g, "");
