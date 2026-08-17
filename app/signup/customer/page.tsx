@@ -344,7 +344,11 @@ export default function CustomerSignupPage() {
 
   async function continueFromStepThree(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (otpSending) return;
+
     setError("");
+    setSuccess("");
 
     const cleanEmail = email.trim().toLowerCase();
     const cleanPhone = phone.replace(/\D/g, "");
@@ -352,88 +356,18 @@ export default function CustomerSignupPage() {
     setEmail(cleanEmail);
     setPhone(cleanPhone);
 
-    // Build the complete phone number in E.164 format.
-    // Country code + national number must always be sent
-    // together as one E.164 international number.
     const phoneNumber = getInternationalPhone(country, cleanPhone);
 
-    // The single OTP sender handles the request, rate limit,
-    // countdown, and navigation to the verification screen.
-    await sendPhoneOtp(phoneNumber);
-  }
+    // Show the OTP screen immediately.
+    setStep(6);
+    setOtp("");
+    setOtpResendSeconds(60);
 
-  function continueFromStepFour(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError("");
-
-    if (latitude === null || longitude === null) {
-      setError(
-        "Please allow precise location access to continue."
-      );
-      return;
+    try {
+      await sendPhoneOtp(phoneNumber);
+    } catch (error) {
+      console.error("PHONE OTP SUBMIT ERROR:", error);
     }
-
-    // Clear any previous step-specific error before opening
-    // the password screen.
-    // Step 5 must never inherit an error from the email/phone
-    // or location steps.
-    setError("");
-    setSuccess("");
-    setStep(5);
-  }
-
-  function requestPreciseLocation() {
-    setError("");
-    setLocationAccuracy(null);
-    setLocationLabel("");
-    setLocationLoading(true);
-
-    if (!navigator.geolocation) {
-      setLocationLoading(false);
-      setError("Location services are not supported by this browser.");
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const accuracy = position.coords.accuracy;
-
-        if (!Number.isFinite(accuracy) || accuracy > 100) {
-          setLatitude(null);
-          setLongitude(null);
-          setLocationAccuracy(null);
-          setLocationLabel("");
-          setLocationLoading(false);
-
-          setError(
-            `Location accuracy is too low (${Math.round(
-              accuracy
-            )} m). Please move near a window or outdoors and try again.`
-          );
-          return;
-        }
-
-        setLatitude(position.coords.latitude);
-        setLongitude(position.coords.longitude);
-        setLocationAccuracy(accuracy);
-        setLocationLabel("Location captured");
-        setLocationLoading(false);
-        setError("");
-      },
-      (error) => {
-        setLocationLoading(false);
-        setError(
-          error.code === error.PERMISSION_DENIED
-            ? "Location permission was denied. Please allow location access and try again."
-            : "We couldn't access your location. Please try again."
-        );
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 0,
-      }
-    );
   }
 
   async function createAccount(event: FormEvent<HTMLFormElement>) {
@@ -1367,15 +1301,70 @@ export default function CustomerSignupPage() {
                 margin: "0 0 22px",
               }}
             >
-              We sent a 6-digit verification code to{" "}
-              <strong>
-                {PHONE_COUNTRIES[country].code}
-                {phone}
-              </strong>
-              .
+              {otpSending ? (
+                <>
+                  Sending a 6-digit verification code to{" "}
+                  <strong>
+                    {PHONE_COUNTRIES[country].code}
+                    {phone}
+                  </strong>
+                  ...
+                </>
+              ) : (
+                <>
+                  We sent a 6-digit verification code to{" "}
+                  <strong>
+                    {PHONE_COUNTRIES[country].code}
+                    {phone}
+                  </strong>
+                  .
+                </>
+              )}
             </p>
 
-            {success && (
+            {otpSending && (
+              <div
+                role="status"
+                aria-live="polite"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "11px",
+                  marginBottom: "15px",
+                  padding: "12px 14px",
+                  borderRadius: "12px",
+                  background:
+                    "linear-gradient(135deg, #F7F9FF 0%, #EEF3FF 100%)",
+                  border: "1px solid #D7E0FF",
+                }}
+              >
+                <div
+                  style={{
+                    width: "23px",
+                    height: "23px",
+                    minWidth: "23px",
+                    borderRadius: "50%",
+                    border: "2px solid #D5DEFF",
+                    borderTopColor: "#315CFF",
+                    animation: "spin 0.8s linear infinite",
+                  }}
+                />
+
+                <div
+                  style={{
+                    flex: 1,
+                    color: "#3152B8",
+                    fontSize: "12px",
+                    lineHeight: 1.45,
+                    fontWeight: 650,
+                  }}
+                >
+                  Sending OTP to your WhatsApp. Please wait...
+                </div>
+              </div>
+            )}
+
+            {!otpSending && success && (
               <div
                 role="status"
                 style={{
@@ -1425,12 +1414,12 @@ export default function CustomerSignupPage() {
               </div>
             )}
 
-            {error && (
-  <div role="alert" style={errorStyle}>
-    <span style={errorIconStyle}>!</span>
-    <span>{error}</span>
-  </div>
-)}
+            {!otpSending && error && (
+              <div role="alert" style={errorStyle}>
+                <span style={errorIconStyle}>!</span>
+                <span>{error}</span>
+              </div>
+            )}
 
             <form onSubmit={verifyPhoneOtp}>
               <div style={fieldGroupStyle}>
