@@ -6555,3 +6555,39 @@ body {
   }
 }
 
+/* MetroVybe iPhone login keyboard lock v2 */
+.mv-login-page {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100vh !important;
+  min-height: 100vh !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+}
+
+.mv-login-page .public-login-card {
+  position: relative !important;
+  width: min(410px, calc(100vw - 28px)) !important;
+  max-width: 410px !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+@supports (-webkit-touch-callout: none) {
+  .mv-login-page {
+    height: 100vh !important;
+    min-height: 100vh !important;
+    padding: 14px !important;
+  }
+
+  .mv-login-page .public-login-card {
+    width: calc(100vw - 28px) !important;
+    max-width: 410px !important;
+  }
+}
+

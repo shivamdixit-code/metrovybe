@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Building2, Eye, EyeOff, UserRound, ArrowLeft } from "lucide-react";
@@ -18,6 +18,64 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const body = document.body;
+    const html = document.documentElement;
+    const previousBodyOverflow = body.style.overflow;
+    const previousHtmlOverflow = html.style.overflow;
+    const previousBodyPosition = body.style.position;
+    const previousBodyWidth = body.style.width;
+
+    body.style.overflow = "hidden";
+    html.style.overflow = "hidden";
+    body.style.position = "fixed";
+    body.style.width = "100%";
+
+    const keepLoginViewportStable = () => {
+      window.scrollTo(0, 0);
+
+      if (window.visualViewport) {
+        document.documentElement.style.setProperty(
+          "--mv-login-visual-height",
+          `${window.visualViewport.height}px`
+        );
+        window.scrollTo(0, 0);
+      }
+    };
+
+    keepLoginViewportStable();
+
+    const viewport = window.visualViewport;
+
+    viewport?.addEventListener("resize", keepLoginViewportStable);
+    viewport?.addEventListener("scroll", keepLoginViewportStable);
+    window.addEventListener("resize", keepLoginViewportStable);
+
+    const handleFocus = () => {
+      window.setTimeout(keepLoginViewportStable, 0);
+      window.setTimeout(keepLoginViewportStable, 250);
+      window.setTimeout(keepLoginViewportStable, 500);
+    };
+
+    document.addEventListener("focusin", handleFocus);
+
+    return () => {
+      body.style.overflow = previousBodyOverflow;
+      html.style.overflow = previousHtmlOverflow;
+      body.style.position = previousBodyPosition;
+      body.style.width = previousBodyWidth;
+
+      viewport?.removeEventListener("resize", keepLoginViewportStable);
+      viewport?.removeEventListener("scroll", keepLoginViewportStable);
+      window.removeEventListener("resize", keepLoginViewportStable);
+      document.removeEventListener("focusin", handleFocus);
+
+      document.documentElement.style.removeProperty(
+        "--mv-login-visual-height"
+      );
+    };
+  }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
