@@ -342,29 +342,24 @@ export default function CustomerSignupPage() {
     setStep(3);
   }
 
-  async function continueFromStepThree(event: FormEvent<HTMLFormElement>) {
+  function continueFromStepThree(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    console.log("[OTP DEBUG] Continue clicked:", performance.now());
-
-    // Switch screens FIRST. Do not wait for OTP or any network work.
-    setStep(6);
-
-    console.log("[OTP DEBUG] setStep(6) called:", performance.now());
-
     const cleanEmail = email.trim().toLowerCase();
-    const cleanPhone = phone.replace(/\\D/g, "");
+    const cleanPhone = phone.replace(/\D/g, "");
     const phoneNumber = getInternationalPhone(country, cleanPhone);
 
+    // Move to the phone OTP screen immediately.
     setEmail(cleanEmail);
     setPhone(cleanPhone);
-    setOtp("");
-    setOtpResendSeconds(60);
     setError("");
     setSuccess("");
+    setOtp("");
+    setOtpResendSeconds(60);
+    setStep(6);
 
-    // OTP request happens completely in the background.
-    void sendPhoneOtp(phoneNumber).catch((error) => {
+    // Fire OTP request without blocking the screen transition.
+    sendPhoneOtp(phoneNumber).catch((error) => {
       console.error("PHONE OTP SUBMIT ERROR:", error);
     });
   }
