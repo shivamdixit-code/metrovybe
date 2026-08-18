@@ -342,26 +342,73 @@ export default function CustomerSignupPage() {
     setStep(3);
   }
 
-  function continueFromStepThree(event: FormEvent<HTMLFormElement>) {
+  async function continueFromStepThree(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (otpSending) return;
+
+    setError("");
+    setSuccess("");
 
     const cleanEmail = email.trim().toLowerCase();
     const cleanPhone = phone.replace(/\D/g, "");
-    const phoneNumber = getInternationalPhone(country, cleanPhone);
 
-    // Move to the phone OTP screen immediately.
     setEmail(cleanEmail);
     setPhone(cleanPhone);
-    setError("");
-    setSuccess("");
+
+    const phoneNumber = getInternationalPhone(country, cleanPhone);
+
+    // Move to OTP screen immediately so the user never waits
+    // on the phone-number screen.
+    setStep(6);
     setOtp("");
     setOtpResendSeconds(60);
-    setStep(6);
+    setOtpSending(true);
 
-    // Fire OTP request without blocking the screen transition.
-    sendPhoneOtp(phoneNumber).catch((error) => {
-      console.error("PHONE OTP SUBMIT ERROR:", error);
-    });
+    try {
+      const response = await fetch(
+        `${API_URL}/api/auth/send-signup-phone-otp`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            phone: phoneNumber,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 429) {
+          setError(
+            data.message ||
+              "Please wait before requesting another OTP."
+          );
+          setOtpResendSeconds(60);
+          return;
+        }
+
+        throw new Error(
+          data.message || "Unable to send OTP."
+        );
+      }
+
+      setSuccess(
+        "OTP sent successfully. Please check your WhatsApp."
+      );
+      setOtpResendSeconds(60);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Unable to send OTP."
+      );
+    } finally {
+      setOtpSending(false);
+    }
   }
 
   function continueFromStepFour(event: FormEvent<HTMLFormElement>) {
@@ -618,7 +665,7 @@ export default function CustomerSignupPage() {
   if (emailVerificationRequired) {
     return (
       <main className="public-login-page">
-        <div className={`public-login-card signup-step-${step}`}>
+        <div className="public-login-card">
           <div
             style={{
               width: "64px",
@@ -1163,8 +1210,6 @@ export default function CustomerSignupPage() {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  maxWidth: "100%",
-                  minWidth: 0,
                   ...inputStyle,
                   padding: 0,
                   overflow: "hidden",
@@ -1230,16 +1275,13 @@ export default function CustomerSignupPage() {
                   }
                   required
                   style={{
-                    flex: "1 1 0%",
-                    width: "0",
+                    flex: 1,
                     minWidth: 0,
-                    maxWidth: "100%",
-                    boxSizing: "border-box",
                     border: "none",
                     outline: "none",
                     background: "transparent",
                     padding: "13px 12px",
-                    fontSize: "16px",
+                    fontSize: "14px",
                     color: "#111318",
                   }}
                 />
@@ -1613,12 +1655,7 @@ export default function CustomerSignupPage() {
         )}
 
         {step === 5 && (
-          <form
-            onSubmit={createAccount}
-            style={{
-              marginTop: "-8px",
-            }}
-          >
+          <form onSubmit={createAccount}>
             <div style={fieldGroupStyle}>
               <label style={labelStyle}>
                 Password

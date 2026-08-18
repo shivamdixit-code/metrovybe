@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   MapContainer,
   Marker,
@@ -21,10 +21,6 @@ type SelectedLocation = LocationValue & {
   city: string;
   state: string;
   pincode: string;
-};
-
-export type ListingLocationPickerHandle = {
-  confirmLocation: () => void;
 };
 
 type Props = {
@@ -152,11 +148,10 @@ function MapClickHandler({
   return null;
 }
 
-const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
-  function ListingLocationPicker({
-    initialLocation,
-    onConfirm,
-  }, ref) {
+export default function ListingLocationPicker({
+  initialLocation,
+  onConfirm,
+}: Props) {
   const [position, setPosition] = useState<LocationValue>(
     initialLocation || DEFAULT_LOCATION
   );
@@ -295,13 +290,11 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
         longitude: Number(results[0].lon),
       });
     } catch (err) {
-      const message =
+      setError(
         err instanceof Error
           ? err.message
-          : "Unable to find this address.";
-
-      setError(message);
-      window.setTimeout(() => setError(""), 3000);
+          : "Unable to find this address."
+      );
     } finally {
       setSearching(false);
     }
@@ -347,10 +340,6 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
       }
     );
   }
-
-  useImperativeHandle(ref, () => ({
-    confirmLocation,
-  }), [address, position, details, onConfirm, saving]);
 
   function confirmLocation() {
     if (!address.trim()) {
@@ -453,21 +442,22 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
         </div>
 
         <div className="mv-step5-modes">
-          <select
-            id="map-style-select"
-            value={mapMode}
-            onChange={(e) =>
-              setMapMode(e.target.value as keyof typeof MAP_MODES)
-            }
-          >
-            {(Object.keys(MAP_MODES) as Array<
+          {(
+            Object.keys(MAP_MODES) as Array<
               keyof typeof MAP_MODES
-            >).map((mode) => (
-              <option key={mode} value={mode}>
-                {MAP_MODES[mode].label}
-              </option>
-            ))}
-          </select>
+            >
+          ).map((mode) => (
+            <button
+              type="button"
+              key={mode}
+              className={
+                mapMode === mode ? "active" : ""
+              }
+              onClick={() => setMapMode(mode)}
+            >
+              {MAP_MODES[mode].label}
+            </button>
+          ))}
         </div>
 
         <button
@@ -519,7 +509,16 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
         </div>
       )}
 
-
+      <button
+        type="button"
+        className="mv-step5-confirm"
+        onClick={confirmLocation}
+        disabled={saving}
+      >
+        {saving
+          ? "Saving..."
+          : "Confirm Location & Continue"}
+      </button>
 
       <style jsx global>{`
         .mv-step5 {
@@ -606,52 +605,6 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
         .mv-step5-search-button:disabled {
           opacity: .65;
           cursor: default;
-        }
-
-        .mv-step5-modes {
-          position: absolute;
-          top: 50%;
-          left: 10px;
-          transform: translateY(-50%);
-          z-index: 1000;
-          display: flex;
-          align-items: center;
-          padding: 3px;
-          border: 1px solid rgba(210,218,214,.95);
-          border-radius: 12px;
-          background: rgba(255,255,255,.96);
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
-          box-shadow: 0 5px 16px rgba(0,0,0,.14);
-        }
-
-        .mv-step5-modes label {
-          color: #59625f;
-          font-size: 9px;
-          font-weight: 900;
-          letter-spacing: .04em;
-          text-transform: uppercase;
-          white-space: nowrap;
-        }
-
-        .mv-step5-modes select {
-          height: 26px;
-          min-width: 92px;
-          padding: 0 22px 0 8px;
-          border: 1px solid #d7dfdc;
-          border-radius: 7px;
-          outline: none;
-          background: #fff;
-          color: #171b19;
-          font-size: 9px;
-          font-weight: 800;
-          cursor: pointer;
-          box-shadow: 0 2px 5px rgba(0,0,0,.06);
-        }
-
-        .mv-step5-modes select:focus {
-          border-color: #29ab87;
-          box-shadow: 0 0 0 2px rgba(41,171,135,.14);
         }
 
         .mv-step5-modes {
@@ -790,22 +743,17 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
           line-height: 1.3;
         }
 
-        .mv-step5-error,
-        .mv-location-error {
-          display: flex !important;
-          align-items: center !important;
-          width: 100% !important;
-          box-sizing: border-box !important;
-          margin: 10px 0 0 !important;
-          padding: 11px 13px !important;
-          border: 1px solid #f1b8b8 !important;
-          border-radius: 10px !important;
-          background: #fff5f5 !important;
-          color: #b42318 !important;
-          font-size: 12px !important;
-          line-height: 1.4 !important;
-          font-weight: 750 !important;
-          box-shadow: 0 2px 7px rgba(180,35,24,.07) !important;
+        .mv-step5-error {
+          width: 100%;
+          margin-top: 7px;
+          padding: 8px 10px;
+          box-sizing: border-box;
+          border-radius: 9px;
+          background: #fff1f1;
+          color: #b42318;
+          font-size: 10px;
+          line-height: 1.35;
+          font-weight: 700;
         }
 
         .mv-step5-confirm {
@@ -841,8 +789,52 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
 
           .mv-step5-search-input,
           .mv-step5-search-button {
-            height: 36px;
-          }
+          flex: 0 0 auto;
+          width: 78px;
+          height: 38px;
+          padding: 0;
+          border: 0;
+          border-radius: 10px;
+          background: #111318;
+          color: #fff;
+          font-size: 12px;
+          font-weight: 800;
+          letter-spacing: .1px;
+          cursor: pointer;
+          box-shadow: 0 3px 8px rgba(0,0,0,.14);
+          transition: transform .15s ease, box-shadow .15s ease;
+        }
+
+        .mv-step5-search-button:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 5px 12px rgba(0,0,0,.18);
+        }
+
+        .mv-step5-search-button:active {
+          transform: translateY(0);
+          box-shadow: 0 2px 6px rgba(0,0,0,.14);
+        }
+
+        .mv-step5-search-button:disabled {
+          opacity: .55;
+          cursor: default;
+          transform: none;
+        }
+
+        .mv-step5-search-button:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 5px 13px rgba(0,0,0,.18);
+        }
+
+        .mv-step5-search-button:active {
+          transform: translateY(0);
+        }
+
+        .mv-step5-search-button:disabled {
+          opacity: .6;
+          cursor: default;
+          transform: none;
+        }
 
           .mv-step5-search-input {
             padding: 0 9px;
@@ -892,230 +884,7 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
             margin-top: 7px;
           }
         }
-
-
-        .mv-step5-map-shell .leaflet-control-attribution {
-          right: 7px !important;
-          bottom: 3px !important;
-          left: auto !important;
-          margin: 0 !important;
-          padding: 2px 5px !important;
-          border-radius: 5px !important;
-          background: rgba(255,255,255,.82) !important;
-          font-size: 8px !important;
-          line-height: 1.2 !important;
-          z-index: 900 !important;
-        }
-
-        .mv-step5-map-tip {
-          position: absolute !important;
-          left: 12px !important;
-          bottom: 16px !important;
-          z-index: 950 !important;
-          max-width: calc(100% - 125px) !important;
-          padding: 7px 11px !important;
-          border-radius: 9px !important;
-          background: rgba(255,255,255,.96) !important;
-          color: #303733 !important;
-          font-size: 10px !important;
-          font-weight: 750 !important;
-          line-height: 1.25 !important;
-          box-shadow: 0 3px 10px rgba(0,0,0,.10) !important;
-        }
-
-        .mv-step5-location-card {
-          margin-top: 10px !important;
-          min-height: 78px !important;
-          box-sizing: border-box !important;
-        }
-
-        .mv-step5-confirm {
-          margin-top: 8px !important;
-          height: 46px !important;
-          border-radius: 13px !important;
-        }
-
-        /* STEP 5 UI POLISH — visual only */
-        .mv-step5 {
-          width: 100%;
-          box-sizing: border-box;
-        }
-
-        .mv-step5-map-shell {
-          border: 1px solid #dfe7e3;
-          border-radius: 16px;
-          box-shadow: 0 5px 18px rgba(20, 40, 32, .08);
-          overflow: hidden;
-        }
-
-        .mv-step5-search {
-          display: flex;
-          align-items: center;
-          gap: 7px;
-          padding: 8px;
-        }
-
-        .mv-step5-search-box {
-          min-width: 0;
-          height: 38px;
-          border: 1px solid #d9e1de;
-          border-radius: 10px;
-          background: rgba(255,255,255,.96);
-          box-shadow: 0 2px 8px rgba(0,0,0,.08);
-          overflow: hidden;
-        }
-
-        .mv-step5-search-box input {
-          height: 38px;
-          font-size: 12px;
-          color: #151918;
-        }
-
-        .mv-step5-search-button {
-          flex: 0 0 74px;
-          width: 74px;
-          height: 38px;
-          padding: 0;
-          border: 0;
-          border-radius: 10px;
-          background: #111318;
-          color: #fff;
-          font-size: 11px;
-          font-weight: 800;
-          cursor: pointer;
-          box-shadow: 0 3px 9px rgba(0,0,0,.14);
-          transition: transform .15s ease, box-shadow .15s ease;
-        }
-
-        .mv-step5-search-button:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 5px 13px rgba(0,0,0,.18);
-        }
-
-        .mv-step5-modes {
-          display: flex;
-          gap: 4px;
-          padding: 7px 8px;
-        }
-
-        .mv-step5-modes button {
-          height: 30px;
-          padding: 0 10px;
-          border: 1px solid #d8e0dd;
-          border-radius: 8px;
-          background: rgba(255,255,255,.94);
-          color: #424946;
-          font-size: 10px;
-          font-weight: 750;
-          cursor: pointer;
-          box-shadow: 0 2px 6px rgba(0,0,0,.06);
-        }
-
-        .mv-step5-modes button.active {
-          background: #111318;
-          border-color: #111318;
-          color: #fff;
-        }
-
-        .mv-step5-my-location {
-          width: 36px !important;
-          height: 36px !important;
-          border: 0 !important;
-          border-radius: 10px !important;
-          background: #fff !important;
-          color: #176b55 !important;
-          box-shadow: 0 3px 10px rgba(0,0,0,.13) !important;
-        }
-
-        .mv-step5-location-card {
-          position: relative;
-          margin-top: 10px;
-          padding: 13px 48px 13px 13px;
-          border: 1px solid #dfe7e3;
-          border-radius: 14px;
-          background: #fff;
-          box-shadow: 0 4px 14px rgba(20,40,32,.06);
-        }
-
-        .mv-step5-pinned {
-          position: absolute;
-          top: 10px;
-          right: 10px;
-          padding: 4px 7px;
-          border-radius: 999px;
-          background: #e8f8f2;
-          color: #176b55;
-          font-size: 9px;
-          line-height: 1;
-          font-weight: 900;
-        }
-
-        .mv-step5-confirm {
-          width: 100%;
-          height: 44px;
-          margin-top: 10px;
-          border: 0;
-          border-radius: 12px;
-          background: #111318;
-          color: #fff;
-          font-size: 12px;
-          font-weight: 900;
-          cursor: pointer;
-          box-shadow: 0 5px 15px rgba(0,0,0,.14);
-          transition: transform .15s ease, box-shadow .15s ease;
-        }
-
-        .mv-step5-confirm:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 7px 18px rgba(0,0,0,.18);
-        }
-
-        .mv-step5-confirm:disabled {
-          opacity: .6;
-          cursor: default;
-          transform: none;
-        }
-
-        @media (max-width: 700px) {
-          .mv-step5-search {
-            padding: 7px;
-          }
-
-          .mv-step5-search-button {
-            flex-basis: 68px;
-            width: 68px;
-          }
-
-          .mv-step5-location-card {
-            padding-right: 45px;
-          }
-
-          .mv-step5-confirm {
-            height: 42px;
-          }
-        }
-
-        .mv-step5-modes {
-          position: absolute !important;
-          top: 50% !important;
-          left: 10px !important;
-          right: auto !important;
-          transform: translateY(-50%) !important;
-          z-index: 1000 !important;
-          padding: 2px !important;
-          gap: 2px !important;
-          border: 1px solid rgba(210,218,214,.75) !important;
-          border-radius: 9px !important;
-          background: rgba(255,255,255,.96) !important;
-          box-shadow: 0 3px 10px rgba(0,0,0,.12) !important;
-          max-width: none !important;
-          overflow: visible !important;
-        }
-
       `}</style>
     </div>
   );
-  }
-);
-
-export default ListingLocationPicker;
+}

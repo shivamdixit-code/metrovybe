@@ -78,26 +78,6 @@ const PHONE_COUNTRIES = {
 
 type PhoneCountry = keyof typeof PHONE_COUNTRIES;
 
-const PHONE_DIAL_CODES: Record<PhoneCountry, string> = {
-  IN: "91",
-  GB: "44",
-  US: "1",
-  CA: "1",
-  AU: "61",
-  NZ: "64",
-  SG: "65",
-  MY: "60",
-  AE: "971",
-};
-
-function getInternationalPhone(
-  country: PhoneCountry,
-  phone: string
-): string {
-  const national = phone.replace(/\D/g, "");
-  return `+${PHONE_DIAL_CODES[country]}${national}`;
-}
-
 export default function CustomerSignupPage() {
   const router = useRouter();
 
@@ -133,28 +113,6 @@ export default function CustomerSignupPage() {
   const [otpSending, setOtpSending] = useState(false);
   const [otpVerifying, setOtpVerifying] = useState(false);
   const [otpResendSeconds, setOtpResendSeconds] = useState(0);
-  const [emailVerificationRequired, setEmailVerificationRequired] =
-    useState(false);
-  const [createdAccountEmail, setCreatedAccountEmail] = useState("");
-
-  // Force-clear any browser-restored OTP whenever the OTP screen opens.
-  useEffect(() => {
-    if (step !== 6) return;
-
-    setOtp("");
-
-    const clearOtpField = window.setTimeout(() => {
-      const input = document.querySelector(
-        'input[key="otp-input-6"]'
-      ) as HTMLInputElement | null;
-
-      if (input) {
-        input.value = "";
-      }
-    }, 0);
-
-    return () => window.clearTimeout(clearOtpField);
-  }, [step]);
 
   useEffect(() => {
     if (otpResendSeconds <= 0) {
@@ -302,6 +260,46 @@ export default function CustomerSignupPage() {
     // Email is valid — explicitly clear any previous email error.
     setError("");
 
+    const phonePatterns: Partial<Record<PhoneCountry, RegExp>> = {
+      IN: /^[6-9]\d{9}$/,
+      // UK mobile: 10 national digits beginning with 7.
+      GB: /^7\d{9}$/,
+      // US / Canada: 10 national digits.
+      US: /^[2-9]\d{9}$/,
+      CA: /^[2-9]\d{9}$/,
+      // Australia mobile: 9 national digits beginning with 4.
+      AU: /^4\d{8}$/,
+      // New Zealand mobile: 9 national digits beginning with 2.
+      NZ: /^2\d{8}$/,
+      // Singapore mobile: 8 digits beginning with 8 or 9.
+      SG: /^[89]\d{7}$/,
+      // Malaysia mobile: 9 or 10 national digits beginning with 1.
+      MY: /^1\d{8,9}$/,
+      // UAE mobile: 9 national digits beginning with 5.
+      AE: /^5\d{8}$/,
+    };
+
+    const phonePattern = phonePatterns[country];
+
+    if (phonePattern && !phonePattern.test(cleanPhone)) {
+      const countryNames: Record<PhoneCountry, string> = {
+        IN: "Indian",
+        GB: "UK",
+        US: "US",
+        CA: "Canadian",
+        AU: "Australian",
+        NZ: "New Zealand",
+        SG: "Singapore",
+        MY: "Malaysian",
+        AE: "UAE",
+      };
+
+      setError(
+        `Please enter a valid ${countryNames[country]} mobile number.`
+      );
+      return;
+    }
+
     if (!gender) {
       setError("Please select your gender.");
       return;
@@ -342,26 +340,74 @@ export default function CustomerSignupPage() {
     setStep(3);
   }
 
-  function continueFromStepThree(event: FormEvent<HTMLFormElement>) {
+  async function continueFromStepThree(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setError("");
 
     const cleanEmail = email.trim().toLowerCase();
     const cleanPhone = phone.replace(/\D/g, "");
-    const phoneNumber = getInternationalPhone(country, cleanPhone);
 
-    // Move to the phone OTP screen immediately.
+    const phonePatterns: Partial<Record<PhoneCountry, RegExp>> = {
+      IN: /^[6-9]\d{9}$/,
+      // UK mobile: 10 national digits beginning with 7.
+      GB: /^7\d{9}$/,
+      // US / Canada: 10 national digits.
+      US: /^[2-9]\d{9}$/,
+      CA: /^[2-9]\d{9}$/,
+      // Australia mobile: 9 national digits beginning with 4.
+      AU: /^4\d{8}$/,
+      // New Zealand mobile: 9 national digits beginning with 2.
+      NZ: /^2\d{8}$/,
+      // Singapore mobile: 8 digits beginning with 8 or 9.
+      SG: /^[89]\d{7}$/,
+      // Malaysia mobile: 9 or 10 national digits beginning with 1.
+      MY: /^1\d{8,9}$/,
+      // UAE mobile: 9 national digits beginning with 5.
+      AE: /^5\d{8}$/,
+    };
+
+    const phonePattern = phonePatterns[country];
+
+    if (phonePattern && !phonePattern.test(cleanPhone)) {
+      const countryNames: Record<PhoneCountry, string> = {
+        IN: "Indian",
+        GB: "UK",
+        US: "US",
+        CA: "Canadian",
+        AU: "Australian",
+        NZ: "New Zealand",
+        SG: "Singapore",
+        MY: "Malaysian",
+        AE: "UAE",
+      };
+
+      setError(
+        `Please enter a valid ${countryNames[country]} mobile number.`
+      );
+      return;
+    }
+
     setEmail(cleanEmail);
     setPhone(cleanPhone);
-    setError("");
-    setSuccess("");
-    setOtp("");
-    setOtpResendSeconds(60);
-    setStep(6);
 
-    // Fire OTP request without blocking the screen transition.
-    sendPhoneOtp(phoneNumber).catch((error) => {
-      console.error("PHONE OTP SUBMIT ERROR:", error);
-    });
+    // Build the complete phone number in E.164 format.
+    const countryDialCodes: Record<PhoneCountry, string> = {
+      IN: "91",
+      GB: "44",
+      US: "1",
+      CA: "1",
+      AU: "61",
+      NZ: "64",
+      SG: "65",
+      MY: "60",
+      AE: "971",
+    };
+
+    const phoneNumber = `+${countryDialCodes[country]}${cleanPhone}`;
+
+    // The single OTP sender handles the request, rate limit,
+    // countdown, and navigation to the verification screen.
+    await sendPhoneOtp(phoneNumber);
   }
 
   function continueFromStepFour(event: FormEvent<HTMLFormElement>) {
@@ -464,7 +510,7 @@ export default function CustomerSignupPage() {
         body: JSON.stringify({
           name: name.trim(),
           email: email.trim().toLowerCase(),
-          phone: getInternationalPhone(country, phone),
+          phone: `${PHONE_COUNTRIES[country].code}${phone}`,
           gender,
           dateOfBirth,
           latitude,
@@ -481,18 +527,14 @@ export default function CustomerSignupPage() {
         throw new Error(data.message || "Registration failed");
       }
 
-      const registeredEmail = data.user?.email || email;
-
-      setCreatedAccountEmail(registeredEmail);
-      setEmailVerificationRequired(true);
-      setError("");
-      setSuccess(
-        `Account created successfully! A verification link has been sent to ${registeredEmail}. Please check your email to verify your account.`
+      localStorage.setItem("metrovybe_token", data.token);
+      localStorage.setItem(
+        "metrovybe_user",
+        JSON.stringify(data.user)
       );
 
-      window.setTimeout(() => {
-        router.push("/profile");
-      }, 5000);
+      setSuccess("Account created successfully!");
+      router.push("/profile");
     } catch (err) {
       setError(
         err instanceof Error
@@ -540,7 +582,6 @@ export default function CustomerSignupPage() {
       }
 
       setSuccess("OTP sent successfully. Please check your phone.");
-      setOtp("");
       setOtpResendSeconds(60);
       setStep(6);
     } catch (err) {
@@ -571,12 +612,13 @@ export default function CustomerSignupPage() {
     setOtpVerifying(true);
 
     try {
-      // Always verify using the exact same E.164 number
-      // that was used when requesting the OTP.
-      const normalizedPhoneNumber = getInternationalPhone(
-        country,
-        phone
-      );
+      const phoneNumber =
+        `${PHONE_COUNTRIES[country].code}${phone.replace(/\D/g, "")}`;
+
+      const normalizedPhoneNumber =
+        phoneNumber.startsWith("+")
+          ? phoneNumber
+          : `+${phoneNumber}`;
 
       const response = await fetch(
         `${API_URL}/api/auth/verify-signup-phone-otp`,
@@ -598,7 +640,7 @@ export default function CustomerSignupPage() {
         throw new Error(data.message || "Invalid OTP.");
       }
 
-      setSuccess("WhatsApp Number verified successfully!");
+      setSuccess("Phone number verified successfully!");
 
       setTimeout(() => {
         setSuccess("");
@@ -613,102 +655,6 @@ export default function CustomerSignupPage() {
     } finally {
       setOtpVerifying(false);
     }
-  }
-
-  if (emailVerificationRequired) {
-    return (
-      <main className="public-login-page">
-        <div className={`public-login-card signup-step-${step}`}>
-          <div
-            style={{
-              width: "64px",
-              height: "64px",
-              borderRadius: "50%",
-              background: "#E8F8F2",
-              color: "#29AB87",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "30px",
-              fontWeight: 800,
-              margin: "0 auto 20px",
-            }}
-          >
-            ✓
-          </div>
-
-          <h1
-            style={{
-              fontSize: "28px",
-              lineHeight: 1.1,
-              letterSpacing: "-0.7px",
-              margin: "0 0 10px",
-              textAlign: "center",
-              color: "#111318",
-            }}
-          >
-            Verify your email
-          </h1>
-
-          <p
-            style={{
-              color: "#747A82",
-              fontSize: "14px",
-              lineHeight: 1.6,
-              textAlign: "center",
-              margin: "0 0 20px",
-            }}
-          >
-            Your MetroVybe account has been created. We sent a
-            verification link to:
-          </p>
-
-          <p
-            style={{
-              fontWeight: 800,
-              textAlign: "center",
-              margin: "0 0 24px",
-              wordBreak: "break-word",
-            }}
-          >
-            {createdAccountEmail}
-          </p>
-
-          <div
-            style={{
-              background: "#F7F8F9",
-              borderRadius: "10px",
-              padding: "14px",
-              fontSize: "13px",
-              lineHeight: 1.5,
-              color: "#666",
-              marginBottom: "20px",
-            }}
-          >
-            Open your email and click <strong>Verify my email</strong>.
-            You must verify your email before logging in.
-          </div>
-
-          <Link
-            href="/login"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "100%",
-              height: "50px",
-              borderRadius: "8px",
-              background: "#29AB87",
-              color: "#fff",
-              textDecoration: "none",
-              fontWeight: 800,
-            }}
-          >
-            Go to Login
-          </Link>
-        </div>
-      </main>
-    );
   }
 
   return (
@@ -877,14 +823,9 @@ export default function CustomerSignupPage() {
 
             <button
               type="submit"
-              disabled={otpSending}
-              style={{
-                ...continueButtonStyle,
-                opacity: otpSending ? 0.7 : 1,
-                cursor: otpSending ? "not-allowed" : "pointer",
-              }}
+              style={continueButtonStyle}
             >
-              {otpSending ? "Sending OTP..." : "Continue"}
+              Continue
             </button>
           </form>
         )}
@@ -1156,15 +1097,13 @@ export default function CustomerSignupPage() {
 
             <div style={fieldGroupStyle}>
               <label style={labelStyle}>
-                WhatsApp Number
+                Phone number
               </label>
 
               <div
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  maxWidth: "100%",
-                  minWidth: 0,
                   ...inputStyle,
                   padding: 0,
                   overflow: "hidden",
@@ -1212,8 +1151,6 @@ export default function CustomerSignupPage() {
                     const maxDigits =
                       PHONE_COUNTRIES[country].digits;
 
-                    // The country code is already selected separately.
-                    // Store only the national number in phone state.
                     const digits = event.target.value
                       .replace(/\D/g, "")
                       .slice(0, maxDigits);
@@ -1230,16 +1167,13 @@ export default function CustomerSignupPage() {
                   }
                   required
                   style={{
-                    flex: "1 1 0%",
-                    width: "0",
+                    flex: 1,
                     minWidth: 0,
-                    maxWidth: "100%",
-                    boxSizing: "border-box",
                     border: "none",
                     outline: "none",
                     background: "transparent",
                     padding: "13px 12px",
-                    fontSize: "16px",
+                    fontSize: "14px",
                     color: "#111318",
                   }}
                 />
@@ -1374,70 +1308,15 @@ export default function CustomerSignupPage() {
                 margin: "0 0 22px",
               }}
             >
-              {otpSending ? (
-                <>
-                  Sending a 6-digit verification code to{" "}
-                  <strong>
-                    {PHONE_COUNTRIES[country].code}
-                    {phone}
-                  </strong>
-                  ...
-                </>
-              ) : (
-                <>
-                  We sent a 6-digit verification code to{" "}
-                  <strong>
-                    {PHONE_COUNTRIES[country].code}
-                    {phone}
-                  </strong>
-                  .
-                </>
-              )}
+              We sent a 6-digit verification code to{" "}
+              <strong>
+                {PHONE_COUNTRIES[country].code}
+                {phone}
+              </strong>
+              .
             </p>
 
-            {otpSending && (
-              <div
-                role="status"
-                aria-live="polite"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "11px",
-                  marginBottom: "15px",
-                  padding: "12px 14px",
-                  borderRadius: "12px",
-                  background:
-                    "linear-gradient(135deg, #F7F9FF 0%, #EEF3FF 100%)",
-                  border: "1px solid #D7E0FF",
-                }}
-              >
-                <div
-                  style={{
-                    width: "23px",
-                    height: "23px",
-                    minWidth: "23px",
-                    borderRadius: "50%",
-                    border: "2px solid #D5DEFF",
-                    borderTopColor: "#315CFF",
-                    animation: "spin 0.8s linear infinite",
-                  }}
-                />
-
-                <div
-                  style={{
-                    flex: 1,
-                    color: "#3152B8",
-                    fontSize: "12px",
-                    lineHeight: 1.45,
-                    fontWeight: 650,
-                  }}
-                >
-                  Sending OTP to your WhatsApp. Please wait...
-                </div>
-              </div>
-            )}
-
-            {!otpSending && success && (
+            {success && (
               <div
                 role="status"
                 style={{
@@ -1487,12 +1366,12 @@ export default function CustomerSignupPage() {
               </div>
             )}
 
-            {!otpSending && error && (
-              <div role="alert" style={errorStyle}>
-                <span style={errorIconStyle}>!</span>
-                <span>{error}</span>
-              </div>
-            )}
+            {error && (
+  <div role="alert" style={errorStyle}>
+    <span style={errorIconStyle}>!</span>
+    <span>{error}</span>
+  </div>
+)}
 
             <form onSubmit={verifyPhoneOtp}>
               <div style={fieldGroupStyle}>
@@ -1501,10 +1380,9 @@ export default function CustomerSignupPage() {
                 </label>
 
                 <input
-                  key={`otp-input-${step}`}
                   type="text"
                   inputMode="numeric"
-                  autoComplete="new-password"
+                  autoComplete="one-time-code"
                   maxLength={6}
                   value={otp}
                   onChange={(event) =>
@@ -1557,47 +1435,96 @@ export default function CustomerSignupPage() {
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
-                    gap: "5px",
-                    color: "#6B7280",
-                    fontSize: "13px",
-                    fontWeight: 600,
-                    lineHeight: 1.3,
+                    gap: "10px",
+                    padding: "9px 12px",
+                    borderRadius: "12px",
+                    background: "#FAFAFB",
+                    border: "1px solid #E5E7EB",
+                    boxShadow:
+                      "0 2px 8px rgba(17, 19, 24, 0.035)",
                   }}
                 >
-                  <span style={{ color: "#4F565E" }}>
-                    Didn't get the code?
-                  </span>
-
-                  <span
+                  <div
                     style={{
-                      color: "#2563EB",
-                      fontWeight: 700,
+                      width: "28px",
+                      height: "28px",
+                      borderRadius: "50%",
+                      background: "#F1F3F5",
+                      border: "1px solid #DEE2E6",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#111318",
+                      fontSize: "10px",
+                      fontWeight: 850,
                       fontVariantNumeric: "tabular-nums",
                     }}
                   >
-                    Available in {otpResendSeconds}s
-                  </span>
+                    {String(otpResendSeconds).padStart(2, "0")}
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "1px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: "#4F565E",
+                        fontSize: "11px",
+                        fontWeight: 700,
+                      }}
+                    >
+                      Resend code
+                    </span>
+
+                    <span
+                      style={{
+                        color: "#9AA0A6",
+                        fontSize: "10px",
+                        fontWeight: 500,
+                      }}
+                    >
+                      Available in {otpResendSeconds}s
+                    </span>
+                  </div>
                 </div>
               ) : (
                 <button
                   type="button"
-                  className="mv-resend-plain"
                   onClick={() =>
                     sendPhoneOtp(
                       `${PHONE_COUNTRIES[country].code}${phone.replace(/\D/g, "")}`
                     )
                   }
                   disabled={otpSending}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "7px",
+                    border: "1px solid #D7E1FF",
+                    background:
+                      "linear-gradient(135deg, #F8FAFF 0%, #F2F6FF 100%)",
+                    color: "#2563EB",
+                    borderRadius: "11px",
+                    padding: "10px 15px",
+                    fontSize: "12px",
+                    fontWeight: 800,
+                    boxShadow:
+                      "0 2px 8px rgba(37, 99, 235, 0.06)",
+                    cursor: otpSending
+                      ? "not-allowed"
+                      : "pointer",
+                    opacity: otpSending ? 0.65 : 1,
+                  }}
                 >
                   <span
                     style={{
-                      fontSize: "17px",
+                      fontSize: "14px",
                       lineHeight: 1,
-                      fontWeight: 800,
-                      display: "inline-flex",
-                      alignItems: "center",
-                      marginRight: "9px",
-                      transform: "translateY(-0.5px)",
                     }}
                   >
                     ↻
@@ -1613,12 +1540,7 @@ export default function CustomerSignupPage() {
         )}
 
         {step === 5 && (
-          <form
-            onSubmit={createAccount}
-            style={{
-              marginTop: "-8px",
-            }}
-          >
+          <form onSubmit={createAccount}>
             <div style={fieldGroupStyle}>
               <label style={labelStyle}>
                 Password

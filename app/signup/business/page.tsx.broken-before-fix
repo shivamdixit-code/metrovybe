@@ -1,0 +1,3890 @@
+"use client";
+
+import { FormEvent, Suspense, useEffect, useMemo, useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
+
+const ListingLocationPicker = dynamic(
+  () => import("@/components/ListingLocationPicker"),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        style={{
+          width: "100%",
+          height: "420px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "#F7F8F7",
+          color: "#747A82",
+          fontSize: "14px",
+        }}
+      >
+        Loading location map...
+      </div>
+    ),
+  }
+);
+
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
+
+const PHONE_COUNTRIES = {
+  IN: { code: "+91", label: "🇮🇳 +91", placeholder: "9876543210" },
+  GB: { code: "+44", label: "🇬🇧 +44", placeholder: "7911123456" },
+  US: { code: "+1", label: "🇺🇸 +1", placeholder: "2015550123" },
+  CA: { code: "+1", label: "🇨🇦 +1", placeholder: "4165550123" },
+  AU: { code: "+61", label: "🇦🇺 +61", placeholder: "412345678" },
+  NZ: { code: "+64", label: "🇳🇿 +64", placeholder: "211234567" },
+  SG: { code: "+65", label: "🇸🇬 +65", placeholder: "81234567" },
+  MY: { code: "+60", label: "🇲🇾 +60", placeholder: "123456789" },
+  AE: { code: "+971", label: "🇦🇪 +971", placeholder: "501234567" },
+} as const;
+
+type PhoneCountry = keyof typeof PHONE_COUNTRIES;
+type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+
+const COUNTRY_NAMES: Record<PhoneCountry, string> = {
+  IN: "India",
+  GB: "United Kingdom",
+  US: "United States",
+  CA: "Canada",
+  AU: "Australia",
+  NZ: "New Zealand",
+  SG: "Singapore",
+  MY: "Malaysia",
+  AE: "United Arab Emirates",
+};
+
+const INDIA_STATES = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+  "Delhi",
+  "Jammu and Kashmir",
+  "Ladakh",
+];
+
+const INDIA_CITIES: Record<string, string[]> = {
+  "Uttar Pradesh": [
+    "Lucknow",
+    "Kanpur",
+    "Ghaziabad",
+    "Noida",
+    "Agra",
+    "Varanasi",
+    "Prayagraj",
+    "Meerut",
+    "Bareilly",
+    "Aligarh",
+    "Moradabad",
+    "Gorakhpur",
+    "Mathura",
+    "Greater Noida",
+  ],
+  Maharashtra: [
+    "Mumbai",
+    "Pune",
+    "Nagpur",
+    "Nashik",
+    "Thane",
+    "Aurangabad",
+    "Kolhapur",
+  ],
+  Karnataka: [
+    "Bengaluru",
+    "Mysuru",
+    "Mangaluru",
+    "Hubballi",
+    "Belagavi",
+  ],
+  Delhi: ["New Delhi", "Delhi"],
+  Gujarat: [
+    "Ahmedabad",
+    "Surat",
+    "Vadodara",
+    "Rajkot",
+    "Gandhinagar",
+    "Bhavnagar",
+  ],
+  Rajasthan: [
+    "Jaipur",
+    "Jodhpur",
+    "Udaipur",
+    "Kota",
+    "Ajmer",
+    "Bikaner",
+  ],
+  Haryana: [
+    "Gurugram",
+    "Faridabad",
+    "Panipat",
+    "Ambala",
+    "Hisar",
+    "Rohtak",
+    "Sonipat",
+  ],
+  Punjab: [
+    "Ludhiana",
+    "Amritsar",
+    "Jalandhar",
+    "Patiala",
+    "Bathinda",
+  ],
+  Telangana: ["Hyderabad", "Warangal", "Nizamabad", "Karimnagar"],
+  "Tamil Nadu": [
+    "Chennai",
+    "Coimbatore",
+    "Madurai",
+    "Tiruchirappalli",
+    "Salem",
+    "Tiruppur",
+  ],
+  Kerala: [
+    "Thiruvananthapuram",
+    "Kochi",
+    "Kozhikode",
+    "Thrissur",
+    "Kollam",
+  ],
+  "West Bengal": [
+    "Kolkata",
+    "Howrah",
+    "Durgapur",
+    "Siliguri",
+    "Asansol",
+  ],
+};
+
+const CATEGORY_DOCUMENTS: Record<string, string[]> = {
+  pg: ["Business registration / ownership proof", "Address proof"],
+  tiffin: ["Business registration / food-related licence", "Address proof"],
+  laundry: ["Business registration / ownership proof", "Address proof"],
+  movers: ["Business registration / transport-related proof", "Address proof"],
+  travel: ["Business registration / travel-related licence", "Address proof"],
+};
+
+function getInternationalPhone(country: PhoneCountry, phone: string) {
+  const codes: Record<PhoneCountry, string> = {
+    IN: "91",
+    GB: "44",
+    US: "1",
+    CA: "1",
+    AU: "61",
+    NZ: "64",
+    SG: "65",
+    MY: "60",
+    AE: "971",
+  };
+
+  return `+${codes[country]}${phone.replace(/\D/g, "")}`;
+}
+
+function BusinessSignupPageContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const category = searchParams.get("category") || "";
+
+  const [step, setStep] = useState<Step>(1);
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [country, setCountry] = useState<PhoneCountry>("IN");
+
+  const [otp, setOtp] = useState("");
+  const [phoneVerified, setPhoneVerified] = useState(false);
+  const [otpSending, setOtpSending] = useState(false);
+  const [otpVerifying, setOtpVerifying] = useState(false);
+  const [otpResendSeconds, setOtpResendSeconds] = useState(0);
+
+  const [businessName, setBusinessName] = useState("");
+  const [businessCategory, setBusinessCategory] = useState(category);
+
+  const [address, setAddress] = useState("");
+  const [state, setState] = useState("");
+  const [city, setCity] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+
+  const [documents, setDocuments] = useState<
+    { name: string; file: File }[]
+  >([]);
+
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const countryName = COUNTRY_NAMES[country];
+
+  useEffect(() => {
+    if (otpResendSeconds <= 0) return;
+
+    const timer = window.setInterval(() => {
+      setOtpResendSeconds((value) => (value > 0 ? value - 1 : 0));
+    }, 1000);
+
+    const stepTitle =
+    step === 1
+      ? "Contact details"
+      : step === 2
+        ? "Verify WhatsApp"
+        : step === 3
+          ? "Business basics"
+          : step === 4
+            ? "Business location"
+            : step === 5
+              ? "Map location"
+              : step === 6
+                ? "Business documents"
+                : step === 7
+                  ? "Create password"
+                  : step === 8
+                    ? "Review & create account"
+                    : "Account created";
+
+  const stepDescription =
+    step === 1
+      ? "Tell us how we can reach you."
+      : step === 2
+        ? `Enter the verification code sent to ${PHONE_COUNTRIES[country].code}${phone}.`
+        : step === 3
+          ? "Tell us about your business."
+          : step === 4
+            ? `Add your ${countryName} business location.`
+            : step === 5
+              ? "Choose the exact location of your business on the map."
+              : step === 6
+                ? "Upload the documents required for your business."
+                : step === 7
+                  ? "Choose a secure password."
+                  : step === 8
+                    ? "Check your details before creating your account."
+                    : "Your MetroVybe business account is ready.";
+
+  return () => window.clearInterval(timer);
+  }, [otpResendSeconds]);
+
+  useEffect(() => {
+    if (!success && !error) return;
+
+    const timer = window.setTimeout(() => {
+      setSuccess("");
+      setError("");
+    }, 5000);
+
+    return () => window.clearTimeout(timer);
+  }, [success, error]);
+
+  function back() {
+    setError("");
+    setSuccess("");
+
+    if (step === 1) {
+      router.push("/signup");
+      return;
+    }
+
+    setStep((step - 1) as Step);
+  }
+
+  function validateContact(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+
+    const cleanName = name.trim();
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPhone = phone.replace(/\D/g, "");
+
+    if (!cleanName) {
+      setError("Please enter your name.");
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(cleanEmail)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    if (cleanPhone.length < 7) {
+      setError("Please enter a valid WhatsApp number.");
+      return;
+    }
+
+    setName(cleanName);
+    setEmail(cleanEmail);
+    setPhone(cleanPhone);
+    setPhoneVerified(false);
+    setStep(2);
+    sendOtp(getInternationalPhone(country, cleanPhone));
+  }
+
+  async function sendOtp(phoneNumber: string) {
+    setOtpSending(true);
+    setError("");
+
+    try {
+      const response = await fetch(
+        `${API_URL}/api/auth/send-signup-phone-otp`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ phone: phoneNumber }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Unable to send WhatsApp verification code."
+        );
+      }
+
+      setOtp("");
+      setOtpResendSeconds(60);
+      setSuccess("Verification code sent to your WhatsApp.");
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Unable to send OTP."
+      );
+    } finally {
+      setOtpSending(false);
+    }
+  }
+
+  async function verifyOtp(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+
+    if (!/^\d{6}$/.test(otp)) {
+      setError("Please enter the 6-digit OTP.");
+      return;
+    }
+
+    setOtpVerifying(true);
+
+    try {
+      const response = await fetch(
+        `${API_URL}/api/auth/verify-signup-phone-otp`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            phone: getInternationalPhone(country, phone),
+            otp,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Invalid OTP.");
+      }
+
+      setPhoneVerified(true);
+      setSuccess("WhatsApp number verified successfully!");
+
+      window.setTimeout(() => {
+        setSuccess("");
+        setStep(3);
+      }, 500);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Phone verification failed."
+      );
+    } finally {
+      setOtpVerifying(false);
+    }
+  }
+
+  function validateBusiness(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+
+    if (!businessName.trim()) {
+      setError("Please enter your business name.");
+      return;
+    }
+
+    if (!businessCategory.trim()) {
+      setError("Please select your business category.");
+      return;
+    }
+
+    setStep(4);
+  }
+
+  function validateLocation(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+
+    if (!address.trim() || !state.trim() || !city.trim() || !postalCode.trim()) {
+      setError("Please complete your business location.");
+      return;
+    }
+
+    if (latitude === null || longitude === null) {
+      setError("Please select and confirm your business location on the map.");
+      return;
+    }
+
+    setStep(5);
+  }
+
+  function validateDocuments(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+
+    if (documents.length === 0) {
+      setError("Please upload at least one business document.");
+      return;
+    }
+
+    setStep(7);
+  }
+
+  function validatePassword(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    setStep(8);
+  }
+
+  async function createAccount() {
+    setError("");
+
+    if (!phoneVerified) {
+      setError("Please verify your WhatsApp number first.");
+      setStep(2);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch(`${API_URL}/api/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          phone: getInternationalPhone(country, phone),
+          password,
+          role: "business",
+          businessName,
+          category: businessCategory,
+          address,
+          city,
+          state,
+          pincode: postalCode,
+          businessLatitude: latitude,
+          businessLongitude: longitude,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Registration failed.");
+      }
+
+      setSuccess("Business account created successfully!");
+      setStep(9);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Registration failed."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const selectedCategory = businessCategory
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+
+const documentRequirements = (() => {
+    if (selectedCategory === "Stay") {
+      return [
+        "Government ID",
+        "Address/property proof",
+        "Ownership proof or owner authorization/rent agreement",
+        "Applicable business/registration proof",
+      ];
+    }
+
+    if (selectedCategory === "Eat") {
+      return [
+        "Government ID",
+        "FSSAI/food registration or license",
+        "Business/registration proof",
+        "Address proof",
+      ];
+    }
+
+    if (selectedCategory === "Live") {
+      return [
+        "Government ID",
+        "Business/registration proof",
+        "Address proof",
+        "Applicable local license",
+      ];
+    }
+
+    if (selectedCategory === "Move") {
+      return [
+        "Government ID",
+        "Business/registration proof",
+        "Address proof",
+        "Vehicle/transport documents if applicable",
+      ];
+    }
+
+    if (selectedCategory === "Travel") {
+      return [
+        "Government ID",
+        "Business/registration proof",
+        "Address proof",
+        "Applicable travel/tourism authorization or license",
+      ];
+    }
+
+    return [
+      "Government ID",
+      "Business/registration proof",
+      "Address proof",
+    ];
+  })();
+
+  const stepTitle =
+    step === 1
+      ? "Contact details"
+      : step === 2
+        ? "Verify WhatsApp"
+        : step === 3
+          ? "Business basics"
+          : step === 4
+            ? "Business location"
+            : step === 5
+              ? "Choose map location"
+              : step === 6
+                ? "Business documents"
+                : step === 7
+                  ? "Create password"
+                  : step === 8
+                    ? "Review & create account"
+                    : "Account created";
+
+  const stepDescription =
+    step === 1
+      ? "Tell us how we can reach you."
+      : step === 2
+        ? `Enter the verification code sent to ${PHONE_COUNTRIES[country].code}${phone}.`
+        : step === 3
+          ? "Tell us about your business."
+          : step === 4
+            ? `Add your ${countryName} business location.`
+            : step === 5
+              ? "Choose the exact location of your business on the map."
+              : step === 6
+                ? "Upload the documents required for your business."
+                : step === 7
+                  ? "Choose a secure password."
+                  : step === 8
+                    ? "Check your details before creating your account."
+                    : "Your MetroVybe business account is ready.";
+
+  return (
+    <main className="public-login-page">
+      <div className="public-login-card">
+        <div style={{ marginBottom: "19px" }}>
+          <button
+            type="button"
+            onClick={back}
+            style={{
+              width: "auto",
+              height: "34px",
+              padding: 0,
+              border: "none",
+              background: "transparent",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "5px",
+              color: "#2563EB",
+              fontSize: "12px",
+              fontWeight: 700,
+              cursor: "pointer",
+            }}
+          >
+            <span style={{ fontSize: "20px" }}>‹</span>
+            <span>Back</span>
+          </button>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "12px",
+          }}
+        >
+          <span
+            style={{
+              fontSize: "11px",
+              fontWeight: 800,
+              color: "#29AB87",
+              textTransform: "uppercase",
+              letterSpacing: "0.6px",
+            }}
+          >
+            Step {step} of 9
+          </span>
+
+          <span
+            style={{
+              fontSize: "11px",
+              color: "#8A9199",
+              fontWeight: 650,
+            }}
+          >
+            Business signup
+          </span>
+        </div>
+
+        <div
+          style={{
+            width: "100%",
+            height: "4px",
+            borderRadius: "20px",
+            background: "#E9ECEF",
+            marginBottom: "22px",
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              width: `${(step / 8) * 100}%`,
+              height: "100%",
+              background: "#29AB87",
+              borderRadius: "20px",
+              transition: "width 0.2s ease",
+            }}
+          />
+        </div>
+
+        <h1
+          style={{
+            fontSize: "28px",
+            lineHeight: 1.1,
+            letterSpacing: "-0.7px",
+            margin: "0 0 7px",
+            color: "#111318",
+          }}
+        >{stepTitle}</h1>
+
+        <p
+          style={{
+            color: "#747A82",
+            fontSize: "14px",
+            lineHeight: 1.5,
+            margin: "0 0 22px",
+          }}
+        >{stepDescription}</p>
+
+        {step === 1 && (
+          <form onSubmit={validateContact}>
+            <Field label="Name">
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your full name"
+                autoComplete="name"
+                autoFocus
+                required
+                style={inputStyle}
+              />
+            </Field>
+
+            <Field label="Email">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                autoComplete="email"
+                required
+                style={inputStyle}
+              />
+            </Field>
+
+            <Field label="WhatsApp number">
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "108px 1fr",
+                  gap: "8px",
+                }}
+              >
+                <select
+                  value={country}
+                  onChange={(e) => {
+                    setCountry(e.target.value as PhoneCountry);
+                    setPhone("");
+                  }}
+                  style={{
+                    ...inputStyle,
+                    padding: "0 8px",
+                    fontSize: "13px",
+                  }}
+                >
+                  {Object.entries(PHONE_COUNTRIES).map(([key, value]) => (
+                    <option key={key} value={key}>
+                      {value.label}
+                    </option>
+                  ))}
+                </select>
+
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) =>
+                    setPhone(e.target.value.replace(/\D/g, ""))
+                  }
+                  placeholder={PHONE_COUNTRIES[country].placeholder}
+                  autoComplete="tel-national"
+                  required
+                  style={inputStyle}
+                />
+              </div>
+
+              <div
+                style={{
+                  marginTop: "7px",
+                  fontSize: "11px",
+                  color: "#747A82",
+                }}
+              >
+                Country automatically determined:{" "}
+                <strong>{countryName}</strong>
+              </div>
+            </Field>
+
+            <ErrorMessage error={error} />
+
+            <button type="submit" style={continueButtonStyle}>
+              Continue
+            </button>
+          </form>
+        )}
+
+        {step === 2 && (
+          <>
+            {otpSending && (
+              <div style={infoBoxStyle}>
+                Sending OTP to your WhatsApp. Please wait...
+              </div>
+            )}
+
+            {success && !otpSending && (
+              <div style={successBoxStyle}>✓ {success}</div>
+            )}
+
+            <form onSubmit={verifyOtp}>
+              <Field label="WhatsApp OTP">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={otp}
+                  onChange={(e) =>
+                    setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+                  }
+                  placeholder="Enter 6-digit OTP"
+                  autoFocus
+                  style={{
+                    ...inputStyle,
+                    textAlign: "center",
+                    letterSpacing: "6px",
+                    fontSize: "20px",
+                    fontWeight: 700,
+                  }}
+                />
+              </Field>
+
+              <ErrorMessage error={error} />
+
+              <button
+                type="submit"
+                disabled={otpVerifying || otpSending}
+                style={{
+                  ...continueButtonStyle,
+                  opacity: otpVerifying || otpSending ? 0.7 : 1,
+                }}
+              >
+                {otpVerifying ? "Verifying..." : "Verify WhatsApp"}
+              </button>
+            </form>
+
+            <div
+              style={{
+                textAlign: "center",
+                marginTop: "15px",
+              }}
+            >
+              {otpResendSeconds > 0 ? (
+                <span
+                  style={{
+                    fontSize: "13px",
+                    color: "#747A82",
+                    fontWeight: 600,
+                  }}
+                >
+                  Resend available in {otpResendSeconds}s
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() =>
+                    sendOtp(getInternationalPhone(country, phone))
+                  }
+                  disabled={otpSending}
+                  style={linkButtonStyle}
+                >
+                  ↻ Resend verification code
+                </button>
+              )}
+            </div>
+          </>
+        )}
+
+        {step === 3 && (
+          <form onSubmit={validateBusiness}>
+            <Field label="Business name">
+              <input
+                value={businessName}
+                onChange={(e) => setBusinessName(e.target.value)}
+                placeholder="Enter your business name"
+                autoComplete="organization"
+                autoFocus
+                required
+                style={inputStyle}
+              />
+            </Field>
+
+            <div
+              style={{
+                padding: "13px 14px",
+                border: "1px solid #E1E5EA",
+                borderRadius: "11px",
+                background: "#F8FAFC",
+                marginBottom: "18px",
+              }}
+            >
+              <div
+                style={{
+                  color: "#747A82",
+                  fontSize: "11px",
+                  marginBottom: "4px",
+                }}
+              >
+                Business category
+              </div>
+              <strong style={{ color: "#111318", fontSize: "13px" }}>
+                {selectedCategory || "Not selected"}
+              </strong>
+            </div>
+
+            <ErrorMessage error={error} />
+
+            <button type="submit" style={continueButtonStyle}>
+              Continue
+            </button>
+          </form>
+        )}
+
+        {step === 4 && (
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              setError("");
+              if (
+                !address.trim() ||
+                !state.trim() ||
+                !city.trim() ||
+                !postalCode.trim()
+              ) {
+                setError("Please complete your business location.");
+                return;
+              }
+              setStep(5);
+            }}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "9px",
+            }}
+          >
+            <Field label="Address">
+              <input
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder={`Business address in ${countryName}`}
+                autoComplete="street-address"
+                autoFocus
+                required
+                style={{
+                  ...inputStyle,
+                  height: "40px",
+                  minHeight: "40px",
+                  borderRadius: "10px",
+                  border: "1.5px solid #D8DDDB",
+                  padding: "0 12px",
+                  fontSize: "13px",
+                  background: "#fff",
+                }}
+              />
+            </Field>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "9px",
+              }}
+            >
+              <Field label="State / Region">
+                {country === "IN" ? (
+                  <select
+                    value={state}
+                    onChange={(e) => {
+                      setState(e.target.value);
+                      setCity("");
+                    }}
+                    required
+                    style={{
+                      ...inputStyle,
+                      height: "38px",
+                      minHeight: "38px",
+                      borderRadius: "9px",
+                      border: "1.5px solid #D8DDDB",
+                      padding: "0 9px",
+                      fontSize: "12px",
+                      cursor: "pointer",
+                      background: "#fff",
+                    }}
+                  >
+                    <option value="">Select state</option>
+                    {INDIA_STATES.map((item) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
+                    placeholder="State / Region"
+                    required
+                    style={{
+                      ...inputStyle,
+                      height: "38px",
+                      minHeight: "38px",
+                      borderRadius: "9px",
+                      border: "1.5px solid #D8DDDB",
+                      padding: "0 10px",
+                      fontSize: "12px",
+                      background: "#fff",
+                    }}
+                  />
+                )}
+              </Field>
+
+              <Field label="City">
+                {country === "IN" ? (
+                  <select
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    disabled={!state}
+                    required
+                    style={{
+                      ...inputStyle,
+                      height: "38px",
+                      minHeight: "38px",
+                      borderRadius: "9px",
+                      border: "1.5px solid #D8DDDB",
+                      padding: "0 9px",
+                      fontSize: "12px",
+                      background: state ? "#fff" : "#F3F5F4",
+                      color: state ? "#151918" : "#9AA19E",
+                      cursor: state ? "pointer" : "not-allowed",
+                    }}
+                  >
+                    <option value="">
+                      {state ? "Select city" : "Select state first"}
+                    </option>
+                    {(INDIA_CITIES[state] || []).map((item) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="City"
+                    required
+                    style={{
+                      ...inputStyle,
+                      height: "38px",
+                      minHeight: "38px",
+                      borderRadius: "9px",
+                      border: "1.5px solid #D8DDDB",
+                      padding: "0 10px",
+                      fontSize: "12px",
+                      background: "#fff",
+                    }}
+                  />
+                )}
+              </Field>
+            </div>
+
+            <Field label="Postal Code">
+              <input
+                value={postalCode}
+                onChange={(e) => setPostalCode(e.target.value)}
+                placeholder="Postal / ZIP code"
+                autoComplete="postal-code"
+                required
+                style={{
+                  ...inputStyle,
+                  height: "38px",
+                  minHeight: "38px",
+                  borderRadius: "9px",
+                  border: "1.5px solid #D8DDDB",
+                  padding: "0 12px",
+                  fontSize: "12px",
+                  background: "#fff",
+                }}
+              />
+            </Field>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "7px",
+                padding: "5px 2px",
+                color: "#5F6864",
+                fontSize: "10px",
+                fontWeight: 700,
+              }}
+            >
+              <span
+                style={{
+                  width: "20px",
+                  height: "20px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "7px",
+                  background: "#E8F6F1",
+                  color: "#168060",
+                  fontSize: "11px",
+                  fontWeight: 900,
+                }}
+              >
+                ✓
+              </span>
+              You'll select the exact map pin next.
+            </div>
+
+            <ErrorMessage error={error} />
+
+            <button
+              type="submit"
+              style={{
+                ...continueButtonStyle,
+                height: "40px",
+                marginTop: "0px",
+                borderRadius: "10px",
+                border: "1px solid #111",
+                boxShadow: "0 4px 11px rgba(0,0,0,.13)",
+                fontSize: "13px",
+                fontWeight: 950,
+              }}
+            >
+              Continue to Map →
+            </button>
+          </form>
+        )}
+        {step === 5 && (
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              setError("");
+
+              if (latitude === null || longitude === null) {
+                setError(
+                  "Please select and confirm your business location on the map."
+                );
+                return;
+              }
+
+              setStep(6);
+            }}
+          >
+            <Field label="Map location">
+              <div
+                style={{
+                  width: "100%",
+                  borderRadius: "16px",
+                  border: "1px solid #E1E5EA",
+                  overflow: "visible",
+                }}
+              >
+                <ListingLocationPicker
+                  initialLocation={
+                    latitude !== null && longitude !== null
+                      ? { latitude, longitude }
+                      : undefined
+                  }
+                  onConfirm={(location) => {
+                    setLatitude(location.latitude);
+                    setLongitude(location.longitude);
+                    setAddress(location.address);
+                    setCity(location.city);
+                    setState(location.state);
+                    setPostalCode(location.pincode);
+                    setError("");
+                    setStep(6);
+                  }}
+                />
+              </div>
+
+              {latitude !== null && longitude !== null && (
+                <div
+                  style={{
+                    marginTop: "8px",
+                    color: "#176B51",
+                    fontSize: "12px",
+                    fontWeight: 650,
+                  }}
+                >
+                  ✓ Map location confirmed
+                </div>
+              )}
+            </Field>
+
+            <ErrorMessage error={error} />
+          </form>
+        )}
+
+        {step === 6 && (
+          <form onSubmit={validateDocuments}>
+            <div
+              style={{
+                background: "#F8FAFC",
+                border: "1px solid #E7EAF0",
+                borderRadius: "12px",
+                padding: "10px 12px",
+                marginBottom: "12px",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "11px",
+                  fontWeight: 800,
+                  color: "#111318",
+                  marginBottom: "1px",
+                }}
+              >
+                Documents required
+              </div>
+
+              <div
+                style={{
+                  fontSize: "10px",
+                  color: "#747A82",
+                  lineHeight: 1.2,
+                  marginBottom: "6px",
+                }}
+              >
+                Based on your selected category:{" "}
+                <strong style={{ color: "#30353B" }}>
+                  {selectedCategory}
+                </strong>{" "}
+                · {countryName}
+              </div>
+
+              {documentRequirements.map((item) => (
+                <div
+                  key={item}
+                  style={{
+                    fontSize: "11px",
+                    color: "#30353B",
+                    marginTop: "4px",
+                  }}
+                >
+                  ✓ {item}
+                </div>
+              ))}
+            </div>
+
+            <div
+              style={{
+                border: "1.5px dashed #C9D0D8",
+                borderRadius: "12px",
+                padding: "10px 12px",
+                textAlign: "center",
+                background: "#FFFFFF",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "15px",
+                  marginBottom: "1px",
+                }}
+              >
+                ↑
+              </div>
+
+              <div
+                style={{
+                  fontSize: "12px",
+                  fontWeight: 800,
+                  color: "#111318",
+                  marginBottom: "2px",
+                }}
+              >
+                Upload business documents
+              </div>
+
+              <div
+                style={{
+                  fontSize: "9px",
+                  color: "#747A82",
+                  marginBottom: "7px",
+                }}
+              >
+                PDF, JPG, JPEG or PNG · Multiple files allowed
+              </div>
+
+              <label
+                htmlFor="business-documents-upload"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "6px 12px",
+                  borderRadius: "8px",
+                  background: "#111318",
+                  color: "#FFFFFF",
+                  fontSize: "11px",
+                  fontWeight: 800,
+                  cursor: "pointer",
+                }}
+              >
+                Choose files
+              </label>
+
+              <input
+                id="business-documents-upload"
+                type="file"
+                multiple
+                accept=".pdf,.jpg,.jpeg,.png"
+                disabled={documents.length >= 5}
+                onChange={(e) => {
+                  const files = Array.from(e.target.files || []);
+
+                  setDocuments((current) => {
+                    const existing = new Set(current.map((item) => item.name));
+
+                    const newFiles = files
+                      .filter((file) => !existing.has(file.name))
+                      .map((file) => ({
+                        name: file.name,
+                        file,
+                      }));
+
+                    const remaining = 5 - current.length;
+
+                    if (remaining <= 0) {
+                      setError("You can upload a maximum of 5 documents.");
+                      return current;
+                    }
+
+                    if (newFiles.length > remaining) {
+                      setError(
+                        `You can upload a maximum of 5 documents. ${remaining} more can be added.`
+                      );
+                    } else {
+                      setError("");
+                    }
+
+                    return [...current, ...newFiles.slice(0, remaining)];
+                  });
+
+                  e.currentTarget.value = "";
+                }}
+                style={{ display: "none" }}
+              />
+            </div>
+
+            {documents.length > 0 && (
+              <div style={{ marginTop: "9px" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    marginBottom: "6px",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "11px",
+                      fontWeight: 800,
+                      color: "#111318",
+                    }}
+                  >
+                    Selected documents
+                  </span>
+
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      color: "#176B51",
+                      fontWeight: 750,
+                    }}
+                  >
+                    {documents.length} selected
+                  </span>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "6px",
+                    maxHeight: "150px",
+                    overflowY: "auto",
+                    paddingRight: "4px",
+                  }}
+                >
+                  {documents.map((document) => (
+                    <div
+                      key={document.name}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        padding: "6px 8px",
+                        border: "1px solid #E7EAF0",
+                        borderRadius: "9px",
+                        background: "#FFFFFF",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "27px",
+                          height: "27px",
+                          borderRadius: "7px",
+                          background: "#F1F5F9",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "12px",
+                          flexShrink: 0,
+                        }}
+                      >
+                        📄
+                      </div>
+
+                      <div
+                        style={{
+                          minWidth: 0,
+                          flex: 1,
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontSize: "11px",
+                            fontWeight: 750,
+                            color: "#20242A",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {document.name}
+                        </div>
+
+                        <div
+                          style={{
+                            fontSize: "9px",
+                            color: "#176B51",
+                            marginTop: "2px",
+                            fontWeight: 700,
+                          }}
+                        >
+                          Ready to upload
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        aria-label={`Remove ${document.name}`}
+                        onClick={() =>
+                          setDocuments((current) =>
+                            current.filter(
+                              (item) => item.name !== document.name
+                            )
+                          )
+                        }
+                        style={{
+                          width: "26px",
+                          height: "26px",
+                          border: "1px solid #E7EAF0",
+                          borderRadius: "7px",
+                          background: "#FFFFFF",
+                          color: "#D92D20",
+                          fontSize: "15px",
+                          fontWeight: 700,
+                          cursor: "pointer",
+                          flexShrink: 0,
+                        }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <ErrorMessage error={error} />
+
+            <button
+              type="submit"
+              style={{
+                ...continueButtonStyle,
+                marginTop: "9px",
+              }}
+            >
+              Continue to Password
+            </button>
+          </form>
+        )}
+
+        {step === 7 && (
+          <form onSubmit={validatePassword}>
+            <Field label="Password">
+              <div style={passwordWrapperStyle}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Create a password"
+                  autoComplete="new-password"
+                  autoFocus
+                  required
+                  style={passwordInputStyle}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((value) => !value)}
+                  style={eyeButtonStyle}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </Field>
+
+            <Field label="Confirm password">
+              <div style={passwordWrapperStyle}>
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm your password"
+                  autoComplete="new-password"
+                  required
+                  style={passwordInputStyle}
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowConfirmPassword((value) => !value)
+                  }
+                  style={eyeButtonStyle}
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
+                </button>
+              </div>
+            </Field>
+
+            <ErrorMessage error={error} />
+
+            <button type="submit" style={continueButtonStyle}>
+              Continue to review
+            </button>
+          </form>
+        )}
+
+        {step === 8 && (
+          <>
+            <div
+              style={{
+                border: "1px solid #E4E7EC",
+                borderRadius: "16px",
+                background: "#FFFFFF",
+                overflow: "hidden",
+                boxShadow: "0 4px 14px rgba(17, 19, 24, 0.04)",
+              }}
+            >
+              <div
+                style={{
+                  padding: "13px 14px 11px",
+                  background: "#FAFBFC",
+                  borderBottom: "1px solid #ECEEF1",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: "10px",
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        fontSize: "15px",
+                        lineHeight: 1.2,
+                        fontWeight: 850,
+                        color: "#111318",
+                      }}
+                    >
+                      Review & create
+                    </div>
+
+                    <div
+                      style={{
+                        fontSize: "10px",
+                        color: "#747A82",
+                        marginTop: "4px",
+                      }}
+                    >
+                      Everything looks ready.
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "5px",
+                      padding: "5px 8px",
+                      borderRadius: "999px",
+                      background: "#ECF9F4",
+                      color: "#176B51",
+                      fontSize: "9px",
+                      fontWeight: 850,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <span>✓</span>
+                    Ready
+                  </div>
+                </div>
+
+              </div>
+
+              <div
+                style={{
+                  maxHeight: "375px",
+                  overflowY: "auto",
+                  padding: "9px 10px 11px",
+                  WebkitOverflowScrolling: "touch",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: "9px",
+                    fontWeight: 850,
+                    color: "#8A9098",
+                    letterSpacing: "0.07em",
+                    textTransform: "uppercase",
+                    padding: "3px 4px 6px",
+                  }}
+                >
+                  Contact
+                </div>
+
+                {[
+                  ["Name", name],
+                  ["Email", email],
+                  [
+                    "WhatsApp",
+                    `${PHONE_COUNTRIES[country].code} ${phone}`,
+                  ],
+                  ["Country", countryName],
+                ].map(([label, value]) => (
+                  <div
+                    key={label}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      padding: "8px 9px",
+                      marginBottom: "5px",
+                      border: "1px solid #ECEEF1",
+                      borderRadius: "9px",
+                    minHeight: "38px",
+                    height: "38px",
+                      background: "#FFFFFF",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "27px",
+                        height: "27px",
+                        borderRadius: "8px",
+                        background: "rgba(41, 171, 135, 0.08)",
+                        color: "#69717C",
+                        border: "1px solid rgba(41, 171, 135, 0.18)",
+                        boxShadow: "inset 2px 0 0 #29AB87",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "10px",
+                        fontWeight: 850,
+                        flexShrink: 0,
+                      }}
+                    >
+                      {label === "Email"
+                        ? "@"
+                        : label === "WhatsApp"
+                          ? "WA"
+                          : label === "Country"
+                            ? "IN"
+                            : "A"}
+                    </div>
+
+                    <div
+                      style={{
+                        minWidth: 0,
+                        flex: 1,
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: "9px",
+                          color: "#8A9098",
+                          marginBottom: "2px",
+                        }}
+                      >
+                        {label}
+                      </div>
+
+                      <div
+                        style={{
+                          fontSize: "11px",
+                          lineHeight: 1.3,
+                          fontWeight: 750,
+                          color: "#20242A",
+                          overflowWrap: "anywhere",
+                        }}
+                      >
+                        {value}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                <div
+                  style={{
+                    fontSize: "9px",
+                    fontWeight: 850,
+                    color: "#8A9098",
+                    letterSpacing: "0.07em",
+                    textTransform: "uppercase",
+                    padding: "7px 4px 6px",
+                  }}
+                >
+                  Business
+                </div>
+
+                {[
+                  ["Business name", businessName],
+                  ["Category", selectedCategory],
+                ].map(([label, value]) => (
+                  <div
+                    key={label}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: "12px",
+                      padding: "9px 10px",
+                      marginBottom: "5px",
+                      border: "1px solid #ECEEF1",
+                      borderRadius: "9px",
+                    minHeight: "38px",
+                    height: "38px",
+                      background: "#FFFFFF",
+                      boxShadow: "inset 2px 0 0 #E5E7EB",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "10px",
+                        color: "#747A82",
+                      }}
+                    >
+                      {label}
+                    </span>
+
+                    <span
+                      style={{
+                        fontSize: "11px",
+                        fontWeight: 800,
+                        color: "#20242A",
+                        textAlign: "right",
+                        overflowWrap: "anywhere",
+                      }}
+                    >
+                      {value}
+                    </span>
+                  </div>
+                ))}
+
+                <div
+                  style={{
+                    fontSize: "9px",
+                    fontWeight: 850,
+                    color: "#8A9098",
+                    letterSpacing: "0.07em",
+                    textTransform: "uppercase",
+                    padding: "7px 4px 6px",
+                  }}
+                >
+                  Location
+                </div>
+
+                {[
+                  ["Address", address],
+                  ["State / Region", state],
+                  ["City", city],
+                  ["Postal Code", postalCode],
+                ].map(([label, value]) => (
+                  <div
+                    key={label}
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      justifyContent: "space-between",
+                      gap: "12px",
+                      padding: "9px 10px",
+                      marginBottom: "5px",
+                      border: "1px solid #ECEEF1",
+                      borderRadius: "9px",
+                    minHeight: "38px",
+                    height: "38px",
+                      background: "#FFFFFF",
+                      boxShadow: "inset 2px 0 0 #E5E7EB",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "10px",
+                        color: "#747A82",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {label}
+                    </span>
+
+                    <span
+                      style={{
+                        fontSize: "11px",
+                        lineHeight: 1.3,
+                        fontWeight: 750,
+                        color: "#20242A",
+                        textAlign: "right",
+                        overflowWrap: "anywhere",
+                      }}
+                    >
+                      {value}
+                    </span>
+                  </div>
+                ))}
+
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "6px",
+                    marginTop: "8px",
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: "10px",
+                      borderRadius: "9px",
+                    minHeight: "38px",
+                    height: "38px",
+                      background: phoneVerified ? "#F0FBF7" : "#FFF7ED",
+                      border: phoneVerified
+                        ? "1px solid #C8E8DC"
+                        : "1px solid #FED7AA",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: "9px",
+                        color: "#747A82",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      WhatsApp
+                    </div>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "5px",
+                        fontSize: "10px",
+                        fontWeight: 850,
+                        color: phoneVerified ? "#176B51" : "#9A3412",
+                      }}
+                    >
+                      <span>{phoneVerified ? "✓" : "!"}</span>
+                      {phoneVerified ? "Verified" : "Not verified"}
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      padding: "10px",
+                      borderRadius: "9px",
+                    minHeight: "38px",
+                    height: "38px",
+                      background: "#F8FAFC",
+                      border: "1px solid #E7EAF0",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: "9px",
+                        color: "#747A82",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      Documents
+                    </div>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "5px",
+                        fontSize: "10px",
+                        fontWeight: 850,
+                        color: "#30353B",
+                      }}
+                    >
+                      <span>📄</span>
+                      {documents.length} uploaded
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <ErrorMessage error={error} />
+
+            <button
+              type="button"
+              onClick={createAccount}
+              disabled={loading}
+              style={{
+                ...continueButtonStyle,
+                marginTop: "9px",
+                boxShadow: "0 5px 16px rgba(41, 171, 135, 0.20)",
+                opacity: loading ? 0.7 : 1,
+              }}
+            >
+              {loading ? "Creating account..." : "Create Business Account"}
+            </button>
+          </>
+        )}
+
+        {step === 9 && (
+          <div
+            style={{
+              textAlign: "center",
+              padding: "10px 0 4px",
+            }}
+          >
+            <div
+              style={{
+                width: "64px",
+                height: "64px",
+                borderRadius: "50%",
+                background: "#ECF9F4",
+                color: "#176B51",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "30px",
+                fontWeight: 800,
+                margin: "0 auto 18px",
+              }}
+            >
+              ✓
+            </div>
+
+            <h2
+              style={{
+                margin: "0 0 9px",
+                fontSize: "24px",
+                lineHeight: 1.2,
+                color: "#111318",
+              }}
+            >
+              Account Created
+            </h2>
+
+            <p
+              style={{
+                margin: "0 0 22px",
+                color: "#747A82",
+                fontSize: "14px",
+                lineHeight: 1.6,
+              }}
+            >
+              Your MetroVybe business account for{" "}
+              <strong>{businessName}</strong> has been created successfully.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => router.push("/business/dashboard")}
+              style={continueButtonStyle}
+            >
+              Go to Dashboard
+            </button>
+          </div>
+        )}
+      </div>
+    </main>
+  );
+}
+
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div style={fieldGroupStyle}>
+      <label style={labelStyle}>{label}</label>
+      {children}
+    </div>
+  );
+}
+
+function ReviewRow({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        gap: "15px",
+        padding: "11px 0",
+        borderBottom: "1px solid #ECEFF1",
+        fontSize: "13px",
+      }}
+    >
+      <span style={{ color: "#747A82", fontWeight: 650 }}>{label}</span>
+      <strong
+        style={{
+          color: "#111318",
+          textAlign: "right",
+          maxWidth: "65%",
+          wordBreak: "break-word",
+        }}
+      >
+        {value}
+      </strong>
+    </div>
+  );
+}
+
+function ErrorMessage({ error }: { error: string }) {
+  if (!error) return null;
+
+  return (
+    <div
+      role="alert"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "8px",
+        marginBottom: "15px",
+        padding: "11px 12px",
+        borderRadius: "10px",
+        background: "#FFF5F5",
+        border: "1px solid #F1CACA",
+        color: "#B42318",
+        fontSize: "12px",
+        lineHeight: 1.4,
+      }}
+    >
+      <span
+        style={{
+          width: "19px",
+          height: "19px",
+          minWidth: "19px",
+          borderRadius: "50%",
+          background: "#FDE2E2",
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontWeight: 900,
+        }}
+      >
+        !
+      </span>
+      <span>{error}</span>
+    </div>
+  );
+}
+
+const fieldGroupStyle = {
+  marginBottom: "16px",
+};
+
+const labelStyle = {
+  display: "block",
+  color: "#30353B",
+  fontSize: "12px",
+  fontWeight: 750,
+  marginBottom: "7px",
+};
+
+const inputStyle = {
+  width: "100%",
+  height: "52px",
+  padding: "0 14px",
+  border: "1px solid #DDE2E7",
+  borderRadius: "11px",
+  background: "#fff",
+  color: "#151918",
+  fontSize: "14px",
+  outline: "none",
+  boxSizing: "border-box" as const,
+};
+
+const passwordWrapperStyle = {
+  position: "relative" as const,
+  width: "100%",
+};
+
+const passwordInputStyle = {
+  ...inputStyle,
+  paddingRight: "48px",
+};
+
+const eyeButtonStyle = {
+  position: "absolute" as const,
+  right: "8px",
+  top: "50%",
+  transform: "translateY(-50%)",
+  width: "36px",
+  height: "36px",
+  border: "none",
+  background: "transparent",
+  color: "#707780",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  cursor: "pointer",
+};
+
+const continueButtonStyle = {
+  width: "100%",
+  height: "46px",
+  border: "none",
+  borderRadius: "11px",
+  background: "#111",
+  color: "#fff",
+  fontSize: "14px",
+  fontWeight: 700,
+  cursor: "pointer",
+};
+
+const linkButtonStyle = {
+  border: "none",
+  background: "transparent",
+  color: "#2563EB",
+  fontSize: "13px",
+  fontWeight: 700,
+  cursor: "pointer",
+};
+
+const successBoxStyle = {
+  marginBottom: "15px",
+  padding: "12px 14px",
+  borderRadius: "12px",
+  background: "#ECF9F4",
+  border: "1px solid #C8E8DC",
+  color: "#176B51",
+  fontSize: "12px",
+  fontWeight: 650,
+};
+
+const infoBoxStyle = {
+  marginBottom: "15px",
+  padding: "12px 14px",
+  borderRadius: "12px",
+  background: "#F7F9FF",
+  border: "1px solid #D7E0FF",
+  color: "#3152B8",
+  fontSize: "12px",
+  fontWeight: 650,
+};
+
+
+<style jsx global>{`
+  @media (max-width: 600px) {
+    .business-doc-upload-card {
+      padding: 10px 10px !important;
+      border-radius: 12px !important;
+    }
+
+    .business-doc-upload-icon {
+      width: 30px !important;
+      height: 30px !important;
+      margin-bottom: 4px !important;
+      font-size: 15px !important;
+    }
+
+    .business-doc-upload-title {
+      font-size: 12px !important;
+      margin-bottom: 2px !important;
+    }
+
+    .business-doc-upload-help {
+      font-size: 9px !important;
+      margin-bottom: 7px !important;
+    }
+
+    .business-doc-upload-button {
+      padding: 6px 11px !important;
+      font-size: 11px !important;
+    }
+
+    .business-doc-row {
+      padding: 6px 8px !important;
+      border-radius: 9px !important;
+    }
+
+    .business-doc-file-icon {
+      width: 27px !important;
+      height: 27px !important;
+      font-size: 12px !important;
+    }
+
+    .business-doc-remove {
+      width: 26px !important;
+      height: 26px !important;
+    }
+  }
+`}</style>
+
+export default function BusinessSignupPage() {
+  return (
+    <Suspense fallback={null}>
+      <BusinessSignupPageContent />
+    </Suspense>
+  );
+}
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "12px",
+          }}
+        >
+          <span
+            style={{
+              fontSize: "11px",
+              fontWeight: 800,
+              color: "#29AB87",
+              textTransform: "uppercase",
+              letterSpacing: "0.6px",
+            }}
+          >
+            Step {step} of 9
+          </span>
+
+          <span
+            style={{
+              fontSize: "11px",
+              color: "#8A9199",
+              fontWeight: 650,
+            }}
+          >
+            Business signup
+          </span>
+        </div>
+
+        <div
+          style={{
+            width: "100%",
+            height: "4px",
+            borderRadius: "20px",
+            background: "#E9ECEF",
+            marginBottom: "22px",
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              width: `${(step / 8) * 100}%`,
+              height: "100%",
+              background: "#29AB87",
+              borderRadius: "20px",
+              transition: "width 0.2s ease",
+            }}
+          />
+        </div>
+
+        <h1
+          style={{
+            fontSize: "28px",
+            lineHeight: 1.1,
+            letterSpacing: "-0.7px",
+            margin: "0 0 7px",
+            color: "#111318",
+          }}
+        >{stepTitle}</h1>
+
+        <p
+          style={{
+            color: "#747A82",
+            fontSize: "14px",
+            lineHeight: 1.5,
+            margin: "0 0 22px",
+          }}
+        >{stepDescription}</p>
+
+        {step === 1 && (
+          <form onSubmit={validateContact}>
+            <Field label="Name">
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your full name"
+                autoComplete="name"
+                autoFocus
+                required
+                style={inputStyle}
+              />
+            </Field>
+
+            <Field label="Email">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                autoComplete="email"
+                required
+                style={inputStyle}
+              />
+            </Field>
+
+            <Field label="WhatsApp number">
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "108px 1fr",
+                  gap: "8px",
+                }}
+              >
+                <select
+                  value={country}
+                  onChange={(e) => {
+                    setCountry(e.target.value as PhoneCountry);
+                    setPhone("");
+                  }}
+                  style={{
+                    ...inputStyle,
+                    padding: "0 8px",
+                    fontSize: "13px",
+                  }}
+                >
+                  {Object.entries(PHONE_COUNTRIES).map(([key, value]) => (
+                    <option key={key} value={key}>
+                      {value.label}
+                    </option>
+                  ))}
+                </select>
+
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) =>
+                    setPhone(e.target.value.replace(/\D/g, ""))
+                  }
+                  placeholder={PHONE_COUNTRIES[country].placeholder}
+                  autoComplete="tel-national"
+                  required
+                  style={inputStyle}
+                />
+              </div>
+
+              <div
+                style={{
+                  marginTop: "7px",
+                  fontSize: "11px",
+                  color: "#747A82",
+                }}
+              >
+                Country automatically determined:{" "}
+                <strong>{countryName}</strong>
+              </div>
+            </Field>
+
+            <ErrorMessage error={error} />
+
+            <button type="submit" style={continueButtonStyle}>
+              Continue
+            </button>
+          </form>
+        )}
+
+        {step === 2 && (
+          <>
+            {otpSending && (
+              <div style={infoBoxStyle}>
+                Sending OTP to your WhatsApp. Please wait...
+              </div>
+            )}
+
+            {success && !otpSending && (
+              <div style={successBoxStyle}>✓ {success}</div>
+            )}
+
+            <form onSubmit={verifyOtp}>
+              <Field label="WhatsApp OTP">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={otp}
+                  onChange={(e) =>
+                    setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+                  }
+                  placeholder="Enter 6-digit OTP"
+                  autoFocus
+                  style={{
+                    ...inputStyle,
+                    textAlign: "center",
+                    letterSpacing: "6px",
+                    fontSize: "20px",
+                    fontWeight: 700,
+                  }}
+                />
+              </Field>
+
+              <ErrorMessage error={error} />
+
+              <button
+                type="submit"
+                disabled={otpVerifying || otpSending}
+                style={{
+                  ...continueButtonStyle,
+                  opacity: otpVerifying || otpSending ? 0.7 : 1,
+                }}
+              >
+                {otpVerifying ? "Verifying..." : "Verify WhatsApp"}
+              </button>
+            </form>
+
+            <div
+              style={{
+                textAlign: "center",
+                marginTop: "15px",
+              }}
+            >
+              {otpResendSeconds > 0 ? (
+                <span
+                  style={{
+                    fontSize: "13px",
+                    color: "#747A82",
+                    fontWeight: 600,
+                  }}
+                >
+                  Resend available in {otpResendSeconds}s
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() =>
+                    sendOtp(getInternationalPhone(country, phone))
+                  }
+                  disabled={otpSending}
+                  style={linkButtonStyle}
+                >
+                  ↻ Resend verification code
+                </button>
+              )}
+            </div>
+          </>
+        )}
+
+        {step === 3 && (
+          <form onSubmit={validateBusiness}>
+            <Field label="Business name">
+              <input
+                value={businessName}
+                onChange={(e) => setBusinessName(e.target.value)}
+                placeholder="Enter your business name"
+                autoComplete="organization"
+                autoFocus
+                required
+                style={inputStyle}
+              />
+            </Field>
+
+            <div
+              style={{
+                padding: "13px 14px",
+                border: "1px solid #E1E5EA",
+                borderRadius: "11px",
+                background: "#F8FAFC",
+                marginBottom: "18px",
+              }}
+            >
+              <div
+                style={{
+                  color: "#747A82",
+                  fontSize: "11px",
+                  marginBottom: "4px",
+                }}
+              >
+                Business category
+              </div>
+              <strong style={{ color: "#111318", fontSize: "13px" }}>
+                {selectedCategory || "Not selected"}
+              </strong>
+            </div>
+
+            <ErrorMessage error={error} />
+
+            <button type="submit" style={continueButtonStyle}>
+              Continue
+            </button>
+          </form>
+        )}
+
+        {step === 4 && (
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              setError("");
+              if (
+                !address.trim() ||
+                !state.trim() ||
+                !city.trim() ||
+                !postalCode.trim()
+              ) {
+                setError("Please complete your business location.");
+                return;
+              }
+              setStep(5);
+            }}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "9px",
+            }}
+          >
+            <Field label="Address">
+              <input
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder={`Business address in ${countryName}`}
+                autoComplete="street-address"
+                autoFocus
+                required
+                style={{
+                  ...inputStyle,
+                  height: "40px",
+                  minHeight: "40px",
+                  borderRadius: "10px",
+                  border: "1.5px solid #D8DDDB",
+                  padding: "0 12px",
+                  fontSize: "13px",
+                  background: "#fff",
+                }}
+              />
+            </Field>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "9px",
+              }}
+            >
+              <Field label="State / Region">
+                {country === "IN" ? (
+                  <select
+                    value={state}
+                    onChange={(e) => {
+                      setState(e.target.value);
+                      setCity("");
+                    }}
+                    required
+                    style={{
+                      ...inputStyle,
+                      height: "38px",
+                      minHeight: "38px",
+                      borderRadius: "9px",
+                      border: "1.5px solid #D8DDDB",
+                      padding: "0 9px",
+                      fontSize: "12px",
+                      cursor: "pointer",
+                      background: "#fff",
+                    }}
+                  >
+                    <option value="">Select state</option>
+                    {INDIA_STATES.map((item) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
+                    placeholder="State / Region"
+                    required
+                    style={{
+                      ...inputStyle,
+                      height: "38px",
+                      minHeight: "38px",
+                      borderRadius: "9px",
+                      border: "1.5px solid #D8DDDB",
+                      padding: "0 10px",
+                      fontSize: "12px",
+                      background: "#fff",
+                    }}
+                  />
+                )}
+              </Field>
+
+              <Field label="City">
+                {country === "IN" ? (
+                  <select
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    disabled={!state}
+                    required
+                    style={{
+                      ...inputStyle,
+                      height: "38px",
+                      minHeight: "38px",
+                      borderRadius: "9px",
+                      border: "1.5px solid #D8DDDB",
+                      padding: "0 9px",
+                      fontSize: "12px",
+                      background: state ? "#fff" : "#F3F5F4",
+                      color: state ? "#151918" : "#9AA19E",
+                      cursor: state ? "pointer" : "not-allowed",
+                    }}
+                  >
+                    <option value="">
+                      {state ? "Select city" : "Select state first"}
+                    </option>
+                    {(INDIA_CITIES[state] || []).map((item) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="City"
+                    required
+                    style={{
+                      ...inputStyle,
+                      height: "38px",
+                      minHeight: "38px",
+                      borderRadius: "9px",
+                      border: "1.5px solid #D8DDDB",
+                      padding: "0 10px",
+                      fontSize: "12px",
+                      background: "#fff",
+                    }}
+                  />
+                )}
+              </Field>
+            </div>
+
+            <Field label="Postal Code">
+              <input
+                value={postalCode}
+                onChange={(e) => setPostalCode(e.target.value)}
+                placeholder="Postal / ZIP code"
+                autoComplete="postal-code"
+                required
+                style={{
+                  ...inputStyle,
+                  height: "38px",
+                  minHeight: "38px",
+                  borderRadius: "9px",
+                  border: "1.5px solid #D8DDDB",
+                  padding: "0 12px",
+                  fontSize: "12px",
+                  background: "#fff",
+                }}
+              />
+            </Field>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "7px",
+                padding: "5px 2px",
+                color: "#5F6864",
+                fontSize: "10px",
+                fontWeight: 700,
+              }}
+            >
+              <span
+                style={{
+                  width: "20px",
+                  height: "20px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "7px",
+                  background: "#E8F6F1",
+                  color: "#168060",
+                  fontSize: "11px",
+                  fontWeight: 900,
+                }}
+              >
+                ✓
+              </span>
+              You'll select the exact map pin next.
+            </div>
+
+            <ErrorMessage error={error} />
+
+            <button
+              type="submit"
+              style={{
+                ...continueButtonStyle,
+                height: "40px",
+                marginTop: "0px",
+                borderRadius: "10px",
+                border: "1px solid #111",
+                boxShadow: "0 4px 11px rgba(0,0,0,.13)",
+                fontSize: "13px",
+                fontWeight: 950,
+              }}
+            >
+              Continue to Map →
+            </button>
+          </form>
+        )}
+        {step === 5 && (
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              setError("");
+
+              if (latitude === null || longitude === null) {
+                setError(
+                  "Please select and confirm your business location on the map."
+                );
+                return;
+              }
+
+              setStep(6);
+            }}
+          >
+            <Field label="Map location">
+              <div
+                style={{
+                  width: "100%",
+                  borderRadius: "16px",
+                  border: "1px solid #E1E5EA",
+                  overflow: "visible",
+                }}
+              >
+                <ListingLocationPicker
+                  initialLocation={
+                    latitude !== null && longitude !== null
+                      ? { latitude, longitude }
+                      : undefined
+                  }
+                  onConfirm={(location) => {
+                    setLatitude(location.latitude);
+                    setLongitude(location.longitude);
+                    setAddress(location.address);
+                    setCity(location.city);
+                    setState(location.state);
+                    setPostalCode(location.pincode);
+                    setError("");
+                    setStep(6);
+                  }}
+                />
+              </div>
+
+              {latitude !== null && longitude !== null && (
+                <div
+                  style={{
+                    marginTop: "8px",
+                    color: "#176B51",
+                    fontSize: "12px",
+                    fontWeight: 650,
+                  }}
+                >
+                  ✓ Map location confirmed
+                </div>
+              )}
+            </Field>
+
+            <ErrorMessage error={error} />
+          </form>
+        )}
+
+        {step === 6 && (
+          <form onSubmit={validateDocuments}>
+            <div
+              style={{
+                background: "#F8FAFC",
+                border: "1px solid #E7EAF0",
+                borderRadius: "12px",
+                padding: "10px 12px",
+                marginBottom: "12px",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "11px",
+                  fontWeight: 800,
+                  color: "#111318",
+                  marginBottom: "1px",
+                }}
+              >
+                Documents required
+              </div>
+
+              <div
+                style={{
+                  fontSize: "10px",
+                  color: "#747A82",
+                  lineHeight: 1.2,
+                  marginBottom: "6px",
+                }}
+              >
+                Based on your selected category:{" "}
+                <strong style={{ color: "#30353B" }}>
+                  {selectedCategory}
+                </strong>{" "}
+                · {countryName}
+              </div>
+
+              {documentRequirements.map((item) => (
+                <div
+                  key={item}
+                  style={{
+                    fontSize: "11px",
+                    color: "#30353B",
+                    marginTop: "4px",
+                  }}
+                >
+                  ✓ {item}
+                </div>
+              ))}
+            </div>
+
+            <div
+              style={{
+                border: "1.5px dashed #C9D0D8",
+                borderRadius: "12px",
+                padding: "10px 12px",
+                textAlign: "center",
+                background: "#FFFFFF",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "15px",
+                  marginBottom: "1px",
+                }}
+              >
+                ↑
+              </div>
+
+              <div
+                style={{
+                  fontSize: "12px",
+                  fontWeight: 800,
+                  color: "#111318",
+                  marginBottom: "2px",
+                }}
+              >
+                Upload business documents
+              </div>
+
+              <div
+                style={{
+                  fontSize: "9px",
+                  color: "#747A82",
+                  marginBottom: "7px",
+                }}
+              >
+                PDF, JPG, JPEG or PNG · Multiple files allowed
+              </div>
+
+              <label
+                htmlFor="business-documents-upload"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "6px 12px",
+                  borderRadius: "8px",
+                  background: "#111318",
+                  color: "#FFFFFF",
+                  fontSize: "11px",
+                  fontWeight: 800,
+                  cursor: "pointer",
+                }}
+              >
+                Choose files
+              </label>
+
+              <input
+                id="business-documents-upload"
+                type="file"
+                multiple
+                accept=".pdf,.jpg,.jpeg,.png"
+                disabled={documents.length >= 5}
+                onChange={(e) => {
+                  const files = Array.from(e.target.files || []);
+
+                  setDocuments((current) => {
+                    const existing = new Set(current.map((item) => item.name));
+
+                    const newFiles = files
+                      .filter((file) => !existing.has(file.name))
+                      .map((file) => ({
+                        name: file.name,
+                        file,
+                      }));
+
+                    const remaining = 5 - current.length;
+
+                    if (remaining <= 0) {
+                      setError("You can upload a maximum of 5 documents.");
+                      return current;
+                    }
+
+                    if (newFiles.length > remaining) {
+                      setError(
+                        `You can upload a maximum of 5 documents. ${remaining} more can be added.`
+                      );
+                    } else {
+                      setError("");
+                    }
+
+                    return [...current, ...newFiles.slice(0, remaining)];
+                  });
+
+                  e.currentTarget.value = "";
+                }}
+                style={{ display: "none" }}
+              />
+            </div>
+
+            {documents.length > 0 && (
+              <div style={{ marginTop: "9px" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    marginBottom: "6px",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "11px",
+                      fontWeight: 800,
+                      color: "#111318",
+                    }}
+                  >
+                    Selected documents
+                  </span>
+
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      color: "#176B51",
+                      fontWeight: 750,
+                    }}
+                  >
+                    {documents.length} selected
+                  </span>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "6px",
+                    maxHeight: "150px",
+                    overflowY: "auto",
+                    paddingRight: "4px",
+                  }}
+                >
+                  {documents.map((document) => (
+                    <div
+                      key={document.name}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        padding: "6px 8px",
+                        border: "1px solid #E7EAF0",
+                        borderRadius: "9px",
+                        background: "#FFFFFF",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "27px",
+                          height: "27px",
+                          borderRadius: "7px",
+                          background: "#F1F5F9",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "12px",
+                          flexShrink: 0,
+                        }}
+                      >
+                        📄
+                      </div>
+
+                      <div
+                        style={{
+                          minWidth: 0,
+                          flex: 1,
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontSize: "11px",
+                            fontWeight: 750,
+                            color: "#20242A",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {document.name}
+                        </div>
+
+                        <div
+                          style={{
+                            fontSize: "9px",
+                            color: "#176B51",
+                            marginTop: "2px",
+                            fontWeight: 700,
+                          }}
+                        >
+                          Ready to upload
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        aria-label={`Remove ${document.name}`}
+                        onClick={() =>
+                          setDocuments((current) =>
+                            current.filter(
+                              (item) => item.name !== document.name
+                            )
+                          )
+                        }
+                        style={{
+                          width: "26px",
+                          height: "26px",
+                          border: "1px solid #E7EAF0",
+                          borderRadius: "7px",
+                          background: "#FFFFFF",
+                          color: "#D92D20",
+                          fontSize: "15px",
+                          fontWeight: 700,
+                          cursor: "pointer",
+                          flexShrink: 0,
+                        }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <ErrorMessage error={error} />
+
+            <button
+              type="submit"
+              style={{
+                ...continueButtonStyle,
+                marginTop: "9px",
+              }}
+            >
+              Continue to Password
+            </button>
+          </form>
+        )}
+
+        {step === 7 && (
+          <form onSubmit={validatePassword}>
+            <Field label="Password">
+              <div style={passwordWrapperStyle}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Create a password"
+                  autoComplete="new-password"
+                  autoFocus
+                  required
+                  style={passwordInputStyle}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((value) => !value)}
+                  style={eyeButtonStyle}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </Field>
+
+            <Field label="Confirm password">
+              <div style={passwordWrapperStyle}>
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm your password"
+                  autoComplete="new-password"
+                  required
+                  style={passwordInputStyle}
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowConfirmPassword((value) => !value)
+                  }
+                  style={eyeButtonStyle}
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
+                </button>
+              </div>
+            </Field>
+
+            <ErrorMessage error={error} />
+
+            <button type="submit" style={continueButtonStyle}>
+              Continue to review
+            </button>
+          </form>
+        )}
+
+        {step === 8 && (
+          <>
+            <div
+              style={{
+                border: "1px solid #E4E7EC",
+                borderRadius: "16px",
+                background: "#FFFFFF",
+                overflow: "hidden",
+                boxShadow: "0 4px 14px rgba(17, 19, 24, 0.04)",
+              }}
+            >
+              <div
+                style={{
+                  padding: "13px 14px 11px",
+                  background: "#FAFBFC",
+                  borderBottom: "1px solid #ECEEF1",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: "10px",
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        fontSize: "15px",
+                        lineHeight: 1.2,
+                        fontWeight: 850,
+                        color: "#111318",
+                      }}
+                    >
+                      Review & create
+                    </div>
+
+                    <div
+                      style={{
+                        fontSize: "10px",
+                        color: "#747A82",
+                        marginTop: "4px",
+                      }}
+                    >
+                      Everything looks ready.
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "5px",
+                      padding: "5px 8px",
+                      borderRadius: "999px",
+                      background: "#ECF9F4",
+                      color: "#176B51",
+                      fontSize: "9px",
+                      fontWeight: 850,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <span>✓</span>
+                    Ready
+                  </div>
+                </div>
+
+              </div>
+
+              <div
+                style={{
+                  maxHeight: "375px",
+                  overflowY: "auto",
+                  padding: "9px 10px 11px",
+                  WebkitOverflowScrolling: "touch",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: "9px",
+                    fontWeight: 850,
+                    color: "#8A9098",
+                    letterSpacing: "0.07em",
+                    textTransform: "uppercase",
+                    padding: "3px 4px 6px",
+                  }}
+                >
+                  Contact
+                </div>
+
+                {[
+                  ["Name", name],
+                  ["Email", email],
+                  [
+                    "WhatsApp",
+                    `${PHONE_COUNTRIES[country].code} ${phone}`,
+                  ],
+                  ["Country", countryName],
+                ].map(([label, value]) => (
+                  <div
+                    key={label}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      padding: "8px 9px",
+                      marginBottom: "5px",
+                      border: "1px solid #ECEEF1",
+                      borderRadius: "9px",
+                    minHeight: "38px",
+                    height: "38px",
+                      background: "#FFFFFF",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "27px",
+                        height: "27px",
+                        borderRadius: "8px",
+                        background: "rgba(41, 171, 135, 0.08)",
+                        color: "#69717C",
+                        border: "1px solid rgba(41, 171, 135, 0.18)",
+                        boxShadow: "inset 2px 0 0 #29AB87",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "10px",
+                        fontWeight: 850,
+                        flexShrink: 0,
+                      }}
+                    >
+                      {label === "Email"
+                        ? "@"
+                        : label === "WhatsApp"
+                          ? "WA"
+                          : label === "Country"
+                            ? "IN"
+                            : "A"}
+                    </div>
+
+                    <div
+                      style={{
+                        minWidth: 0,
+                        flex: 1,
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: "9px",
+                          color: "#8A9098",
+                          marginBottom: "2px",
+                        }}
+                      >
+                        {label}
+                      </div>
+
+                      <div
+                        style={{
+                          fontSize: "11px",
+                          lineHeight: 1.3,
+                          fontWeight: 750,
+                          color: "#20242A",
+                          overflowWrap: "anywhere",
+                        }}
+                      >
+                        {value}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                <div
+                  style={{
+                    fontSize: "9px",
+                    fontWeight: 850,
+                    color: "#8A9098",
+                    letterSpacing: "0.07em",
+                    textTransform: "uppercase",
+                    padding: "7px 4px 6px",
+                  }}
+                >
+                  Business
+                </div>
+
+                {[
+                  ["Business name", businessName],
+                  ["Category", selectedCategory],
+                ].map(([label, value]) => (
+                  <div
+                    key={label}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: "12px",
+                      padding: "9px 10px",
+                      marginBottom: "5px",
+                      border: "1px solid #ECEEF1",
+                      borderRadius: "9px",
+                    minHeight: "38px",
+                    height: "38px",
+                      background: "#FFFFFF",
+                      boxShadow: "inset 2px 0 0 #E5E7EB",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "10px",
+                        color: "#747A82",
+                      }}
+                    >
+                      {label}
+                    </span>
+
+                    <span
+                      style={{
+                        fontSize: "11px",
+                        fontWeight: 800,
+                        color: "#20242A",
+                        textAlign: "right",
+                        overflowWrap: "anywhere",
+                      }}
+                    >
+                      {value}
+                    </span>
+                  </div>
+                ))}
+
+                <div
+                  style={{
+                    fontSize: "9px",
+                    fontWeight: 850,
+                    color: "#8A9098",
+                    letterSpacing: "0.07em",
+                    textTransform: "uppercase",
+                    padding: "7px 4px 6px",
+                  }}
+                >
+                  Location
+                </div>
+
+                {[
+                  ["Address", address],
+                  ["State / Region", state],
+                  ["City", city],
+                  ["Postal Code", postalCode],
+                ].map(([label, value]) => (
+                  <div
+                    key={label}
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      justifyContent: "space-between",
+                      gap: "12px",
+                      padding: "9px 10px",
+                      marginBottom: "5px",
+                      border: "1px solid #ECEEF1",
+                      borderRadius: "9px",
+                    minHeight: "38px",
+                    height: "38px",
+                      background: "#FFFFFF",
+                      boxShadow: "inset 2px 0 0 #E5E7EB",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "10px",
+                        color: "#747A82",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {label}
+                    </span>
+
+                    <span
+                      style={{
+                        fontSize: "11px",
+                        lineHeight: 1.3,
+                        fontWeight: 750,
+                        color: "#20242A",
+                        textAlign: "right",
+                        overflowWrap: "anywhere",
+                      }}
+                    >
+                      {value}
+                    </span>
+                  </div>
+                ))}
+
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "6px",
+                    marginTop: "8px",
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: "10px",
+                      borderRadius: "9px",
+                    minHeight: "38px",
+                    height: "38px",
+                      background: phoneVerified ? "#F0FBF7" : "#FFF7ED",
+                      border: phoneVerified
+                        ? "1px solid #C8E8DC"
+                        : "1px solid #FED7AA",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: "9px",
+                        color: "#747A82",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      WhatsApp
+                    </div>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "5px",
+                        fontSize: "10px",
+                        fontWeight: 850,
+                        color: phoneVerified ? "#176B51" : "#9A3412",
+                      }}
+                    >
+                      <span>{phoneVerified ? "✓" : "!"}</span>
+                      {phoneVerified ? "Verified" : "Not verified"}
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      padding: "10px",
+                      borderRadius: "9px",
+                    minHeight: "38px",
+                    height: "38px",
+                      background: "#F8FAFC",
+                      border: "1px solid #E7EAF0",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: "9px",
+                        color: "#747A82",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      Documents
+                    </div>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "5px",
+                        fontSize: "10px",
+                        fontWeight: 850,
+                        color: "#30353B",
+                      }}
+                    >
+                      <span>📄</span>
+                      {documents.length} uploaded
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <ErrorMessage error={error} />
+
+            <button
+              type="button"
+              onClick={createAccount}
+              disabled={loading}
+              style={{
+                ...continueButtonStyle,
+                marginTop: "9px",
+                boxShadow: "0 5px 16px rgba(41, 171, 135, 0.20)",
+                opacity: loading ? 0.7 : 1,
+              }}
+            >
+              {loading ? "Creating account..." : "Create Business Account"}
+            </button>
+          </>
+        )}
+
+        {step === 9 && (
+          <div
+            style={{
+              textAlign: "center",
+              padding: "10px 0 4px",
+            }}
+          >
+            <div
+              style={{
+                width: "64px",
+                height: "64px",
+                borderRadius: "50%",
+                background: "#ECF9F4",
+                color: "#176B51",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "30px",
+                fontWeight: 800,
+                margin: "0 auto 18px",
+              }}
+            >
+              ✓
+            </div>
+
+            <h2
+              style={{
+                margin: "0 0 9px",
+                fontSize: "24px",
+                lineHeight: 1.2,
+                color: "#111318",
+              }}
+            >
+              Account Created
+            </h2>
+
+            <p
+              style={{
+                margin: "0 0 22px",
+                color: "#747A82",
+                fontSize: "14px",
+                lineHeight: 1.6,
+              }}
+            >
+              Your MetroVybe business account for{" "}
+              <strong>{businessName}</strong> has been created successfully.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => router.push("/business/dashboard")}
+              style={continueButtonStyle}
+            >
+              Go to Dashboard
+            </button>
+          </div>
+        )}
+      </div>
+    </main>
+  );
+}
+
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div style={fieldGroupStyle}>
+      <label style={labelStyle}>{label}</label>
+      {children}
+    </div>
+  );
+}
+
+function ReviewRow({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        gap: "15px",
+        padding: "11px 0",
+        borderBottom: "1px solid #ECEFF1",
+        fontSize: "13px",
+      }}
+    >
+      <span style={{ color: "#747A82", fontWeight: 650 }}>{label}</span>
+      <strong
+        style={{
+          color: "#111318",
+          textAlign: "right",
+          maxWidth: "65%",
+          wordBreak: "break-word",
+        }}
+      >
+        {value}
+      </strong>
+    </div>
+  );
+}
+
+function ErrorMessage({ error }: { error: string }) {
+  if (!error) return null;
+
+  return (
+    <div
+      role="alert"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "8px",
+        marginBottom: "15px",
+        padding: "11px 12px",
+        borderRadius: "10px",
+        background: "#FFF5F5",
+        border: "1px solid #F1CACA",
+        color: "#B42318",
+        fontSize: "12px",
+        lineHeight: 1.4,
+      }}
+    >
+      <span
+        style={{
+          width: "19px",
+          height: "19px",
+          minWidth: "19px",
+          borderRadius: "50%",
+          background: "#FDE2E2",
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontWeight: 900,
+        }}
+      >
+        !
+      </span>
+      <span>{error}</span>
+    </div>
+  );
+}
+
+const fieldGroupStyle = {
+  marginBottom: "16px",
+};
+
+const labelStyle = {
+  display: "block",
+  color: "#30353B",
+  fontSize: "12px",
+  fontWeight: 750,
+  marginBottom: "7px",
+};
+
+const inputStyle = {
+  width: "100%",
+  height: "52px",
+  padding: "0 14px",
+  border: "1px solid #DDE2E7",
+  borderRadius: "11px",
+  background: "#fff",
+  color: "#151918",
+  fontSize: "14px",
+  outline: "none",
+  boxSizing: "border-box" as const,
+};
+
+const passwordWrapperStyle = {
+  position: "relative" as const,
+  width: "100%",
+};
+
+const passwordInputStyle = {
+  ...inputStyle,
+  paddingRight: "48px",
+};
+
+const eyeButtonStyle = {
+  position: "absolute" as const,
+  right: "8px",
+  top: "50%",
+  transform: "translateY(-50%)",
+  width: "36px",
+  height: "36px",
+  border: "none",
+  background: "transparent",
+  color: "#707780",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  cursor: "pointer",
+};
+
+const continueButtonStyle = {
+  width: "100%",
+  height: "46px",
+  border: "none",
+  borderRadius: "11px",
+  background: "#111",
+  color: "#fff",
+  fontSize: "14px",
+  fontWeight: 700,
+  cursor: "pointer",
+};
+
+const linkButtonStyle = {
+  border: "none",
+  background: "transparent",
+  color: "#2563EB",
+  fontSize: "13px",
+  fontWeight: 700,
+  cursor: "pointer",
+};
+
+const successBoxStyle = {
+  marginBottom: "15px",
+  padding: "12px 14px",
+  borderRadius: "12px",
+  background: "#ECF9F4",
+  border: "1px solid #C8E8DC",
+  color: "#176B51",
+  fontSize: "12px",
+  fontWeight: 650,
+};
+
+const infoBoxStyle = {
+  marginBottom: "15px",
+  padding: "12px 14px",
+  borderRadius: "12px",
+  background: "#F7F9FF",
+  border: "1px solid #D7E0FF",
+  color: "#3152B8",
+  fontSize: "12px",
+  fontWeight: 650,
+};
+
+
+<style jsx global>{`
+  @media (max-width: 600px) {
+    .business-doc-upload-card {
+      padding: 10px 10px !important;
+      border-radius: 12px !important;
+    }
+
+    .business-doc-upload-icon {
+      width: 30px !important;
+      height: 30px !important;
+      margin-bottom: 4px !important;
+      font-size: 15px !important;
+    }
+
+    .business-doc-upload-title {
+      font-size: 12px !important;
+      margin-bottom: 2px !important;
+    }
+
+    .business-doc-upload-help {
+      font-size: 9px !important;
+      margin-bottom: 7px !important;
+    }
+
+    .business-doc-upload-button {
+      padding: 6px 11px !important;
+      font-size: 11px !important;
+    }
+
+    .business-doc-row {
+      padding: 6px 8px !important;
+      border-radius: 9px !important;
+    }
+
+    .business-doc-file-icon {
+      width: 27px !important;
+      height: 27px !important;
+      font-size: 12px !important;
+    }
+
+    .business-doc-remove {
+      width: 26px !important;
+      height: 26px !important;
+    }
+  }
+`}</style>
+
+export default function BusinessSignupPage() {
+  return (
+    <Suspense fallback={null}>
+      <BusinessSignupPageContent />
+    </Suspense>
+  );
+}

@@ -1,0 +1,2 @@
+const payments=[["PAY-01","MV-1001","₹8,500","Razorpay","Paid"],["PAY-02","MV-1002","₹2,999","UPI","Pending"],["PAY-03","MV-1003","₹499","UPI","Paid"],["PAY-04","MV-1004","₹1,499","Card","Paid"]];
+export default function Payments(){return <><h1 className="page-title">PAYMENTS.</h1><p className="subtle">Payment and settlement records.</p><div className="table-wrap"><table><thead><tr><th>Payment</th><th>Order</th><th>Amount</th><th>Method</th><th>Status</th></tr></thead><tbody>{payments.map(p=><tr key={p[0]}>{p.map((x,i)=><td key={i}>{x}</td>)}</tr>)}</tbody></table></div></>}

@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "indiapins": "https://github.com/paramadeep/indiapins/releases/download/v2026.6.28/indiapins-2026.6.28.tgz",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.468.0",
     "next": "16.2.1",

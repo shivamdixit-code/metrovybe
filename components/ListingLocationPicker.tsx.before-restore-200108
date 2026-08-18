@@ -1,0 +1,795 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import {
+  MapContainer,
+  Marker,
+  TileLayer,
+  useMap,
+  useMapEvents,
+} from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+
+type LocationValue = {
+  latitude: number;
+  longitude: number;
+};
+
+type SelectedLocation = LocationValue & {
+  address: string;
+  city: string;
+  state: string;
+  pincode: string;
+};
+
+type Props = {
+  initialLocation?: LocationValue;
+  onConfirm: (location: SelectedLocation) => void;
+};
+
+const DEFAULT_LOCATION: LocationValue = {
+  latitude: 28.6139,
+  longitude: 77.209,
+};
+
+const PIN_ICON = new L.DivIcon({
+  className: "",
+  html: `
+    <div style="
+      position:relative;
+      width:44px;
+      height:56px;
+      pointer-events:none;
+    ">
+      <div style="
+        position:absolute;
+        left:8px;
+        top:2px;
+        width:28px;
+        height:28px;
+        background:#176b55;
+        border:4px solid #fff;
+        border-radius:50% 50% 50% 0;
+        transform:rotate(-45deg);
+        box-shadow:0 4px 10px rgba(0,0,0,.35);
+      ">
+        <div style="
+          position:absolute;
+          width:9px;
+          height:9px;
+          left:6px;
+          top:6px;
+          background:#fff;
+          border-radius:50%;
+        "></div>
+      </div>
+      <div style="
+        position:absolute;
+        left:12px;
+        bottom:2px;
+        width:20px;
+        height:6px;
+        background:rgba(0,0,0,.25);
+        border-radius:50%;
+        filter:blur(2px);
+      "></div>
+    </div>
+  `,
+  iconSize: [44, 56],
+  iconAnchor: [22, 48],
+});
+
+const MAP_MODES = {
+  standard: {
+    label: "Standard",
+    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    attribution: "&copy; OpenStreetMap contributors",
+  },
+  light: {
+    label: "Light",
+    url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+    attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
+  },
+  dark: {
+    label: "Dark",
+    url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+    attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
+  },
+  satellite: {
+    label: "Satellite",
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    attribution: "Tiles &copy; Esri",
+  },
+};
+
+function MapController({
+  center,
+  version,
+}: {
+  center: LocationValue;
+  version: number;
+}) {
+  const map = useMap();
+
+  useEffect(() => {
+    const lat = Number(center.latitude);
+    const lng = Number(center.longitude);
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+
+    map.flyTo([lat, lng], 17, {
+      animate: true,
+      duration: 0.7,
+    });
+  }, [center.latitude, center.longitude, version, map]);
+
+  return null;
+}
+
+function MapClickHandler({
+  onMove,
+}: {
+  onMove: (location: LocationValue) => void;
+}) {
+  useMapEvents({
+    click(event) {
+      const { lat, lng } = event.latlng;
+
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+
+      onMove({
+        latitude: lat,
+        longitude: lng,
+      });
+    },
+  });
+
+  return null;
+}
+
+export default function ListingLocationPicker({
+  initialLocation,
+  onConfirm,
+}: Props) {
+  const [position, setPosition] = useState<LocationValue>(
+    initialLocation || DEFAULT_LOCATION
+  );
+  const [version, setVersion] = useState(0);
+  const [address, setAddress] = useState("");
+  const [details, setDetails] = useState({
+    city: "",
+    state: "",
+    pincode: "",
+  });
+  const [search, setSearch] = useState("");
+  const [searching, setSearching] = useState(false);
+  const [locating, setLocating] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [mapMode, setMapMode] =
+    useState<keyof typeof MAP_MODES>("standard");
+
+  const tile = useMemo(() => MAP_MODES[mapMode], [mapMode]);
+
+  async function reverseGeocode(latitude: number, longitude: number) {
+    try {
+      const url =
+        "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" +
+        latitude +
+        "&lon=" +
+        longitude +
+        "&zoom=18&addressdetails=1";
+
+      const response = await fetch(url, {
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Reverse geocoding failed");
+      }
+
+      const data = await response.json();
+      const a = data.address || {};
+
+      setAddress(
+        data.display_name ||
+          `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`
+      );
+
+      setDetails({
+        city:
+          a.city ||
+          a.town ||
+          a.village ||
+          a.municipality ||
+          a.county ||
+          "",
+        state: a.state || "",
+        pincode: a.postcode || "",
+      });
+    } catch {
+      setAddress(`${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
+      setDetails({
+        city: "",
+        state: "",
+        pincode: "",
+      });
+    }
+  }
+
+  function movePin(next: LocationValue) {
+    const latitude = Number(next.latitude);
+    const longitude = Number(next.longitude);
+
+    if (
+      !Number.isFinite(latitude) ||
+      !Number.isFinite(longitude)
+    ) {
+      return;
+    }
+
+    setPosition({ latitude, longitude });
+    setVersion((v) => v + 1);
+    setError("");
+    reverseGeocode(latitude, longitude);
+  }
+
+  useEffect(() => {
+    reverseGeocode(position.latitude, position.longitude);
+  }, []);
+
+  async function searchAddress() {
+    const query = search.trim();
+    if (!query) return;
+
+    setSearching(true);
+    setError("");
+
+    try {
+      const url =
+        "https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&addressdetails=1&q=" +
+        encodeURIComponent(query);
+
+      const response = await fetch(url, {
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      const results = await response.json();
+
+      if (!results.length) {
+        throw new Error(
+          "Address not found. Try a nearby landmark or complete address."
+        );
+      }
+
+      movePin({
+        latitude: Number(results[0].lat),
+        longitude: Number(results[0].lon),
+      });
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Unable to find this address."
+      );
+    } finally {
+      setSearching(false);
+    }
+  }
+
+  function useMyLocation() {
+    if (!navigator.geolocation) {
+      setError("Location services are not supported by this browser.");
+      return;
+    }
+
+    setLocating(true);
+    setError("");
+
+    navigator.geolocation.getCurrentPosition(
+      (location) => {
+        movePin({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        });
+        setLocating(false);
+      },
+      (err) => {
+        setLocating(false);
+
+        if (err.code === 1) {
+          setError(
+            "Location permission was denied. Please allow location access."
+          );
+        } else {
+          setError(
+            "Unable to get your current location. Please try again."
+          );
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0,
+      }
+    );
+  }
+
+  function confirmLocation() {
+    if (!address.trim()) {
+      setError("Please select a valid location first.");
+      return;
+    }
+
+    setSaving(true);
+
+    onConfirm({
+      latitude: position.latitude,
+      longitude: position.longitude,
+      address,
+      city: details.city,
+      state: details.state,
+      pincode: details.pincode,
+    });
+
+    setSaving(false);
+  }
+
+  return (
+    <div className="mv-step5-map">
+      <div className="mv-map-shell">
+        <MapContainer
+          center={[position.latitude, position.longitude]}
+          zoom={17}
+          zoomControl={false}
+          scrollWheelZoom
+          className="mv-leaflet-map"
+        >
+          <TileLayer
+            attribution={tile.attribution}
+            url={tile.url}
+          />
+
+          <MapController
+            center={position}
+            version={version}
+          />
+
+          <MapClickHandler onMove={movePin} />
+
+          <Marker
+            position={[position.latitude, position.longitude]}
+            icon={PIN_ICON}
+            draggable={true}
+            eventHandlers={{
+              dragend(event) {
+                const marker = event.target as L.Marker;
+                const next = marker.getLatLng();
+
+                movePin({
+                  latitude: next.lat,
+                  longitude: next.lng,
+                });
+              },
+            }}
+          />
+        </MapContainer>
+
+        <div className="mv-map-search">
+          <div className="mv-search-box">
+            <span>⌕</span>
+
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  searchAddress();
+                }
+              }}
+              placeholder="Search your business address"
+            />
+
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch("")}
+              >
+                ×
+              </button>
+            )}
+          </div>
+
+          <button
+            type="button"
+            className="mv-search-submit"
+            onClick={searchAddress}
+            disabled={searching}
+          >
+            {searching ? "..." : "Search"}
+          </button>
+        </div>
+
+        <div className="mv-map-modes">
+          {(Object.keys(MAP_MODES) as Array<
+            keyof typeof MAP_MODES
+          >).map((mode) => (
+            <button
+              type="button"
+              key={mode}
+              className={mapMode === mode ? "active" : ""}
+              onClick={() => setMapMode(mode)}
+            >
+              {MAP_MODES[mode].label}
+            </button>
+          ))}
+        </div>
+
+        <button
+          type="button"
+          className="mv-my-location"
+          onClick={useMyLocation}
+          disabled={locating}
+          aria-label="Use my location"
+        >
+          {locating ? "…" : "◎"}
+        </button>
+
+        <div className="mv-map-tip">
+          Drag the pin or tap anywhere on the map
+        </div>
+      </div>
+
+      <div className="mv-step5-selected-address">
+        <div className="mv-step5-address-icon">⌖</div>
+
+        <div className="mv-step5-address-info">
+          <span>BUSINESS LOCATION</span>
+
+          <strong>
+            {address || "Fetching selected location address..."}
+          </strong>
+
+          <small>
+            {[
+              details.city,
+              details.state,
+              details.pincode,
+            ].filter(Boolean).join(", ") ||
+              `${position.latitude.toFixed(6)}, ${position.longitude.toFixed(6)}`}
+          </small>
+        </div>
+      </div>
+
+      {error && (
+        <div className="mv-location-error">
+          {error}
+        </div>
+      )}
+
+      <button
+        type="button"
+        className="mv-confirm-location"
+        onClick={confirmLocation}
+        disabled={saving}
+      >
+        {saving ? "Saving..." : "Confirm Location & Continue"}
+      </button>
+
+      <style jsx global>{`
+        .mv-step5-map {
+          width: 100%;
+          background: #fff;
+          color: #151918;
+        }
+
+        .mv-map-shell {
+          position: relative;
+          width: 100%;
+          height: 280px;
+          overflow: hidden;
+          border-radius: 18px;
+          background: #e9eeec;
+        }
+
+        .mv-leaflet-map {
+          width: 100% !important;
+          height: 100% !important;
+          min-height: 0 !important;
+        }
+
+        .mv-map-search {
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          right: 10px;
+          z-index: 1000;
+          display: flex;
+          gap: 6px;
+        }
+
+        .mv-search-box {
+          flex: 1;
+          min-width: 0;
+          height: 42px;
+          display: flex;
+          align-items: center;
+          gap: 7px;
+          padding: 0 11px;
+          border-radius: 12px;
+          background: rgba(255,255,255,.97);
+          border: 1px solid rgba(0,0,0,.09);
+          box-shadow: 0 4px 16px rgba(0,0,0,.15);
+        }
+
+        .mv-search-box > span {
+          font-size: 20px;
+          line-height: 1;
+        }
+
+        .mv-search-box input {
+          flex: 1;
+          min-width: 0;
+          border: 0;
+          outline: 0;
+          background: transparent;
+          font-size: 13px;
+          color: #151918;
+        }
+
+        .mv-search-box input::placeholder {
+          color: #7b8581;
+        }
+
+        .mv-search-box button {
+          border: 0;
+          background: transparent;
+          font-size: 20px;
+          cursor: pointer;
+        }
+
+        .mv-search-submit {
+          flex: 0 0 auto;
+          height: 42px;
+          padding: 0 14px;
+          border: 0;
+          border-radius: 12px;
+          background: #176b55;
+          color: #fff;
+          font-size: 12px;
+          font-weight: 800;
+          cursor: pointer;
+          box-shadow: 0 4px 16px rgba(0,0,0,.15);
+        }
+
+        .mv-search-submit:disabled {
+          opacity: .65;
+        }
+
+        .mv-map-modes {
+          position: absolute;
+          top: 60px;
+          left: 10px;
+          z-index: 1000;
+          display: flex;
+          gap: 3px;
+          padding: 4px;
+          max-width: calc(100% - 20px);
+          overflow-x: auto;
+          border-radius: 11px;
+          background: rgba(255,255,255,.95);
+          box-shadow: 0 4px 14px rgba(0,0,0,.14);
+        }
+
+        .mv-map-modes button {
+          height: 28px;
+          padding: 0 9px;
+          border: 0;
+          border-radius: 8px;
+          background: transparent;
+          color: #303633;
+          font-size: 10px;
+          font-weight: 800;
+          white-space: nowrap;
+          cursor: pointer;
+        }
+
+        .mv-map-modes button.active {
+          background: #176b55;
+          color: #fff;
+        }
+
+        .mv-my-location {
+          position: absolute;
+          right: 10px;
+          bottom: 42px;
+          z-index: 1000;
+          width: 40px;
+          height: 40px;
+          border: 1px solid #d8dedb;
+          border-radius: 50%;
+          background: #fff;
+          color: #176b55;
+          font-size: 21px;
+          box-shadow: 0 4px 14px rgba(0,0,0,.18);
+          cursor: pointer;
+        }
+
+        .mv-map-tip {
+          position: absolute;
+          left: 10px;
+          bottom: 9px;
+          z-index: 1000;
+          padding: 6px 9px;
+          border-radius: 8px;
+          background: rgba(255,255,255,.93);
+          font-size: 10px;
+          font-weight: 700;
+          box-shadow: 0 3px 10px rgba(0,0,0,.12);
+        }
+
+        .mv-step5-selected-address {
+          display: flex !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
+          align-items: flex-start !important;
+          gap: 10px !important;
+          margin-top: 10px !important;
+          padding: 12px !important;
+          min-height: 68px !important;
+          border: 1px solid #dfe6e3 !important;
+          border-radius: 12px !important;
+          background: #ffffff !important;
+          color: #151918 !important;
+          position: relative !important;
+          z-index: 20 !important;
+        }
+
+        .mv-step5-address-icon {
+          width: 36px !important;
+          height: 36px !important;
+          min-width: 36px !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          border-radius: 10px !important;
+          background: #e9f5f0 !important;
+          color: #176b55 !important;
+          font-size: 21px !important;
+        }
+
+        .mv-step5-address-info {
+          min-width: 0 !important;
+          flex: 1 !important;
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 3px !important;
+        }
+
+        .mv-step5-address-info span {
+          display: block !important;
+          color: #176b55 !important;
+          font-size: 9px !important;
+          font-weight: 900 !important;
+          letter-spacing: .08em !important;
+        }
+
+        .mv-step5-address-info strong {
+          display: block !important;
+          color: #151918 !important;
+          font-size: 13px !important;
+          line-height: 1.35 !important;
+          font-weight: 800 !important;
+          white-space: normal !important;
+          overflow: visible !important;
+          text-overflow: unset !important;
+        }
+
+        .mv-step5-address-info small {
+          display: block !important;
+          color: #77817d !important;
+          font-size: 10px !important;
+          line-height: 1.3 !important;
+        }
+
+        .mv-location-error {
+          margin-top: 7px;
+          padding: 8px 10px;
+          border-radius: 9px;
+          background: #fff1f1;
+          color: #b42318;
+          font-size: 11px;
+          font-weight: 700;
+        }
+
+        .mv-confirm-location {
+          width: 100%;
+          height: 44px;
+          margin-top: 9px;
+          border: 0;
+          border-radius: 12px;
+          background: #176b55;
+          color: #fff;
+          font-size: 13px;
+          font-weight: 900;
+          cursor: pointer;
+        }
+
+        .mv-confirm-location:disabled {
+          opacity: .65;
+          cursor: default;
+        }
+
+        @media (max-width: 700px) {
+          .mv-map-shell {
+            height: 220px;
+            border-radius: 15px;
+          }
+
+          .mv-map-search {
+            top: 7px;
+            left: 7px;
+            right: 7px;
+          }
+
+          .mv-search-box,
+          .mv-search-submit {
+            height: 36px;
+          }
+
+          .mv-search-box input {
+            font-size: 11px;
+          }
+
+          .mv-search-submit {
+            padding: 0 11px;
+            font-size: 10px;
+          }
+
+          .mv-map-modes {
+            top: 49px;
+            left: 7px;
+            max-width: calc(100% - 14px);
+          }
+
+          .mv-map-modes button {
+            height: 26px;
+            padding: 0 7px;
+            font-size: 9px;
+          }
+
+          .mv-my-location {
+            width: 36px;
+            height: 36px;
+            right: 8px;
+            bottom: 36px;
+          }
+
+          .mv-map-tip {
+            left: 7px;
+            bottom: 7px;
+            font-size: 9px;
+          }
+
+          .mv-location-card {
+            margin-top: 7px;
+            padding: 8px;
+          }
+
+          .mv-confirm-location {
+            height: 42px;
+            margin-top: 7px;
+          }
+        }
+      `}</style>
+    </div>
+  );
+}

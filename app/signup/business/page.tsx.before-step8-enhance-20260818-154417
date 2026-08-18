@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-
 import { FormEvent, Suspense, useEffect, useMemo, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -94,6 +92,97 @@ const INDIA_STATES = [
   "Ladakh",
 ];
 
+const INDIA_CITIES: Record<string, string[]> = {
+  "Uttar Pradesh": [
+    "Lucknow",
+    "Kanpur",
+    "Ghaziabad",
+    "Noida",
+    "Agra",
+    "Varanasi",
+    "Prayagraj",
+    "Meerut",
+    "Bareilly",
+    "Aligarh",
+    "Moradabad",
+    "Gorakhpur",
+    "Mathura",
+    "Greater Noida",
+  ],
+  Maharashtra: [
+    "Mumbai",
+    "Pune",
+    "Nagpur",
+    "Nashik",
+    "Thane",
+    "Aurangabad",
+    "Kolhapur",
+  ],
+  Karnataka: [
+    "Bengaluru",
+    "Mysuru",
+    "Mangaluru",
+    "Hubballi",
+    "Belagavi",
+  ],
+  Delhi: ["New Delhi", "Delhi"],
+  Gujarat: [
+    "Ahmedabad",
+    "Surat",
+    "Vadodara",
+    "Rajkot",
+    "Gandhinagar",
+    "Bhavnagar",
+  ],
+  Rajasthan: [
+    "Jaipur",
+    "Jodhpur",
+    "Udaipur",
+    "Kota",
+    "Ajmer",
+    "Bikaner",
+  ],
+  Haryana: [
+    "Gurugram",
+    "Faridabad",
+    "Panipat",
+    "Ambala",
+    "Hisar",
+    "Rohtak",
+    "Sonipat",
+  ],
+  Punjab: [
+    "Ludhiana",
+    "Amritsar",
+    "Jalandhar",
+    "Patiala",
+    "Bathinda",
+  ],
+  Telangana: ["Hyderabad", "Warangal", "Nizamabad", "Karimnagar"],
+  "Tamil Nadu": [
+    "Chennai",
+    "Coimbatore",
+    "Madurai",
+    "Tiruchirappalli",
+    "Salem",
+    "Tiruppur",
+  ],
+  Kerala: [
+    "Thiruvananthapuram",
+    "Kochi",
+    "Kozhikode",
+    "Thrissur",
+    "Kollam",
+  ],
+  "West Bengal": [
+    "Kolkata",
+    "Howrah",
+    "Durgapur",
+    "Siliguri",
+    "Asansol",
+  ],
+};
+
 const CATEGORY_DOCUMENTS: Record<string, string[]> = {
   pg: ["Business registration / ownership proof", "Address proof"],
   tiffin: ["Business registration / food-related licence", "Address proof"],
@@ -143,40 +232,9 @@ function BusinessSignupPageContent() {
   const [address, setAddress] = useState("");
   const [state, setState] = useState("");
   const [city, setCity] = useState("");
-  const [indiaDistricts, setIndiaDistricts] = useState<string[]>([]);
-  const [indiaPins, setIndiaPins] = useState<{ name: string; pincode: string }[]>([]);
-
-  useEffect(() => {
-    if (country !== "IN" || !state) {
-      setIndiaDistricts([]);
-      setIndiaPins([]);
-      return;
-    }
-
-    fetch(`/api/india-location?state=${encodeURIComponent(state)}`)
-      .then((r) => r.json())
-      .then((data) => setIndiaDistricts(data.districts || []))
-      .catch(() => setIndiaDistricts([]));
-  }, [country, state]);
-
-  useEffect(() => {
-    if (country !== "IN" || !state || !city) {
-      setIndiaPins([]);
-      return;
-    }
-
-    fetch(
-      `/api/india-location?state=${encodeURIComponent(state)}&district=${encodeURIComponent(city)}`
-    )
-      .then((r) => r.json())
-      .then((data) => setIndiaPins(data.locations || []))
-      .catch(() => setIndiaPins([]));
-  }, [country, state, city]);
-
   const [postalCode, setPostalCode] = useState("");
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
-  const [locationConfirmed, setLocationConfirmed] = useState(false);
 
   const [documents, setDocuments] = useState<
     { name: string; file: File }[]
@@ -194,12 +252,60 @@ function BusinessSignupPageContent() {
   const countryName = COUNTRY_NAMES[country];
 
   useEffect(() => {
+    if (otpResendSeconds <= 0) return;
+
+    const timer = window.setInterval(() => {
+      setOtpResendSeconds((value) => (value > 0 ? value - 1 : 0));
+    }, 1000);
+
+    const stepTitle =
+    step === 1
+      ? "Contact details"
+      : step === 2
+        ? "Verify WhatsApp"
+        : step === 3
+          ? "Business basics"
+          : step === 4
+            ? "Business location"
+            : step === 5
+              ? "Map location"
+              : step === 6
+                ? "Business documents"
+                : step === 7
+                  ? "Create password"
+                  : step === 8
+                    ? "Review & create account"
+                    : "Account created";
+
+  const stepDescription =
+    step === 1
+      ? "Tell us how we can reach you."
+      : step === 2
+        ? `Enter the verification code sent to ${PHONE_COUNTRIES[country].code}${phone}.`
+        : step === 3
+          ? "Tell us about your business."
+          : step === 4
+            ? `Add your ${countryName} business location.`
+            : step === 5
+              ? "Choose the exact location of your business on the map."
+              : step === 6
+                ? "Upload the documents required for your business."
+                : step === 7
+                  ? "Choose a secure password."
+                  : step === 8
+                    ? "Check your details before creating your account."
+                    : "Your MetroVybe business account is ready.";
+
+  return () => window.clearInterval(timer);
+  }, [otpResendSeconds]);
+
+  useEffect(() => {
     if (!success && !error) return;
 
     const timer = window.setTimeout(() => {
       setSuccess("");
       setError("");
-    }, 3000);
+    }, 5000);
 
     return () => window.clearTimeout(timer);
   }, [success, error]);
@@ -543,81 +649,26 @@ const documentRequirements = (() => {
   return (
     <main className="public-login-page">
       <div className="public-login-card">
-        <Link
-          href="/"
-          style={{
-            display: "inline-block",
-            textDecoration: "none",
-            color: "#111318",
-            fontWeight: 900,
-            fontSize: "32px",
-            lineHeight: 1,
-            letterSpacing: "-1.5px",
-          }}
-        >
-          metro
-          <span style={{ color: "#29AB87" }}>
-            vybe
-          </span>
-          <span
-            style={{
-              fontSize: "11px",
-              position: "relative",
-              top: "-10px",
-              color: "#D9AA32",
-              marginLeft: "3px",
-            }}
-          >
-            ✦
-          </span>
-
-          <div
-            style={{
-              fontSize: "9px",
-              letterSpacing: "1.7px",
-              color: "#8A9097",
-              marginTop: "6px",
-              fontWeight: 700,
-            }}
-          >
-            YOUR CITY. YOUR VYBE.
-          </div>
-        </Link>
-
-        <div style={{ marginBottom: "19px", marginTop: "18px" }}>
+        <div style={{ marginBottom: "19px" }}>
           <button
             type="button"
             onClick={back}
             style={{
               width: "auto",
-              height: "16px",
+              height: "34px",
               padding: 0,
               border: "none",
               background: "transparent",
               display: "inline-flex",
               alignItems: "center",
-              gap: "3px",
+              gap: "5px",
               color: "#2563EB",
               fontSize: "12px",
               fontWeight: 700,
-              lineHeight: 1,
               cursor: "pointer",
-              whiteSpace: "nowrap",
             }}
           >
-            <img
-              src="/back-arrow-9312237.png"
-              alt=""
-              width={16}
-              height={16}
-              style={{
-                width: "16px",
-                height: "20px",
-                objectFit: "contain",
-                filter: "brightness(0) saturate(100%) invert(36%) sepia(45%) saturate(1050%) hue-rotate(183deg) brightness(88%)",
-                flexShrink: 0,
-              }}
-            />
+            <span style={{ fontSize: "20px" }}>‹</span>
             <span>Back</span>
           </button>
         </div>
@@ -909,6 +960,7 @@ const documentRequirements = (() => {
             onSubmit={(event) => {
               event.preventDefault();
               setError("");
+
               if (
                 !address.trim() ||
                 !state.trim() ||
@@ -918,295 +970,99 @@ const documentRequirements = (() => {
                 setError("Please complete your business location.");
                 return;
               }
+
               setStep(5);
             }}
-            style={{
-              width: "100%",
-              background: "#fff",
-              border: "1px solid #E3EAE7",
-              borderRadius: "20px",
-              padding: "22px",
-              boxShadow: "0 12px 30px rgba(17,25,21,.08)",
-              boxSizing: "border-box",
-            }}
           >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                marginBottom: "12px",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "10px",
-                  fontWeight: 900,
-                  color: "#454F4B",
-                  textTransform: "uppercase",
-                  letterSpacing: ".06em",
-                }}
-              >
-                Address details
-              </div>
+            <Field label="Address">
+              <input
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder={`Business address in ${countryName}`}
+                autoComplete="street-address"
+                autoFocus
+                required
+                style={inputStyle}
+              />
+            </Field>
 
-              <div
-                style={{
-                  padding: "4px 8px",
-                  border: "1px solid #E0E8E4",
-                  borderRadius: "7px",
-                  background: "#FAFCFB",
-                  color: "#65716C",
-                  fontSize: "9px",
-                  fontWeight: 800,
-                }}
-              >
-                <span
+            <Field label="State / Region">
+              {country === "IN" ? (
+                <select
+                  value={state}
+                  onChange={(e) => {
+                    setState(e.target.value);
+                    setCity("");
+                  }}
+                  required
+                  style={inputStyle}
+                >
+                  <option value="">Select state</option>
+                  {INDIA_STATES.map((item) => (
+                    <option key={item} value={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  value={state}
+                  onChange={(e) => setState(e.target.value)}
+                  placeholder="State / Region"
+                  required
+                  style={inputStyle}
+                />
+              )}
+            </Field>
+
+            <Field label="City">
+              {country === "IN" ? (
+                <select
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  disabled={!state}
+                  required
                   style={{
-                    position: "relative",
-                    display: "inline-block",
-                    width: "18px",
-                    minWidth: "18px",
-                    height: "12px",
-                    flexShrink: 0,
-                    borderRadius: "2px",
-                    border: "1px solid #E2E2E2",
-                    boxSizing: "border-box",
-                    marginRight: "6px",
-                    verticalAlign: "middle",
-                    background:
-                      "linear-gradient(to bottom, #FF9933 0 33%, #FFFFFF 33% 66%, #138808 66% 100%)",
+                    ...inputStyle,
+                    background: state ? "#fff" : "#F3F4F6",
                   }}
                 >
-                  <span
-                    style={{
-                      position: "absolute",
-                      left: "50%",
-                      top: "50%",
-                      width: "5px",
-                      height: "5px",
-                      transform: "translate(-50%, -50%)",
-                      border: "1px solid #000080",
-                      borderRadius: "50%",
-                    }}
-                  />
-                  <span
-                    style={{
-                      position: "absolute",
-                      left: "50%",
-                      top: "50%",
-                      width: "7px",
-                      height: "1px",
-                      background: "#000080",
-                      transform: "translate(-50%, -50%)",
-                    }}
-                  />
-                  <span
-                    style={{
-                      position: "absolute",
-                      left: "50%",
-                      top: "50%",
-                      width: "1px",
-                      height: "7px",
-                      background: "#000080",
-                      transform: "translate(-50%, -50%)",
-                    }}
-                  />
-                </span>
-                {countryName}
-              </div>
-            </div>
-
-            <div
-              style={{
-                display: "grid",
-                gap: "12px",
-              }}
-            >
-              <Field label="Business address">
+                  <option value="">
+                    {state ? "Select city" : "Select state first"}
+                  </option>
+                  {(INDIA_CITIES[state] || []).map((item) => (
+                    <option key={item} value={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+              ) : (
                 <input
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder={`Business address in ${countryName}`}
-                  autoComplete="street-address"
-                  autoFocus
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="City"
                   required
-                  style={{
-                    ...inputStyle,
-                    width: "100%",
-                    height: "46px",
-                    borderRadius: "12px",
-                    border: "1px solid #D6E1DC",
-                    background: "#FBFDFC",
-                    padding: "0 13px",
-                    fontSize: "12px",
-                    boxSizing: "border-box",
-                  }}
+                  style={inputStyle}
                 />
-              </Field>
+              )}
+            </Field>
 
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "10px",
-                }}
-              >
-                <Field label="State / Region">
-                  {country === "IN" ? (
-                    <select
-                      value={state}
-                      onChange={(e) => {
-                        setState(e.target.value);
-                        setCity("");
-                      }}
-                      required
-                      style={{
-                        ...inputStyle,
-                        width: "100%",
-                        height: "46px",
-                        borderRadius: "12px",
-                        border: "1px solid #D6E1DC",
-                        background: "#FBFDFC",
-                        padding: "0 10px",
-                        fontSize: "11px",
-                        boxSizing: "border-box",
-                      }}
-                    >
-                      <option value="">Select state</option>
-                      {INDIA_STATES.map((item) => (
-                        <option key={item} value={item}>
-                          {item}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <input
-                      value={state}
-                      onChange={(e) => setState(e.target.value)}
-                      placeholder="State / Region"
-                      required
-                      style={{
-                        ...inputStyle,
-                        width: "100%",
-                        height: "46px",
-                        borderRadius: "12px",
-                        border: "1px solid #D6E1DC",
-                        background: "#FBFDFC",
-                        padding: "0 12px",
-                        fontSize: "12px",
-                        boxSizing: "border-box",
-                      }}
-                    />
-                  )}
-                </Field>
-
-                <Field label="City">
-                  {country === "IN" ? (
-                    <select
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                      disabled={!state}
-                      required
-                      style={{
-                        ...inputStyle,
-                        width: "100%",
-                        height: "46px",
-                        borderRadius: "12px",
-                        border: "1px solid #D6E1DC",
-                        background: state ? "#FBFDFC" : "#F1F4F2",
-                        padding: "0 10px",
-                        fontSize: "11px",
-                        boxSizing: "border-box",
-                        opacity: state ? 1 : .75,
-                      }}
-                    >
-                      <option value="">
-                        {state ? "Select city" : "Select state first"}
-                      </option>
-                      {indiaDistricts.map((item) => (
-                        <option key={item} value={item}>
-                          {item}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <input
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                      placeholder="City"
-                      required
-                      style={{
-                        ...inputStyle,
-                        width: "100%",
-                        height: "46px",
-                        borderRadius: "12px",
-                        border: "1px solid #D6E1DC",
-                        background: "#FBFDFC",
-                        padding: "0 12px",
-                        fontSize: "12px",
-                        boxSizing: "border-box",
-                      }}
-                    />
-                  )}
-                </Field>
-              </div>
-
-              <Field label="Postal code">
-                <input
-                  value={postalCode}
-                  onChange={(e) => setPostalCode(e.target.value)}
-                  placeholder="Postal code"
-                  autoComplete="postal-code"
-                  required
-                  style={{
-                    ...inputStyle,
-                    width: "100%",
-                    height: "46px",
-                    borderRadius: "12px",
-                    border: "1px solid #D6E1DC",
-                    background: "#FBFDFC",
-                    padding: "0 13px",
-                    fontSize: "12px",
-                    boxSizing: "border-box",
-                  }}
-                />
-              </Field>
-            </div>
+            <Field label="Postal Code">
+              <input
+                value={postalCode}
+                onChange={(e) => setPostalCode(e.target.value)}
+                placeholder="Postal code"
+                autoComplete="postal-code"
+                required
+                style={inputStyle}
+              />
+            </Field>
 
             <ErrorMessage error={error} />
 
-            <button
-              type="submit"
-              style={{
-                width: "100%",
-                height: "48px",
-                marginTop: "17px",
-                border: "none",
-                borderRadius: "13px",
-                background: "#111318",
-                color: "#fff",
-                fontSize: "12px",
-                fontWeight: 900,
-                letterSpacing: ".01em",
-                cursor: "pointer",
-                boxShadow: "0 6px 16px rgba(0,0,0,.17)",
-              }}
-            >
-              Continue to Map →
+            <button type="submit" style={continueButtonStyle}>
+              Continue to Map
             </button>
-
-            <div
-              style={{
-                marginTop: "9px",
-                textAlign: "center",
-                fontSize: "9px",
-                fontWeight: 650,
-                color: "#8A9490",
-              }}
-            >
-              You’ll confirm the exact location on the map next
-            </div>
           </form>
         )}
 
@@ -1216,11 +1072,7 @@ const documentRequirements = (() => {
               event.preventDefault();
               setError("");
 
-              if (
-                !locationConfirmed ||
-                latitude === null ||
-                longitude === null
-              ) {
+              if (latitude === null || longitude === null) {
                 setError(
                   "Please select and confirm your business location on the map."
                 );
@@ -1234,11 +1086,10 @@ const documentRequirements = (() => {
               <div
                 style={{
                   width: "100%",
-                  borderRadius: "18px",
+                  height: "500px",
+                  borderRadius: "16px",
                   overflow: "hidden",
-                  border: "1px solid #DDE6E2",
-                  background: "#fff",
-                  boxShadow: "0 4px 16px rgba(20,40,32,.06)",
+                  border: "1px solid #E1E5EA",
                 }}
               >
                 <ListingLocationPicker
@@ -1250,30 +1101,10 @@ const documentRequirements = (() => {
                   onConfirm={(location) => {
                     setLatitude(location.latitude);
                     setLongitude(location.longitude);
-                    setLocationConfirmed(true);
                     setError("");
                   }}
                 />
               </div>
-
-              <button
-                type="submit"
-                style={{
-                  width: "100%",
-                  height: "46px",
-                  marginTop: "12px",
-                  border: "none",
-                  borderRadius: "13px",
-                  background: "#111318",
-                  color: "#fff",
-                  fontSize: "13px",
-                  fontWeight: 900,
-                  cursor: "pointer",
-                  boxShadow: "0 5px 15px rgba(0,0,0,.14)",
-                }}
-              >
-                Confirm Location & Continue
-              </button>
 
               {latitude !== null && longitude !== null && (
                 <div
@@ -1290,6 +1121,10 @@ const documentRequirements = (() => {
             </Field>
 
             <ErrorMessage error={error} />
+
+            <button type="submit" style={continueButtonStyle}>
+              Confirm Location & Continue
+            </button>
           </form>
         )}
 
@@ -1653,91 +1488,58 @@ const documentRequirements = (() => {
           <>
             <div
               style={{
-                border: "1px solid #E4E7EC",
-                borderRadius: "16px",
+                border: "1px solid #E5E7EB",
+                borderRadius: "14px",
                 background: "#FFFFFF",
                 overflow: "hidden",
-                boxShadow: "0 4px 14px rgba(17, 19, 24, 0.04)",
               }}
             >
               <div
                 style={{
-                  padding: "13px 14px 11px",
+                  padding: "12px 13px",
+                  borderBottom: "1px solid #E5E7EB",
                   background: "#FAFBFC",
-                  borderBottom: "1px solid #ECEEF1",
                 }}
               >
                 <div
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: "10px",
+                    fontSize: "15px",
+                    fontWeight: 850,
+                    color: "#111318",
                   }}
                 >
-                  <div>
-                    <div
-                      style={{
-                        fontSize: "15px",
-                        lineHeight: 1.2,
-                        fontWeight: 850,
-                        color: "#111318",
-                      }}
-                    >
-                      Review & create
-                    </div>
-
-                    <div
-                      style={{
-                        fontSize: "10px",
-                        color: "#747A82",
-                        marginTop: "4px",
-                      }}
-                    >
-                      Everything looks ready.
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "5px",
-                      padding: "5px 8px",
-                      borderRadius: "999px",
-                      background: "#ECF9F4",
-                      color: "#176B51",
-                      fontSize: "9px",
-                      fontWeight: 850,
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    <span>✓</span>
-                    Ready
-                  </div>
+                  Review & create
                 </div>
 
+                <div
+                  style={{
+                    fontSize: "10px",
+                    color: "#747A82",
+                    marginTop: "3px",
+                  }}
+                >
+                  Check your details before creating your business account.
+                </div>
               </div>
 
               <div
                 style={{
-                  maxHeight: "375px",
+                  maxHeight: "390px",
                   overflowY: "auto",
-                  padding: "9px 10px 11px",
-                  WebkitOverflowScrolling: "touch",
+                  padding: "8px 10px 10px",
                 }}
               >
                 <div
                   style={{
                     fontSize: "9px",
                     fontWeight: 850,
-                    color: "#8A9098",
-                    letterSpacing: "0.07em",
+                    color: "#747A82",
                     textTransform: "uppercase",
-                    padding: "3px 4px 6px",
+                    letterSpacing: "0.06em",
+                    padding: "4px 3px 5px",
                   }}
                 >
-                  Contact
+                  Contact details
                 </div>
 
                 {[
@@ -1754,107 +1556,21 @@ const documentRequirements = (() => {
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      gap: "10px",
-                      padding: "8px 9px",
-                      marginBottom: "5px",
-                      border: "1px solid #ECEEF1",
-                      borderRadius: "10px",
-                      background: "#FFFFFF",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "27px",
-                        height: "27px",
-                        borderRadius: "8px",
-                        background: "rgba(41, 171, 135, 0.08)",
-                        color: "#69717C",
-                        border: "1px solid rgba(41, 171, 135, 0.18)",
-                        boxShadow: "inset 2px 0 0 #29AB87",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "10px",
-                        fontWeight: 850,
-                        flexShrink: 0,
-                      }}
-                    >
-                      {label === "Email"
-                        ? "@"
-                        : label === "WhatsApp"
-                          ? "WA"
-                          : label === "Country"
-                            ? "IN"
-                            : "A"}
-                    </div>
-
-                    <div
-                      style={{
-                        minWidth: 0,
-                        flex: 1,
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontSize: "9px",
-                          color: "#8A9098",
-                          marginBottom: "2px",
-                        }}
-                      >
-                        {label}
-                      </div>
-
-                      <div
-                        style={{
-                          fontSize: "11px",
-                          lineHeight: 1.3,
-                          fontWeight: 750,
-                          color: "#20242A",
-                          overflowWrap: "anywhere",
-                        }}
-                      >
-                        {value}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
-                <div
-                  style={{
-                    fontSize: "9px",
-                    fontWeight: 850,
-                    color: "#8A9098",
-                    letterSpacing: "0.07em",
-                    textTransform: "uppercase",
-                    padding: "7px 4px 6px",
-                  }}
-                >
-                  Business
-                </div>
-
-                {[
-                  ["Business name", businessName],
-                  ["Category", selectedCategory],
-                ].map(([label, value]) => (
-                  <div
-                    key={label}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
                       justifyContent: "space-between",
                       gap: "12px",
-                      padding: "9px 10px",
+                      minHeight: "40px",
+                      padding: "6px 9px",
                       marginBottom: "5px",
                       border: "1px solid #ECEEF1",
-                      borderRadius: "10px",
+                      borderRadius: "9px",
                       background: "#FFFFFF",
-                      boxShadow: "inset 2px 0 0 #E5E7EB",
                     }}
                   >
                     <span
                       style={{
                         fontSize: "10px",
                         color: "#747A82",
+                        flexShrink: 0,
                       }}
                     >
                       {label}
@@ -1863,7 +1579,7 @@ const documentRequirements = (() => {
                     <span
                       style={{
                         fontSize: "11px",
-                        fontWeight: 800,
+                        fontWeight: 750,
                         color: "#20242A",
                         textAlign: "right",
                         overflowWrap: "anywhere",
@@ -1878,13 +1594,68 @@ const documentRequirements = (() => {
                   style={{
                     fontSize: "9px",
                     fontWeight: 850,
-                    color: "#8A9098",
-                    letterSpacing: "0.07em",
+                    color: "#747A82",
                     textTransform: "uppercase",
-                    padding: "7px 4px 6px",
+                    letterSpacing: "0.06em",
+                    padding: "7px 3px 5px",
                   }}
                 >
-                  Location
+                  Business details
+                </div>
+
+                {[
+                  ["Business name", businessName],
+                  ["Category", selectedCategory],
+                ].map(([label, value]) => (
+                  <div
+                    key={label}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: "12px",
+                      minHeight: "40px",
+                      padding: "6px 9px",
+                      marginBottom: "5px",
+                      border: "1px solid #ECEEF1",
+                      borderRadius: "9px",
+                      background: "#FFFFFF",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "10px",
+                        color: "#747A82",
+                      }}
+                    >
+                      {label}
+                    </span>
+
+                    <span
+                      style={{
+                        fontSize: "11px",
+                        fontWeight: 750,
+                        color: "#20242A",
+                        textAlign: "right",
+                        overflowWrap: "anywhere",
+                      }}
+                    >
+                      {value}
+                    </span>
+                  </div>
+                ))}
+
+                <div
+                  style={{
+                    fontSize: "9px",
+                    fontWeight: 850,
+                    color: "#747A82",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em",
+                    padding: "7px 3px 5px",
+                  }}
+                >
+                  Business location
                 </div>
 
                 {[
@@ -1900,12 +1671,12 @@ const documentRequirements = (() => {
                       alignItems: "flex-start",
                       justifyContent: "space-between",
                       gap: "12px",
-                      padding: "9px 10px",
+                      minHeight: "40px",
+                      padding: "6px 9px",
                       marginBottom: "5px",
                       border: "1px solid #ECEEF1",
-                      borderRadius: "10px",
+                      borderRadius: "9px",
                       background: "#FFFFFF",
-                      boxShadow: "inset 2px 0 0 #E5E7EB",
                     }}
                   >
                     <span
@@ -1921,7 +1692,6 @@ const documentRequirements = (() => {
                     <span
                       style={{
                         fontSize: "11px",
-                        lineHeight: 1.3,
                         fontWeight: 750,
                         color: "#20242A",
                         textAlign: "right",
@@ -1935,17 +1705,17 @@ const documentRequirements = (() => {
 
                 <div
                   style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    gap: "6px",
-                    marginTop: "8px",
+                    display: "flex",
+                    gap: "7px",
+                    marginTop: "7px",
                   }}
                 >
                   <div
                     style={{
-                      padding: "10px",
-                      borderRadius: "10px",
-                      background: phoneVerified ? "#F0FBF7" : "#FFF7ED",
+                      flex: 1,
+                      padding: "9px",
+                      borderRadius: "9px",
+                      background: phoneVerified ? "#ECF9F4" : "#FFF7ED",
                       border: phoneVerified
                         ? "1px solid #C8E8DC"
                         : "1px solid #FED7AA",
@@ -1954,8 +1724,8 @@ const documentRequirements = (() => {
                     <div
                       style={{
                         fontSize: "9px",
-                        color: "#747A82",
-                        marginBottom: "4px",
+                        color: phoneVerified ? "#176B51" : "#9A3412",
+                        fontWeight: 800,
                       }}
                     >
                       WhatsApp
@@ -1963,23 +1733,21 @@ const documentRequirements = (() => {
 
                     <div
                       style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "5px",
                         fontSize: "10px",
-                        fontWeight: 850,
                         color: phoneVerified ? "#176B51" : "#9A3412",
+                        fontWeight: 850,
+                        marginTop: "2px",
                       }}
                     >
-                      <span>{phoneVerified ? "✓" : "!"}</span>
-                      {phoneVerified ? "Verified" : "Not verified"}
+                      {phoneVerified ? "Verified ✓" : "Not verified"}
                     </div>
                   </div>
 
                   <div
                     style={{
-                      padding: "10px",
-                      borderRadius: "10px",
+                      flex: 1,
+                      padding: "9px",
+                      borderRadius: "9px",
                       background: "#F8FAFC",
                       border: "1px solid #E7EAF0",
                     }}
@@ -1988,7 +1756,7 @@ const documentRequirements = (() => {
                       style={{
                         fontSize: "9px",
                         color: "#747A82",
-                        marginBottom: "4px",
+                        fontWeight: 800,
                       }}
                     >
                       Documents
@@ -1996,15 +1764,12 @@ const documentRequirements = (() => {
 
                     <div
                       style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "5px",
                         fontSize: "10px",
-                        fontWeight: 850,
                         color: "#30353B",
+                        fontWeight: 850,
+                        marginTop: "2px",
                       }}
                     >
-                      <span>📄</span>
                       {documents.length} uploaded
                     </div>
                   </div>
@@ -2021,7 +1786,6 @@ const documentRequirements = (() => {
               style={{
                 ...continueButtonStyle,
                 marginTop: "9px",
-                boxShadow: "0 5px 16px rgba(41, 171, 135, 0.20)",
                 opacity: loading ? 0.7 : 1,
               }}
             >

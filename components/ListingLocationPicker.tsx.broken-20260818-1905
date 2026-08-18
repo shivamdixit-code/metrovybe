@@ -1,0 +1,714 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import {
+  MapContainer,
+  Marker,
+  TileLayer,
+  useMap,
+  useMapEvents,
+} from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+
+type LocationValue = {
+  latitude: number;
+  longitude: number;
+};
+
+type SelectedLocation = LocationValue & {
+  address: string;
+  city: string;
+  state: string;
+  pincode: string;
+};
+
+type Props = {
+  initialLocation?: LocationValue;
+  onConfirm: (location: SelectedLocation) => void;
+};
+
+const DEFAULT_LOCATION: LocationValue = {
+  latitude: 28.6139,
+  longitude: 77.209,
+};
+
+const PIN_ICON = new L.DivIcon({
+  className: "metro-location-pin",
+  html: `
+    <div class="metro-pin-wrap">
+      <div class="metro-pin">
+        <div class="metro-pin-dot"></div>
+      </div>
+      <div class="metro-pin-shadow"></div>
+    </div>
+  `,
+  iconSize: [44, 56],
+  iconAnchor: [22, 48],
+});
+
+const MAP_PROTOCOL = String.fromCharCode(104,116,116,112,115,58,47,47);
+
+const MAP_MODES = {
+  standard: {
+    label: "Standard",
+    url: MAP_PROTOCOL + "{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    attribution: "&copy; OpenStreetMap contributors",
+  },
+  light: {
+    label: "Light",
+    url: MAP_PROTOCOL + "{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+    attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
+  },
+  dark: {
+    label: "Dark",
+    url: MAP_PROTOCOL + "{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+    attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
+  },
+  satellite: {
+    label: "Satellite",
+    url: MAP_PROTOCOL + "server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    attribution: "Tiles &copy; Esri",
+  },
+};
+
+function MapController({
+  center,
+  locationVersion,
+}: {
+  center: LocationValue;
+  locationVersion: number;
+}) {
+  const map = useMap();
+
+  useEffect(() => {
+    const lat = Number(center.latitude);
+    const lng = Number(center.longitude);
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+      return;
+    }
+
+    map.stop();
+
+    map.flyTo([lat, lng], 18, {
+      animate: true,
+      duration: 0.8,
+    });
+  }, [
+    center.latitude,
+    center.longitude,
+    locationVersion,
+    map,
+  ]);
+
+  return null;
+}
+
+function MapClickHandler({
+  onMove,
+}: {
+  onMove: (location: LocationValue) => void;
+}) {
+  useMapEvents({
+    click(event) {
+      onMove({
+        latitude: event.latlng.lat,
+        longitude: event.latlng.lng,
+      });
+    },
+  });
+
+  return null;
+}
+
+export default function ListingLocationPicker({
+  initialLocation,
+  onConfirm,
+}: Props) {
+  const [position, setPosition] = useState<LocationValue>(
+    initialLocation || DEFAULT_LOCATION
+  );
+
+  const [locationVersion, setLocationVersion] = useState(0);
+
+  const [address, setAddress] = useState("");
+  const [locationDetails, setLocationDetails] = useState({
+    city: "",
+    state: "",
+    pincode: "",
+  });
+  const [search, setSearch] = useState("");
+  const [searching, setSearching] = useState(false);
+  const [locating, setLocating] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [mapMode, setMapMode] =
+    useState<keyof typeof MAP_MODES>("standard");
+
+  const tile = useMemo(
+    () => MAP_MODES[mapMode],
+    [mapMode]
+  );
+
+  async function reverseGeocode(
+    latitude: number,
+    longitude: number
+  ) {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`,
+        {
+          headers: {
+            Accept: "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Unable to fetch address");
+      }
+
+      const data = await response.json();
+      const addressData = data.address || {};
+
+      setAddress(
+        data.display_name ||
+          `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`
+      );
+
+      setLocationDetails({
+        city:
+          addressData.city ||
+          addressData.town ||
+          addressData.village ||
+          addressData.municipality ||
+          addressData.county ||
+          "",
+        state: addressData.state || "",
+        pincode: addressData.postcode || "",
+      });
+    } catch {
+      setAddress(
+        `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`
+      );
+
+      setLocationDetails({
+        city: "",
+        state: "",
+        pincode: "",
+      });
+    }
+  }
+
+  function movePin(next: LocationValue) {
+    const lat = Number(next.latitude);
+    const lng = Number(next.longitude);
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+      return;
+    }
+
+    setPosition({
+      latitude: lat,
+      longitude: lng,
+    });
+
+    setLocationVersion((value) => value + 1);
+    setError("");
+
+    reverseGeocode(lat, lng);
+  }
+
+  useEffect(() => {
+    reverseGeocode(
+      position.latitude,
+      position.longitude
+    );
+  }, []);
+
+  async function searchAddress() {
+    const query = search.trim();
+
+    if (!query) return;
+
+    setSearching(true);
+    setError("");
+
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&addressdetails=1&q=${encodeURIComponent(
+          query
+        )}`,
+        {
+          headers: {
+            Accept: "application/json",
+          },
+        }
+      );
+
+      const results = await response.json();
+
+      if (!results.length) {
+        throw new Error(
+          "Address not found. Try a nearby landmark or complete address."
+        );
+      }
+
+      const next = {
+        latitude: Number(results[0].lat),
+        longitude: Number(results[0].lon),
+      };
+
+      setPosition(next);
+      setAddress(results[0].display_name || query);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Unable to find this address."
+      );
+    } finally {
+      setSearching(false);
+    }
+  }
+
+  function useMyLocation() {
+    if (!navigator.geolocation) {
+      setError(
+        "Location services are not supported by this browser."
+      );
+      return;
+    }
+
+    setLocating(true);
+    setError("");
+
+    navigator.geolocation.getCurrentPosition(
+      (location) => {
+        const next = {
+          latitude: Number(location.coords.latitude),
+          longitude: Number(location.coords.longitude),
+        };
+
+        if (
+          !Number.isFinite(next.latitude) ||
+          !Number.isFinite(next.longitude)
+        ) {
+          setLocating(false);
+          setError("Invalid GPS coordinates received.");
+          return;
+        }
+
+        // Update the marker and force MapController to
+        // recenter the actual Leaflet map on this GPS point.
+        setPosition(next);
+        setLocationVersion((value) => value + 1);
+
+        reverseGeocode(
+          next.latitude,
+          next.longitude
+        ).finally(() => {
+          setLocating(false);
+        });
+      },
+      (err) => {
+        setLocating(false);
+
+        if (err.code === 1) {
+          setError(
+            "Location permission was denied. Please allow location access in your browser."
+          );
+        } else if (err.code === 2) {
+          setError(
+            "Your current location could not be determined."
+          );
+        } else {
+          setError(
+            "Unable to get your current location. Please try again."
+          );
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0,
+      }
+    );
+  }
+
+  function confirmLocation() {
+    if (!address.trim()) {
+      setError("Please select a valid location first.");
+      return;
+    }
+
+    setSaving(true);
+
+    onConfirm({
+      latitude: position.latitude,
+      longitude: position.longitude,
+      address,
+      city: locationDetails.city,
+      state: locationDetails.state,
+      pincode: locationDetails.pincode,
+    });
+
+    setSaving(false);
+  }
+
+  return (
+    <div className="listing-location-picker">
+      <div className="picker-top"></div>
+
+      <div className="map-area">
+        <div className="map-search-overlay customer-map-search">
+          <div className="search-row">
+            <div className="search-box">
+              <span className="search-icon">⌕</span>
+
+              <input
+                value={search}
+                onChange={(event) =>
+                  setSearch(event.target.value)
+                }
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    searchAddress();
+                  }
+                }}
+                placeholder="Search your business address"
+              />
+
+              {search && (
+                <button
+                  type="button"
+                  className="clear-search"
+                  onClick={() => setSearch("")}
+                >
+                  ×
+                </button>
+              )}
+            </div>
+
+            <button
+              type="button"
+              className="search-button"
+              onClick={searchAddress}
+              disabled={searching}
+            >
+              {searching ? "..." : "Search"}
+            </button>
+          </div>
+        </div>
+        <MapContainer
+          center={[
+            position.latitude,
+            position.longitude,
+          ]}
+          zoom={17}
+          zoomControl={false}
+          scrollWheelZoom
+          className="listing-picker-map"
+        >
+          <TileLayer
+            attribution={tile.attribution}
+            url={tile.url}
+          />
+
+          <MapController
+            center={position}
+            locationVersion={locationVersion}
+          />
+
+          <MapClickHandler onMove={movePin} />
+
+          <Marker
+            position={[
+              position.latitude,
+              position.longitude,
+            ]}
+            icon={PIN_ICON}
+            draggable
+            eventHandlers={{
+              dragend(event) {
+                const marker =
+                  event.target as L.Marker;
+
+                const next = marker.getLatLng();
+
+                movePin({
+                  latitude: next.lat,
+                  longitude: next.lng,
+                });
+              },
+            }}
+          />
+        </MapContainer>
+
+        <button
+          type="button"
+          className="floating-location-button customer-location-button"
+          onClick={useMyLocation}
+          disabled={locating}
+          aria-label="Use my location"
+          title="Use my location"
+        >
+          <span className={locating ? "location-spinner" : ""}>
+            ◎
+          </span>
+        </button>
+
+        <div className="map-mode-control">
+          {(
+            Object.keys(MAP_MODES) as Array<
+              keyof typeof MAP_MODES
+            >
+          ).map((mode) => (
+            <button
+              type="button"
+              key={mode}
+              className={
+                mapMode === mode ? "active" : ""
+              }
+              onClick={() => setMapMode(mode)}
+            >
+              {mode === "standard" && "▦"}
+              {mode === "light" && "☼"}
+              {mode === "dark" && "◐"}
+              {mode === "satellite" && "▧"}
+              <span>{MAP_MODES[mode].label}</span>
+            </button>
+          ))}
+        </div>
+
+        <div className="map-help">
+          <span className="help-pin">●</span>
+          Tap the map or drag the pin to the exact place
+        </div>
+      </div>
+
+      <div className="location-bottom">
+        <div className="address-preview">
+          <div className="address-icon">⌖</div>
+
+          <div>
+            <small>BUSINESS LOCATION</small>
+
+            <strong>
+              {address ||
+                "Move the pin to select your location"}
+            </strong>
+
+            <span>
+              {position.latitude.toFixed(6)},{" "}
+              {position.longitude.toFixed(6)}
+            </span>
+          </div>
+        </div>
+
+        {error && (
+          <div className="picker-error">
+            {error}
+          </div>
+        )}
+
+      </div>
+
+      <style jsx global>{`
+        .listing-location-picker {
+          width: 100%;
+          height: auto !important;
+          display: flex;
+          flex-direction: column;
+          background: #fff !important;
+          color: #151918;
+          overflow: hidden;
+        }
+
+        .picker-top {
+          padding: 8px;
+          background: #fff;
+          border-bottom: 1px solid #e7ebe9;
+          position: relative;
+          z-index: 1000;
+        }
+
+        .map-area {
+          position: relative;
+          flex: 1;
+          min-height: 0;
+          overflow: hidden;
+        }
+
+        .listing-picker-map {
+          width: 100% !important;
+          height: 100% !important;
+          min-height: 360px !important;
+        }
+
+        .map-search-overlay {
+          position: absolute !important;
+          top: 12px !important;
+          left: 12px !important;
+          right: 12px !important;
+          width: auto !important;
+          z-index: 2000 !important;
+          pointer-events: none;
+        }
+
+        .map-search-overlay .search-row {
+          display: flex !important;
+          align-items: center !important;
+          gap: 6px !important;
+          width: 100% !important;
+          pointer-events: auto;
+        }
+
+        .map-search-overlay .search-box {
+          flex: 1 !important;
+          height: 38px !important;
+          min-width: 0 !important;
+          padding: 0 11px !important;
+          border-radius: 12px !important;
+          background: rgba(255,255,255,.96) !important;
+          border: 1px solid rgba(0,0,0,.08) !important;
+          box-shadow: 0 4px 18px rgba(0,0,0,.13) !important;
+        }
+
+        .map-search-overlay .search-box input {
+          min-width: 0 !important;
+          font-size: 12px !important;
+        }
+
+        .map-search-overlay .search-button {
+          height: 38px !important;
+          padding: 0 12px !important;
+          border-radius: 12px !important;
+          font-size: 11px !important;
+          background: #176b55 !important;
+        }
+
+        .map-mode-control {
+          position: absolute !important;
+          top: 58px !important;
+          left: 12px !important;
+          right: auto !important;
+          z-index: 2000 !important;
+          display: flex !important;
+          align-items: center !important;
+          gap: 3px !important;
+          padding: 4px !important;
+          max-width: calc(100% - 24px) !important;
+          overflow-x: auto !important;
+          border-radius: 11px !important;
+          background: rgba(255,255,255,.94) !important;
+          border: 1px solid rgba(0,0,0,.07) !important;
+          box-shadow: 0 4px 16px rgba(0,0,0,.13) !important;
+          backdrop-filter: blur(10px) !important;
+        }
+
+        .map-mode-control button {
+          flex: 0 0 auto !important;
+          height: 29px !important;
+          min-height: 29px !important;
+          padding: 0 9px !important;
+          border: 0 !important;
+          border-radius: 8px !important;
+          background: transparent !important;
+          color: #303633 !important;
+          font-size: 10px !important;
+          font-weight: 700 !important;
+          white-space: nowrap !important;
+        }
+
+        .map-mode-control button.active {
+          background: #176b55 !important;
+          color: #fff !important;
+        }
+
+        .customer-location-button {
+          position: absolute !important;
+          right: 10px !important;
+          bottom: 48px !important;
+          z-index: 2000 !important;
+          width: 38px !important;
+          height: 38px !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          background: #fff !important;
+          border: 1px solid #d9dee5 !important;
+          border-radius: 50% !important;
+          box-shadow: 0 3px 12px rgba(0,0,0,.16) !important;
+        }
+
+        .customer-location-button span {
+          font-size: 20px !important;
+          line-height: 1 !important;
+        }
+
+        .map-help {
+          position: absolute !important;
+          left: 10px !important;
+          bottom: 8px !important;
+          z-index: 1500 !important;
+          max-width: calc(100% - 20px);
+          padding: 5px 8px !important;
+          border-radius: 8px !important;
+          background: rgba(255,255,255,.90) !important;
+          font-size: 10px !important;
+          line-height: 1.2 !important;
+        }
+
+        .location-bottom {
+          padding: 8px !important;
+          background: #fff !important;
+        }
+
+        .address-preview {
+          padding: 8px !important;
+          border: 1px solid #e1e6e4;
+          border-radius: 10px;
+        }
+
+        @media (max-width: 600px) {
+          .picker-top {
+            padding: 6px;
+          }
+
+          .map-search-overlay {
+            top: 7px !important;
+            left: 8px !important;
+            right: 8px !important;
+          }
+
+          .map-search-overlay .search-box {
+            height: 34px !important;
+          }
+
+          .map-search-overlay .search-button {
+            height: 34px !important;
+            padding: 0 10px !important;
+          }
+
+          .map-mode-control {
+            top: 46px !important;
+            left: 8px !important;
+            max-width: calc(100% - 16px) !important;
+          }
+
+          .map-mode-control button {
+            padding: 0 7px !important;
+            font-size: 10px !important;
+          }
+
+          .listing-picker-map {
+            min-height: 340px !important;
+          }
+        }
+      `}</style>
+    </div>
+  );
+}

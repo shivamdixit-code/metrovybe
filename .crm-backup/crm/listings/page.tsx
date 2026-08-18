@@ -1,0 +1,2 @@
+import {listings} from "@/lib/data";
+export default function Listings(){return <><h1 className="page-title">LISTINGS.</h1><p className="subtle">Manage every service published on MetroVybe.</p><div className="table-wrap"><table><thead><tr><th>Listing</th><th>Category</th><th>Location</th><th>Price</th><th>Rating</th></tr></thead><tbody>{listings.map(x=><tr key={x.id}><td>{x.title}</td><td>{x.category}</td><td>{x.location}</td><td>{x.price}</td><td>⭐ {x.rating}</td></tr>)}</tbody></table></div></>}
