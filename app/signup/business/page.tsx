@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { FormEvent, Suspense, useEffect, useMemo, useState } from "react";
+import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -177,6 +177,9 @@ function BusinessSignupPageContent() {
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const [locationConfirmed, setLocationConfirmed] = useState(false);
+  const listingLocationPickerRef = useRef<{
+    confirmLocation: () => void;
+  } | null>(null);
 
   const [documents, setDocuments] = useState<
     { name: string; file: File }[]
@@ -1216,6 +1219,8 @@ const documentRequirements = (() => {
               event.preventDefault();
               setError("");
 
+              listingLocationPickerRef.current?.confirmLocation();
+
               if (
                 latitude === null ||
                 longitude === null
@@ -1241,6 +1246,7 @@ const documentRequirements = (() => {
                 }}
               >
                 <ListingLocationPicker
+                  ref={listingLocationPickerRef}
                   initialLocation={
                     latitude !== null && longitude !== null
                       ? { latitude, longitude }
