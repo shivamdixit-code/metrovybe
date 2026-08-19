@@ -224,6 +224,91 @@ function BusinessSignupPageContent() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  const businessSignupDraftKey = `metrovybe-business-signup-draft-${category || "default"}`;
+  const businessSignupDraftRestored = useRef(false);
+
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem(businessSignupDraftKey);
+      if (!saved) {
+        businessSignupDraftRestored.current = true;
+        return;
+      }
+
+      const draft = JSON.parse(saved);
+
+      if (draft.step >= 1 && draft.step <= 9) setStep(draft.step);
+      if (typeof draft.name === "string") setName(draft.name);
+      if (typeof draft.email === "string") setEmail(draft.email);
+      if (typeof draft.phone === "string") setPhone(draft.phone);
+      if (draft.country && PHONE_COUNTRIES[draft.country as PhoneCountry]) {
+        setCountry(draft.country);
+      }
+
+      if (typeof draft.businessName === "string") setBusinessName(draft.businessName);
+      if (typeof draft.businessCategory === "string") setBusinessCategory(draft.businessCategory);
+
+      if (typeof draft.address === "string") setAddress(draft.address);
+      if (typeof draft.state === "string") setState(draft.state);
+      if (typeof draft.city === "string") setCity(draft.city);
+      if (typeof draft.postalCode === "string") setPostalCode(draft.postalCode);
+
+      if (typeof draft.latitude === "number") setLatitude(draft.latitude);
+      if (typeof draft.longitude === "number") setLongitude(draft.longitude);
+      if (typeof draft.locationConfirmed === "boolean") {
+        setLocationConfirmed(draft.locationConfirmed);
+      }
+
+      businessSignupDraftRestored.current = true;
+    } catch {
+      businessSignupDraftRestored.current = true;
+    }
+  }, [businessSignupDraftKey]);
+
+  useEffect(() => {
+    if (!businessSignupDraftRestored.current) return;
+
+    try {
+      sessionStorage.setItem(
+        businessSignupDraftKey,
+        JSON.stringify({
+          step,
+          name,
+          email,
+          phone,
+          country,
+          businessName,
+          businessCategory,
+          address,
+          state,
+          city,
+          postalCode,
+          latitude,
+          longitude,
+          locationConfirmed,
+        })
+      );
+    } catch {
+      // Ignore storage errors and keep the signup form working normally.
+    }
+  }, [
+    businessSignupDraftKey,
+    step,
+    name,
+    email,
+    phone,
+    country,
+    businessName,
+    businessCategory,
+    address,
+    state,
+    city,
+    postalCode,
+    latitude,
+    longitude,
+    locationConfirmed,
+  ]);
+
   const countryName = COUNTRY_NAMES[country];
 
   useEffect(() => {
@@ -2381,23 +2466,28 @@ const infoBoxStyle = {
   @media (max-width: 600px) {
 
     .mv-business-signup-page {
-      width: 100% !important;
-      max-width: 100% !important;
+      width: 100vw !important;
+      max-width: 100vw !important;
       min-width: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
       overflow-x: hidden !important;
       box-sizing: border-box !important;
     }
 
     .mv-business-signup-page .public-login-card {
-      width: calc(100% - 24px) !important;
-      max-width: 100% !important;
+      width: calc(100vw - 24px) !important;
+      max-width: calc(100vw - 24px) !important;
       min-width: 0 !important;
-      margin-left: auto !important;
-      margin-right: auto !important;
-      padding-left: 16px !important;
-      padding-right: 16px !important;
+      margin-left: 12px !important;
+      margin-right: 12px !important;
       box-sizing: border-box !important;
       overflow-x: hidden !important;
+    }
+
+    .mv-business-signup-page * {
+      max-width: 100% !important;
+      box-sizing: border-box !important;
     }
 
     .mv-business-signup-page input,
