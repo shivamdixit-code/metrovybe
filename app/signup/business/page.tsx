@@ -146,6 +146,14 @@ function BusinessSignupPageContent() {
         "--mv-business-visible-top",
         `${vv.offsetTop}px`
       );
+
+      const page = document.querySelector(".mv-business-signup-page");
+      if (page instanceof HTMLElement) {
+        page.style.setProperty(
+          "--mv-business-keyboard-height",
+          `${Math.max(0, window.innerHeight - vv.height)}px`
+        );
+      }
     };
 
     updateViewport();
@@ -159,6 +167,35 @@ function BusinessSignupPageContent() {
       vv?.removeEventListener("resize", updateViewport);
       vv?.removeEventListener("scroll", updateViewport);
       window.removeEventListener("resize", updateViewport);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleFocus = (event: FocusEvent) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+
+      if (
+        !target.matches(
+          ".mv-business-signup-page input, .mv-business-signup-page select, .mv-business-signup-page textarea"
+        )
+      ) {
+        return;
+      }
+
+      window.setTimeout(() => {
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+          inline: "nearest",
+        });
+      }, 350);
+    };
+
+    document.addEventListener("focusin", handleFocus);
+
+    return () => {
+      document.removeEventListener("focusin", handleFocus);
     };
   }, []);
 
@@ -2388,6 +2425,12 @@ const infoBoxStyle = {
       padding-right: 16px !important;
       box-sizing: border-box !important;
       overflow-x: hidden !important;
+    }
+
+    .mv-business-signup-page input,
+    .mv-business-signup-page select,
+    .mv-business-signup-page textarea {
+      font-size: 16px !important;
     }
 
     .mv-business-signup-page input,
