@@ -2413,6 +2413,8 @@ const inputStyle = {
 const passwordWrapperStyle = {
   position: "relative" as const,
   width: "100%",
+  display: "block",
+  boxSizing: "border-box" as const,
 };
 
 const passwordInputStyle = {
@@ -2599,7 +2601,10 @@ const infoBoxStyle = {
 
         button.mv-step7-eye-button {
           position: absolute !important;
-          inset: 50% 8px auto auto !important;
+          top: 50% !important;
+          right: 8px !important;
+          bottom: auto !important;
+          left: auto !important;
           transform: translateY(-50%) !important;
 
           width: 32px !important;
