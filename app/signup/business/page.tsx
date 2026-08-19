@@ -197,6 +197,16 @@ function BusinessSignupPageContent() {
   const countryName = COUNTRY_NAMES[country];
 
   useEffect(() => {
+    if (otpResendSeconds <= 0) return;
+
+    const timer = window.setInterval(() => {
+      setOtpResendSeconds((seconds) => Math.max(0, seconds - 1));
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [otpResendSeconds]);
+
+  useEffect(() => {
     if (!success && !error) return;
 
     const timer = window.setTimeout(() => {
@@ -365,10 +375,7 @@ function BusinessSignupPageContent() {
       return;
     }
 
-    if (latitude === null || longitude === null) {
-      setError("Please select and confirm your business location on the map.");
-      return;
-    }
+
 
     setStep(5);
   }
@@ -527,7 +534,7 @@ const documentRequirements = (() => {
                   ? "Create password"
                   : step === 8
                     ? "Review & create account"
-                    : "Account created";
+                    : "";
 
   const stepDescription =
     step === 1
@@ -546,7 +553,7 @@ const documentRequirements = (() => {
                   ? "Choose a secure password."
                   : step === 8
                     ? "Check your details before creating your account."
-                    : "Your MetroVybe business account is ready.";
+                    : "";
 
   return (
     <main className="public-login-page">
@@ -592,6 +599,7 @@ const documentRequirements = (() => {
           </div>
         </Link>
 
+        {step !== 9 && (
         <div style={{ marginBottom: "19px", marginTop: "18px" }}>
           <button
             type="button"
@@ -629,6 +637,8 @@ const documentRequirements = (() => {
             <span>Back</span>
           </button>
         </div>
+        )}
+
 
         <div
           style={{
@@ -795,8 +805,10 @@ const documentRequirements = (() => {
               </div>
             )}
 
-            {success && !otpSending && (
-              <div style={successBoxStyle}>✓ {success}</div>
+            {!otpSending && success && (
+              <div style={successBoxStyle}>
+                ✓ {success}
+              </div>
             )}
 
             <form onSubmit={verifyOtp}>
@@ -838,13 +850,13 @@ const documentRequirements = (() => {
             <div
               style={{
                 textAlign: "center",
-                marginTop: "15px",
+                marginTop: "10px",
               }}
             >
               {otpResendSeconds > 0 ? (
                 <span
                   style={{
-                    fontSize: "13px",
+                    fontSize: "12px",
                     color: "#747A82",
                     fontWeight: 600,
                   }}
@@ -858,9 +870,17 @@ const documentRequirements = (() => {
                     sendOtp(getInternationalPhone(country, phone))
                   }
                   disabled={otpSending}
-                  style={linkButtonStyle}
+                  style={{
+                    border: "none",
+                    background: "transparent",
+                    color: "#0037FF",
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    cursor: otpSending ? "default" : "pointer",
+                    padding: "2px 6px",
+                  }}
                 >
-                  ↻ Resend verification code
+                  ↻ Resend Verification OTP
                 </button>
               )}
             </div>
@@ -1226,15 +1246,7 @@ const documentRequirements = (() => {
 
               listingLocationPickerRef.current?.confirmLocation();
 
-              if (
-                latitude === null ||
-                longitude === null
-              ) {
-                setError(
-                  "Please select and confirm your business location on the map."
-                );
-                return;
-              }
+
 
               setStep(6);
             }}
@@ -1699,25 +1711,16 @@ const documentRequirements = (() => {
                   }}
                 >
                   <div>
-                    <div
-                      style={{
-                        fontSize: "15px",
-                        lineHeight: 1.2,
-                        fontWeight: 850,
-                        color: "#111318",
-                      }}
-                    >
-                      Review & create
-                    </div>
+                    
 
-                    <div
+        <div
                       style={{
                         fontSize: "10px",
                         color: "#747A82",
                         marginTop: "4px",
                       }}
                     >
-                      Everything looks ready.
+                      Everything looks great!.
                     </div>
                   </div>
 
@@ -2060,6 +2063,17 @@ const documentRequirements = (() => {
               padding: "10px 0 4px",
             }}
           >
+            <h2
+              style={{
+                margin: "0 0 9px",
+                fontSize: "24px",
+                lineHeight: 1.2,
+                color: "#111318",
+              }}
+            >
+              Account Created
+            </h2>
+
             <div
               style={{
                 width: "64px",
@@ -2078,17 +2092,6 @@ const documentRequirements = (() => {
               ✓
             </div>
 
-            <h2
-              style={{
-                margin: "0 0 9px",
-                fontSize: "24px",
-                lineHeight: 1.2,
-                color: "#111318",
-              }}
-            >
-              Account Created
-            </h2>
-
             <p
               style={{
                 margin: "0 0 22px",
@@ -2100,6 +2103,23 @@ const documentRequirements = (() => {
               Your MetroVybe business account for{" "}
               <strong>{businessName}</strong> has been created successfully.
             </p>
+
+            <div
+              style={{
+                margin: "0 0 20px",
+                padding: "11px 14px",
+                borderRadius: "8px",
+                background: "#ECF9F4",
+                color: "#176B51",
+                fontSize: "13px",
+                fontWeight: 600,
+              }}
+            >
+              ✓ Verification email sent to your email address.
+              <div style={{ marginTop: "4px", fontWeight: 500 }}>
+                Please verify your email address to activate your MetroVybe account.
+              </div>
+            </div>
 
             <button
               type="button"
