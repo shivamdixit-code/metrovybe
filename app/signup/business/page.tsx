@@ -2370,6 +2370,52 @@ const infoBoxStyle = {
 <style jsx global>{`
   @media (max-width: 600px) {
 
+    .mv-business-signup-page {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      overflow-x: hidden !important;
+      box-sizing: border-box !important;
+    }
+
+    .mv-business-signup-page .public-login-card {
+      width: calc(100% - 24px) !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      padding-left: 16px !important;
+      padding-right: 16px !important;
+      box-sizing: border-box !important;
+      overflow-x: hidden !important;
+    }
+
+    .mv-business-signup-page input,
+    .mv-business-signup-page select,
+    .mv-business-signup-page textarea,
+    .mv-business-signup-page button {
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    .mv-business-signup-page img {
+      max-width: 100%;
+    }
+
+    .mv-business-signup-page h1,
+    .mv-business-signup-page p {
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+
+    .mv-business-signup-page [style*="overflowY"],
+    .mv-business-signup-page [style*="overflowX"] {
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+
+
 
     .business-doc-upload-card {
       padding: 10px 10px !important;
