@@ -2515,48 +2515,78 @@ const infoBoxStyle = {
     position: relative !important;
     display: block !important;
     width: 100% !important;
-    height: 46px !important;
-    min-height: 46px !important;
+    height: 52px !important;
+    min-height: 52px !important;
     margin: 0 !important;
     padding: 0 !important;
     box-sizing: border-box !important;
-    overflow: visible !important;
   }
 
   .mv-business-signup-page .mv-step7-password-input {
     display: block !important;
     width: 100% !important;
-    height: 46px !important;
-    min-height: 46px !important;
+    height: 52px !important;
+    min-height: 52px !important;
     margin: 0 !important;
-    padding: 0 46px 0 13px !important;
+    padding: 0 56px 0 14px !important;
     box-sizing: border-box !important;
-    border-radius: 11px !important;
+
+    border: 1px solid #D7DBE1 !important;
+    border-radius: 12px !important;
     background: #FFFFFF !important;
+
+    color: #111318 !important;
     font-size: 16px !important;
+    line-height: 52px !important;
+    font-weight: 500 !important;
+
+    outline: none !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+
+    box-shadow: 0 1px 2px rgba(17, 19, 24, 0.04) !important;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease !important;
+  }
+
+  .mv-business-signup-page .mv-step7-password-input::placeholder {
+    color: #8A9098 !important;
+    opacity: 1 !important;
+    font-weight: 400 !important;
+  }
+
+  .mv-business-signup-page .mv-step7-password-input:focus {
+    border-color: #111318 !important;
+    box-shadow:
+      0 0 0 2px rgba(17, 19, 24, 0.07),
+      0 1px 2px rgba(17, 19, 24, 0.04) !important;
   }
 
   .mv-business-signup-page .mv-step7-password-eye {
     position: absolute !important;
-    top: 0 !important;
-    right: 0 !important;
+    top: 1px !important;
+    right: 1px !important;
     left: auto !important;
     bottom: auto !important;
 
-    width: 46px !important;
-    min-width: 46px !important;
-    max-width: 46px !important;
+    width: 50px !important;
+    min-width: 50px !important;
+    max-width: 50px !important;
 
-    height: 46px !important;
-    min-height: 46px !important;
-    max-height: 46px !important;
+    height: 50px !important;
+    min-height: 50px !important;
+    max-height: 50px !important;
 
     margin: 0 !important;
     padding: 0 !important;
 
     border: 0 !important;
-    border-radius: 0 !important;
+    border-left: 1px solid #EEF0F3 !important;
+    border-radius: 0 11px 11px 0 !important;
+
     background: transparent !important;
+    color: #69717C !important;
 
     display: flex !important;
     align-items: center !important;
@@ -2573,17 +2603,40 @@ const infoBoxStyle = {
 
     cursor: pointer !important;
     z-index: 50 !important;
+
+    transition:
+      background 0.15s ease,
+      color 0.15s ease !important;
+  }
+
+  .mv-business-signup-page .mv-step7-password-eye:hover {
+    background: #F7F8FA !important;
+    color: #111318 !important;
+  }
+
+  .mv-business-signup-page .mv-step7-password-eye:active {
+    background: #F0F2F4 !important;
+    color: #111318 !important;
+  }
+
+  .mv-business-signup-page .mv-step7-password-eye:focus-visible {
+    outline: 2px solid rgba(17, 19, 24, 0.22) !important;
+    outline-offset: -2px !important;
   }
 
   .mv-business-signup-page .mv-step7-password-eye svg {
     position: static !important;
     display: block !important;
-    width: 18px !important;
-    height: 18px !important;
-    min-width: 18px !important;
-    min-height: 18px !important;
+
+    width: 19px !important;
+    height: 19px !important;
+    min-width: 19px !important;
+    min-height: 19px !important;
+
     margin: 0 !important;
     padding: 0 !important;
+
+    stroke-width: 2 !important;
     transform: none !important;
   }
 
@@ -2591,6 +2644,40 @@ const infoBoxStyle = {
   .mv-business-signup-page .mv-step7-password-eye::after {
     display: none !important;
     content: none !important;
+  }
+
+  @media (max-width: 600px) {
+    .mv-business-signup-page .mv-step7-password-wrap {
+      height: 52px !important;
+      min-height: 52px !important;
+    }
+
+    .mv-business-signup-page .mv-step7-password-input {
+      height: 52px !important;
+      min-height: 52px !important;
+      font-size: 16px !important;
+      line-height: 52px !important;
+      padding-left: 14px !important;
+      padding-right: 56px !important;
+      border-radius: 12px !important;
+    }
+
+    .mv-business-signup-page .mv-step7-password-eye {
+      top: 1px !important;
+      right: 1px !important;
+      width: 50px !important;
+      min-width: 50px !important;
+      max-width: 50px !important;
+      height: 50px !important;
+      min-height: 50px !important;
+      max-height: 50px !important;
+      border-radius: 0 11px 11px 0 !important;
+    }
+
+    .mv-business-signup-page .mv-step7-password-eye svg {
+      width: 19px !important;
+      height: 19px !important;
+    }
   }
 
   .mv-business-signup-page {
