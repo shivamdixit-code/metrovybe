@@ -133,6 +133,35 @@ function BusinessSignupPageContent() {
 
   const [otp, setOtp] = useState("");
   const [phoneVerified, setPhoneVerified] = useState(false);
+  useEffect(() => {
+    const updateViewport = () => {
+      const vv = window.visualViewport;
+      if (!vv) return;
+
+      document.documentElement.style.setProperty(
+        "--mv-business-visible-height",
+        `${vv.height}px`
+      );
+      document.documentElement.style.setProperty(
+        "--mv-business-visible-top",
+        `${vv.offsetTop}px`
+      );
+    };
+
+    updateViewport();
+
+    const vv = window.visualViewport;
+    vv?.addEventListener("resize", updateViewport);
+    vv?.addEventListener("scroll", updateViewport);
+    window.addEventListener("resize", updateViewport);
+
+    return () => {
+      vv?.removeEventListener("resize", updateViewport);
+      vv?.removeEventListener("scroll", updateViewport);
+      window.removeEventListener("resize", updateViewport);
+    };
+  }, []);
+
   const [otpSending, setOtpSending] = useState(false);
   const [otpVerifying, setOtpVerifying] = useState(false);
   const [otpResendSeconds, setOtpResendSeconds] = useState(0);
@@ -556,7 +585,7 @@ const documentRequirements = (() => {
                     : "";
 
   return (
-    <main className="public-login-page">
+    <main className="public-login-page mv-business-signup-page">
       <div className="public-login-card">
         <Link
           href="/"
@@ -740,9 +769,16 @@ const documentRequirements = (() => {
             <Field label="WhatsApp number">
               <div
                 style={{
-                  display: "grid",
-                  gridTemplateColumns: "108px 1fr",
-                  gap: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  width: "100%",
+                  minWidth: 0,
+                  height: "52px",
+                  border: "1px solid #DDE2E7",
+                  borderRadius: "11px",
+                  background: "#fff",
+                  boxSizing: "border-box",
+                  overflow: "hidden",
                 }}
               >
                 <select
@@ -752,9 +788,20 @@ const documentRequirements = (() => {
                     setPhone("");
                   }}
                   style={{
-                    ...inputStyle,
-                    padding: "0 8px",
+                    flex: "0 0 104px",
+                    width: "104px",
+                    minWidth: "104px",
+                    maxWidth: "104px",
+                    height: "100%",
+                    border: "none",
+                    borderRight: "1px solid #E1E5EA",
+                    outline: "none",
+                    background: "#FFFFFF",
+                    padding: "0 6px 0 10px",
                     fontSize: "13px",
+                    fontWeight: 700,
+                    color: "#252A31",
+                    cursor: "pointer",
                   }}
                 >
                   {Object.entries(PHONE_COUNTRIES).map(([key, value]) => (
@@ -771,21 +818,23 @@ const documentRequirements = (() => {
                     setPhone(e.target.value.replace(/\D/g, ""))
                   }
                   placeholder={PHONE_COUNTRIES[country].placeholder}
+                  inputMode="numeric"
                   autoComplete="tel-national"
                   required
-                  style={inputStyle}
+                  style={{
+                    flex: "1 1 0%",
+                    width: "auto",
+                    minWidth: 0,
+                    maxWidth: "100%",
+                    boxSizing: "border-box",
+                    border: "none",
+                    outline: "none",
+                    background: "transparent",
+                    padding: "13px 12px",
+                    fontSize: "16px",
+                    color: "#111318",
+                  }}
                 />
-              </div>
-
-              <div
-                style={{
-                  marginTop: "7px",
-                  fontSize: "11px",
-                  color: "#747A82",
-                }}
-              >
-                Country automatically determined:{" "}
-                <strong>{countryName}</strong>
               </div>
             </Field>
 
@@ -1255,7 +1304,7 @@ const documentRequirements = (() => {
               style={{
                 height: "auto",
                 maxHeight: "560px",
-                overflowY: "scroll",
+                overflowY: "visible",
                 overflowX: "hidden",
                 paddingRight: "8px",
                 boxSizing: "border-box",
@@ -2320,6 +2369,8 @@ const infoBoxStyle = {
 
 <style jsx global>{`
   @media (max-width: 600px) {
+
+
     .business-doc-upload-card {
       padding: 10px 10px !important;
       border-radius: 12px !important;
