@@ -2507,6 +2507,27 @@ const infoBoxStyle = {
 
 
 <style jsx global>{`
+  .mv-business-signup-page .mv-password-eye {
+    position: absolute !important;
+    top: 50% !important;
+    right: 4px !important;
+    width: 40px !important;
+    height: 46px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
+    min-height: 46px !important;
+    max-height: 46px !important;
+    transform: translateY(-50%) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 5 !important;
+  }
+
   @media (max-width: 600px) {
 
     .mv-business-signup-page {
