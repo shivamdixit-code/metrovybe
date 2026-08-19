@@ -1215,8 +1215,11 @@ const documentRequirements = (() => {
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
+                  gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)",
                   gap: "10px",
+                  width: "100%",
+                  minWidth: 0,
+                  boxSizing: "border-box",
                 }}
               >
                 <Field label="State / Region">
