@@ -1803,7 +1803,7 @@ const documentRequirements = (() => {
                 <button
                   type="button"
                   onClick={() => setShowPassword((value) => !value)}
-                  style={step7EyeButtonStyle}
+                  className="mv-step7-eye-button"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -1826,7 +1826,7 @@ const documentRequirements = (() => {
                   onClick={() =>
                     setShowConfirmPassword((value) => !value)
                   }
-                  style={step7EyeButtonStyle}
+                  className="mv-step7-eye-button"
                 >
                   {showConfirmPassword ? (
                     <EyeOff size={18} />
@@ -2448,32 +2448,10 @@ const eyeButtonStyle = {
 };
 
 
-const step7EyeButtonStyle = {
-  position: "absolute" as const,
-  right: "8px",
-  top: "50%",
-  transform: "translateY(-50%)",
-  width: "32px",
-  minWidth: "32px",
-  maxWidth: "32px",
-  height: "32px",
-  minHeight: "32px",
-  maxHeight: "32px",
-  padding: 0,
-  margin: 0,
-  border: 0,
-  borderRadius: "50%",
-  background: "transparent",
-  color: "#707780",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  flex: "0 0 32px",
-  appearance: "none",
-  WebkitAppearance: "none",
-  boxSizing: "border-box" as const,
-  cursor: "pointer",
-};
+
+
+
+
 
 const continueButtonStyle = {
   width: "100%",
@@ -2618,6 +2596,59 @@ const infoBoxStyle = {
       height: 26px !important;
     }
   }
+
+        button.mv-step7-eye-button {
+          position: absolute !important;
+          inset: 50% 8px auto auto !important;
+          transform: translateY(-50%) !important;
+
+          width: 32px !important;
+          min-width: 32px !important;
+          max-width: 32px !important;
+
+          height: 32px !important;
+          min-height: 32px !important;
+          max-height: 32px !important;
+
+          padding: 0 !important;
+          margin: 0 !important;
+
+          box-sizing: border-box !important;
+          flex: 0 0 32px !important;
+
+          border: 0 !important;
+          border-radius: 50% !important;
+
+          background: transparent !important;
+          box-shadow: none !important;
+
+          color: #707780 !important;
+
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+
+          font-size: 0 !important;
+          line-height: 1 !important;
+
+          appearance: none !important;
+          -webkit-appearance: none !important;
+          -webkit-tap-highlight-color: transparent !important;
+
+          outline: none !important;
+        }
+
+        button.mv-step7-eye-button svg {
+          width: 18px !important;
+          min-width: 18px !important;
+          max-width: 18px !important;
+          height: 18px !important;
+          min-height: 18px !important;
+          max-height: 18px !important;
+          flex: 0 0 18px !important;
+          display: block !important;
+        }
+
 `}</style>
 
 export default function BusinessSignupPage() {
