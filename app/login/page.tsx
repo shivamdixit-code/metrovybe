@@ -77,13 +77,29 @@ export default function LoginPage() {
     const previousHtmlOverflow = html.style.overflow;
     const previousBodyPosition = body.style.position;
     const previousBodyWidth = body.style.width;
+    const isIOS =
+      /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
-    body.style.overflow = "hidden";
-    html.style.overflow = "hidden";
-    body.style.position = "fixed";
-    body.style.width = "100%";
+
+    if (!isIOS) {
+      body.style.overflow = "hidden";
+      html.style.overflow = "hidden";
+      body.style.position = "fixed";
+      body.style.width = "100%";
+    }
 
     const keepLoginViewportStable = () => {
+      if (isIOS) {
+        if (window.visualViewport) {
+          document.documentElement.style.setProperty(
+            "--mv-login-visual-height",
+            `${window.visualViewport.height}px`
+          );
+        }
+        return;
+      }
+
       window.scrollTo(0, 0);
 
       if (window.visualViewport) {
@@ -104,6 +120,8 @@ export default function LoginPage() {
     window.addEventListener("resize", keepLoginViewportStable);
 
     const handleFocus = () => {
+      if (isIOS) return;
+
       window.setTimeout(keepLoginViewportStable, 0);
       window.setTimeout(keepLoginViewportStable, 250);
       window.setTimeout(keepLoginViewportStable, 500);
@@ -256,6 +274,8 @@ export default function LoginPage() {
         return;
       }
 
+      const internationalPhone = getInternationalPhone(country, phone);
+
       if (otpSent) {
         if (!otp.trim()) {
           setError("Please enter the OTP.");
@@ -266,7 +286,7 @@ export default function LoginPage() {
 
         try {
           const result = await verifyLoginPhoneOtp(
-            phone.trim(),
+            internationalPhone,
             otp.trim(),
             selectedRole
           );
@@ -1309,7 +1329,7 @@ export default function LoginPage() {
                     }}
                     placeholder={PHONE_COUNTRIES[country].placeholder}
                     inputMode="numeric"
-                    autoComplete="tel-national"
+                    autoComplete="tel"
                     maxLength={PHONE_COUNTRIES[country].digits}
                     disabled={otpSent}
                     required
@@ -1322,7 +1342,7 @@ export default function LoginPage() {
                       outline: "none",
                       background: "transparent",
                       padding: "0 12px",
-                      fontSize: "14px",
+                      fontSize: "16px",
                       boxSizing: "border-box",
                       color: "#15181D",
                     }}
@@ -1424,7 +1444,7 @@ export default function LoginPage() {
 
                         try {
                           await sendLoginPhoneOtp(
-                            phone.trim(),
+                            getInternationalPhone(country, phone),
                             selectedRole
                           );
                           setOtp("");
