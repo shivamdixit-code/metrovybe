@@ -1112,7 +1112,6 @@ const documentRequirements = (() => {
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder="Enter shop/house no., street & locality"
                   autoComplete="street-address"
-                  autoFocus
                   required
                   style={{
                     ...inputStyle,
@@ -1122,7 +1121,7 @@ const documentRequirements = (() => {
                     border: "1px solid #D6E1DC",
                     background: "#FBFDFC",
                     padding: "0 13px",
-                    fontSize: "12px",
+                    fontSize: "16px",
                     boxSizing: "border-box",
                   }}
                 />
