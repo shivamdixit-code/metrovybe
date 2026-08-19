@@ -2510,12 +2510,13 @@ const infoBoxStyle = {
 
 
 <style jsx global>{`
-  /* STEP 7 PASSWORD FIELDS — ISOLATED */
+  /* STEP 7 — PREMIUM PASSWORD UI */
+
   .mv-business-signup-page .mv-step7-password-wrap {
     position: relative !important;
     width: 100% !important;
-    height: 52px !important;
-    min-height: 52px !important;
+    height: 54px !important;
+    min-height: 54px !important;
     margin: 0 !important;
     padding: 0 !important;
     box-sizing: border-box !important;
@@ -2524,41 +2525,50 @@ const infoBoxStyle = {
   .mv-business-signup-page .mv-step7-password-input {
     display: block !important;
     width: 100% !important;
-    height: 52px !important;
-    min-height: 52px !important;
+    height: 54px !important;
+    min-height: 54px !important;
+
     margin: 0 !important;
-    padding: 0 58px 0 15px !important;
+    padding: 0 58px 0 16px !important;
+
     box-sizing: border-box !important;
 
-    border: 1px solid #D9DDE3 !important;
-    border-radius: 12px !important;
-    background: #FFFFFF !important;
+    border: 1.5px solid #D7DBE1 !important;
+    border-radius: 13px !important;
 
+    background: #FFFFFF !important;
     color: #111318 !important;
+
     font-size: 16px !important;
     font-weight: 500 !important;
-    line-height: 52px !important;
+    line-height: 54px !important;
 
     outline: none !important;
     appearance: none !important;
     -webkit-appearance: none !important;
 
     box-shadow:
-      0 1px 2px rgba(17, 19, 24, 0.025) !important;
+      0 1px 2px rgba(17, 19, 24, 0.03),
+      0 4px 12px rgba(17, 19, 24, 0.025) !important;
 
     transition:
-      border-color 0.15s ease,
-      box-shadow 0.15s ease !important;
+      border-color 0.16s ease,
+      box-shadow 0.16s ease,
+      background 0.16s ease !important;
   }
 
   .mv-business-signup-page .mv-step7-password-input:hover {
     border-color: #B8BEC7 !important;
+    background: #FFFFFF !important;
   }
 
   .mv-business-signup-page .mv-step7-password-input:focus {
     border-color: #111318 !important;
+    background: #FFFFFF !important;
+
     box-shadow:
-      0 0 0 3px rgba(17, 19, 24, 0.06) !important;
+      0 0 0 3px rgba(17, 19, 24, 0.07),
+      0 5px 16px rgba(17, 19, 24, 0.06) !important;
   }
 
   .mv-business-signup-page .mv-step7-password-input::placeholder {
@@ -2569,14 +2579,14 @@ const infoBoxStyle = {
 
   .mv-business-signup-page .mv-step7-password-eye {
     position: absolute !important;
-    top: 2px !important;
-    right: 2px !important;
-    left: auto !important;
-    bottom: auto !important;
+
+    top: 3px !important;
+    right: 3px !important;
 
     width: 48px !important;
     min-width: 48px !important;
     max-width: 48px !important;
+
     height: 48px !important;
     min-height: 48px !important;
     max-height: 48px !important;
@@ -2586,8 +2596,8 @@ const infoBoxStyle = {
 
     border: 0 !important;
     border-radius: 10px !important;
-    background: transparent !important;
 
+    background: transparent !important;
     color: #737A84 !important;
 
     display: flex !important;
@@ -2595,29 +2605,34 @@ const infoBoxStyle = {
     justify-content: center !important;
 
     box-sizing: border-box !important;
+
     appearance: none !important;
     -webkit-appearance: none !important;
 
     transform: none !important;
+
     cursor: pointer !important;
     touch-action: manipulation !important;
+
     -webkit-tap-highlight-color: transparent !important;
 
-    z-index: 10 !important;
+    z-index: 20 !important;
 
     transition:
       color 0.15s ease,
-      background 0.15s ease !important;
+      background 0.15s ease,
+      transform 0.1s ease !important;
   }
 
   .mv-business-signup-page .mv-step7-password-eye:hover {
     color: #111318 !important;
-    background: #F7F8FA !important;
+    background: #F5F6F8 !important;
   }
 
   .mv-business-signup-page .mv-step7-password-eye:active {
     color: #111318 !important;
-    background: #F0F2F4 !important;
+    background: #ECEEF1 !important;
+    transform: scale(0.96) !important;
   }
 
   .mv-business-signup-page .mv-step7-password-eye:focus {
@@ -2631,11 +2646,13 @@ const infoBoxStyle = {
 
   .mv-business-signup-page .mv-step7-password-eye svg {
     position: static !important;
+
     display: block !important;
     flex: 0 0 auto !important;
 
     width: 19px !important;
     height: 19px !important;
+
     min-width: 19px !important;
     min-height: 19px !important;
 
@@ -2643,6 +2660,7 @@ const infoBoxStyle = {
     padding: 0 !important;
 
     stroke-width: 2 !important;
+
     transform: none !important;
   }
 
@@ -2653,29 +2671,37 @@ const infoBoxStyle = {
   }
 
   @media (max-width: 600px) {
+
     .mv-business-signup-page .mv-step7-password-wrap {
-      height: 52px !important;
-      min-height: 52px !important;
+      height: 54px !important;
+      min-height: 54px !important;
     }
 
     .mv-business-signup-page .mv-step7-password-input {
-      height: 52px !important;
-      min-height: 52px !important;
-      padding: 0 58px 0 15px !important;
+      width: 100% !important;
+      height: 54px !important;
+      min-height: 54px !important;
+
+      padding: 0 58px 0 16px !important;
+
       font-size: 16px !important;
-      line-height: 52px !important;
-      border-radius: 12px !important;
+      line-height: 54px !important;
+
+      border-radius: 13px !important;
     }
 
     .mv-business-signup-page .mv-step7-password-eye {
-      top: 2px !important;
-      right: 2px !important;
+      top: 3px !important;
+      right: 3px !important;
+
       width: 48px !important;
       min-width: 48px !important;
       max-width: 48px !important;
+
       height: 48px !important;
       min-height: 48px !important;
       max-height: 48px !important;
+
       border-radius: 10px !important;
     }
   }
