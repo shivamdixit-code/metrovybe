@@ -1789,54 +1789,50 @@ const documentRequirements = (() => {
         {step === 7 && (
           <form onSubmit={validatePassword}>
             <Field label="Password">
-              <div style={passwordWrapperStyle}>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Create a password"
-                  autoComplete="new-password"
-                  autoFocus
-                  required
-                  style={passwordInputStyle}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((value) => !value)}
-                  className="mv-password-eye"
-                  style={eyeButtonStyle}
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Create a password"
+                autoComplete="new-password"
+                autoFocus
+                required
+                style={{
+                  width: "100%",
+                  height: "46px",
+                  padding: "0 14px",
+                  border: "1px solid #D0D5DD",
+                  borderRadius: "10px",
+                  background: "#FFFFFF",
+                  color: "#101828",
+                  fontSize: "16px",
+                  boxSizing: "border-box",
+                  outline: "none",
+                }}
+              />
             </Field>
 
             <Field label="Confirm password">
-              <div style={passwordWrapperStyle}>
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm your password"
-                  autoComplete="new-password"
-                  required
-                  style={passwordInputStyle}
-                />
-                <button
-                  type="button"
-                  onClick={() =>
-                    setShowConfirmPassword((value) => !value)
-                  }
-                  className="mv-password-eye"
-                  style={eyeButtonStyle}
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff size={18} />
-                  ) : (
-                    <Eye size={18} />
-                  )}
-                </button>
-              </div>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm your password"
+                autoComplete="new-password"
+                required
+                style={{
+                  width: "100%",
+                  height: "46px",
+                  padding: "0 14px",
+                  border: "1px solid #D0D5DD",
+                  borderRadius: "10px",
+                  background: "#FFFFFF",
+                  color: "#101828",
+                  fontSize: "16px",
+                  boxSizing: "border-box",
+                  outline: "none",
+                }}
+              />
             </Field>
 
             <ErrorMessage error={error} />
@@ -2536,7 +2532,7 @@ const infoBoxStyle = {
     .mv-business-signup-page input,
     .mv-business-signup-page select,
     .mv-business-signup-page textarea,
-    .mv-business-signup-page button:not(.mv-password-eye) {
+    .mv-business-signup-page button {
       max-width: 100% !important;
       box-sizing: border-box !important;
     }
