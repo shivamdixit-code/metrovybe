@@ -2466,28 +2466,23 @@ const infoBoxStyle = {
   @media (max-width: 600px) {
 
     .mv-business-signup-page {
-      width: 100vw !important;
-      max-width: 100vw !important;
+      width: 100% !important;
+      max-width: 100% !important;
       min-width: 0 !important;
-      margin: 0 !important;
-      padding: 0 !important;
       overflow-x: hidden !important;
       box-sizing: border-box !important;
     }
 
     .mv-business-signup-page .public-login-card {
-      width: calc(100vw - 24px) !important;
-      max-width: calc(100vw - 24px) !important;
+      width: calc(100% - 24px) !important;
+      max-width: 100% !important;
       min-width: 0 !important;
-      margin-left: 12px !important;
-      margin-right: 12px !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      padding-left: 16px !important;
+      padding-right: 16px !important;
       box-sizing: border-box !important;
       overflow-x: hidden !important;
-    }
-
-    .mv-business-signup-page * {
-      max-width: 100% !important;
-      box-sizing: border-box !important;
     }
 
     .mv-business-signup-page input,

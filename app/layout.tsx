@@ -1,6 +1,12 @@
 import "./globals.css";
 import type { ReactNode } from "react";
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export const metadata = {
   title: "MetroVybe — Your City. Your Vybe.",
   description: "Discover PGs, tiffin, laundry, movers, parking and everyday services around you."
