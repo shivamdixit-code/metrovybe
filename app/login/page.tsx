@@ -15,6 +15,30 @@ import {
 
 type Role = "customer" | "business";
 
+
+const PHONE_COUNTRIES = {
+  IN: { code: "+91", digits: 10, placeholder: "9876543210", label: "🇮🇳 +91" },
+  GB: { code: "+44", digits: 10, placeholder: "7911123456", label: "🇬🇧 +44" },
+  US: { code: "+1", digits: 10, placeholder: "2015550123", label: "🇺🇸 +1" },
+  CA: { code: "+1", digits: 10, placeholder: "4165550123", label: "🇨🇦 +1" },
+  AU: { code: "+61", digits: 9, placeholder: "412345678", label: "🇦🇺 +61" },
+  NZ: { code: "+64", digits: 9, placeholder: "211234567", label: "🇳🇿 +64" },
+  SG: { code: "+65", digits: 8, placeholder: "81234567", label: "🇸🇬 +65" },
+  MY: { code: "+60", digits: 9, placeholder: "123456789", label: "🇲🇾 +60" },
+  AE: { code: "+971", digits: 9, placeholder: "501234567", label: "🇦🇪 +971" },
+} as const;
+
+type PhoneCountry = keyof typeof PHONE_COUNTRIES;
+
+const PHONE_DIAL_CODES: Record<PhoneCountry, string> = {
+  IN: "91", GB: "44", US: "1", CA: "1", AU: "61",
+  NZ: "64", SG: "65", MY: "60", AE: "971",
+};
+
+function getInternationalPhone(country: PhoneCountry, phone: string): string {
+  return `+${PHONE_DIAL_CODES[country]}${phone.replace(/\D/g, "")}`;
+}
+
 export default function LoginPage() {
   const router = useRouter();
 
@@ -26,6 +50,7 @@ export default function LoginPage() {
     "whatsapp"
   );
   const [phone, setPhone] = useState("");
+  const [country, setCountry] = useState<PhoneCountry>("IN");
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otpLoading, setOtpLoading] = useState(false);
@@ -269,7 +294,7 @@ export default function LoginPage() {
       setOtpLoading(true);
 
       try {
-        await sendLoginPhoneOtp(phone.trim(), selectedRole);
+        await sendLoginPhoneOtp(getInternationalPhone(country, phone), selectedRole);
         setOtpSent(true);
         setOtp("");
         setResendCountdown(60);
@@ -1228,28 +1253,81 @@ export default function LoginPage() {
                   WhatsApp Number
                 </label>
 
-                <input
-                  type="tel"
-                  value={phone}
-                  onChange={(event) => setPhone(event.target.value)}
-                  placeholder="+91 9876543210"
-                  autoComplete="tel"
-                  disabled={otpSent}
-                  required
+                <div
                   style={{
+                    display: "flex",
+                    alignItems: "center",
                     width: "100%",
                     height: "46px",
-                    padding: "0 13px",
                     border: "1px solid #DDE2E9",
                     borderRadius: "11px",
                     marginBottom: "15px",
-                    fontSize: "14px",
+                    overflow: "hidden",
                     boxSizing: "border-box",
-                    outline: "none",
-                    color: "#15181D",
                     background: otpSent ? "#F5F6F7" : "#fff",
                   }}
-                />
+                >
+                  <select
+                    value={country}
+                    disabled={otpSent}
+                    onChange={(event) => {
+                      setCountry(event.target.value as PhoneCountry);
+                      setPhone("");
+                      setError("");
+                    }}
+                    aria-label="Country"
+                    style={{
+                      flex: "0 0 auto",
+                      width: "104px",
+                      height: "100%",
+                      border: "none",
+                      borderRight: "1px solid #E1E5EA",
+                      outline: "none",
+                      background: "transparent",
+                      padding: "0 6px 0 10px",
+                      fontSize: "13px",
+                      fontWeight: 700,
+                      color: "#252A31",
+                      cursor: otpSent ? "default" : "pointer",
+                    }}
+                  >
+                    {Object.entries(PHONE_COUNTRIES).map(([key, value]) => (
+                      <option key={key} value={key}>
+                        {value.label}
+                      </option>
+                    ))}
+                  </select>
+
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(event) => {
+                      const digits = event.target.value
+                        .replace(/\D/g, "")
+                        .slice(0, PHONE_COUNTRIES[country].digits);
+                      setPhone(digits);
+                    }}
+                    placeholder={PHONE_COUNTRIES[country].placeholder}
+                    inputMode="numeric"
+                    autoComplete="tel-national"
+                    maxLength={PHONE_COUNTRIES[country].digits}
+                    disabled={otpSent}
+                    required
+                    style={{
+                      flex: "1 1 0%",
+                      width: "0",
+                      minWidth: 0,
+                      height: "100%",
+                      border: "none",
+                      outline: "none",
+                      background: "transparent",
+                      padding: "0 12px",
+                      fontSize: "14px",
+                      boxSizing: "border-box",
+                      color: "#15181D",
+                    }}
+                  />
+                </div>
 
                 {otpSent && (
                   <>
