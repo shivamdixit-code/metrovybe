@@ -1789,19 +1789,7 @@ const documentRequirements = (() => {
         {step === 7 && (
           <form onSubmit={validatePassword}>
             <Field label="Password">
-              <div
-                className="mv-step7-password-field"
-                style={{
-                  position: "relative",
-                  display: "block",
-                  width: "100%",
-                  maxWidth: "100%",
-                  minWidth: 0,
-                  height: "46px",
-                  flex: "0 0 100%",
-                  boxSizing: "border-box",
-                }}
-              >
+              <div style={passwordWrapperStyle}>
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
@@ -1810,47 +1798,13 @@ const documentRequirements = (() => {
                   autoComplete="new-password"
                   autoFocus
                   required
-                  style={{
-                    width: "100%",
-                    height: "46px",
-                    padding: "0 52px 0 14px",
-                    border: "1px solid #D0D5DD",
-                    borderRadius: "10px",
-                    background: "#FFFFFF",
-                    color: "#101828",
-                    fontSize: "16px",
-                    boxSizing: "border-box",
-                    outline: "none",
-                  }}
+                  style={passwordInputStyle}
                 />
-
                 <button
                   type="button"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
                   onClick={() => setShowPassword((value) => !value)}
-                  style={{
-                    position: "absolute",
-                    top: "0",
-                    right: "0",
-                    left: "auto",
-                    bottom: "auto",
-                    width: "46px",
-                    minWidth: "46px",
-                    maxWidth: "46px",
-                    height: "46px",
-                    padding: "0",
-                    margin: "0",
-                    border: "none",
-                    background: "transparent",
-                    color: "#667085",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: "pointer",
-                    boxSizing: "border-box",
-                    WebkitTapHighlightColor: "transparent",
-                    touchAction: "manipulation",
-                  }}
+                  className="mv-password-eye"
+                  style={eyeButtonStyle}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -1858,19 +1812,7 @@ const documentRequirements = (() => {
             </Field>
 
             <Field label="Confirm password">
-              <div
-                className="mv-step7-password-field"
-                style={{
-                  position: "relative",
-                  display: "block",
-                  width: "100%",
-                  maxWidth: "100%",
-                  minWidth: 0,
-                  height: "46px",
-                  flex: "0 0 100%",
-                  boxSizing: "border-box",
-                }}
-              >
+              <div style={passwordWrapperStyle}>
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
@@ -1878,53 +1820,15 @@ const documentRequirements = (() => {
                   placeholder="Confirm your password"
                   autoComplete="new-password"
                   required
-                  style={{
-                    width: "100%",
-                    height: "46px",
-                    padding: "0 52px 0 14px",
-                    border: "1px solid #D0D5DD",
-                    borderRadius: "10px",
-                    background: "#FFFFFF",
-                    color: "#101828",
-                    fontSize: "16px",
-                    boxSizing: "border-box",
-                    outline: "none",
-                  }}
+                  style={passwordInputStyle}
                 />
-
                 <button
                   type="button"
-                  aria-label={
-                    showConfirmPassword
-                      ? "Hide confirm password"
-                      : "Show confirm password"
-                  }
                   onClick={() =>
                     setShowConfirmPassword((value) => !value)
                   }
-                  style={{
-                    position: "absolute",
-                    top: "0",
-                    right: "0",
-                    left: "auto",
-                    bottom: "auto",
-                    width: "46px",
-                    minWidth: "46px",
-                    maxWidth: "46px",
-                    height: "46px",
-                    padding: "0",
-                    margin: "0",
-                    border: "none",
-                    background: "transparent",
-                    color: "#667085",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: "pointer",
-                    boxSizing: "border-box",
-                    WebkitTapHighlightColor: "transparent",
-                    touchAction: "manipulation",
-                  }}
+                  className="mv-password-eye"
+                  style={eyeButtonStyle}
                 >
                   {showConfirmPassword ? (
                     <EyeOff size={18} />
@@ -2523,17 +2427,19 @@ const passwordInputStyle = {
   display: "block",
   width: "100%",
   height: "46px",
-  padding: "0 48px 0 13px",
+  padding: "0 46px 0 13px",
   boxSizing: "border-box" as const,
   borderRadius: "11px",
   background: "#FFFFFF",
-  fontSize: "14px",
+  fontSize: "16px",
 };
 
 const eyeButtonStyle = {
   position: "absolute" as const,
-  top: 0,
-  right: 0,
+  top: "0",
+  right: "0",
+  left: "auto",
+  bottom: "auto",
   width: "46px",
   height: "46px",
   minWidth: "46px",
@@ -2543,7 +2449,7 @@ const eyeButtonStyle = {
   padding: 0,
   margin: 0,
   border: "0",
-  borderRadius: "0",
+  borderRadius: 0,
   background: "transparent",
   color: "#777F88",
   display: "flex",
@@ -2556,7 +2462,7 @@ const eyeButtonStyle = {
   outline: "none",
   cursor: "pointer",
   touchAction: "manipulation",
-  zIndex: 10,
+  zIndex: 20,
 };
 
 const continueButtonStyle = {
@@ -2604,6 +2510,47 @@ const infoBoxStyle = {
 
 
 <style jsx global>{`
+  .mv-business-signup-page .mv-password-eye {
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: auto !important;
+    bottom: auto !important;
+    width: 46px !important;
+    min-width: 46px !important;
+    max-width: 46px !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    max-height: 46px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    transform: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    border: 0 !important;
+    background: transparent !important;
+    z-index: 20 !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  .mv-business-signup-page .mv-password-eye svg {
+    position: static !important;
+    display: block !important;
+    width: 18px !important;
+    height: 18px !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+
+  .mv-business-signup-page .mv-password-eye::before,
+  .mv-business-signup-page .mv-password-eye::after {
+    display: none !important;
+    content: none !important;
+  }
+
   .mv-business-signup-page {
       width: 100% !important;
       max-width: 100% !important;
