@@ -1788,62 +1788,173 @@ const documentRequirements = (() => {
 
         {step === 7 && (
           <form onSubmit={validatePassword}>
-            <Field label="Password">
-              <div className="mv-step7-password-wrap">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Create a password"
-                  autoComplete="new-password"
-                  autoFocus
-                  required
-                  className="mv-step7-password-input"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((value) => !value)}
-                  className="mv-step7-password-eye"
 
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-            </Field>
+            <label
+              style={{
+                display: "block",
+                color: "#252A31",
+                fontSize: "13px",
+                fontWeight: 700,
+                marginBottom: "7px",
+              }}
+            >
+              Password
+            </label>
 
-            <Field label="Confirm password">
-              <div className="mv-step7-password-wrap">
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm your password"
-                  autoComplete="new-password"
-                  required
-                  className="mv-step7-password-input"
-                />
-                <button
-                  type="button"
-                  onClick={() =>
-                    setShowConfirmPassword((value) => !value)
-                  }
-                  className="mv-step7-password-eye"
+            <div
+              style={{
+                position: "relative",
+                width: "100%",
+                marginBottom: "17px",
+              }}
+            >
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Enter your password"
+                autoComplete="new-password"
+                required
+                style={{
+                  width: "100%",
+                  height: "46px",
+                  padding: "0 45px 0 13px",
+                  border: "1px solid #DDE2E9",
+                  borderRadius: "11px",
+                  fontSize: "16px",
+                  boxSizing: "border-box",
+                  outline: "none",
+                  color: "#15181D",
+                  background: "#fff",
+                  WebkitAppearance: "none",
+                  appearance: "none",
+                }}
+              />
 
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff size={18} />
-                  ) : (
-                    <Eye size={18} />
-                  )}
-                </button>
-              </div>
-            </Field>
+              <button
+                type="button"
+                onClick={() => setShowPassword((value) => !value)}
+                aria-label={
+                  showPassword ? "Hide password" : "Show password"
+                }
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  right: "4px",
+                  width: "40px",
+                  height: "46px",
+                  minWidth: "40px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 0,
+                  margin: 0,
+                  border: 0,
+                  borderRadius: 0,
+                  background: "transparent",
+                  color: "#777F88",
+                  cursor: "pointer",
+                  touchAction: "manipulation",
+                  WebkitTapHighlightColor: "transparent",
+                  boxSizing: "border-box",
+                }}
+              >
+                {showPassword ? (
+                  <EyeOff size={18} strokeWidth={2} />
+                ) : (
+                  <Eye size={18} strokeWidth={2} />
+                )}
+              </button>
+            </div>
+
+            <label
+              style={{
+                display: "block",
+                color: "#252A31",
+                fontSize: "13px",
+                fontWeight: 700,
+                marginBottom: "7px",
+              }}
+            >
+              Confirm password
+            </label>
+
+            <div
+              style={{
+                position: "relative",
+                width: "100%",
+                marginBottom: "17px",
+              }}
+            >
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                placeholder="Confirm your password"
+                autoComplete="new-password"
+                required
+                style={{
+                  width: "100%",
+                  height: "46px",
+                  padding: "0 45px 0 13px",
+                  border: "1px solid #DDE2E9",
+                  borderRadius: "11px",
+                  fontSize: "16px",
+                  boxSizing: "border-box",
+                  outline: "none",
+                  color: "#15181D",
+                  background: "#fff",
+                  WebkitAppearance: "none",
+                  appearance: "none",
+                }}
+              />
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowConfirmPassword((value) => !value)
+                }
+                aria-label={
+                  showConfirmPassword
+                    ? "Hide confirm password"
+                    : "Show confirm password"
+                }
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  right: "4px",
+                  width: "40px",
+                  height: "46px",
+                  minWidth: "40px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 0,
+                  margin: 0,
+                  border: 0,
+                  borderRadius: 0,
+                  background: "transparent",
+                  color: "#777F88",
+                  cursor: "pointer",
+                  touchAction: "manipulation",
+                  WebkitTapHighlightColor: "transparent",
+                  boxSizing: "border-box",
+                }}
+              >
+                {showConfirmPassword ? (
+                  <EyeOff size={18} strokeWidth={2} />
+                ) : (
+                  <Eye size={18} strokeWidth={2} />
+                )}
+              </button>
+            </div>
 
             <ErrorMessage error={error} />
 
             <button type="submit" style={continueButtonStyle}>
               Continue to review
             </button>
+
           </form>
         )}
 
@@ -2510,201 +2621,7 @@ const infoBoxStyle = {
 
 
 <style jsx global>{`
-  /* STEP 7 — PREMIUM PASSWORD UI */
 
-  .mv-business-signup-page .mv-step7-password-wrap {
-    position: relative !important;
-    width: 100% !important;
-    height: 54px !important;
-    min-height: 54px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    box-sizing: border-box !important;
-  }
-
-  .mv-business-signup-page .mv-step7-password-input {
-    display: block !important;
-    width: 100% !important;
-    height: 54px !important;
-    min-height: 54px !important;
-
-    margin: 0 !important;
-    padding: 0 58px 0 16px !important;
-
-    box-sizing: border-box !important;
-
-    border: 1.5px solid #D7DBE1 !important;
-    border-radius: 13px !important;
-
-    background: #FFFFFF !important;
-    color: #111318 !important;
-
-    font-size: 16px !important;
-    font-weight: 500 !important;
-    line-height: 54px !important;
-
-    outline: none !important;
-    appearance: none !important;
-    -webkit-appearance: none !important;
-
-    box-shadow:
-      0 1px 2px rgba(17, 19, 24, 0.03),
-      0 4px 12px rgba(17, 19, 24, 0.025) !important;
-
-    transition:
-      border-color 0.16s ease,
-      box-shadow 0.16s ease,
-      background 0.16s ease !important;
-  }
-
-  .mv-business-signup-page .mv-step7-password-input:hover {
-    border-color: #B8BEC7 !important;
-    background: #FFFFFF !important;
-  }
-
-  .mv-business-signup-page .mv-step7-password-input:focus {
-    border-color: #111318 !important;
-    background: #FFFFFF !important;
-
-    box-shadow:
-      0 0 0 3px rgba(17, 19, 24, 0.07),
-      0 5px 16px rgba(17, 19, 24, 0.06) !important;
-  }
-
-  .mv-business-signup-page .mv-step7-password-input::placeholder {
-    color: #9298A1 !important;
-    opacity: 1 !important;
-    font-weight: 400 !important;
-  }
-
-  .mv-business-signup-page .mv-step7-password-eye {
-    position: absolute !important;
-
-    top: 3px !important;
-    right: 3px !important;
-
-    width: 48px !important;
-    min-width: 48px !important;
-    max-width: 48px !important;
-
-    height: 48px !important;
-    min-height: 48px !important;
-    max-height: 48px !important;
-
-    margin: 0 !important;
-    padding: 0 !important;
-
-    border: 0 !important;
-    border-radius: 10px !important;
-
-    background: transparent !important;
-    color: #737A84 !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    box-sizing: border-box !important;
-
-    appearance: none !important;
-    -webkit-appearance: none !important;
-
-    transform: none !important;
-
-    cursor: pointer !important;
-    touch-action: manipulation !important;
-
-    -webkit-tap-highlight-color: transparent !important;
-
-    z-index: 20 !important;
-
-    transition:
-      color 0.15s ease,
-      background 0.15s ease,
-      transform 0.1s ease !important;
-  }
-
-  .mv-business-signup-page .mv-step7-password-eye:hover {
-    color: #111318 !important;
-    background: #F5F6F8 !important;
-  }
-
-  .mv-business-signup-page .mv-step7-password-eye:active {
-    color: #111318 !important;
-    background: #ECEEF1 !important;
-    transform: scale(0.96) !important;
-  }
-
-  .mv-business-signup-page .mv-step7-password-eye:focus {
-    outline: none !important;
-  }
-
-  .mv-business-signup-page .mv-step7-password-eye:focus-visible {
-    outline: 2px solid rgba(17, 19, 24, 0.16) !important;
-    outline-offset: -2px !important;
-  }
-
-  .mv-business-signup-page .mv-step7-password-eye svg {
-    position: static !important;
-
-    display: block !important;
-    flex: 0 0 auto !important;
-
-    width: 19px !important;
-    height: 19px !important;
-
-    min-width: 19px !important;
-    min-height: 19px !important;
-
-    margin: 0 !important;
-    padding: 0 !important;
-
-    stroke-width: 2 !important;
-
-    transform: none !important;
-  }
-
-  .mv-business-signup-page .mv-step7-password-eye::before,
-  .mv-business-signup-page .mv-step7-password-eye::after {
-    display: none !important;
-    content: none !important;
-  }
-
-  @media (max-width: 600px) {
-
-    .mv-business-signup-page .mv-step7-password-wrap {
-      height: 54px !important;
-      min-height: 54px !important;
-    }
-
-    .mv-business-signup-page .mv-step7-password-input {
-      width: 100% !important;
-      height: 54px !important;
-      min-height: 54px !important;
-
-      padding: 0 58px 0 16px !important;
-
-      font-size: 16px !important;
-      line-height: 54px !important;
-
-      border-radius: 13px !important;
-    }
-
-    .mv-business-signup-page .mv-step7-password-eye {
-      top: 3px !important;
-      right: 3px !important;
-
-      width: 48px !important;
-      min-width: 48px !important;
-      max-width: 48px !important;
-
-      height: 48px !important;
-      min-height: 48px !important;
-      max-height: 48px !important;
-
-      border-radius: 10px !important;
-    }
-  }
 
   .mv-business-signup-page {
       width: 100% !important;
