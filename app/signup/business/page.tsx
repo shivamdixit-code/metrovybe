@@ -1803,7 +1803,7 @@ const documentRequirements = (() => {
                 <button
                   type="button"
                   onClick={() => setShowPassword((value) => !value)}
-                  className="mv-step7-eye-button"
+                  style={eyeButtonStyle}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -1826,7 +1826,7 @@ const documentRequirements = (() => {
                   onClick={() =>
                     setShowConfirmPassword((value) => !value)
                   }
-                  className="mv-step7-eye-button"
+                  style={eyeButtonStyle}
                 >
                   {showConfirmPassword ? (
                     <EyeOff size={18} />
@@ -2599,60 +2599,6 @@ const infoBoxStyle = {
     }
   }
 
-        button.mv-step7-eye-button {
-          position: absolute !important;
-          top: 50% !important;
-          right: 8px !important;
-          bottom: auto !important;
-          left: auto !important;
-          transform: translateY(-50%) !important;
-
-          width: 32px !important;
-          min-width: 32px !important;
-          max-width: 32px !important;
-
-          height: 32px !important;
-          min-height: 32px !important;
-          max-height: 32px !important;
-
-          padding: 0 !important;
-          margin: 0 !important;
-
-          box-sizing: border-box !important;
-          flex: 0 0 32px !important;
-
-          border: 0 !important;
-          border-radius: 50% !important;
-
-          background: transparent !important;
-          box-shadow: none !important;
-
-          color: #707780 !important;
-
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-
-          font-size: 0 !important;
-          line-height: 1 !important;
-
-          appearance: none !important;
-          -webkit-appearance: none !important;
-          -webkit-tap-highlight-color: transparent !important;
-
-          outline: none !important;
-        }
-
-        button.mv-step7-eye-button svg {
-          width: 18px !important;
-          min-width: 18px !important;
-          max-width: 18px !important;
-          height: 18px !important;
-          min-height: 18px !important;
-          max-height: 18px !important;
-          flex: 0 0 18px !important;
-          display: block !important;
-        }
 
 `}</style>
 
