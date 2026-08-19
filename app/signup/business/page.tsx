@@ -2585,18 +2585,23 @@ const infoBoxStyle = {
       min-width: 0 !important;
       height: 46px !important;
       box-sizing: border-box !important;
-      padding-right: 58px !important;
+      padding-right: 68px !important;
     }
 
     .mv-business-signup-page .mv-step7-password-form .mv-password-eye {
       position: absolute !important;
       top: 0 !important;
       right: 0 !important;
+      left: auto !important;
+      inset-inline-start: auto !important;
+      inset-inline-end: 0 !important;
       width: 46px !important;
       height: 46px !important;
       min-width: 46px !important;
       max-width: 46px !important;
+      margin: 0 !important;
       transform: none !important;
+      z-index: 3 !important;
     }
 
     .mv-business-signup-page .public-login-card {
