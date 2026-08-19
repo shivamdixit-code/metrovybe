@@ -1789,7 +1789,7 @@ const documentRequirements = (() => {
         {step === 7 && (
           <form onSubmit={validatePassword}>
             <Field label="Password">
-              <div style={passwordWrapperStyle}>
+              <div className="mv-step7-password-wrap">
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
@@ -1798,13 +1798,13 @@ const documentRequirements = (() => {
                   autoComplete="new-password"
                   autoFocus
                   required
-                  style={passwordInputStyle}
+                  className="mv-step7-password-input"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((value) => !value)}
-                  className="mv-password-eye"
-                  style={eyeButtonStyle}
+                  className="mv-step7-password-eye"
+
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -1812,7 +1812,7 @@ const documentRequirements = (() => {
             </Field>
 
             <Field label="Confirm password">
-              <div style={passwordWrapperStyle}>
+              <div className="mv-step7-password-wrap">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
@@ -1820,15 +1820,15 @@ const documentRequirements = (() => {
                   placeholder="Confirm your password"
                   autoComplete="new-password"
                   required
-                  style={passwordInputStyle}
+                  className="mv-step7-password-input"
                 />
                 <button
                   type="button"
                   onClick={() =>
                     setShowConfirmPassword((value) => !value)
                   }
-                  className="mv-password-eye"
-                  style={eyeButtonStyle}
+                  className="mv-step7-password-eye"
+
                 >
                   {showConfirmPassword ? (
                     <EyeOff size={18} />
@@ -1874,7 +1874,7 @@ const documentRequirements = (() => {
                   }}
                 >
                   <div>
-                    
+
 
         <div
                       style={{
@@ -2510,43 +2510,85 @@ const infoBoxStyle = {
 
 
 <style jsx global>{`
-  .mv-business-signup-page .mv-password-eye {
+  /* STEP 7 PASSWORD FIELDS — ISOLATED */
+  .mv-business-signup-page .mv-step7-password-wrap {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+  }
+
+  .mv-business-signup-page .mv-step7-password-input {
+    display: block !important;
+    width: 100% !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    margin: 0 !important;
+    padding: 0 46px 0 13px !important;
+    box-sizing: border-box !important;
+    border-radius: 11px !important;
+    background: #FFFFFF !important;
+    font-size: 16px !important;
+  }
+
+  .mv-business-signup-page .mv-step7-password-eye {
     position: absolute !important;
     top: 0 !important;
     right: 0 !important;
     left: auto !important;
     bottom: auto !important;
+
     width: 46px !important;
     min-width: 46px !important;
     max-width: 46px !important;
+
     height: 46px !important;
     min-height: 46px !important;
     max-height: 46px !important;
-    padding: 0 !important;
+
     margin: 0 !important;
-    transform: none !important;
+    padding: 0 !important;
+
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+
     box-sizing: border-box !important;
-    border: 0 !important;
-    background: transparent !important;
-    z-index: 20 !important;
+    transform: none !important;
+
+    appearance: none !important;
+    -webkit-appearance: none !important;
+
     touch-action: manipulation !important;
     -webkit-tap-highlight-color: transparent !important;
+
+    cursor: pointer !important;
+    z-index: 50 !important;
   }
 
-  .mv-business-signup-page .mv-password-eye svg {
+  .mv-business-signup-page .mv-step7-password-eye svg {
     position: static !important;
     display: block !important;
     width: 18px !important;
     height: 18px !important;
+    min-width: 18px !important;
+    min-height: 18px !important;
     margin: 0 !important;
+    padding: 0 !important;
     transform: none !important;
   }
 
-  .mv-business-signup-page .mv-password-eye::before,
-  .mv-business-signup-page .mv-password-eye::after {
+  .mv-business-signup-page .mv-step7-password-eye::before,
+  .mv-business-signup-page .mv-step7-password-eye::after {
     display: none !important;
     content: none !important;
   }
