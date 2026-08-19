@@ -1792,7 +1792,13 @@ const documentRequirements = (() => {
               <div
                 style={{
                   position: "relative",
+                  display: "block",
                   width: "100%",
+                  maxWidth: "100%",
+                  minWidth: 0,
+                  height: "46px",
+                  flex: "0 0 100%",
+                  boxSizing: "border-box",
                 }}
               >
                 <input
@@ -1825,7 +1831,11 @@ const documentRequirements = (() => {
                     position: "absolute",
                     top: "0",
                     right: "0",
+                    left: "auto",
+                    bottom: "auto",
                     width: "46px",
+                    minWidth: "46px",
+                    maxWidth: "46px",
                     height: "46px",
                     padding: "0",
                     margin: "0",
@@ -1850,7 +1860,13 @@ const documentRequirements = (() => {
               <div
                 style={{
                   position: "relative",
+                  display: "block",
                   width: "100%",
+                  maxWidth: "100%",
+                  minWidth: 0,
+                  height: "46px",
+                  flex: "0 0 100%",
+                  boxSizing: "border-box",
                 }}
               >
                 <input
@@ -1888,7 +1904,11 @@ const documentRequirements = (() => {
                     position: "absolute",
                     top: "0",
                     right: "0",
+                    left: "auto",
+                    bottom: "auto",
                     width: "46px",
+                    minWidth: "46px",
+                    maxWidth: "46px",
                     height: "46px",
                     padding: "0",
                     margin: "0",
