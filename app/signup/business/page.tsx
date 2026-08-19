@@ -1803,6 +1803,7 @@ const documentRequirements = (() => {
                 <button
                   type="button"
                   onClick={() => setShowPassword((value) => !value)}
+                  className="mv-password-eye"
                   style={eyeButtonStyle}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -1826,6 +1827,7 @@ const documentRequirements = (() => {
                   onClick={() =>
                     setShowConfirmPassword((value) => !value)
                   }
+                  className="mv-password-eye"
                   style={eyeButtonStyle}
                 >
                   {showConfirmPassword ? (
@@ -2431,18 +2433,19 @@ const passwordInputStyle = {
 
 const eyeButtonStyle = {
   position: "absolute" as const,
-  top: 0,
-  right: 0,
-  width: "48px",
-  height: "52px",
-  minWidth: "48px",
-  maxWidth: "48px",
-  minHeight: "52px",
-  maxHeight: "52px",
+  top: "50%",
+  right: "4px",
+  transform: "translateY(-50%)",
+  width: "40px",
+  height: "40px",
+  minWidth: "40px",
+  maxWidth: "40px",
+  minHeight: "40px",
+  maxHeight: "40px",
   padding: 0,
   margin: 0,
   border: "none",
-  borderRadius: "0 11px 11px 0",
+  borderRadius: "50%",
   background: "transparent",
   color: "#707780",
   display: "flex",
@@ -2528,11 +2531,10 @@ const infoBoxStyle = {
     .mv-business-signup-page textarea {
       font-size: 16px !important;
     }
-
     .mv-business-signup-page input,
     .mv-business-signup-page select,
     .mv-business-signup-page textarea,
-    .mv-business-signup-page button:not(.mv-step7-eye-button) {
+    .mv-business-signup-page button:not(.mv-password-eye) {
       max-width: 100% !important;
       box-sizing: border-box !important;
     }
