@@ -1217,7 +1217,6 @@ const documentRequirements = (() => {
               setError("");
 
               if (
-                !locationConfirmed ||
                 latitude === null ||
                 longitude === null
               ) {
