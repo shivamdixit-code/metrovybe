@@ -2437,11 +2437,11 @@ const passwordInputStyle = {
 const eyeButtonStyle = {
   position: "absolute" as const,
   top: 0,
-  right: "10px",
-  width: "40px",
+  right: 0,
+  width: "46px",
   height: "46px",
-  minWidth: "40px",
-  maxWidth: "40px",
+  minWidth: "46px",
+  maxWidth: "46px",
   minHeight: "46px",
   maxHeight: "46px",
   padding: 0,
@@ -2510,23 +2510,29 @@ const infoBoxStyle = {
 <style jsx global>{`
   .mv-business-signup-page .mv-password-eye {
     position: absolute !important;
-    top: 50% !important;
-    right: 4px !important;
-    width: 40px !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: auto !important;
+    bottom: auto !important;
+    width: 46px !important;
     height: 46px !important;
-    min-width: 40px !important;
-    max-width: 40px !important;
+    min-width: 46px !important;
+    max-width: 46px !important;
     min-height: 46px !important;
     max-height: 46px !important;
-    transform: translateY(-50%) !important;
+    transform: none !important;
     margin: 0 !important;
     padding: 0 !important;
-    border: none !important;
+    border: 0 !important;
+    border-radius: 0 11px 11px 0 !important;
     background: transparent !important;
+    color: #777F88 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     z-index: 5 !important;
+    cursor: pointer !important;
+    box-sizing: border-box !important;
   }
 
   .mv-business-signup-page .mv-password-wrapper {
@@ -2542,30 +2548,27 @@ const infoBoxStyle = {
   .mv-business-signup-page .mv-password-wrapper .mv-password-eye {
     position: absolute !important;
     top: 0 !important;
-    right: 10px !important;
+    right: 0 !important;
     left: auto !important;
     bottom: auto !important;
-    width: 40px !important;
+    width: 46px !important;
     height: 46px !important;
-    min-width: 40px !important;
-    max-width: 40px !important;
+    min-width: 46px !important;
+    max-width: 46px !important;
     min-height: 46px !important;
     max-height: 46px !important;
+    transform: none !important;
     padding: 0 !important;
     margin: 0 !important;
     border: 0 !important;
-    border-radius: 0 !important;
+    border-radius: 0 11px 11px 0 !important;
     background: transparent !important;
     color: #777F88 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    transform: none !important;
-    box-shadow: none !important;
-    outline: none !important;
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    z-index: 20 !important;
+    z-index: 5 !important;
+    box-sizing: border-box !important;
   }
 
   .mv-business-signup-page .mv-password-wrapper input {
