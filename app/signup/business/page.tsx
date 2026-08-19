@@ -1790,6 +1790,7 @@ const documentRequirements = (() => {
           <form onSubmit={validatePassword}>
             <Field label="Password">
               <div
+                className="mv-step7-password-field"
                 style={{
                   position: "relative",
                   display: "block",
@@ -1858,6 +1859,7 @@ const documentRequirements = (() => {
 
             <Field label="Confirm password">
               <div
+                className="mv-step7-password-field"
                 style={{
                   position: "relative",
                   display: "block",
