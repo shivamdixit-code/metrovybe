@@ -1057,6 +1057,35 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
           z-index: 1001 !important;
         }
 
+        /* Final iPhone-only override for Use My Location */
+        button.mv-step5-my-location {
+          position: absolute !important;
+          inset: auto 8px 8px auto !important;
+          width: 32px !important;
+          min-width: 32px !important;
+          max-width: 32px !important;
+          height: 32px !important;
+          min-height: 32px !important;
+          max-height: 32px !important;
+          flex: 0 0 32px !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          box-sizing: border-box !important;
+          border: 0 !important;
+          border-radius: 50% !important;
+          background: transparent !important;
+          box-shadow: none !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          color: #176b55 !important;
+          font-size: 18px !important;
+          line-height: 1 !important;
+          z-index: 1002 !important;
+          appearance: none !important;
+          -webkit-appearance: none !important;
+        }
+
         .mv-step5-location-card {
           position: relative;
           margin-top: 10px;
