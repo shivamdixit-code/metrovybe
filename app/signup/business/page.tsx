@@ -2275,6 +2275,7 @@ const documentRequirements = (() => {
           </div>
         )}
       </div>
+      </div>
     </main>
   );
 }
