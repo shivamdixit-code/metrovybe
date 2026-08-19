@@ -842,8 +842,8 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
 
         @media (max-width: 700px) {
           .mv-step5-map-shell {
-            height: clamp(390px, 52vh, 440px);
-            min-height: 390px;
+            height: 170px;
+            min-height: 170px;
             border-radius: 14px;
           }
 
