@@ -6615,3 +6615,160 @@ body {
   max-height: 45vh !important;
   overflow: hidden !important;
 }
+
+/* ===== BUSINESS SIGNUP — CLEAN MOBILE LAYOUT ===== */
+
+@media (max-width: 600px) {
+  html:has(.mv-business-signup-page),
+  body:has(.mv-business-signup-page) {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-x: none !important;
+  }
+
+  html:has(.mv-business-signup-page) *,
+  body:has(.mv-business-signup-page) * {
+    box-sizing: border-box !important;
+  }
+
+  .mv-business-signup-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    overflow-x: hidden !important;
+  }
+
+  .mv-business-signup-page .public-login-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    overflow-x: hidden !important;
+  }
+
+  .mv-business-signup-page input,
+  .mv-business-signup-page select,
+  .mv-business-signup-page textarea {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .mv-business-signup-page {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    min-height: 100dvh !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 16px 12px !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  .mv-business-signup-page .public-login-card {
+    position: relative !important;
+    display: block !important;
+    flex: 0 1 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 24px !important;
+    transform: none !important;
+    left: auto !important;
+    right: auto !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+  }
+
+  .mv-business-signup-page .public-login-card > div,
+  .mv-business-signup-page form,
+  .mv-business-signup-page fieldset {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .mv-business-signup-page input,
+  .mv-business-signup-page select,
+  .mv-business-signup-page textarea,
+  .mv-business-signup-page button {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .mv-business-signup-page [style*="gridTemplateColumns"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* ===== END BUSINESS SIGNUP — CLEAN MOBILE LAYOUT ===== */
+
+/* ===== BUSINESS SIGNUP — FINAL MOBILE WIDTH LOCK ===== */
+@media (max-width: 600px) {
+  .mv-business-signup-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    padding: 12px !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  .mv-business-signup-page > .public-login-card {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 28px 20px !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+
+  .mv-business-signup-page form,
+  .mv-business-signup-page form > *,
+  .mv-business-signup-page [style*="gridTemplateColumns"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .mv-business-signup-page input,
+  .mv-business-signup-page select,
+  .mv-business-signup-page textarea,
+  .mv-business-signup-page button {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* ===== END BUSINESS SIGNUP — FINAL MOBILE WIDTH LOCK ===== */
