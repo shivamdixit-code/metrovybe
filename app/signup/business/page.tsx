@@ -2412,48 +2412,49 @@ const inputStyle = {
 
 const passwordWrapperStyle = {
   position: "relative" as const,
+  display: "block",
   width: "100%",
   height: "52px",
+  margin: 0,
+  padding: 0,
   boxSizing: "border-box" as const,
 };
 
 const passwordInputStyle = {
   ...inputStyle,
+  display: "block",
   width: "100%",
   height: "52px",
-  paddingRight: "54px",
+  padding: "0 52px 0 14px",
+  boxSizing: "border-box" as const,
 };
 
 const eyeButtonStyle = {
   position: "absolute" as const,
-  top: "1px",
-  right: "1px",
-  width: "50px",
-  minWidth: "50px",
-  maxWidth: "50px",
-  height: "50px",
-  minHeight: "50px",
-  maxHeight: "50px",
+  top: 0,
+  right: 0,
+  width: "48px",
+  height: "52px",
+  minWidth: "48px",
+  maxWidth: "48px",
+  minHeight: "52px",
+  maxHeight: "52px",
   padding: 0,
   margin: 0,
   border: "none",
-  borderRadius: "0 10px 10px 0",
+  borderRadius: "0 11px 11px 0",
   background: "transparent",
   color: "#707780",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  boxSizing: "border-box",
+  boxSizing: "border-box" as const,
   appearance: "none",
   WebkitAppearance: "none",
+  WebkitTapHighlightColor: "transparent",
+  outline: "none",
   cursor: "pointer",
 };
-
-
-
-
-
-
 
 const continueButtonStyle = {
   width: "100%",
@@ -2531,7 +2532,7 @@ const infoBoxStyle = {
     .mv-business-signup-page input,
     .mv-business-signup-page select,
     .mv-business-signup-page textarea,
-    .mv-business-signup-page button {
+    .mv-business-signup-page button:not(.mv-step7-eye-button) {
       max-width: 100% !important;
       box-sizing: border-box !important;
     }
