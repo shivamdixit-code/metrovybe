@@ -1803,7 +1803,7 @@ const documentRequirements = (() => {
                 <button
                   type="button"
                   onClick={() => setShowPassword((value) => !value)}
-                  style={eyeButtonStyle}
+                  style={step7EyeButtonStyle}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -1826,7 +1826,7 @@ const documentRequirements = (() => {
                   onClick={() =>
                     setShowConfirmPassword((value) => !value)
                   }
-                  style={eyeButtonStyle}
+                  style={step7EyeButtonStyle}
                 >
                   {showConfirmPassword ? (
                     <EyeOff size={18} />
@@ -2444,6 +2444,34 @@ const eyeButtonStyle = {
   boxSizing: "border-box",
   appearance: "none",
   WebkitAppearance: "none",
+  cursor: "pointer",
+};
+
+
+const step7EyeButtonStyle = {
+  position: "absolute" as const,
+  right: "8px",
+  top: "50%",
+  transform: "translateY(-50%)",
+  width: "32px",
+  minWidth: "32px",
+  maxWidth: "32px",
+  height: "32px",
+  minHeight: "32px",
+  maxHeight: "32px",
+  padding: 0,
+  margin: 0,
+  border: 0,
+  borderRadius: "50%",
+  background: "transparent",
+  color: "#707780",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  flex: "0 0 32px",
+  appearance: "none",
+  WebkitAppearance: "none",
+  boxSizing: "border-box" as const,
   cursor: "pointer",
 };
 
