@@ -1151,7 +1151,7 @@ const documentRequirements = (() => {
                         border: "1px solid #D6E1DC",
                         background: "#FBFDFC",
                         padding: "0 10px",
-                        fontSize: "11px",
+                        fontSize: "16px",
                         boxSizing: "border-box",
                       }}
                     >
@@ -1176,7 +1176,7 @@ const documentRequirements = (() => {
                         border: "1px solid #D6E1DC",
                         background: "#FBFDFC",
                         padding: "0 12px",
-                        fontSize: "12px",
+                        fontSize: "16px",
                         boxSizing: "border-box",
                       }}
                     />
@@ -1198,7 +1198,7 @@ const documentRequirements = (() => {
                         border: "1px solid #D6E1DC",
                         background: state ? "#FBFDFC" : "#F1F4F2",
                         padding: "0 10px",
-                        fontSize: "11px",
+                        fontSize: "16px",
                         boxSizing: "border-box",
                         opacity: state ? 1 : .75,
                       }}
@@ -1226,7 +1226,7 @@ const documentRequirements = (() => {
                         border: "1px solid #D6E1DC",
                         background: "#FBFDFC",
                         padding: "0 12px",
-                        fontSize: "12px",
+                        fontSize: "16px",
                         boxSizing: "border-box",
                       }}
                     />
@@ -1254,7 +1254,7 @@ const documentRequirements = (() => {
                     border: "1px solid #D6E1DC",
                     background: "#FBFDFC",
                     padding: "0 13px",
-                    fontSize: "12px",
+                    fontSize: "16px",
                     boxSizing: "border-box",
                   }}
                 />
@@ -1273,7 +1273,7 @@ const documentRequirements = (() => {
                 borderRadius: "13px",
                 background: "#111318",
                 color: "#fff",
-                fontSize: "12px",
+                fontSize: "16px",
                 fontWeight: 900,
                 letterSpacing: ".01em",
                 cursor: "pointer",
