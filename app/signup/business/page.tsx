@@ -21,7 +21,7 @@ const ListingLocationPicker = dynamic(
           justifyContent: "center",
           background: "#F7F8F7",
           color: "#747A82",
-          fontSize: "14px",
+          fontSize: "11px",
         }}
       >
         Loading location map...
@@ -214,6 +214,11 @@ function BusinessSignupPageContent() {
     if (step === 1) {
       router.push("/signup");
       return;
+    }
+
+    if (step === 3) {
+      setOtp("");
+      setPhoneVerified(false);
     }
 
     setStep((step - 1) as Step);
@@ -532,7 +537,7 @@ const documentRequirements = (() => {
         : step === 3
           ? "Tell us about your business."
           : step === 4
-            ? `Add your ${countryName} business location.`
+            ? "Tell our customers where is your business located"
             : step === 5
               ? "Choose the exact location of your business on the map."
               : step === 6
@@ -679,7 +684,7 @@ const documentRequirements = (() => {
 
         <h1
           style={{
-            fontSize: "28px",
+            fontSize: "16px",
             lineHeight: 1.1,
             letterSpacing: "-0.7px",
             margin: "0 0 7px",
@@ -925,11 +930,6 @@ const documentRequirements = (() => {
             }}
             style={{
               width: "100%",
-              background: "#fff",
-              border: "1px solid #E3EAE7",
-              borderRadius: "20px",
-              padding: "22px",
-              boxShadow: "0 12px 30px rgba(17,25,21,.08)",
               boxSizing: "border-box",
             }}
           >
@@ -1030,7 +1030,7 @@ const documentRequirements = (() => {
                 <input
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder={`Business address in ${countryName}`}
+                  placeholder="Enter shop/house no., street & locality"
                   autoComplete="street-address"
                   autoFocus
                   required
@@ -1158,8 +1158,13 @@ const documentRequirements = (() => {
               <Field label="Postal code">
                 <input
                   value={postalCode}
-                  onChange={(e) => setPostalCode(e.target.value)}
-                  placeholder="Postal code"
+                  onChange={(e) =>
+                    setPostalCode(e.target.value.replace(/\D/g, "").slice(0, 6))
+                  }
+                  placeholder="6-digit postal code"
+                  inputMode="numeric"
+                  pattern="[0-9]{6}"
+                  maxLength={6}
                   autoComplete="postal-code"
                   required
                   style={{
@@ -1201,7 +1206,7 @@ const documentRequirements = (() => {
 
             <div
               style={{
-                marginTop: "9px",
+                marginTop: "5px",
                 textAlign: "center",
                 fontSize: "9px",
                 fontWeight: 650,
@@ -1234,6 +1239,18 @@ const documentRequirements = (() => {
               setStep(6);
             }}
           >
+            <div
+              style={{
+                height: "auto",
+                maxHeight: "560px",
+                overflowY: "scroll",
+                overflowX: "hidden",
+                paddingRight: "8px",
+                boxSizing: "border-box",
+                scrollbarWidth: "thin",
+                scrollbarColor: "#29AB87 #EEF2F0",
+              }}
+            >
             <Field label="Map location">
               <div
                 style={{
@@ -1295,6 +1312,7 @@ const documentRequirements = (() => {
             </Field>
 
             <ErrorMessage error={error} />
+                                </div>
           </form>
         )}
 
@@ -1325,7 +1343,7 @@ const documentRequirements = (() => {
                   fontSize: "10px",
                   color: "#747A82",
                   lineHeight: 1.4,
-                  marginBottom: "6px",
+                  marginBottom: "3px",
                 }}
               >
                 Based on your selected category:{" "}
@@ -1395,7 +1413,7 @@ const documentRequirements = (() => {
                   alignItems: "center",
                   justifyContent: "center",
                   padding: "6px 12px",
-                  borderRadius: "8px",
+                  borderRadius: "6px",
                   background: "#111318",
                   color: "#FFFFFF",
                   fontSize: "11px",
@@ -1450,13 +1468,13 @@ const documentRequirements = (() => {
             </div>
 
             {documents.length > 0 && (
-              <div style={{ marginTop: "9px" }}>
+              <div style={{ marginTop: "5px" }}>
                 <div
                   style={{
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    marginBottom: "6px",
+                    marginBottom: "3px",
                   }}
                 >
                   <span
@@ -1484,8 +1502,8 @@ const documentRequirements = (() => {
                   style={{
                     display: "flex",
                     flexDirection: "column",
-                    gap: "6px",
-                    maxHeight: "150px",
+                    gap: "3px",
+                    maxHeight: "84px",
                     overflowY: "auto",
                     paddingRight: "4px",
                   }}
@@ -1497,7 +1515,7 @@ const documentRequirements = (() => {
                         display: "flex",
                         alignItems: "center",
                         gap: "8px",
-                        padding: "6px 8px",
+                        padding: "4px 6px",
                         border: "1px solid #E7EAF0",
                         borderRadius: "9px",
                         background: "#FFFFFF",
@@ -1505,8 +1523,8 @@ const documentRequirements = (() => {
                     >
                       <div
                         style={{
-                          width: "27px",
-                          height: "27px",
+                          width: "23px",
+                          height: "23px",
                           borderRadius: "7px",
                           background: "#F1F5F9",
                           display: "flex",
@@ -1561,8 +1579,8 @@ const documentRequirements = (() => {
                           )
                         }
                         style={{
-                          width: "26px",
-                          height: "26px",
+                          width: "23px",
+                          height: "23px",
                           border: "1px solid #E7EAF0",
                           borderRadius: "7px",
                           background: "#FFFFFF",
@@ -1659,7 +1677,7 @@ const documentRequirements = (() => {
             <div
               style={{
                 border: "1px solid #E4E7EC",
-                borderRadius: "16px",
+                borderRadius: "12px",
                 background: "#FFFFFF",
                 overflow: "hidden",
                 boxShadow: "0 4px 14px rgba(17, 19, 24, 0.04)",
@@ -1726,9 +1744,9 @@ const documentRequirements = (() => {
 
               <div
                 style={{
-                  maxHeight: "375px",
+                  maxHeight: "215px",
                   overflowY: "auto",
-                  padding: "9px 10px 11px",
+                  padding: "4px 6px 5px",
                   WebkitOverflowScrolling: "touch",
                 }}
               >
@@ -1760,8 +1778,8 @@ const documentRequirements = (() => {
                       display: "flex",
                       alignItems: "center",
                       gap: "10px",
-                      padding: "8px 9px",
-                      marginBottom: "5px",
+                      padding: "5px 7px",
+                      marginBottom: "3px",
                       border: "1px solid #ECEEF1",
                       borderRadius: "10px",
                       background: "#FFFFFF",
@@ -1769,8 +1787,8 @@ const documentRequirements = (() => {
                   >
                     <div
                       style={{
-                        width: "27px",
-                        height: "27px",
+                        width: "23px",
+                        height: "23px",
                         borderRadius: "8px",
                         background: "rgba(41, 171, 135, 0.08)",
                         color: "#69717C",
@@ -1811,8 +1829,8 @@ const documentRequirements = (() => {
 
                       <div
                         style={{
-                          fontSize: "11px",
-                          lineHeight: 1.3,
+                          fontSize: "10px",
+                          lineHeight: 1.2,
                           fontWeight: 750,
                           color: "#20242A",
                           overflowWrap: "anywhere",
@@ -2186,7 +2204,7 @@ function ErrorMessage({ error }: { error: string }) {
 }
 
 const fieldGroupStyle = {
-  marginBottom: "16px",
+  marginBottom: "8px",
 };
 
 const labelStyle = {
