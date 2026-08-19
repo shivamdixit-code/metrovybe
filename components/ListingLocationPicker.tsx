@@ -884,10 +884,14 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
           }
 
           .mv-step5-my-location {
+            top: 48px;
             right: 8px;
-            bottom: 35px;
-            width: 35px;
-            height: 35px;
+            bottom: auto;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            font-size: 18px;
+            z-index: 1001;
           }
 
           .mv-step5-map-tip {
