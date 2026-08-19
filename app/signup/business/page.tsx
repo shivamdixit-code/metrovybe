@@ -1789,7 +1789,7 @@ const documentRequirements = (() => {
         {step === 7 && (
           <form onSubmit={validatePassword}>
             <Field label="Password">
-              <div style={passwordWrapperStyle}>
+              <div className="mv-password-wrapper" style={passwordWrapperStyle}>
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
@@ -1812,7 +1812,7 @@ const documentRequirements = (() => {
             </Field>
 
             <Field label="Confirm password">
-              <div style={passwordWrapperStyle}>
+              <div className="mv-password-wrapper" style={passwordWrapperStyle}>
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
@@ -2437,7 +2437,7 @@ const passwordInputStyle = {
 const eyeButtonStyle = {
   position: "absolute" as const,
   top: 0,
-  right: "4px",
+  right: "10px",
   width: "40px",
   height: "46px",
   minWidth: "40px",
@@ -2446,7 +2446,7 @@ const eyeButtonStyle = {
   maxHeight: "46px",
   padding: 0,
   margin: 0,
-  border: "none",
+  border: "0",
   borderRadius: "0",
   background: "transparent",
   color: "#777F88",
@@ -2460,6 +2460,7 @@ const eyeButtonStyle = {
   outline: "none",
   cursor: "pointer",
   touchAction: "manipulation",
+  zIndex: 10,
 };
 
 const continueButtonStyle = {
@@ -2526,6 +2527,49 @@ const infoBoxStyle = {
     align-items: center !important;
     justify-content: center !important;
     z-index: 5 !important;
+  }
+
+  .mv-business-signup-page .mv-password-wrapper {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    height: 46px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .mv-business-signup-page .mv-password-wrapper .mv-password-eye {
+    position: absolute !important;
+    top: 0 !important;
+    right: 10px !important;
+    left: auto !important;
+    bottom: auto !important;
+    width: 40px !important;
+    height: 46px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
+    min-height: 46px !important;
+    max-height: 46px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: #777F88 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transform: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    z-index: 20 !important;
+  }
+
+  .mv-business-signup-page .mv-password-wrapper input {
+    padding-right: 58px !important;
   }
 
   @media (max-width: 600px) {
