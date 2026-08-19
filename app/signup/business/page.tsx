@@ -1787,7 +1787,7 @@ const documentRequirements = (() => {
         )}
 
         {step === 7 && (
-          <form onSubmit={validatePassword}>
+          <form onSubmit={validatePassword} className="mv-step7-password-form">
             <Field label="Password">
               <div className="mv-password-wrapper" style={passwordWrapperStyle}>
                 <input
@@ -2508,40 +2508,25 @@ const infoBoxStyle = {
 
 
 <style jsx global>{`
-  .mv-business-signup-page .mv-password-eye {
-    position: absolute !important;
-    top: 0 !important;
-    right: 0 !important;
-    left: auto !important;
-    bottom: auto !important;
-    width: 46px !important;
-    height: 46px !important;
-    min-width: 46px !important;
-    max-width: 46px !important;
-    min-height: 46px !important;
-    max-height: 46px !important;
-    transform: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: 0 !important;
-    border-radius: 0 11px 11px 0 !important;
-    background: transparent !important;
-    color: #777F88 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    z-index: 5 !important;
-    cursor: pointer !important;
-    box-sizing: border-box !important;
-  }
-
   .mv-business-signup-page .mv-password-wrapper {
     position: relative !important;
     display: block !important;
     width: 100% !important;
     height: 46px !important;
+    min-width: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  .mv-business-signup-page .mv-password-wrapper input {
+    display: block !important;
+    width: 100% !important;
+    height: 46px !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding-right: 58px !important;
     box-sizing: border-box !important;
   }
 
@@ -2549,17 +2534,17 @@ const infoBoxStyle = {
     position: absolute !important;
     top: 0 !important;
     right: 0 !important;
-    left: auto !important;
     bottom: auto !important;
+    left: auto !important;
     width: 46px !important;
     height: 46px !important;
     min-width: 46px !important;
     max-width: 46px !important;
     min-height: 46px !important;
     max-height: 46px !important;
-    transform: none !important;
-    padding: 0 !important;
     margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
     border: 0 !important;
     border-radius: 0 11px 11px 0 !important;
     background: transparent !important;
@@ -2567,15 +2552,64 @@ const infoBoxStyle = {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    z-index: 5 !important;
     box-sizing: border-box !important;
-  }
-
-  .mv-business-signup-page .mv-password-wrapper input {
-    padding-right: 58px !important;
+    z-index: 20 !important;
+    cursor: pointer !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    touch-action: manipulation !important;
   }
 
   @media (max-width: 600px) {
+    .mv-business-signup-page .mv-step7-password-form {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      box-sizing: border-box !important;
+    }
+
+    .mv-business-signup-page .mv-step7-password-form .mv-password-wrapper {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      height: 46px !important;
+      overflow: hidden !important;
+      position: relative !important;
+    }
+
+    .mv-business-signup-page .mv-step7-password-form .mv-password-wrapper input {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      height: 46px !important;
+      box-sizing: border-box !important;
+      padding-right: 58px !important;
+    }
+
+    .mv-business-signup-page .mv-step7-password-form .mv-password-eye {
+      position: absolute !important;
+      top: 0 !important;
+      right: 0 !important;
+      width: 46px !important;
+      height: 46px !important;
+      min-width: 46px !important;
+      max-width: 46px !important;
+      transform: none !important;
+    }
+
+    .mv-business-signup-page .public-login-card {
+      min-height: 0 !important;
+      height: auto !important;
+    }
+
+    .mv-business-signup-page .mv-step7-password-form > button[type="submit"] {
+      margin-bottom: 0 !important;
+    }
+  }
+
+
 
     .mv-business-signup-page {
       width: 100% !important;
