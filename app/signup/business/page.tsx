@@ -1739,15 +1739,29 @@ const documentRequirements = (() => {
                         }
                         style={{
                           width: "23px",
+                          minWidth: "23px",
+                          maxWidth: "23px",
                           height: "23px",
+                          minHeight: "23px",
+                          maxHeight: "23px",
+                          padding: 0,
+                          margin: 0,
                           border: "1px solid #E7EAF0",
-                          borderRadius: "7px",
-                          background: "#FFFFFF",
+                          borderRadius: "50%",
+                          background: "transparent",
                           color: "#D92D20",
                           fontSize: "15px",
                           fontWeight: 700,
+                          lineHeight: 1,
                           cursor: "pointer",
+                          flex: "0 0 23px",
                           flexShrink: 0,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          boxSizing: "border-box",
+                          appearance: "none",
+                          WebkitAppearance: "none",
                         }}
                       >
                         ×
