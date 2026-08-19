@@ -309,9 +309,7 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
 
   function useMyLocation() {
     if (!navigator.geolocation) {
-      setError(
-        "Location services are not supported by this browser."
-      );
+      setError("Location services are not supported by this browser.");
       return;
     }
 
@@ -320,11 +318,11 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
 
     navigator.geolocation.getCurrentPosition(
       (location) => {
+        setError("");
         movePin({
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
         });
-
         setLocating(false);
       },
       (err) => {
@@ -336,14 +334,14 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
           );
         } else {
           setError(
-            "Unable to get your current location. Please try again."
+            "Your device could not provide a current location. Please select your location on the map."
           );
         }
       },
       {
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 0,
+        enableHighAccuracy: false,
+        timeout: 30000,
+        maximumAge: 300000,
       }
     );
   }
@@ -440,16 +438,31 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
                 ×
               </button>
             )}
-          </div>
 
-          <button
-            type="button"
-            className="mv-step5-search-button"
-            onClick={() => void searchAddress()}
-            disabled={searching}
-          >
-            {searching ? "..." : "Search"}
-          </button>
+            <button
+              type="button"
+              className="mv-step5-search-button"
+              onClick={() => void searchAddress()}
+              disabled={searching}
+              style={{
+                height: "32px",
+                minWidth: "68px",
+                padding: "0 12px",
+                marginRight: "5px",
+                border: "1.5px solid #111",
+                borderRadius: "9px",
+                background: "#111",
+                color: "#fff",
+                fontSize: "11px",
+                fontWeight: 700,
+                cursor: searching ? "default" : "pointer",
+                boxShadow: "2px 2px 0 #29AB87",
+                transition: "transform .15s ease",
+              }}
+            >
+              {searching ? "..." : "Search"}
+            </button>
+          </div>
         </div>
 
         <div className="mv-step5-modes">
@@ -531,7 +544,7 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
         .mv-step5-map-shell {
           position: relative;
           width: 100%;
-          height: 220px;
+          height: 180px;
           overflow: hidden;
           border-radius: 20px;
           background: #f4f7f6;
@@ -829,7 +842,8 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
 
         @media (max-width: 700px) {
           .mv-step5-map-shell {
-            height: 220px;
+            height: clamp(390px, 52vh, 440px);
+            min-height: 390px;
             border-radius: 14px;
           }
 
