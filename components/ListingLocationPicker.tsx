@@ -1036,13 +1036,25 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
         }
 
         .mv-step5-my-location {
-          width: 36px !important;
-          height: 36px !important;
-          border: 0 !important;
-          border-radius: 10px !important;
-          background: #fff !important;
+          position: absolute !important;
+          top: auto !important;
+          right: 8px !important;
+          bottom: 8px !important;
+          width: 32px !important;
+          height: 32px !important;
+          min-width: 32px !important;
+          max-width: 32px !important;
+          padding: 0 !important;
+          border: none !important;
+          border-radius: 50% !important;
+          background: transparent !important;
           color: #176b55 !important;
-          box-shadow: 0 3px 10px rgba(0,0,0,.13) !important;
+          box-shadow: none !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          font-size: 18px !important;
+          z-index: 1001 !important;
         }
 
         .mv-step5-location-card {
