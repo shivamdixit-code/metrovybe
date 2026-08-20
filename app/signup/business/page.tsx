@@ -1787,31 +1787,211 @@ const documentRequirements = (() => {
         )}
 
         {step === 7 && (
-          <form onSubmit={validatePassword}>
-
-            <div style={fieldGroupStyle}>
-              <label style={labelStyle}>
-                Password
-              </label>
-
-
+          <div style={{ width: "100%", boxSizing: "border-box" }}>
+            <div
+              style={{
+                marginBottom: "14px",
+                fontSize: "12px",
+                color: "#6B7280",
+                lineHeight: 1.5,
+              }}
+            >
+              Create a secure password for your business account.
             </div>
 
-            <div style={fieldGroupStyle}>
-              <label style={labelStyle}>
-                Confirm password
-              </label>
+            <form onSubmit={validatePassword}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "14px",
+                  width: "100%",
+                }}
+              >
+                <div style={{ width: "100%" }}>
+                  <label
+                    htmlFor="business-password"
+                    style={{
+                      display: "block",
+                      marginBottom: "7px",
+                      fontSize: "12px",
+                      fontWeight: 800,
+                      color: "#252A31",
+                    }}
+                  >
+                    Password
+                  </label>
 
+                  <div
+                    style={{
+                      position: "relative",
+                      width: "100%",
+                      height: "46px",
+                    }}
+                  >
+                    <input
+                      id="business-password"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      autoComplete="new-password"
+                      inputMode="text"
+                      style={{
+                        width: "100%",
+                        height: "46px",
+                        minHeight: "46px",
+                        boxSizing: "border-box",
+                        border: "1px solid #D1D5DB",
+                        borderRadius: "8px",
+                        background: "#FFFFFF",
+                        color: "#111318",
+                        padding: "0 48px 0 13px",
+                        fontSize: "16px",
+                        lineHeight: "46px",
+                        outline: "none",
+                        WebkitAppearance: "none",
+                      }}
+                    />
 
-            </div>
+                    <button
+                      type="button"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      onClick={() => setShowPassword((v) => !v)}
+                      style={{
+                        position: "absolute",
+                        top: "9px",
+                        right: "12px",
+                        width: "28px",
+                        height: "28px",
+                        minWidth: "28px",
+                        minHeight: "28px",
+                        padding: 0,
+                        margin: 0,
+                        border: "none",
+                        background: "transparent",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "#6B7280",
+                        cursor: "pointer",
+                        zIndex: 2,
+                        WebkitTapHighlightColor: "transparent",
+                      }}
+                    >
+                      {showPassword ? (
+                        <EyeOff size={18} strokeWidth={2} />
+                      ) : (
+                        <Eye size={18} strokeWidth={2} />
+                      )}
+                    </button>
+                  </div>
+                </div>
 
-            <ErrorMessage error={error} />
+                <div style={{ width: "100%" }}>
+                  <label
+                    htmlFor="business-confirm-password"
+                    style={{
+                      display: "block",
+                      marginBottom: "7px",
+                      fontSize: "12px",
+                      fontWeight: 800,
+                      color: "#252A31",
+                    }}
+                  >
+                    Confirm password
+                  </label>
 
-            <button type="submit" style={continueButtonStyle}>
-              Continue to review
-            </button>
+                  <div
+                    style={{
+                      position: "relative",
+                      width: "100%",
+                      height: "46px",
+                    }}
+                  >
+                    <input
+                      id="business-confirm-password"
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      autoComplete="new-password"
+                      inputMode="text"
+                      style={{
+                        width: "100%",
+                        height: "46px",
+                        minHeight: "46px",
+                        boxSizing: "border-box",
+                        border: "1px solid #D1D5DB",
+                        borderRadius: "8px",
+                        background: "#FFFFFF",
+                        color: "#111318",
+                        padding: "0 48px 0 13px",
+                        fontSize: "16px",
+                        lineHeight: "46px",
+                        outline: "none",
+                        WebkitAppearance: "none",
+                      }}
+                    />
 
-          </form>
+                    <button
+                      type="button"
+                      aria-label={
+                        showConfirmPassword
+                          ? "Hide confirm password"
+                          : "Show confirm password"
+                      }
+                      onClick={() => setShowConfirmPassword((v) => !v)}
+                      style={{
+                        position: "absolute",
+                        top: "9px",
+                        right: "12px",
+                        width: "28px",
+                        height: "28px",
+                        minWidth: "28px",
+                        minHeight: "28px",
+                        padding: 0,
+                        margin: 0,
+                        border: "none",
+                        background: "transparent",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "#6B7280",
+                        cursor: "pointer",
+                        zIndex: 2,
+                        WebkitTapHighlightColor: "transparent",
+                      }}
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff size={18} strokeWidth={2} />
+                      ) : (
+                        <Eye size={18} strokeWidth={2} />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  style={{
+                    width: "100%",
+                    height: "46px",
+                    minHeight: "46px",
+                    marginTop: "2px",
+                    border: "none",
+                    borderRadius: "8px",
+                    background: "#111318",
+                    color: "#FFFFFF",
+                    fontSize: "14px",
+                    fontWeight: 800,
+                    cursor: "pointer",
+                    WebkitTapHighlightColor: "transparent",
+                  }}
+                >
+                  Continue to review
+                </button>
+              </div>
+            </form>
+          </div>
         )}
 
         {step === 8 && (
