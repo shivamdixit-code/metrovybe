@@ -7328,7 +7328,7 @@ body {
 
 @media (max-width: 600px) {
   .profile-page {
-    padding-bottom: 70px !important;
+    padding-bottom: 65px !important;
   }
 }
 /* ===== END PROFILE BOTTOM SPACE ===== */
@@ -8505,7 +8505,7 @@ body {
 /* ===== SETTINGS — FINAL BOTTOM SPACING ===== */
 
 .settings-page {
-  padding-bottom: 70px !important;
+  padding-bottom: 65px !important;
   margin-bottom: 0 !important;
   min-height: auto !important;
 }
@@ -8522,7 +8522,7 @@ body {
 
 @media (max-width: 600px) {
   .settings-page {
-    padding-bottom: 70px !important;
+    padding-bottom: 65px !important;
     margin-bottom: 0 !important;
   }
 
