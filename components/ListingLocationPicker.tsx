@@ -622,6 +622,15 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
           box-shadow: 0 4px 14px rgba(0,0,0,.15);
         }
 
+        .mv-step5-search-input > input {
+          flex: 1 1 auto;
+          min-width: 0;
+          width: 100%;
+          max-width: none;
+          padding-right: 38px !important;
+          box-sizing: border-box;
+        }
+
         .mv-step5-search-input > span {
           font-size: 19px;
           line-height: 1;
@@ -1008,13 +1017,6 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
           align-items: center;
           gap: 7px;
           padding: 8px;
-        }
-
-        .mv-step5-search-input {
-          position: relative;
-          min-width: 0;
-          flex: 1 1 auto;
-          width: 0;
         }
 
         .mv-step5-search-box {
