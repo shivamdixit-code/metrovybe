@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -5,43 +8,141 @@ import {
   CalendarDays,
   ChevronRight,
   Heart,
+  LogOut,
   MapPin,
   Settings,
   Sparkles,
   UserRound,
 } from "lucide-react";
-
+import { useRouter } from "next/navigation";
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
+import { getToken, getUser, logout, type AuthUser } from "@/lib/auth";
 
 export default function Profile() {
+  const router = useRouter();
+
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  useEffect(() => {
+    const token = getToken();
+    const currentUser = getUser();
+
+    if (!token || !currentUser) {
+      router.replace("/login");
+      return;
+    }
+
+    if (currentUser.role !== "customer") {
+      router.replace(
+        currentUser.role === "business" ? "/business/profile" : "/login"
+      );
+      return;
+    }
+
+    setUser(currentUser);
+    setCheckingAuth(false);
+  }, [router]);
+
+  const handleLogout = () => {
+    setLoggingOut(true);
+    logout();
+    router.replace("/login");
+  };
+
+  if (checkingAuth || !user) {
+    return (
+      <div className="page">
+        <Header />
+        <main className="shell inner profile-page">
+          <section
+            className="profile-top"
+            style={{
+              minHeight: 220,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <div className="profile-person-info">
+              <strong>Loading your profile...</strong>
+              <span>Please wait a moment.</span>
+            </div>
+          </section>
+        </main>
+        <BottomNav active="profile" />
+      </div>
+    );
+  }
+
+  const displayName = user.name?.trim() || "Customer";
+  const firstName = displayName.split(" ")[0] || "Customer";
+  const initials =
+    displayName
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join("") || "C";
+
   return (
     <div className="page">
       <Header />
 
       <main className="shell inner profile-page">
-
         <section className="profile-top">
           <div className="profile-top-copy">
             <span className="profile-kicker">MY METROVYBE</span>
-            <h1>Your city,<br /><em>your space.</em></h1>
+
+            <h1>
+              Your city,
+              <br />
+              <em>your space.</em>
+            </h1>
+
             <p>
-              Everything you love, book and discover around your city —
-              all in one place.
+              Everything you love, book and discover around your city — all in
+              one place.
             </p>
           </div>
 
           <div className="profile-person">
-            <div className="profile-avatar-large">
-              <UserRound size={38} />
+            <div
+              className="profile-avatar-large"
+              aria-label={`${displayName} profile`}
+            >
+              <span
+                style={{
+                  fontWeight: 800,
+                  fontSize: 25,
+                  lineHeight: 1,
+                  letterSpacing: "-0.04em",
+                }}
+              >
+                {initials}
+              </span>
             </div>
 
             <div className="profile-person-info">
-              <strong>Welcome back</strong>
-              <span>Customer account</span>
+              <strong>Welcome back, {firstName}</strong>
+              <span>{user.email}</span>
             </div>
 
-            <button className="profile-settings-button" aria-label="Settings">
+            <button
+              type="button"
+              className="profile-settings-button"
+              aria-label="Account settings"
+              title="Account settings"
+              onClick={() => {
+                const account = document.querySelector(".profile-account");
+                account?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                });
+              }}
+            >
               <Settings size={19} />
             </button>
           </div>
@@ -52,10 +153,12 @@ export default function Profile() {
             <div className="profile-stat-icon green">
               <CalendarDays size={20} />
             </div>
+
             <div>
               <strong>Bookings</strong>
               <span>View your bookings</span>
             </div>
+
             <ChevronRight size={18} />
           </Link>
 
@@ -63,10 +166,12 @@ export default function Profile() {
             <div className="profile-stat-icon yellow">
               <Bookmark size={20} />
             </div>
+
             <div>
               <strong>Saved</strong>
               <span>Your favourite places</span>
             </div>
+
             <ChevronRight size={18} />
           </Link>
         </section>
@@ -84,8 +189,10 @@ export default function Profile() {
           </div>
 
           <div className="vybe-grid">
-
-            <Link href="/explore?category=stay" className="vybe-card stay">
+            <Link
+              href="/explore?category=stay"
+              className="vybe-card stay"
+            >
               <div className="vybe-card-top">
                 <span className="vybe-number">01</span>
                 <span className="vybe-arrow">
@@ -100,7 +207,10 @@ export default function Profile() {
               </div>
             </Link>
 
-            <Link href="/explore?category=food" className="vybe-card food">
+            <Link
+              href="/explore?category=food"
+              className="vybe-card food"
+            >
               <div className="vybe-card-top">
                 <span className="vybe-number">02</span>
                 <span className="vybe-arrow">
@@ -115,7 +225,10 @@ export default function Profile() {
               </div>
             </Link>
 
-            <Link href="/explore?category=live" className="vybe-card services">
+            <Link
+              href="/explore?category=live"
+              className="vybe-card services"
+            >
               <div className="vybe-card-top">
                 <span className="vybe-number">03</span>
                 <span className="vybe-arrow">
@@ -139,17 +252,17 @@ export default function Profile() {
               </div>
 
               <div className="vybe-card-bottom">
-                <span className="vybe-icon"><Sparkles size={22} /></span>
+                <span className="vybe-icon">
+                  <Sparkles size={22} />
+                </span>
                 <h3>Everything</h3>
                 <p>Explore your city</p>
               </div>
             </Link>
-
           </div>
         </section>
 
         <section className="profile-bottom">
-
           <div className="profile-account">
             <div className="profile-heading-row compact">
               <div>
@@ -159,15 +272,40 @@ export default function Profile() {
             </div>
 
             <div className="account-menu">
+              <div className="account-menu-item">
+                <span className="account-menu-icon">
+                  <UserRound size={19} />
+                </span>
+
+                <span className="account-menu-copy">
+                  <strong>{displayName}</strong>
+                  <small>{user.email}</small>
+                </span>
+              </div>
+
+              {user.phone && (
+                <div className="account-menu-item">
+                  <span className="account-menu-icon">
+                    <MapPin size={19} />
+                  </span>
+
+                  <span className="account-menu-copy">
+                    <strong>WhatsApp / Phone</strong>
+                    <small>{user.phone}</small>
+                  </span>
+                </div>
+              )}
 
               <Link href="/saved" className="account-menu-item">
                 <span className="account-menu-icon">
                   <Heart size={19} />
                 </span>
+
                 <span className="account-menu-copy">
                   <strong>Favourite places</strong>
                   <small>Your saved listings</small>
                 </span>
+
                 <ChevronRight size={18} />
               </Link>
 
@@ -175,10 +313,12 @@ export default function Profile() {
                 <span className="account-menu-icon">
                   <CalendarDays size={19} />
                 </span>
+
                 <span className="account-menu-copy">
                   <strong>Booking history</strong>
                   <small>Past and upcoming bookings</small>
                 </span>
+
                 <ChevronRight size={18} />
               </Link>
 
@@ -186,13 +326,40 @@ export default function Profile() {
                 <span className="account-menu-icon">
                   <MapPin size={19} />
                 </span>
+
                 <span className="account-menu-copy">
                   <strong>Explore nearby</strong>
                   <small>Discover services around you</small>
                 </span>
+
                 <ChevronRight size={18} />
               </Link>
 
+              <button
+                type="button"
+                className="account-menu-item"
+                onClick={handleLogout}
+                disabled={loggingOut}
+                style={{
+                  width: "100%",
+                  border: 0,
+                  cursor: loggingOut ? "wait" : "pointer",
+                  font: "inherit",
+                  textAlign: "left",
+                  background: "transparent",
+                }}
+              >
+                <span className="account-menu-icon">
+                  <LogOut size={19} />
+                </span>
+
+                <span className="account-menu-copy">
+                  <strong>{loggingOut ? "Logging out..." : "Log out"}</strong>
+                  <small>Sign out of your MetroVybe account</small>
+                </span>
+
+                <ChevronRight size={18} />
+              </button>
             </div>
           </div>
 
@@ -201,7 +368,13 @@ export default function Profile() {
 
             <div className="business-card-content">
               <span className="profile-kicker">FOR LOCAL BUSINESSES</span>
-              <h2>Turn your service<br />into a <em>destination.</em></h2>
+
+              <h2>
+                Turn your service
+                <br />
+                into a <em>destination.</em>
+              </h2>
+
               <p>
                 Get discovered by people searching for services around your
                 neighbourhood.
@@ -213,9 +386,7 @@ export default function Profile() {
               </Link>
             </div>
           </div>
-
         </section>
-
       </main>
 
       <BottomNav active="profile" />
