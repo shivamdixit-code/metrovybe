@@ -2644,8 +2644,9 @@ const infoBoxStyle = {
 
 <style jsx global>{`
 
-  /* STEP 7 — FINAL RIGHT-EDGE PASSWORD EYE */
+  /* STEP 7 — MOBILE PASSWORD EYE — FINAL */
   @media (max-width: 700px) {
+
     .mv-business-signup-page .mv-step7-password-wrap {
       position: relative !important;
       display: block !important;
@@ -2656,27 +2657,30 @@ const infoBoxStyle = {
       margin: 0 0 17px 0 !important;
       padding: 0 !important;
       box-sizing: border-box !important;
+      overflow: visible !important;
     }
 
     .mv-business-signup-page .mv-step7-password-wrap > input {
       position: absolute !important;
       top: 0 !important;
+      left: 0 !important;
       right: 0 !important;
       bottom: 0 !important;
-      left: 0 !important;
 
+      display: block !important;
       width: 100% !important;
       height: 46px !important;
       min-height: 46px !important;
+      max-height: 46px !important;
 
-      padding: 0 52px 0 13px !important;
       margin: 0 !important;
+      padding: 0 52px 0 13px !important;
 
       box-sizing: border-box !important;
       z-index: 1 !important;
     }
 
-    .mv-business-signup-page .mv-step7-password-wrap > .mv-step7-password-eye {
+    .mv-business-signup-page .mv-step7-password-wrap > button.mv-step7-password-eye {
       position: absolute !important;
 
       top: 0 !important;
@@ -2704,23 +2708,27 @@ const infoBoxStyle = {
       background: transparent !important;
 
       transform: none !important;
-      z-index: 10 !important;
-      box-sizing: border-box !important;
+      float: none !important;
       flex: none !important;
+
+      box-sizing: border-box !important;
+      z-index: 20 !important;
     }
 
-    .mv-business-signup-page .mv-step7-password-wrap > .mv-step7-password-eye svg {
+    .mv-business-signup-page .mv-step7-password-wrap
+      > button.mv-step7-password-eye svg {
       position: static !important;
       display: block !important;
+
       width: 18px !important;
       height: 18px !important;
+
       margin: 0 !important;
+      padding: 0 !important;
+
       transform: none !important;
     }
   }
-
-
-
 
 
   .mv-business-signup-page {
