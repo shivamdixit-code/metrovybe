@@ -1233,7 +1233,8 @@ const documentRequirements = (() => {
                       required
                       style={{
                         ...inputStyle,
-                        width: "100%",
+                        flex: 1,
+                        width: "auto",
                         height: "46px",
                         borderRadius: "12px",
                         border: "1px solid #D6E1DC",
@@ -1258,7 +1259,8 @@ const documentRequirements = (() => {
                       required
                       style={{
                         ...inputStyle,
-                        width: "100%",
+                        flex: 1,
+                        width: "auto",
                         height: "46px",
                         borderRadius: "12px",
                         border: "1px solid #D6E1DC",
@@ -1280,7 +1282,8 @@ const documentRequirements = (() => {
                       required
                       style={{
                         ...inputStyle,
-                        width: "100%",
+                        flex: 1,
+                        width: "auto",
                         height: "46px",
                         borderRadius: "12px",
                         border: "1px solid #D6E1DC",
@@ -1308,7 +1311,8 @@ const documentRequirements = (() => {
                       required
                       style={{
                         ...inputStyle,
-                        width: "100%",
+                        flex: 1,
+                        width: "auto",
                         height: "46px",
                         borderRadius: "12px",
                         border: "1px solid #D6E1DC",
@@ -1822,7 +1826,11 @@ const documentRequirements = (() => {
                     Password
                   </label>
 
-                  <div className="mv-business-password-wrap" style={{ position: "relative",
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "stretch",
+                      gap: "8px",
                       width: "100%",
                       height: "46px",
                     }}
@@ -1835,7 +1843,9 @@ const documentRequirements = (() => {
                       autoComplete="new-password"
                       inputMode="text"
                       style={{
-                        width: "100%",
+                        flex: "1 1 auto",
+                        width: "0",
+                        minWidth: "0",
                         height: "46px",
                         minHeight: "46px",
                         boxSizing: "border-box",
@@ -1843,9 +1853,9 @@ const documentRequirements = (() => {
                         borderRadius: "8px",
                         background: "#FFFFFF",
                         color: "#111318",
-                        padding: "0 52px 0 13px",
+                        padding: "0 52px 0 14px",
                         fontSize: "16px",
-                        lineHeight: "46px",
+                        lineHeight: "52px",
                         outline: "none",
                         WebkitAppearance: "none",
                       }}
@@ -1856,26 +1866,24 @@ const documentRequirements = (() => {
                       aria-label={showPassword ? "Hide password" : "Show password"}
                       onClick={() => setShowPassword((v) => !v)}
                       style={{
-                        position: "absolute",
-                        right: "0px",
-                        top: "50%",
-                        left: "auto",
-                        bottom: "auto",
-                        transform: "translateY(-50%)",
-                        width: "40px",
+                        flex: "0 0 46px",
+                        width: "46px",
+                        minWidth: "46px",
+                        maxWidth: "46px",
                         height: "46px",
-                        minWidth: "40px",
                         minHeight: "46px",
+                        maxHeight: "46px",
                         margin: 0,
                         padding: 0,
-                        border: 0,
-                        background: "transparent",
+                        border: "1px solid #D1D5DB",
+                        borderRadius: "8px",
+                        background: "#FFFFFF",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         color: "#747A82",
                         cursor: "pointer",
-                        zIndex: 3,
+                        boxSizing: "border-box",
                         WebkitTapHighlightColor: "transparent",
                         touchAction: "manipulation",
                       }}
@@ -1903,7 +1911,11 @@ const documentRequirements = (() => {
                     Confirm password
                   </label>
 
-                  <div className="mv-business-password-wrap" style={{ position: "relative",
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "stretch",
+                      gap: "8px",
                       width: "100%",
                       height: "46px",
                     }}
@@ -1916,7 +1928,9 @@ const documentRequirements = (() => {
                       autoComplete="new-password"
                       inputMode="text"
                       style={{
-                        width: "100%",
+                        flex: "1 1 auto",
+                        width: "0",
+                        minWidth: "0",
                         height: "46px",
                         minHeight: "46px",
                         boxSizing: "border-box",
@@ -1924,9 +1938,9 @@ const documentRequirements = (() => {
                         borderRadius: "8px",
                         background: "#FFFFFF",
                         color: "#111318",
-                        padding: "0 52px 0 13px",
+                        padding: "0 52px 0 14px",
                         fontSize: "16px",
-                        lineHeight: "46px",
+                        lineHeight: "52px",
                         outline: "none",
                         WebkitAppearance: "none",
                       }}
@@ -1941,26 +1955,24 @@ const documentRequirements = (() => {
                       }
                       onClick={() => setShowConfirmPassword((v) => !v)}
                       style={{
-                        position: "absolute",
-                        right: "0px",
-                        top: "50%",
-                        left: "auto",
-                        bottom: "auto",
-                        transform: "translateY(-50%)",
-                        width: "40px",
+                        flex: "0 0 46px",
+                        width: "46px",
+                        minWidth: "46px",
+                        maxWidth: "46px",
                         height: "46px",
-                        minWidth: "40px",
                         minHeight: "46px",
+                        maxHeight: "46px",
                         margin: 0,
                         padding: 0,
-                        border: 0,
-                        background: "transparent",
+                        border: "1px solid #D1D5DB",
+                        borderRadius: "8px",
+                        background: "#FFFFFF",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         color: "#747A82",
                         cursor: "pointer",
-                        zIndex: 3,
+                        boxSizing: "border-box",
                         WebkitTapHighlightColor: "transparent",
                         touchAction: "manipulation",
                       }}
