@@ -415,7 +415,7 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
 
         <div className="mv-step5-search">
           <div className="mv-step5-search-input">
-            <span>⌕</span>
+            <span className="mv-step5-search-icon">⌕</span>
 
             <input
               value={search}
@@ -427,10 +427,6 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
                 }
               }}
               placeholder="Search your business address"
-              style={{
-                paddingRight: "38px",
-                boxSizing: "border-box",
-              }}
             />
 
             {search && (
@@ -438,69 +434,22 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
                 type="button"
                 onClick={() => setSearch("")}
                 aria-label="Clear search"
-                style={{
-                  position: "absolute",
-                  right: "6px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  width: "22px",
-                  minWidth: "22px",
-                  maxWidth: "22px",
-                  height: "22px",
-                  minHeight: "22px",
-                  maxHeight: "22px",
-                  padding: 0,
-                  margin: 0,
-                  border: "none",
-                  borderRadius: "50%",
-                  background: "transparent",
-                  color: "#777F88",
-                  fontSize: "18px",
-                  fontWeight: 600,
-                  lineHeight: "22px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flex: "0 0 22px",
-                  boxSizing: "border-box",
-                  appearance: "none",
-                  WebkitAppearance: "none",
-                  WebkitTapHighlightColor: "transparent",
-                  outline: "none",
-                  cursor: "pointer",
-                  zIndex: 5,
-                }}
+                className="mv-step5-search-clear"
               >
                 ×
               </button>
             )}
-
-            <button
-              type="button"
-              className="mv-step5-search-button"
-              onClick={() => void searchAddress()}
-              disabled={searching}
-              style={{
-                height: "32px",
-                minWidth: "68px",
-                padding: "0 12px",
-                marginRight: "5px",
-                border: "1.5px solid #111",
-                borderRadius: "9px",
-                background: "#111",
-                color: "#fff",
-                fontSize: "11px",
-                fontWeight: 700,
-                cursor: searching ? "default" : "pointer",
-                boxShadow: "2px 2px 0 #29AB87",
-                transition: "transform .15s ease",
-              }}
-            >
-              {searching ? "..." : "Search"}
-            </button>
           </div>
-        </div>
 
+          <button
+            type="button"
+            className="mv-step5-search-button"
+            onClick={() => void searchAddress()}
+            disabled={searching}
+          >
+            {searching ? "..." : "Search"}
+          </button>
+        </div>
         <div className="mv-step5-modes">
           <select
             id="map-style-select"
@@ -601,13 +550,18 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
           right: 10px;
           z-index: 1000;
           display: flex;
+          align-items: center;
           gap: 6px;
+          padding: 0;
+          box-sizing: border-box;
+          min-width: 0;
         }
 
         .mv-step5-search-input {
           position: relative;
-          flex: 1;
+          flex: 1 1 auto;
           min-width: 0;
+          width: auto;
           height: 40px;
           display: flex;
           align-items: center;
@@ -620,47 +574,74 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
           -webkit-backdrop-filter: blur(18px);
           border: 1px solid rgba(0,0,0,.09);
           box-shadow: 0 4px 14px rgba(0,0,0,.15);
+          overflow: hidden;
+        }
+
+        .mv-step5-search-input > span {
+          flex: 0 0 auto;
+          font-size: 19px;
+          line-height: 1;
         }
 
         .mv-step5-search-input > input {
           flex: 1 1 auto;
           min-width: 0;
-          width: 100%;
+          width: auto;
           max-width: none;
-          padding-right: 38px !important;
-          box-sizing: border-box;
-        }
-
-        .mv-step5-search-input > span {
-          font-size: 19px;
-          line-height: 1;
-        }
-
-        .mv-step5-search-input input {
-          flex: 1;
-          min-width: 0;
+          height: 100%;
+          padding: 0;
+          margin: 0;
           border: 0;
           outline: 0;
           background: transparent;
           font-size: 12px;
           color: #151918;
+          box-sizing: border-box;
         }
 
-        .mv-step5-search-input input::placeholder {
+        .mv-step5-search-input > input::placeholder {
           color: #7b8581;
+          opacity: 1;
         }
 
-        .mv-step5-search-input button {
-          border: 0;
+        .mv-step5-search-clear {
+          flex: 0 0 24px;
+          width: 24px;
+          min-width: 24px;
+          max-width: 24px;
+          height: 24px;
           padding: 0;
+          margin: 0;
+          border: 0;
           background: transparent;
-          color: #555;
+          color: #777F88;
           font-size: 19px;
-          line-height: 1;
+          font-weight: 600;
+          line-height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-sizing: border-box;
+          appearance: none;
+          -webkit-appearance: none;
+          -webkit-tap-highlight-color: transparent;
+          outline: none;
           cursor: pointer;
         }
 
+        .mv-step5-search-clear:hover {
+          color: #222;
+        }
 
+        .mv-step5-search-button {
+          flex: 0 0 74px;
+          width: 74px;
+          min-width: 74px;
+          height: 32px;
+          padding: 0 12px;
+          margin: 0;
+          box-sizing: border-box;
+        }
 
         .mv-step5-search-button:disabled {
           opacity: .65;
@@ -1012,44 +993,7 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
           overflow: hidden;
         }
 
-        .mv-step5-search {
-          display: flex;
-          align-items: center;
-          gap: 7px;
-          padding: 8px;
-        }
 
-        .mv-step5-search-box {
-          min-width: 0;
-          height: 38px;
-          border: 1px solid #d9e1de;
-          border-radius: 10px;
-          background: rgba(255,255,255,.96);
-          box-shadow: 0 2px 8px rgba(0,0,0,.08);
-          overflow: hidden;
-        }
-
-        .mv-step5-search-box input {
-          height: 38px;
-          font-size: 12px;
-          color: #151918;
-        }
-
-        .mv-step5-search-button {
-          flex: 0 0 74px;
-          width: 74px;
-          height: 38px;
-          padding: 0;
-          border: 0;
-          border-radius: 10px;
-          background: #111318;
-          color: #fff;
-          font-size: 11px;
-          font-weight: 800;
-          cursor: pointer;
-          box-shadow: 0 3px 9px rgba(0,0,0,.14);
-          transition: transform .15s ease, box-shadow .15s ease;
-        }
 
         .mv-step5-search-button:hover {
           transform: translateY(-1px);
@@ -1200,6 +1144,56 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
           }
         }
 
+        @media (max-width: 700px) {
+          .mv-step5-search {
+            top: 7px !important;
+            left: 7px !important;
+            right: 7px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 5px !important;
+            padding: 0 !important;
+            min-width: 0 !important;
+            box-sizing: border-box !important;
+          }
+
+          .mv-step5-search-input {
+            flex: 1 1 auto !important;
+            min-width: 0 !important;
+            width: auto !important;
+            height: 36px !important;
+            padding: 0 9px !important;
+          }
+
+          .mv-step5-search-input > input {
+            flex: 1 1 auto !important;
+            min-width: 0 !important;
+            width: auto !important;
+            height: 100% !important;
+            font-size: 10px !important;
+            padding: 0 !important;
+          }
+
+          .mv-step5-search-clear {
+            flex: 0 0 22px !important;
+            width: 22px !important;
+            min-width: 22px !important;
+            max-width: 22px !important;
+            height: 22px !important;
+            font-size: 18px !important;
+            line-height: 22px !important;
+            margin: 0 !important;
+          }
+
+          .mv-step5-search-button {
+            flex: 0 0 68px !important;
+            width: 68px !important;
+            min-width: 68px !important;
+            height: 32px !important;
+            margin: 0 !important;
+          }
+        }
+
         .mv-step5-modes {
           position: absolute !important;
           top: 50% !important;
@@ -1215,6 +1209,256 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
           box-shadow: 0 3px 10px rgba(0,0,0,.12) !important;
           max-width: none !important;
           overflow: visible !important;
+        }
+
+
+        /* =====================================================
+           STEP 5 SEARCH — FINAL LOCKED LAYOUT
+
+           Intended structure:
+           search row
+             ├── white search field
+             │    ├── icon
+             │    ├── input
+             │    └── clear X
+             └── Search button
+           ===================================================== */
+
+        .mv-step5-search {
+          position: absolute !important;
+          top: 10px !important;
+          left: 10px !important;
+          right: 10px !important;
+          z-index: 1000 !important;
+
+          display: flex !important;
+          flex-direction: row !important;
+          align-items: center !important;
+
+          gap: 6px !important;
+          padding: 0 !important;
+          margin: 0 !important;
+
+          width: auto !important;
+          min-width: 0 !important;
+          max-width: none !important;
+
+          box-sizing: border-box !important;
+        }
+
+        .mv-step5-search-input {
+          position: relative !important;
+
+          flex: 1 1 auto !important;
+          width: auto !important;
+          min-width: 0 !important;
+          max-width: none !important;
+
+          height: 40px !important;
+
+          display: flex !important;
+          flex-direction: row !important;
+          align-items: center !important;
+
+          gap: 7px !important;
+
+          padding: 0 42px 0 11px !important;
+          margin: 0 !important;
+
+          box-sizing: border-box !important;
+
+          border: 1px solid rgba(0,0,0,.09) !important;
+          border-radius: 14px !important;
+
+          background: rgba(255,255,255,.96) !important;
+
+          box-shadow: 0 4px 14px rgba(0,0,0,.15) !important;
+
+          overflow: hidden !important;
+
+          backdrop-filter: blur(18px) !important;
+          -webkit-backdrop-filter: blur(18px) !important;
+        }
+
+        .mv-step5-search-icon {
+          flex: 0 0 auto !important;
+
+          width: 19px !important;
+          min-width: 19px !important;
+
+          font-size: 19px !important;
+          line-height: 1 !important;
+
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+        }
+
+        .mv-step5-search-input > input {
+          flex: 1 1 auto !important;
+
+          width: 100% !important;
+          min-width: 0 !important;
+          max-width: none !important;
+
+          height: 100% !important;
+
+          padding: 0 !important;
+          margin: 0 !important;
+
+          border: 0 !important;
+          outline: 0 !important;
+
+          background: transparent !important;
+
+          font-size: 12px !important;
+          color: #151918 !important;
+
+          box-sizing: border-box !important;
+        }
+
+        .mv-step5-search-input > input::placeholder {
+          color: #7b8581 !important;
+          opacity: 1 !important;
+        }
+
+        .mv-step5-search-clear {
+          position: absolute !important;
+
+          top: 50% !important;
+          right: 8px !important;
+
+          transform: translateY(-50%) !important;
+
+          width: 24px !important;
+          min-width: 24px !important;
+          max-width: 24px !important;
+
+          height: 24px !important;
+          min-height: 24px !important;
+          max-height: 24px !important;
+
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+
+          padding: 0 !important;
+          margin: 0 !important;
+
+          border: 0 !important;
+          border-radius: 50% !important;
+
+          background: transparent !important;
+
+          color: #777f88 !important;
+
+          font-size: 19px !important;
+          font-weight: 600 !important;
+          line-height: 24px !important;
+
+          box-sizing: border-box !important;
+
+          appearance: none !important;
+          -webkit-appearance: none !important;
+
+          outline: none !important;
+          cursor: pointer !important;
+
+          z-index: 20 !important;
+        }
+
+        .mv-step5-search-clear:hover {
+          color: #222 !important;
+        }
+
+        .mv-step5-search-button {
+          flex: 0 0 74px !important;
+
+          width: 74px !important;
+          min-width: 74px !important;
+          max-width: 74px !important;
+
+          height: 32px !important;
+
+          padding: 0 12px !important;
+          margin: 0 !important;
+
+          box-sizing: border-box !important;
+
+          border: 1.5px solid #111 !important;
+          border-radius: 9px !important;
+
+          background: #111 !important;
+          color: #fff !important;
+
+          font-size: 11px !important;
+          font-weight: 700 !important;
+
+          cursor: pointer !important;
+
+          box-shadow: 2px 2px 0 #29AB87 !important;
+
+          transition: transform .15s ease !important;
+        }
+
+        .mv-step5-search-button:disabled {
+          opacity: .65 !important;
+          cursor: default !important;
+        }
+
+        @media (max-width: 700px) {
+          .mv-step5-search {
+            top: 7px !important;
+            left: 7px !important;
+            right: 7px !important;
+
+            gap: 5px !important;
+          }
+
+          .mv-step5-search-input {
+            height: 36px !important;
+
+            padding: 0 36px 0 9px !important;
+
+            border-radius: 12px !important;
+          }
+
+          .mv-step5-search-icon {
+            width: 17px !important;
+            min-width: 17px !important;
+            font-size: 17px !important;
+          }
+
+          .mv-step5-search-input > input {
+            font-size: 10px !important;
+          }
+
+          .mv-step5-search-clear {
+            right: 6px !important;
+
+            width: 22px !important;
+            min-width: 22px !important;
+            max-width: 22px !important;
+
+            height: 22px !important;
+            min-height: 22px !important;
+            max-height: 22px !important;
+
+            font-size: 18px !important;
+            line-height: 22px !important;
+          }
+
+          .mv-step5-search-button {
+            flex: 0 0 68px !important;
+
+            width: 68px !important;
+            min-width: 68px !important;
+            max-width: 68px !important;
+
+            height: 32px !important;
+
+            font-size: 10px !important;
+          }
         }
 
       `}</style>
