@@ -2686,46 +2686,9 @@ const infoBoxStyle = {
       z-index: 1 !important;
     }
 
-    .mv-business-signup-page .mv-step7-password-wrap > button.mv-step7-password-eye {
-      position: absolute !important;
-      top: 50% !important;
-      right: 8px !important;
-      left: auto !important;
-      bottom: auto !important;
-      width: 44px !important;
-      min-width: 44px !important;
-      max-width: 44px !important;
-      height: 44px !important;
-      min-height: 44px !important;
-      max-height: 44px !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      border: 0 !important;
-      border-radius: 0 !important;
-      background: transparent !important;
-      transform: translateY(-50%) !important;
-      float: none !important;
-      flex: none !important;
-      box-sizing: border-box !important;
-      z-index: 20 !important;
-      }
 
-    .mv-business-signup-page .mv-step7-password-wrap
-      > button.mv-step7-password-eye svg {
-      position: static !important;
-      display: block !important;
 
-      width: 18px !important;
-      height: 18px !important;
 
-      margin: 0 !important;
-      padding: 0 !important;
-
-      transform: none !important;
-    }
   }
 
 
