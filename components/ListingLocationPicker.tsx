@@ -434,6 +434,38 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
                 type="button"
                 onClick={() => setSearch("")}
                 aria-label="Clear search"
+                style={{
+                  position: "absolute",
+                  right: "78px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  width: "22px",
+                  minWidth: "22px",
+                  maxWidth: "22px",
+                  height: "22px",
+                  minHeight: "22px",
+                  maxHeight: "22px",
+                  padding: 0,
+                  margin: 0,
+                  border: "none",
+                  borderRadius: "50%",
+                  background: "transparent",
+                  color: "#777F88",
+                  fontSize: "18px",
+                  fontWeight: 600,
+                  lineHeight: "22px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flex: "0 0 22px",
+                  boxSizing: "border-box",
+                  appearance: "none",
+                  WebkitAppearance: "none",
+                  WebkitTapHighlightColor: "transparent",
+                  outline: "none",
+                  cursor: "pointer",
+                  zIndex: 5,
+                }}
               >
                 ×
               </button>
@@ -971,6 +1003,12 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
           align-items: center;
           gap: 7px;
           padding: 8px;
+        }
+
+        .mv-step5-search-input {
+          position: relative;
+          min-width: 0;
+          flex: 1 1 auto;
         }
 
         .mv-step5-search-box {

@@ -2721,21 +2721,6 @@ const infoBoxStyle = {
 
 
 `}
-/* Step 5 map search: prevent iPhone/Safari native search X */
-@media (max-width: 767px) {
-  .mv-map-search input[type="search"]::-webkit-search-cancel-button,
-  .mv-map-search input[type="search"]::-webkit-search-decoration {
-    -webkit-appearance: none;
-    appearance: none;
-    display: none;
-  }
-
-  .mv-map-search input[type="search"] {
-    -webkit-appearance: none;
-    appearance: none;
-  }
-}
-
 </style>
 
 export default function BusinessSignupPage() {
