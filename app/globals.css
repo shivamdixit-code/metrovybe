@@ -8556,3 +8556,13 @@ body {
   background: transparent !important;
   border: 2px solid #14532d !important;
 }
+
+/* ===== SETTINGS TOP BUTTON BORDERS ===== */
+.settings-page .settings-edit-link {
+  background: transparent !important;
+  border: 2px solid #14532d !important;
+}
+
+.settings-page .settings-top-logout {
+  border: 2px solid #d1d5db !important;
+}
