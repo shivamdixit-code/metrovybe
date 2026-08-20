@@ -9037,3 +9037,33 @@ body {
   }
 }
 
+
+/* ===== MOBILE CATEGORY SLIDER — STAY / EAT / LIVE / MOVE / GO ===== */
+@media (max-width: 600px) {
+  .categories {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    gap: 12px !important;
+    padding: 18px 14px 22px !important;
+    margin: 0 -14px !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+
+  .categories::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .categories .cat {
+    flex: 0 0 78% !important;
+    min-width: 78% !important;
+    min-height: 100px !important;
+    scroll-snap-align: start !important;
+    box-sizing: border-box !important;
+  }
+}
+
