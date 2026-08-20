@@ -1822,9 +1822,7 @@ const documentRequirements = (() => {
                     Password
                   </label>
 
-                  <div
-                    style={{
-                      position: "relative",
+                  <div className="mv-business-password-wrap" style={{ position: "relative",
                       width: "100%",
                       height: "46px",
                     }}
@@ -1859,23 +1857,27 @@ const documentRequirements = (() => {
                       onClick={() => setShowPassword((v) => !v)}
                       style={{
                         position: "absolute",
-                        top: "9px",
-                        right: "12px",
-                        width: "28px",
-                        height: "28px",
-                        minWidth: "28px",
-                        minHeight: "28px",
-                        padding: 0,
+                        right: "4px",
+                        top: 0,
+                        left: "auto",
+                        bottom: "auto",
+                        width: "40px",
+                        height: "46px",
+                        minWidth: "40px",
+                        minHeight: "46px",
                         margin: 0,
-                        border: "none",
+                        marginLeft: 0,
+                        padding: 0,
+                        border: 0,
                         background: "transparent",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        color: "#6B7280",
+                        color: "#747A82",
                         cursor: "pointer",
-                        zIndex: 2,
+                        zIndex: 3,
                         WebkitTapHighlightColor: "transparent",
+                        touchAction: "manipulation",
                       }}
                     >
                       {showPassword ? (
@@ -1901,9 +1903,7 @@ const documentRequirements = (() => {
                     Confirm password
                   </label>
 
-                  <div
-                    style={{
-                      position: "relative",
+                  <div className="mv-business-password-wrap" style={{ position: "relative",
                       width: "100%",
                       height: "46px",
                     }}
@@ -1942,23 +1942,27 @@ const documentRequirements = (() => {
                       onClick={() => setShowConfirmPassword((v) => !v)}
                       style={{
                         position: "absolute",
-                        top: "9px",
-                        right: "12px",
-                        width: "28px",
-                        height: "28px",
-                        minWidth: "28px",
-                        minHeight: "28px",
-                        padding: 0,
+                        right: "4px",
+                        top: 0,
+                        left: "auto",
+                        bottom: "auto",
+                        width: "40px",
+                        height: "46px",
+                        minWidth: "40px",
+                        minHeight: "46px",
                         margin: 0,
-                        border: "none",
+                        marginLeft: 0,
+                        padding: 0,
+                        border: 0,
                         background: "transparent",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        color: "#6B7280",
+                        color: "#747A82",
                         cursor: "pointer",
-                        zIndex: 2,
+                        zIndex: 3,
                         WebkitTapHighlightColor: "transparent",
+                        touchAction: "manipulation",
                       }}
                     >
                       {showConfirmPassword ? (
@@ -2545,6 +2549,69 @@ const labelStyle = {
   fontWeight: 750,
   marginBottom: "7px",
 };
+
+
+const mvBusinessPasswordStyles = `
+.mv-business-password-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.mv-business-password-wrap input {
+  width: 100%;
+  min-height: 46px;
+  height: 46px;
+  padding-right: 52px !important;
+  box-sizing: border-box;
+}
+
+.mv-business-password-wrap button {
+  position: absolute;
+  right: 4px;
+  top: 0;
+  width: 40px;
+  height: 46px;
+  min-height: 46px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #747A82;
+  cursor: pointer;
+  z-index: 3;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.mv-business-password-wrap button:hover {
+  background: transparent;
+  color: #252A31;
+}
+
+.mv-business-password-wrap button:focus-visible {
+  outline: 2px solid rgba(41, 171, 135, 0.35);
+  outline-offset: -2px;
+}
+
+@media (max-width: 640px) {
+  .mv-business-password-wrap input {
+    height: 46px;
+    min-height: 46px;
+    padding-right: 52px !important;
+  }
+
+  .mv-business-password-wrap button {
+    right: 4px;
+    width: 40px;
+    height: 46px;
+    min-height: 46px;
+  }
+}
+`;
 
 const inputStyle = {
   width: "100%",
