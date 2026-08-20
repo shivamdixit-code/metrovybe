@@ -2720,7 +2720,41 @@ const infoBoxStyle = {
   }
 
 
+        /* FINAL STEP 7 MOBILE EYE POSITION LOCK */
+        @media (max-width: 700px) {
+          .mv-business-signup-page button[aria-label="Show password"],
+          .mv-business-signup-page button[aria-label="Hide password"],
+          .mv-business-signup-page button[aria-label="Show confirm password"],
+          .mv-business-signup-page button[aria-label="Hide confirm password"] {
+            position: absolute !important;
+            top: 50% !important;
+            right: 4px !important;
+            left: auto !important;
+            bottom: auto !important;
+            transform: translateY(-50%) !important;
+
+            width: 40px !important;
+            min-width: 40px !important;
+            max-width: 40px !important;
+            height: 46px !important;
+            min-height: 46px !important;
+            max-height: 46px !important;
+
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+
+            margin: 0 !important;
+            padding: 0 !important;
+            box-sizing: border-box !important;
+
+            flex: none !important;
+            z-index: 50 !important;
+          }
+        }
+
 `}
+
 </style>
 
 export default function BusinessSignupPage() {
