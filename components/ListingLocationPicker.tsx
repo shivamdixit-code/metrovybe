@@ -1498,6 +1498,46 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
           }
         }
 
+
+        /* FINAL MOBILE X POSITION — absolute inside white search field */
+        @media (max-width: 700px) {
+          .mv-step5-search-input {
+            position: relative !important;
+            overflow: hidden !important;
+          }
+
+          .mv-step5-search-input .mv-step5-search-clear {
+            position: absolute !important;
+            top: 50% !important;
+            right: 7px !important;
+            left: auto !important;
+            bottom: auto !important;
+
+            transform: translateY(-50%) !important;
+
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+
+            flex: none !important;
+            width: 22px !important;
+            min-width: 22px !important;
+            max-width: 22px !important;
+            height: 22px !important;
+            min-height: 22px !important;
+            max-height: 22px !important;
+
+            margin: 0 !important;
+            padding: 0 !important;
+
+            z-index: 100 !important;
+          }
+
+          .mv-step5-search-input > input {
+            padding-right: 30px !important;
+          }
+        }
+
       `}</style>
     </div>
   );
