@@ -436,7 +436,7 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
                 aria-label="Clear search"
                 style={{
                   position: "absolute",
-                  right: "78px",
+                  right: "8px",
                   top: "50%",
                   transform: "translateY(-50%)",
                   width: "22px",
