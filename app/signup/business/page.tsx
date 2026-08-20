@@ -1812,6 +1812,8 @@ const documentRequirements = (() => {
                   width: "100%",
                 }}
               >
+
+                {/* PASSWORD */}
                 <div style={{ width: "100%" }}>
                   <label
                     htmlFor="business-password"
@@ -1827,12 +1829,14 @@ const documentRequirements = (() => {
                   </label>
 
                   <div
+                    className="mv-step7-password-field"
                     style={{
-                      display: "flex",
-                      alignItems: "stretch",
-                      gap: "8px",
+                      display: "grid",
+                      gridTemplateColumns: "minmax(0, 1fr) 40px",
+                      gridTemplateRows: "46px",
                       width: "100%",
-                      height: "46px",
+                      maxWidth: "100%",
+                      minWidth: 0,
                     }}
                   >
                     <input
@@ -1843,47 +1847,49 @@ const documentRequirements = (() => {
                       autoComplete="new-password"
                       inputMode="text"
                       style={{
-                        flex: "1 1 auto",
-                        width: "0",
-                        minWidth: "0",
+                        gridColumn: "1 / 3",
+                        gridRow: "1",
+                        width: "100%",
+                        minWidth: 0,
                         height: "46px",
-                        minHeight: "46px",
                         boxSizing: "border-box",
                         border: "1px solid #D1D5DB",
                         borderRadius: "8px",
                         background: "#FFFFFF",
                         color: "#111318",
-                        padding: "0 52px 0 14px",
+                        padding: "0 48px 0 14px",
                         fontSize: "16px",
-                        lineHeight: "52px",
+                        lineHeight: "46px",
                         outline: "none",
                         WebkitAppearance: "none",
                       }}
                     />
 
                     <button
+                      className="mv-step7-password-eye"
                       type="button"
-                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
                       onClick={() => setShowPassword((v) => !v)}
                       style={{
-                        flex: "0 0 46px",
-                        width: "46px",
-                        minWidth: "46px",
-                        maxWidth: "46px",
+                        gridColumn: "2",
+                        gridRow: "1",
+                        width: "40px",
+                        minWidth: "40px",
+                        maxWidth: "40px",
                         height: "46px",
-                        minHeight: "46px",
-                        maxHeight: "46px",
                         margin: 0,
                         padding: 0,
-                        border: "1px solid #D1D5DB",
-                        borderRadius: "8px",
-                        background: "#FFFFFF",
+                        border: "none",
+                        background: "transparent",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         color: "#747A82",
                         cursor: "pointer",
                         boxSizing: "border-box",
+                        zIndex: 5,
                         WebkitTapHighlightColor: "transparent",
                         touchAction: "manipulation",
                       }}
@@ -1897,6 +1903,7 @@ const documentRequirements = (() => {
                   </div>
                 </div>
 
+                {/* CONFIRM PASSWORD */}
                 <div style={{ width: "100%" }}>
                   <label
                     htmlFor="business-confirm-password"
@@ -1908,16 +1915,18 @@ const documentRequirements = (() => {
                       color: "#252A31",
                     }}
                   >
-                    Confirm password
+                    Confirm Password
                   </label>
 
                   <div
+                    className="mv-step7-password-field"
                     style={{
-                      display: "flex",
-                      alignItems: "stretch",
-                      gap: "8px",
+                      display: "grid",
+                      gridTemplateColumns: "minmax(0, 1fr) 40px",
+                      gridTemplateRows: "46px",
                       width: "100%",
-                      height: "46px",
+                      maxWidth: "100%",
+                      minWidth: 0,
                     }}
                   >
                     <input
@@ -1928,25 +1937,26 @@ const documentRequirements = (() => {
                       autoComplete="new-password"
                       inputMode="text"
                       style={{
-                        flex: "1 1 auto",
-                        width: "0",
-                        minWidth: "0",
+                        gridColumn: "1 / 3",
+                        gridRow: "1",
+                        width: "100%",
+                        minWidth: 0,
                         height: "46px",
-                        minHeight: "46px",
                         boxSizing: "border-box",
                         border: "1px solid #D1D5DB",
                         borderRadius: "8px",
                         background: "#FFFFFF",
                         color: "#111318",
-                        padding: "0 52px 0 14px",
+                        padding: "0 48px 0 14px",
                         fontSize: "16px",
-                        lineHeight: "52px",
+                        lineHeight: "46px",
                         outline: "none",
                         WebkitAppearance: "none",
                       }}
                     />
 
                     <button
+                      className="mv-step7-password-eye"
                       type="button"
                       aria-label={
                         showConfirmPassword
@@ -1955,24 +1965,23 @@ const documentRequirements = (() => {
                       }
                       onClick={() => setShowConfirmPassword((v) => !v)}
                       style={{
-                        flex: "0 0 46px",
-                        width: "46px",
-                        minWidth: "46px",
-                        maxWidth: "46px",
+                        gridColumn: "2",
+                        gridRow: "1",
+                        width: "40px",
+                        minWidth: "40px",
+                        maxWidth: "40px",
                         height: "46px",
-                        minHeight: "46px",
-                        maxHeight: "46px",
                         margin: 0,
                         padding: 0,
-                        border: "1px solid #D1D5DB",
-                        borderRadius: "8px",
-                        background: "#FFFFFF",
+                        border: "none",
+                        background: "transparent",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         color: "#747A82",
                         cursor: "pointer",
                         boxSizing: "border-box",
+                        zIndex: 5,
                         WebkitTapHighlightColor: "transparent",
                         touchAction: "manipulation",
                       }}
@@ -1986,26 +1995,17 @@ const documentRequirements = (() => {
                   </div>
                 </div>
 
-                <button
-                  type="submit"
-                  style={{
-                    width: "100%",
-                    height: "46px",
-                    minHeight: "46px",
-                    marginTop: "2px",
-                    border: "none",
-                    borderRadius: "8px",
-                    background: "#111318",
-                    color: "#FFFFFF",
-                    fontSize: "14px",
-                    fontWeight: 800,
-                    cursor: "pointer",
-                    WebkitTapHighlightColor: "transparent",
-                  }}
-                >
-                  Continue to review
-                </button>
               </div>
+
+              <button
+                type="submit"
+                style={{
+                  ...continueButtonStyle,
+                  marginTop: "18px",
+                }}
+              >
+                Continue to Review
+              </button>
             </form>
           </div>
         )}
@@ -2622,6 +2622,48 @@ const mvBusinessPasswordStyles = `
     height: 46px;
     min-height: 46px;
   }
+}
+
+
+.mv-step7-password-field {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 40px !important;
+  grid-template-rows: 46px !important;
+  position: relative !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+.mv-step7-password-field > input {
+  grid-column: 1 / 3 !important;
+  grid-row: 1 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: 46px !important;
+  box-sizing: border-box !important;
+  padding-right: 48px !important;
+}
+
+.mv-step7-password-field > .mv-step7-password-eye {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+  width: 40px !important;
+  min-width: 40px !important;
+  max-width: 40px !important;
+  height: 46px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  align-self: stretch !important;
+  justify-self: stretch !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 20 !important;
 }
 `;
 

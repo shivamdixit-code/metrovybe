@@ -6772,3 +6772,74 @@ body {
 }
 
 /* ===== END BUSINESS SIGNUP — FINAL MOBILE WIDTH LOCK ===== */
+
+/* ===== BUSINESS SIGNUP — FINAL VERTICAL CENTER FIX ===== */
+
+.mv-business-signup-page {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100vh !important;
+  min-height: 100vh !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 24px 16px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+.mv-business-signup-page > .public-login-card {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  transform: none !important;
+  width: min(460px, 100%) !important;
+  max-width: 460px !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
+  flex: 0 0 auto !important;
+}
+
+/* Keep the whole signup centered on mobile too */
+@media (max-width: 600px) {
+  .mv-business-signup-page {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    padding: 16px 12px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  .mv-business-signup-page > .public-login-card {
+    width: 100% !important;
+    max-width: 460px !important;
+    margin: 0 auto !important;
+    padding: 28px 20px !important;
+    transform: none !important;
+  }
+}
+
+/* iPhone/Safari */
+@supports (-webkit-touch-callout: none) {
+  .mv-business-signup-page {
+    height: 100svh !important;
+    min-height: 100svh !important;
+  }
+}
+
+/* ===== END BUSINESS SIGNUP — FINAL VERTICAL CENTER FIX ===== */
