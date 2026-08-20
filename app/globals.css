@@ -9029,3 +9029,11 @@ body {
   }
 }
 
+
+/* MOBILE — SPACE BETWEEN ONE APP, AND ALL VYBES */
+@media (max-width: 600px) {
+  .hero .hero-title span + span {
+    margin-left: 9px !important;
+  }
+}
+
