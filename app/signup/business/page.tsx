@@ -1802,6 +1802,7 @@ const documentRequirements = (() => {
             </label>
 
             <div
+              className="mv-step7-password-wrap"
               style={{
                 position: "relative",
                 width: "100%",
@@ -1832,6 +1833,7 @@ const documentRequirements = (() => {
               />
 
               <button
+                className="mv-step7-password-eye"
                 type="button"
                 onClick={() => setShowPassword((value) => !value)}
                 aria-label={
@@ -1880,6 +1882,7 @@ const documentRequirements = (() => {
             </label>
 
             <div
+              className="mv-step7-password-wrap"
               style={{
                 position: "relative",
                 width: "100%",
@@ -1910,6 +1913,7 @@ const documentRequirements = (() => {
               />
 
               <button
+                className="mv-step7-password-eye"
                 type="button"
                 onClick={() =>
                   setShowConfirmPassword((value) => !value)
@@ -2720,22 +2724,33 @@ const infoBoxStyle = {
   }
 
 
-        /* FINAL STEP 7 MOBILE EYE POSITION LOCK */
+
+
+        /* FINAL STEP 7 MOBILE PASSWORD EYE LOCK */
         @media (max-width: 700px) {
-          .mv-business-signup-page button[aria-label="Show password"],
-          .mv-business-signup-page button[aria-label="Hide password"],
-          .mv-business-signup-page button[aria-label="Show confirm password"],
-          .mv-business-signup-page button[aria-label="Hide confirm password"] {
+          .mv-step7-password-wrap {
+            position: relative !important;
+            width: 100% !important;
+            height: 46px !important;
+            min-height: 46px !important;
+            max-height: 46px !important;
+            display: block !important;
+            overflow: visible !important;
+            box-sizing: border-box !important;
+          }
+
+          .mv-step7-password-wrap > .mv-step7-password-eye {
             position: absolute !important;
-            top: 50% !important;
+            top: 0 !important;
             right: 4px !important;
             left: auto !important;
             bottom: auto !important;
-            transform: translateY(-50%) !important;
+            transform: none !important;
 
             width: 40px !important;
             min-width: 40px !important;
             max-width: 40px !important;
+
             height: 46px !important;
             min-height: 46px !important;
             max-height: 46px !important;
@@ -2744,12 +2759,33 @@ const infoBoxStyle = {
             align-items: center !important;
             justify-content: center !important;
 
-            margin: 0 !important;
             padding: 0 !important;
-            box-sizing: border-box !important;
+            margin: 0 !important;
 
             flex: none !important;
-            z-index: 50 !important;
+            box-sizing: border-box !important;
+
+            border: 0 !important;
+            background: transparent !important;
+
+            z-index: 100 !important;
+          }
+
+          .mv-step7-password-wrap > input {
+            position: relative !important;
+            z-index: 1 !important;
+            width: 100% !important;
+            height: 46px !important;
+            padding-right: 45px !important;
+            box-sizing: border-box !important;
+          }
+
+          .mv-step7-password-wrap > .mv-step7-password-eye svg {
+            position: relative !important;
+            display: block !important;
+            flex: none !important;
+            width: 18px !important;
+            height: 18px !important;
           }
         }
 
