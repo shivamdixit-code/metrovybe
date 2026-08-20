@@ -1807,8 +1807,10 @@ const documentRequirements = (() => {
                 position: "relative",
                 width: "100%",
                 height: "46px",
+                minHeight: "46px",
                 marginBottom: "17px",
                 display: "block",
+                boxSizing: "border-box",
               }}
             >
               <input
@@ -1821,7 +1823,7 @@ const documentRequirements = (() => {
                 style={{
                   width: "100%",
                   height: "46px",
-                  padding: "0 45px 0 13px",
+                  padding: "0 60px 0 13px",
                   border: "1px solid #DDE2E9",
                   borderRadius: "11px",
                   fontSize: "16px",
@@ -1843,16 +1845,17 @@ const documentRequirements = (() => {
                 }
                 style={{
                   position: "absolute",
-                  top: "0",
-                  right: "0",
+                  top: "50%",
+                  right: "8px",
                   left: "auto",
-                  bottom: "0",
+                  bottom: "auto",
+                  transform: "translateY(-50%)",
                   width: "44px",
                   minWidth: "44px",
                   maxWidth: "44px",
-                  height: "46px",
-                  minHeight: "46px",
-                  maxHeight: "46px",
+                  height: "44px",
+                  minHeight: "44px",
+                  maxHeight: "44px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -1896,8 +1899,10 @@ const documentRequirements = (() => {
                 position: "relative",
                 width: "100%",
                 height: "46px",
+                minHeight: "46px",
                 marginBottom: "17px",
                 display: "block",
+                boxSizing: "border-box",
               }}
             >
               <input
@@ -1910,7 +1915,7 @@ const documentRequirements = (() => {
                 style={{
                   width: "100%",
                   height: "46px",
-                  padding: "0 45px 0 13px",
+                  padding: "0 60px 0 13px",
                   border: "1px solid #DDE2E9",
                   borderRadius: "11px",
                   fontSize: "16px",
@@ -1936,16 +1941,17 @@ const documentRequirements = (() => {
                 }
                 style={{
                   position: "absolute",
-                  top: "0",
-                  right: "0",
+                  top: "50%",
+                  right: "8px",
                   left: "auto",
-                  bottom: "0",
+                  bottom: "auto",
+                  transform: "translateY(-50%)",
                   width: "44px",
                   minWidth: "44px",
                   maxWidth: "44px",
-                  height: "46px",
-                  minHeight: "46px",
-                  maxHeight: "46px",
+                  height: "44px",
+                  minHeight: "44px",
+                  maxHeight: "44px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -2682,38 +2688,30 @@ const infoBoxStyle = {
 
     .mv-business-signup-page .mv-step7-password-wrap > button.mv-step7-password-eye {
       position: absolute !important;
-
-      top: 0 !important;
-      right: 0 !important;
-      bottom: 0 !important;
+      top: 50% !important;
+      right: 8px !important;
       left: auto !important;
-
+      bottom: auto !important;
       width: 44px !important;
       min-width: 44px !important;
       max-width: 44px !important;
-
-      height: 46px !important;
-      min-height: 46px !important;
-      max-height: 46px !important;
-
-      margin: 0 !important;
-      padding: 0 !important;
-
+      height: 44px !important;
+      min-height: 44px !important;
+      max-height: 44px !important;
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
-
+      margin: 0 !important;
+      padding: 0 !important;
       border: 0 !important;
       border-radius: 0 !important;
       background: transparent !important;
-
-      transform: none !important;
+      transform: translateY(-50%) !important;
       float: none !important;
       flex: none !important;
-
       box-sizing: border-box !important;
       z-index: 20 !important;
-    }
+      }
 
     .mv-business-signup-page .mv-step7-password-wrap
       > button.mv-step7-password-eye svg {
