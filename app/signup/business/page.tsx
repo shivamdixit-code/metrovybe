@@ -1806,7 +1806,9 @@ const documentRequirements = (() => {
               style={{
                 position: "relative",
                 width: "100%",
+                height: "46px",
                 marginBottom: "17px",
+                display: "block",
               }}
             >
               <input
@@ -1841,17 +1843,22 @@ const documentRequirements = (() => {
                 }
                 style={{
                   position: "absolute",
-                  top: 0,
+                  top: "0",
                   right: "4px",
+                  left: "auto",
+                  bottom: "auto",
                   width: "40px",
-                  height: "46px",
                   minWidth: "40px",
+                  maxWidth: "40px",
+                  height: "46px",
+                  minHeight: "46px",
+                  maxHeight: "46px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   padding: 0,
                   margin: 0,
-                  border: 0,
+                  border: "0",
                   borderRadius: 0,
                   background: "transparent",
                   color: "#777F88",
@@ -1859,6 +1866,8 @@ const documentRequirements = (() => {
                   touchAction: "manipulation",
                   WebkitTapHighlightColor: "transparent",
                   boxSizing: "border-box",
+                  zIndex: 2,
+                  flexShrink: 0,
                 }}
               >
                 {showPassword ? (
@@ -1886,7 +1895,9 @@ const documentRequirements = (() => {
               style={{
                 position: "relative",
                 width: "100%",
+                height: "46px",
                 marginBottom: "17px",
+                display: "block",
               }}
             >
               <input
@@ -1925,17 +1936,22 @@ const documentRequirements = (() => {
                 }
                 style={{
                   position: "absolute",
-                  top: 0,
+                  top: "0",
                   right: "4px",
+                  left: "auto",
+                  bottom: "auto",
                   width: "40px",
-                  height: "46px",
                   minWidth: "40px",
+                  maxWidth: "40px",
+                  height: "46px",
+                  minHeight: "46px",
+                  maxHeight: "46px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   padding: 0,
                   margin: 0,
-                  border: 0,
+                  border: "0",
                   borderRadius: 0,
                   background: "transparent",
                   color: "#777F88",
@@ -1943,6 +1959,8 @@ const documentRequirements = (() => {
                   touchAction: "manipulation",
                   WebkitTapHighlightColor: "transparent",
                   boxSizing: "border-box",
+                  zIndex: 2,
+                  flexShrink: 0,
                 }}
               >
                 {showConfirmPassword ? (
@@ -2626,6 +2644,64 @@ const infoBoxStyle = {
 
 <style jsx global>{`
 
+  /* STEP 7 — clean mobile password field layout */
+  @media (max-width: 700px) {
+    .mv-business-signup-page .mv-step7-password-wrap {
+      position: relative !important;
+      width: 100% !important;
+      height: 46px !important;
+      min-height: 46px !important;
+      max-height: 46px !important;
+      display: block !important;
+      overflow: visible !important;
+      box-sizing: border-box !important;
+    }
+
+    .mv-business-signup-page .mv-step7-password-wrap > input {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 46px !important;
+      min-height: 46px !important;
+      max-height: 46px !important;
+      padding: 0 45px 0 13px !important;
+      box-sizing: border-box !important;
+      z-index: 1 !important;
+    }
+
+    .mv-business-signup-page .mv-step7-password-wrap > .mv-step7-password-eye {
+      position: absolute !important;
+      top: 0 !important;
+      right: 4px !important;
+      left: auto !important;
+      bottom: auto !important;
+      transform: none !important;
+      width: 40px !important;
+      min-width: 40px !important;
+      max-width: 40px !important;
+      height: 46px !important;
+      min-height: 46px !important;
+      max-height: 46px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      z-index: 3 !important;
+      box-sizing: border-box !important;
+      flex: 0 0 40px !important;
+    }
+
+    .mv-business-signup-page .mv-step7-password-wrap
+      > .mv-step7-password-eye svg {
+      width: 18px !important;
+      height: 18px !important;
+      display: block !important;
+      flex: none !important;
+    }
+  }
+
+
 
   .mv-business-signup-page {
       width: 100% !important;
@@ -2722,72 +2798,6 @@ const infoBoxStyle = {
       height: 26px !important;
     }
   }
-
-
-
-
-        /* FINAL STEP 7 MOBILE PASSWORD EYE LOCK */
-        @media (max-width: 700px) {
-          .mv-step7-password-wrap {
-            position: relative !important;
-            width: 100% !important;
-            height: 46px !important;
-            min-height: 46px !important;
-            max-height: 46px !important;
-            display: block !important;
-            overflow: visible !important;
-            box-sizing: border-box !important;
-          }
-
-          .mv-step7-password-wrap > .mv-step7-password-eye {
-            position: absolute !important;
-            top: 0 !important;
-            right: 4px !important;
-            left: auto !important;
-            bottom: auto !important;
-            transform: none !important;
-
-            width: 40px !important;
-            min-width: 40px !important;
-            max-width: 40px !important;
-
-            height: 46px !important;
-            min-height: 46px !important;
-            max-height: 46px !important;
-
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-
-            padding: 0 !important;
-            margin: 0 !important;
-
-            flex: none !important;
-            box-sizing: border-box !important;
-
-            border: 0 !important;
-            background: transparent !important;
-
-            z-index: 100 !important;
-          }
-
-          .mv-step7-password-wrap > input {
-            position: relative !important;
-            z-index: 1 !important;
-            width: 100% !important;
-            height: 46px !important;
-            padding-right: 45px !important;
-            box-sizing: border-box !important;
-          }
-
-          .mv-step7-password-wrap > .mv-step7-password-eye svg {
-            position: relative !important;
-            display: block !important;
-            flex: none !important;
-            width: 18px !important;
-            height: 18px !important;
-          }
-        }
 
 `}
 
