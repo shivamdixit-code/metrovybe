@@ -1126,7 +1126,35 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
         }
 
         @media (max-width: 700px) {
-          .mv-step5-search {
+          .mv-step5-search-input {
+            position: relative !important;
+          }
+
+          .mv-step5-search-clear {
+            position: absolute !important;
+            top: 50% !important;
+            right: 6px !important;
+            left: auto !important;
+            bottom: auto !important;
+            transform: translateY(-50%) !important;
+
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+
+            flex: none !important;
+            width: 22px !important;
+            min-width: 22px !important;
+            max-width: 22px !important;
+            height: 22px !important;
+            min-height: 22px !important;
+            max-height: 22px !important;
+
+            margin: 0 !important;
+            padding: 0 !important;
+            z-index: 50 !important;
+          }
+
             padding: 7px;
           }
 
@@ -1175,14 +1203,23 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
           }
 
           .mv-step5-search-clear {
-            flex: 0 0 22px !important;
+            position: absolute !important;
+            top: 50% !important;
+            right: 6px !important;
+            left: auto !important;
+            transform: translateY(-50%) !important;
+            flex: none !important;
             width: 22px !important;
             min-width: 22px !important;
             max-width: 22px !important;
             height: 22px !important;
+            min-height: 22px !important;
+            max-height: 22px !important;
+            margin: 0 !important;
+            padding: 0 !important;
             font-size: 18px !important;
             line-height: 22px !important;
-            margin: 0 !important;
+            z-index: 50 !important;
           }
 
           .mv-step5-search-button {
