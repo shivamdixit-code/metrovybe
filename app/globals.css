@@ -9010,3 +9010,22 @@ body {
   border-color: #14532D !important;
 }
 
+
+/* IPHONE ONLY — ONE APP, ALL VYBES ON ONE LINE */
+@media (max-width: 600px) {
+  .hero .hero-title {
+    white-space: nowrap !important;
+    font-size: clamp(30px, 10vw, 44px) !important;
+    letter-spacing: -1.8px !important;
+    line-height: 1 !important;
+  }
+
+  .hero .hero-title span {
+    display: inline !important;
+  }
+
+  .hero .hero-title span + span {
+    margin-top: 0 !important;
+  }
+}
+
