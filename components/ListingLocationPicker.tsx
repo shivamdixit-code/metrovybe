@@ -427,6 +427,10 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
                 }
               }}
               placeholder="Search your business address"
+              style={{
+                paddingRight: "38px",
+                boxSizing: "border-box",
+              }}
             />
 
             {search && (
@@ -436,7 +440,7 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
                 aria-label="Clear search"
                 style={{
                   position: "absolute",
-                  right: "8px",
+                  right: "6px",
                   top: "50%",
                   transform: "translateY(-50%)",
                   width: "22px",
@@ -601,6 +605,7 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
         }
 
         .mv-step5-search-input {
+          position: relative;
           flex: 1;
           min-width: 0;
           height: 40px;
@@ -1009,6 +1014,7 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
           position: relative;
           min-width: 0;
           flex: 1 1 auto;
+          width: 0;
         }
 
         .mv-step5-search-box {
