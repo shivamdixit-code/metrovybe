@@ -4,13 +4,18 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
+  Bell,
   Bookmark,
   CalendarDays,
   ChevronRight,
   Heart,
+  HelpCircle,
   LogOut,
   MapPin,
+  Pencil,
+  Search,
   Settings,
+  ShieldCheck,
   Sparkles,
   UserRound,
 } from "lucide-react";
@@ -49,6 +54,7 @@ export default function Profile() {
   const handleLogout = () => {
     setLoggingOut(true);
     logout();
+    window.dispatchEvent(new Event("metrovybe-auth-changed"));
     router.replace("/login");
   };
 
@@ -56,11 +62,12 @@ export default function Profile() {
     return (
       <div className="page">
         <Header />
+
         <main className="shell inner profile-page">
           <section
             className="profile-top"
             style={{
-              minHeight: 220,
+              minHeight: 240,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -72,13 +79,15 @@ export default function Profile() {
             </div>
           </section>
         </main>
+
         <BottomNav active="profile" />
       </div>
     );
   }
 
   const displayName = user.name?.trim() || "Customer";
-  const firstName = displayName.split(" ")[0] || "Customer";
+  const firstName = displayName.split(/\s+/)[0] || "Customer";
+
   const initials =
     displayName
       .split(/\s+/)
@@ -92,23 +101,55 @@ export default function Profile() {
       <Header />
 
       <main className="shell inner profile-page">
-        <section className="profile-top">
-          <div className="profile-top-copy">
+        {/* PREMIUM PROFILE HERO */}
+        <section
+          className="profile-top"
+          style={{
+            position: "relative",
+            overflow: "hidden",
+            borderRadius: 28,
+            padding: "34px 34px 30px",
+          }}
+        >
+          <div
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              width: 220,
+              height: 220,
+              borderRadius: "50%",
+              right: -80,
+              top: -100,
+              background: "rgba(0, 230, 118, 0.12)",
+              filter: "blur(2px)",
+              pointerEvents: "none",
+            }}
+          />
+
+          <div className="profile-top-copy" style={{ position: "relative" }}>
             <span className="profile-kicker">MY METROVYBE</span>
 
-            <h1>
-              Your city,
+            <h1 style={{ letterSpacing: "-0.055em" }}>
+              Hey {firstName},
               <br />
-              <em>your space.</em>
+              <em>your city awaits.</em>
             </h1>
 
-            <p>
-              Everything you love, book and discover around your city — all in
-              one place.
+            <p style={{ maxWidth: 560 }}>
+              Your favourite places, bookings and everyday city discoveries —
+              all in one space.
             </p>
           </div>
 
-          <div className="profile-person">
+          <div
+            className="profile-person"
+            style={{
+              position: "relative",
+              marginTop: 28,
+              paddingTop: 22,
+              borderTop: "1px solid rgba(17,17,17,0.1)",
+            }}
+          >
             <div
               className="profile-avatar-large"
               aria-label={`${displayName} profile`}
@@ -126,7 +167,7 @@ export default function Profile() {
             </div>
 
             <div className="profile-person-info">
-              <strong>Welcome back, {firstName}</strong>
+              <strong>{displayName}</strong>
               <span>{user.email}</span>
             </div>
 
@@ -135,52 +176,91 @@ export default function Profile() {
               className="profile-settings-button"
               aria-label="Account settings"
               title="Account settings"
-              onClick={() => {
-                const account = document.querySelector(".profile-account");
-                account?.scrollIntoView({
-                  behavior: "smooth",
-                  block: "start",
-                });
-              }}
+              onClick={() => router.push("/profile/settings")}
             >
               <Settings size={19} />
             </button>
           </div>
         </section>
 
-        <section className="profile-stats">
-          <Link href="/bookings" className="profile-stat">
-            <div className="profile-stat-icon green">
-              <CalendarDays size={20} />
-            </div>
-
+        {/* ACTIVITY */}
+        <section style={{ marginTop: 34 }}>
+          <div className="profile-heading-row">
             <div>
-              <strong>Bookings</strong>
-              <span>View your bookings</span>
+              <span className="profile-kicker dark">YOUR ACTIVITY</span>
+              <h2>Keep track of your vybe.</h2>
             </div>
+          </div>
 
-            <ChevronRight size={18} />
-          </Link>
+          <div
+            className="profile-stats"
+            style={{
+              marginTop: 18,
+              gap: 16,
+            }}
+          >
+            <Link
+              href="/bookings"
+              className="profile-stat"
+              style={{
+                minHeight: 112,
+                borderRadius: 22,
+              }}
+            >
+              <div
+                className="profile-stat-icon green"
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 16,
+                }}
+              >
+                <CalendarDays size={21} />
+              </div>
 
-          <Link href="/saved" className="profile-stat">
-            <div className="profile-stat-icon yellow">
-              <Bookmark size={20} />
-            </div>
+              <div>
+                <strong>Bookings</strong>
+                <span>Upcoming & past plans</span>
+              </div>
 
-            <div>
-              <strong>Saved</strong>
-              <span>Your favourite places</span>
-            </div>
+              <ChevronRight size={19} />
+            </Link>
 
-            <ChevronRight size={18} />
-          </Link>
+            <Link
+              href="/saved"
+              className="profile-stat"
+              style={{
+                minHeight: 112,
+                borderRadius: 22,
+              }}
+            >
+              <div
+                className="profile-stat-icon yellow"
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 16,
+                }}
+              >
+                <Bookmark size={21} />
+              </div>
+
+              <div>
+                <strong>Saved</strong>
+                <span>Places worth coming back to</span>
+              </div>
+
+              <ChevronRight size={19} />
+            </Link>
+          </div>
         </section>
 
-        <section className="profile-discover">
+        {/* DISCOVER */}
+        <section className="profile-discover" style={{ marginTop: 42 }}>
           <div className="profile-heading-row">
             <div>
               <span className="profile-kicker dark">DISCOVER</span>
-              <h2>What's your vybe?</h2>
+              <h2>Find your next vybe.</h2>
             </div>
 
             <Link href="/explore" className="profile-see-all">
@@ -188,10 +268,17 @@ export default function Profile() {
             </Link>
           </div>
 
-          <div className="vybe-grid">
+          <div
+            className="vybe-grid"
+            style={{
+              marginTop: 20,
+              gap: 14,
+            }}
+          >
             <Link
               href="/explore?category=stay"
               className="vybe-card stay"
+              style={{ borderRadius: 24 }}
             >
               <div className="vybe-card-top">
                 <span className="vybe-number">01</span>
@@ -210,6 +297,7 @@ export default function Profile() {
             <Link
               href="/explore?category=food"
               className="vybe-card food"
+              style={{ borderRadius: 24 }}
             >
               <div className="vybe-card-top">
                 <span className="vybe-number">02</span>
@@ -228,6 +316,7 @@ export default function Profile() {
             <Link
               href="/explore?category=live"
               className="vybe-card services"
+              style={{ borderRadius: 24 }}
             >
               <div className="vybe-card-top">
                 <span className="vybe-number">03</span>
@@ -243,7 +332,11 @@ export default function Profile() {
               </div>
             </Link>
 
-            <Link href="/explore" className="vybe-card all">
+            <Link
+              href="/explore"
+              className="vybe-card all"
+              style={{ borderRadius: 24 }}
+            >
               <div className="vybe-card-top">
                 <span className="vybe-number">04</span>
                 <span className="vybe-arrow">
@@ -262,131 +355,6 @@ export default function Profile() {
           </div>
         </section>
 
-        <section className="profile-bottom">
-          <div className="profile-account">
-            <div className="profile-heading-row compact">
-              <div>
-                <span className="profile-kicker dark">ACCOUNT</span>
-                <h2>Manage your account</h2>
-              </div>
-            </div>
-
-            <div className="account-menu">
-              <div className="account-menu-item">
-                <span className="account-menu-icon">
-                  <UserRound size={19} />
-                </span>
-
-                <span className="account-menu-copy">
-                  <strong>{displayName}</strong>
-                  <small>{user.email}</small>
-                </span>
-              </div>
-
-              {user.phone && (
-                <div className="account-menu-item">
-                  <span className="account-menu-icon">
-                    <MapPin size={19} />
-                  </span>
-
-                  <span className="account-menu-copy">
-                    <strong>WhatsApp / Phone</strong>
-                    <small>{user.phone}</small>
-                  </span>
-                </div>
-              )}
-
-              <Link href="/saved" className="account-menu-item">
-                <span className="account-menu-icon">
-                  <Heart size={19} />
-                </span>
-
-                <span className="account-menu-copy">
-                  <strong>Favourite places</strong>
-                  <small>Your saved listings</small>
-                </span>
-
-                <ChevronRight size={18} />
-              </Link>
-
-              <Link href="/bookings" className="account-menu-item">
-                <span className="account-menu-icon">
-                  <CalendarDays size={19} />
-                </span>
-
-                <span className="account-menu-copy">
-                  <strong>Booking history</strong>
-                  <small>Past and upcoming bookings</small>
-                </span>
-
-                <ChevronRight size={18} />
-              </Link>
-
-              <Link href="/explore" className="account-menu-item">
-                <span className="account-menu-icon">
-                  <MapPin size={19} />
-                </span>
-
-                <span className="account-menu-copy">
-                  <strong>Explore nearby</strong>
-                  <small>Discover services around you</small>
-                </span>
-
-                <ChevronRight size={18} />
-              </Link>
-
-              <button
-                type="button"
-                className="account-menu-item"
-                onClick={handleLogout}
-                disabled={loggingOut}
-                style={{
-                  width: "100%",
-                  border: 0,
-                  cursor: loggingOut ? "wait" : "pointer",
-                  font: "inherit",
-                  textAlign: "left",
-                  background: "transparent",
-                }}
-              >
-                <span className="account-menu-icon">
-                  <LogOut size={19} />
-                </span>
-
-                <span className="account-menu-copy">
-                  <strong>{loggingOut ? "Logging out..." : "Log out"}</strong>
-                  <small>Sign out of your MetroVybe account</small>
-                </span>
-
-                <ChevronRight size={18} />
-              </button>
-            </div>
-          </div>
-
-          <div className="business-card">
-            <div className="business-card-glow"></div>
-
-            <div className="business-card-content">
-              <span className="profile-kicker">FOR LOCAL BUSINESSES</span>
-
-              <h2>
-                Turn your service
-                <br />
-                into a <em>destination.</em>
-              </h2>
-
-              <p>
-                Get discovered by people searching for services around your
-                neighbourhood.
-              </p>
-
-              <Link href="/list" className="business-button">
-                List your service
-                <ArrowRight size={17} />
-              </Link>
-            </div>
-          </div>
-        </section>
       </main>
 
       <BottomNav active="profile" />
