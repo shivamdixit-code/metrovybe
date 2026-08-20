@@ -23,9 +23,9 @@ export default async function Home() {
      <div className="hero-content">
       <span className="eyebrow">EVERYTHING YOU NEED</span>
 
-      <h1 className="hero-title"><span>ONE APP.</span><span>ALL VYBES.</span></h1>
+      <h1 className="hero-title"><span>ONE APP,</span><span>ALL VYBES.</span></h1>
 
-      <p className="hero-copy">
+      <p className="hero-copy" style={{ color: "#ffffff", textShadow: "1px 1px 1px rgba(0,0,0,0.75)" }}>
        PGs, tiffin, laundry, movers, parking & more.
        <br/>
        Discover trusted services near you.

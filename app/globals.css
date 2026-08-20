@@ -8671,3 +8671,342 @@ body {
 
 }
 
+
+/* ===== MOBILE GIRL → NAV BAR POSITION ===== */
+/* Mobile only — desktop completely untouched */
+
+@media (max-width: 600px) {
+  .hero-art {
+    transform: translateY(-55px) !important;
+  }
+
+  .hero-art img,
+  .hero-art .person,
+  .hero-art .hero-girl {
+    transform: translateY(-55px) !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .hero-art {
+    transform: translateY(-45px) !important;
+  }
+
+  .hero-art img,
+  .hero-art .person,
+  .hero-art .hero-girl {
+    transform: translateY(-45px) !important;
+  }
+}
+
+
+/* ===== MOBILE HERO TITLE — SLIGHTLY SMALLER ===== */
+@media (max-width: 600px) {
+  .hero .hero-title,
+  .hero h1 {
+    font-size: 52px !important;
+    line-height: .84 !important;
+    letter-spacing: -2.4px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .hero .hero-title,
+  .hero h1 {
+    font-size: 48px !important;
+  }
+}
+
+
+/* ===== MOBILE HERO DESCRIPTION — WHITE ===== */
+@media (max-width: 600px) {
+  .hero-copy > p {
+    color: #fff !important;
+  }
+
+  .hero-copy p {
+    color: #fff !important;
+  }
+}
+
+
+/* FIX: MetroVybe hero subtitle — force white */
+.mv-hero-subtitle,
+.mv-hero-subtitle * {
+  color: #fff !important;
+}
+\n
+/* FIX: hero-copy text white */
+.hero-copy,
+.hero-copy * {
+  color: #ffffff !important;
+}
+\n
+
+
+
+
+
+
+
+
+
+/* HERO TITLE — ORIGINAL GOLD */
+.hero-title span {
+  color: #D4AF37 !important;
+  -webkit-text-fill-color: #D4AF37 !important;
+}
+
+/* MOBILE: BLACK GIRL BEHIND HERO CONTENT */
+@media (max-width: 600px) {
+  .hero {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    position: relative;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 5 !important;
+  }
+
+  .hero-art-new {
+    position: absolute !important;
+    z-index: 2 !important;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100% !important;
+    height: 300px !important;
+    margin: 0 !important;
+    pointer-events: none;
+  }
+
+  .hero-girl {
+    position: relative;
+    z-index: 2 !important;
+  }
+}
+
+
+/* MOBILE: BLACK CIRCLE TO BOTTOM-RIGHT CORNER */
+@media (max-width: 600px) {
+  .hero::before {
+    /* keep the phone/card decoration unchanged */
+  }
+
+  .hero > .home-hero-white-circle {
+    width: 420px !important;
+    height: 420px !important;
+    right: -190px !important;
+    top: auto !important;
+    bottom: -190px !important;
+    opacity: .96 !important;
+    border-radius: 50% !important;
+    transform: none !important;
+    background: #111 !important;
+  }
+}
+
+
+/* MOBILE: MOVE HERO GIRL DOWN */
+@media (max-width: 600px) {
+  .hero-girl {
+    transform: translateY(35px) !important;
+  }
+}
+
+
+/* MOBILE: HERO GIRL TOUCHES BOTTOM */
+@media (max-width: 600px) {
+  .hero-art-new {
+    align-items: flex-end !important;
+  }
+
+  .hero-girl {
+    transform: none !important;
+    margin-bottom: 0 !important;
+  }
+}
+
+
+/* MOBILE: RESTORE HERO GIRL TO ORIGINAL POSITION */
+@media (max-width: 600px) {
+  .hero-art-new {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+    height: 300px !important;
+    min-height: 300px !important;
+    margin-top: 8px !important;
+    margin-bottom: 0 !important;
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+  }
+
+  .hero-girl {
+    position: relative !important;
+    transform: none !important;
+    width: min(90%, 355px) !important;
+    max-height: 315px !important;
+    margin: 0 auto !important;
+  }
+}
+
+
+/* MOBILE: HIDE TOP BLACK CIRCLE */
+@media (max-width: 600px) {
+  .home-hero-green-circle {
+    display: none !important;
+  }
+}
+
+
+/* MOBILE: GIRL BOTTOM EDGE ALIGNS WITH NAV BAR TOP */
+@media (max-width: 600px) {
+  .hero-girl {
+    transform: translateY(-65px) !important;
+  }
+}
+
+
+/* MOBILE: RESTORE GIRL POSITION */
+@media (max-width: 600px) {
+  .hero-girl {
+    transform: none !important;
+  }
+}
+
+
+/* MOBILE ONLY: ONE APP, ALL VYBES ON ONE LINE */
+@media (max-width: 600px) {
+  .hero-title span {
+    display: inline !important;
+  }
+
+  .hero-title span + span {
+    margin-top: 0 !important;
+  }
+}
+
+
+/* MOBILE ONLY: ONE APP, ALL VYBES ON ONE LINE */
+@media (max-width: 600px) {
+  .hero-title span {
+    display: inline !important;
+  }
+
+  .hero-title span + span {
+    margin-top: 0 !important;
+  }
+}
+
+
+/* EVERYTHING YOU NEED — ORGANIC SHAPE */
+.hero .eyebrow {
+  padding: 8px 16px !important;
+  border: 2px solid #111 !important;
+  border-radius: 18px 28px 22px 30px !important;
+  background: #111 !important;
+  color: #fff !important;
+  transform: rotate(-2deg) !important;
+  box-shadow: 3px 3px 0 #111 !important;
+  position: relative !important;
+}
+
+
+/* EVERYTHING YOU NEED — SHARP GEN-Z TAG */
+.hero .eyebrow {
+  display: inline-block !important;
+  padding: 8px 16px !important;
+  background: #111 !important;
+  color: #fff !important;
+  border: 2px solid #111 !important;
+  border-radius: 0 !important;
+  clip-path: polygon(
+    5% 0,
+    100% 0,
+    94% 100%,
+    0 100%
+  ) !important;
+  transform: rotate(-2deg) !important;
+  box-shadow: 3px 3px 0 #111 !important;
+}
+
+
+/* EVERYTHING YOU NEED — SPEECH BUBBLE */
+.hero .eyebrow {
+  display: inline-block !important;
+  position: relative !important;
+  padding: 8px 16px !important;
+  background: #111 !important;
+  color: #fff !important;
+  border: 2px solid #111 !important;
+  border-radius: 18px !important;
+  transform: rotate(-2deg) !important;
+  box-shadow: 3px 3px 0 #111 !important;
+  margin-bottom: 22px !important;
+}
+
+.hero .eyebrow::after {
+  content: "" !important;
+  position: absolute !important;
+  left: 22px !important;
+  bottom: -9px !important;
+  width: 16px !important;
+  height: 16px !important;
+  background: #111 !important;
+  transform: rotate(45deg) !important;
+  z-index: -1 !important;
+}
+
+
+/* EVERYTHING YOU NEED — SHARP GEN-Z TAG */
+.hero .eyebrow {
+  display: inline-block !important;
+  padding: 8px 16px !important;
+  background: #111 !important;
+  color: #fff !important;
+  border: 2px solid #111 !important;
+  border-radius: 0 !important;
+  clip-path: polygon(
+    5% 0,
+    100% 0,
+    94% 100%,
+    0 100%
+  ) !important;
+  transform: rotate(-2deg) !important;
+  box-shadow: 3px 3px 0 #111 !important;
+}
+
+
+/* EVERYTHING YOU NEED — SHARP GEN-Z TAG + DARK GREEN BORDER */
+.hero .eyebrow {
+  display: inline-block !important;
+  padding: 8px 16px !important;
+  background: #111 !important;
+  color: #fff !important;
+  border: 2px solid #075c45 !important;
+  border-radius: 0 !important;
+  clip-path: polygon(
+    5% 0,
+    100% 0,
+    94% 100%,
+    0 100%
+  ) !important;
+  transform: rotate(-2deg) !important;
+  box-shadow: 3px 3px 0 #111 !important;
+}
+
+
+/* EVERYTHING YOU NEED — MATCH EXPLORE BUTTON GREEN */
+.hero .eyebrow {
+  border-color: #14532D !important;
+}
+
