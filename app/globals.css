@@ -8544,3 +8544,15 @@ body {
   border-color: #0f3d22 !important;
   color: #ffffff !important;
 }
+
+/* ===== SETTINGS EDIT — DARK GREEN BORDER ONLY ===== */
+.settings-page .settings-edit-link {
+  background: transparent !important;
+  border: 2px solid #14532d !important;
+  color: inherit !important;
+}
+
+.settings-page .settings-edit-link:hover {
+  background: transparent !important;
+  border: 2px solid #14532d !important;
+}
