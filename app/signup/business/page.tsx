@@ -1794,32 +1794,7 @@ const documentRequirements = (() => {
                 Password
               </label>
 
-              <div style={passwordWrapperStyle}>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  placeholder="Enter your password"
-                  autoComplete="new-password"
-                  required
-                  style={passwordInputStyle}
-                />
 
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((value) => !value)}
-                  aria-label={
-                    showPassword ? "Hide password" : "Show password"
-                  }
-                  style={eyeButtonStyle}
-                >
-                  {showPassword ? (
-                    <EyeOff size={18} />
-                  ) : (
-                    <Eye size={18} />
-                  )}
-                </button>
-              </div>
             </div>
 
             <div style={fieldGroupStyle}>
@@ -1827,38 +1802,7 @@ const documentRequirements = (() => {
                 Confirm password
               </label>
 
-              <div style={passwordWrapperStyle}>
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  value={confirmPassword}
-                  onChange={(event) =>
-                    setConfirmPassword(event.target.value)
-                  }
-                  placeholder="Confirm your password"
-                  autoComplete="new-password"
-                  required
-                  style={passwordInputStyle}
-                />
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    setShowConfirmPassword((value) => !value)
-                  }
-                  aria-label={
-                    showConfirmPassword
-                      ? "Hide confirm password"
-                      : "Show confirm password"
-                  }
-                  style={eyeButtonStyle}
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff size={18} />
-                  ) : (
-                    <Eye size={18} />
-                  )}
-                </button>
-              </div>
             </div>
 
             <ErrorMessage error={error} />
@@ -2435,58 +2379,8 @@ const inputStyle = {
   boxSizing: "border-box" as const,
 };
 
-const passwordWrapperStyle = {
-  position: "relative" as const,
-  display: "block",
-  width: "100%",
-  height: "46px",
-  margin: 0,
-  padding: 0,
-  boxSizing: "border-box" as const,
-};
 
-const passwordInputStyle = {
-  ...inputStyle,
-  display: "block",
-  width: "100%",
-  height: "46px",
-  padding: "0 46px 0 13px",
-  boxSizing: "border-box" as const,
-  borderRadius: "11px",
-  background: "#FFFFFF",
-  fontSize: "16px",
-};
 
-const eyeButtonStyle = {
-  position: "absolute" as const,
-  top: "0",
-  right: "0",
-  left: "auto",
-  bottom: "auto",
-  width: "46px",
-  height: "46px",
-  minWidth: "46px",
-  maxWidth: "46px",
-  minHeight: "46px",
-  maxHeight: "46px",
-  padding: 0,
-  margin: 0,
-  border: "0",
-  borderRadius: 0,
-  background: "transparent",
-  color: "#777F88",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  boxSizing: "border-box" as const,
-  appearance: "none" as const,
-  WebkitAppearance: "none" as const,
-  WebkitTapHighlightColor: "transparent",
-  outline: "none",
-  cursor: "pointer",
-  touchAction: "manipulation",
-  zIndex: 20,
-};
 
 const continueButtonStyle = {
   width: "100%",
