@@ -8531,3 +8531,16 @@ body {
     margin-bottom: 0 !important;
   }
 }
+
+/* ===== SETTINGS EDIT LINK — DARK GREEN ===== */
+.settings-edit-link {
+  background: #14532d !important;
+  border-color: #14532d !important;
+  color: #ffffff !important;
+}
+
+.settings-edit-link:hover {
+  background: #0f3d22 !important;
+  border-color: #0f3d22 !important;
+  color: #ffffff !important;
+}
