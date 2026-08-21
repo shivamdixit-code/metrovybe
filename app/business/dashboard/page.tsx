@@ -41,19 +41,19 @@ export default function BusinessDashboard() {
           return;
         }
 
-        const [businessResponse, listingsResponse] = await Promise.all([
-          fetch(`${API_URL}/api/business/me`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-
-          fetch(`${API_URL}/api/listings/business/mine`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-        ]);
+        const [businessResponse, listingsResponse] =
+          await Promise.all([
+            fetch(`${API_URL}/api/business/me`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }),
+            fetch(`${API_URL}/api/listings/business/mine`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }),
+          ]);
 
         if (!businessResponse.ok) {
           throw new Error("Unable to load business profile");
@@ -84,285 +84,217 @@ export default function BusinessDashboard() {
 
   if (loading) {
     return (
-      <main style={{ padding: 40 }}>
-        <p>Loading business dashboard...</p>
+      <main className="mv-business-dashboard">
+        <div className="mv-business-loading">
+          <div className="mv-loading-mark">✦</div>
+          <h2>Loading your Vybe...</h2>
+          <p>Getting your business dashboard ready.</p>
+        </div>
       </main>
     );
   }
 
   if (error) {
     return (
-      <main style={{ padding: 40 }}>
-        <h1>Business Dashboard</h1>
-        <p style={{ color: "#c00" }}>{error}</p>
+      <main className="mv-business-dashboard">
+        <div className="mv-business-error">
+          <div className="mv-error-icon">!</div>
+          <h1>Something went wrong.</h1>
+          <p>{error}</p>
+          <Link href="/business/dashboard">
+            Try again →
+          </Link>
+        </div>
       </main>
     );
   }
 
+  const published = listings.filter(
+    (x) => x.status === "published"
+  ).length;
+
+  const pending = listings.filter(
+    (x) => x.status === "pending"
+  ).length;
+
+  const verification =
+    business?.verificationStatus || "pending";
+
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        background: "#f7f8fa",
-        padding: "30px",
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 1200,
-          margin: "0 auto",
-        }}
-      >
-        <header
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: 30,
-          }}
-        >
+    <main className="mv-business-dashboard">
+      <div className="mv-business-shell">
+
+        <header className="mv-business-header">
           <div>
-            <Link
-              href="/"
-              style={{
-                textDecoration: "none",
-                color: "#111",
-                fontSize: 25,
-                fontWeight: 800,
-              }}
-            >
-              metro<span style={{ color: "#29AB87" }}>vybe</span>✦
+            <Link href="/" className="mv-business-logo">
+              metro<span>vybe</span>✦
             </Link>
 
-            <h1 style={{ margin: "18px 0 5px" }}>
-              Business Dashboard
-            </h1>
+            <div className="mv-business-eyebrow">
+              BUSINESS HUB
+            </div>
 
-            <p style={{ color: "#666", margin: 0 }}>
-              Manage your MetroVybe business.
+            <h1>YOUR BUSINESS.<br />YOUR VYBE.</h1>
+
+            <p>
+              Manage your listings and grow your presence
+              on MetroVybe.
             </p>
           </div>
 
-          <Link
-            href="/"
-            style={{
-              padding: "10px 16px",
-              borderRadius: 9,
-              background: "#111",
-              color: "#fff",
-              textDecoration: "none",
-              fontWeight: 600,
-            }}
-          >
-            Back to marketplace
+          <Link href="/" className="mv-business-back">
+            ← Marketplace
           </Link>
         </header>
 
         {business && (
-          <section
-            style={{
-              background: "#fff",
-              borderRadius: 16,
-              padding: 25,
-              marginBottom: 25,
-              boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                gap: 20,
-              }}
-            >
-              <div>
-                <h2 style={{ margin: 0 }}>
-                  {business.businessName}
-                </h2>
-
-                <p style={{ color: "#666" }}>
-                  {business.city || "MetroVybe Business"}
-                </p>
+          <section className="mv-business-profile-card">
+            <div className="mv-business-profile-main">
+              <div className="mv-business-avatar">
+                {business.businessName
+                  ?.charAt(0)
+                  ?.toUpperCase() || "B"}
               </div>
 
-              <span
-                style={{
-                  padding: "8px 14px",
-                  borderRadius: 999,
-                  background:
-                    business.verificationStatus === "verified"
-                      ? "#DDF5EE"
-                      : "#fef3c7",
-                  color:
-                    business.verificationStatus === "verified"
-                      ? "#176B55"
-                      : "#92400e",
-                  fontWeight: 700,
-                  fontSize: 14,
-                }}
-              >
-                {business.verificationStatus || "pending"}
-              </span>
+              <div>
+                <div className="mv-business-small-label">
+                  BUSINESS PROFILE
+                </div>
+
+                <h2>{business.businessName}</h2>
+
+                <p>
+                  {business.category || "MetroVybe Business"}
+                  {business.city
+                    ? ` · ${business.city}`
+                    : ""}
+                </p>
+              </div>
             </div>
+
+            <span
+              className={`mv-business-status ${
+                verification === "verified"
+                  ? "verified"
+                  : "pending"
+              }`}
+            >
+              {verification === "verified"
+                ? "✓ VERIFIED"
+                : "◷ PENDING"}
+            </span>
           </section>
         )}
 
-        <section
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: 18,
-            marginBottom: 30,
-          }}
-        >
-          <div
-            style={{
-              background: "#fff",
-              padding: 22,
-              borderRadius: 15,
-            }}
-          >
-            <p style={{ color: "#777", margin: 0 }}>
-              My Listings
-            </p>
-            <h2 style={{ margin: "8px 0 0" }}>
-              {listings.length}
-            </h2>
+        <section className="mv-business-stats">
+
+          <div className="mv-business-stat green">
+            <span>MY LISTINGS</span>
+            <strong>{listings.length}</strong>
+            <small>Total listings</small>
           </div>
 
-          <div
-            style={{
-              background: "#fff",
-              padding: 22,
-              borderRadius: 15,
-            }}
-          >
-            <p style={{ color: "#777", margin: 0 }}>
-              Published
-            </p>
-            <h2 style={{ margin: "8px 0 0" }}>
-              {listings.filter((x) => x.status === "published").length}
-            </h2>
+          <div className="mv-business-stat cyan">
+            <span>PUBLISHED</span>
+            <strong>{published}</strong>
+            <small>Live on MetroVybe</small>
           </div>
 
-          <div
-            style={{
-              background: "#fff",
-              padding: 22,
-              borderRadius: 15,
-            }}
-          >
-            <p style={{ color: "#777", margin: 0 }}>
-              Pending Review
-            </p>
-            <h2 style={{ margin: "8px 0 0" }}>
-              {listings.filter((x) => x.status === "pending").length}
-            </h2>
+          <div className="mv-business-stat orange">
+            <span>PENDING</span>
+            <strong>{pending}</strong>
+            <small>Awaiting review</small>
           </div>
+
         </section>
 
-        <section
-          style={{
-            background: "#fff",
-            borderRadius: 16,
-            padding: 25,
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: 20,
-            }}
-          >
-            <h2 style={{ margin: 0 }}>My Listings</h2>
+        <section className="mv-business-listings">
+
+          <div className="mv-business-section-head">
+            <div>
+              <div className="mv-business-small-label">
+                YOUR SPACE
+              </div>
+              <h2>MY LISTINGS</h2>
+            </div>
 
             <Link
               href="/business/listings/new"
-              style={{
-                background: "#29AB87",
-                color: "#fff",
-                padding: "11px 16px",
-                borderRadius: 9,
-                textDecoration: "none",
-                fontWeight: 700,
-              }}
+              className="mv-business-add"
             >
-              + Add Listing
+              + ADD LISTING
             </Link>
           </div>
 
           {listings.length === 0 ? (
-            <div
-              style={{
-                padding: 35,
-                textAlign: "center",
-                color: "#777",
-              }}
-            >
-              <p>You don't have any listings yet.</p>
+            <div className="mv-business-empty">
+              <div className="mv-empty-icon">✦</div>
+
+              <h3>No listings yet.</h3>
+
+              <p>
+                Put your business on the MetroVybe map.
+              </p>
 
               <Link
                 href="/business/listings/new"
-                style={{
-                  color: "#29AB87",
-                  fontWeight: 700,
-                }}
+                className="mv-business-add"
               >
-                Create your first listing →
+                CREATE YOUR FIRST LISTING →
               </Link>
             </div>
           ) : (
-            <div style={{ display: "grid", gap: 12 }}>
+            <div className="mv-business-list-grid">
               {listings.map((listing) => (
-                <div
+                <article
                   key={listing._id}
-                  style={{
-                    border: "1px solid #eee",
-                    borderRadius: 12,
-                    padding: 16,
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    gap: 15,
-                  }}
+                  className="mv-business-listing-card"
                 >
-                  <div>
-                    <h3 style={{ margin: "0 0 5px" }}>
-                      {listing.title}
-                    </h3>
+                  <div className="mv-business-listing-top">
+                    <div className="mv-business-listing-icon">
+                      {listing.category === "stay"
+                        ? "🏠"
+                        : listing.category === "eat"
+                        ? "🍴"
+                        : listing.category === "live"
+                        ? "🧺"
+                        : listing.category === "move"
+                        ? "🚚"
+                        : "✦"}
+                    </div>
 
-                    <p
-                      style={{
-                        margin: 0,
-                        color: "#777",
-                        fontSize: 14,
-                      }}
+                    <span
+                      className={`mv-listing-status ${
+                        listing.status === "published"
+                          ? "live"
+                          : "waiting"
+                      }`}
                     >
-                      {listing.location || ""}
-                      {listing.price
-                        ? ` • ${listing.price}`
-                        : ""}
-                    </p>
+                      {listing.status === "published"
+                        ? "LIVE"
+                        : listing.status || "PENDING"}
+                    </span>
                   </div>
 
-                  <span
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 700,
-                      textTransform: "capitalize",
-                    }}
-                  >
-                    {listing.status || "pending"}
-                  </span>
-                </div>
+                  <h3>{listing.title}</h3>
+
+                  <p>
+                    {listing.location ||
+                      "MetroVybe location"}
+                  </p>
+
+                  {listing.price && (
+                    <strong className="mv-listing-price">
+                      {listing.price}
+                    </strong>
+                  )}
+                </article>
               ))}
             </div>
           )}
+
         </section>
+
       </div>
     </main>
   );
