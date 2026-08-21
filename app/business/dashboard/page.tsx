@@ -8,11 +8,30 @@ const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
 
 type Business = {
+  _id?: string;
   businessName: string;
+  description?: string;
   category?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
   city?: string;
+  state?: string;
+  pincode?: string;
+  logo?: string;
+  images?: string[];
   verificationStatus?: string;
+  rejectionReason?: string;
+  verifiedAt?: string | null;
   status?: string;
+  owner?: {
+    _id?: string;
+    name?: string;
+    email?: string;
+    phone?: string;
+    role?: string;
+    status?: string;
+  };
 };
 
 type Listing = {
@@ -28,6 +47,7 @@ type Listing = {
 export default function BusinessDashboard() {
   const [business, setBusiness] = useState<Business | null>(null);
   const [listings, setListings] = useState<Listing[]>([]);
+  const [verification, setVerification] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -42,15 +62,21 @@ export default function BusinessDashboard() {
         }
 
         const [businessResponse, listingsResponse] = await Promise.all([
-          fetch(`${API_URL}/api/business/me`, {
+          fetch(`${API_URL}/api/business/me?_t=${Date.now()}`, {
+            cache: "no-store",
             headers: {
               Authorization: `Bearer ${token}`,
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
             },
           }),
 
-          fetch(`${API_URL}/api/listings/business/mine`, {
+          fetch(`${API_URL}/api/listings/business/mine?_t=${Date.now()}`, {
+            cache: "no-store",
             headers: {
               Authorization: `Bearer ${token}`,
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
             },
           }),
         ]);
@@ -66,8 +92,15 @@ export default function BusinessDashboard() {
         const businessData = await businessResponse.json();
         const listingsData = await listingsResponse.json();
 
+        console.log("===== METROVYBE BUSINESS API =====");
+        console.log("Business:", businessData.business);
+        console.log("Owner:", businessData.business?.owner);
+        console.log("Verification:", businessData.verification);
+        console.log("Listings:", listingsData);
+
         setBusiness(businessData.business);
-        setListings(listingsData);
+        setVerification(businessData.verification || null);
+        setListings(Array.isArray(listingsData) ? listingsData : []);
       } catch (err) {
         setError(
           err instanceof Error
@@ -236,17 +269,25 @@ export default function BusinessDashboard() {
               style={{
                 display: "flex",
                 justifyContent: "space-between",
-                alignItems: "center",
+                alignItems: "flex-start",
                 gap: 20,
+                flexWrap: "wrap",
               }}
             >
               <div>
                 <h2 style={{ margin: 0 }}>
-                  {business.businessName}
+                  {business.businessName || "Business"}
                 </h2>
 
-                <p style={{ color: "#666" }}>
-                  {business.city || "MetroVybe Business"}
+                <p
+                  style={{
+                    color: "#666",
+                    margin: "7px 0 0",
+                    fontWeight: 600,
+                  }}
+                >
+                  {business.category || "Business"}{" "}
+                  {business.city ? `• ${business.city}` : ""}
                 </p>
               </div>
 
@@ -257,17 +298,175 @@ export default function BusinessDashboard() {
                   background:
                     business.verificationStatus === "verified"
                       ? "#DDF5EE"
-                      : "#fef3c7",
+                      : business.verificationStatus === "rejected" ||
+                          business.verificationStatus === "suspended"
+                        ? "#fee2e2"
+                        : "#fef3c7",
                   color:
                     business.verificationStatus === "verified"
                       ? "#176B55"
-                      : "#92400e",
+                      : business.verificationStatus === "rejected" ||
+                          business.verificationStatus === "suspended"
+                        ? "#991b1b"
+                        : "#92400e",
                   fontWeight: 700,
                   fontSize: 14,
+                  textTransform: "capitalize",
                 }}
               >
-                {business.verificationStatus || "pending"}
+                {(business.verificationStatus || "pending").replace(
+                  /_/g,
+                  " "
+                )}
               </span>
+            </div>
+
+            <div
+              style={{
+                marginTop: 24,
+                paddingTop: 20,
+                borderTop: "1px solid #eee",
+                display: "grid",
+                gridTemplateColumns:
+                  "repeat(auto-fit, minmax(220px, 1fr))",
+                gap: 18,
+              }}
+            >
+              <div>
+                <p
+                  style={{
+                    margin: "0 0 5px",
+                    color: "#888",
+                    fontSize: 12,
+                    fontWeight: 800,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Owner
+                </p>
+                <strong>
+                  {business.owner?.name || "—"}
+                </strong>
+              </div>
+
+              <div>
+                <p
+                  style={{
+                    margin: "0 0 5px",
+                    color: "#888",
+                    fontSize: 12,
+                    fontWeight: 800,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Business Email
+                </p>
+                <strong>
+                  {business.email || business.owner?.email || "—"}
+                </strong>
+              </div>
+
+              <div>
+                <p
+                  style={{
+                    margin: "0 0 5px",
+                    color: "#888",
+                    fontSize: 12,
+                    fontWeight: 800,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Phone
+                </p>
+                <strong>
+                  {business.phone || business.owner?.phone || "—"}
+                </strong>
+              </div>
+
+              <div>
+                <p
+                  style={{
+                    margin: "0 0 5px",
+                    color: "#888",
+                    fontSize: 12,
+                    fontWeight: 800,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Category
+                </p>
+                <strong>{business.category || "—"}</strong>
+              </div>
+
+              <div>
+                <p
+                  style={{
+                    margin: "0 0 5px",
+                    color: "#888",
+                    fontSize: 12,
+                    fontWeight: 800,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Address
+                </p>
+                <strong>{business.address || "—"}</strong>
+              </div>
+
+              <div>
+                <p
+                  style={{
+                    margin: "0 0 5px",
+                    color: "#888",
+                    fontSize: 12,
+                    fontWeight: 800,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Location
+                </p>
+                <strong>
+                  {[business.city, business.state, business.pincode]
+                    .filter(Boolean)
+                    .join(", ") || "—"}
+                </strong>
+              </div>
+
+              <div>
+                <p
+                  style={{
+                    margin: "0 0 5px",
+                    color: "#888",
+                    fontSize: 12,
+                    fontWeight: 800,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Account Status
+                </p>
+                <strong style={{ textTransform: "capitalize" }}>
+                  {(business.status || "active").replace(/_/g, " ")}
+                </strong>
+              </div>
+
+              <div>
+                <p
+                  style={{
+                    margin: "0 0 5px",
+                    color: "#888",
+                    fontSize: 12,
+                    fontWeight: 800,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Verification
+                </p>
+                <strong style={{ textTransform: "capitalize" }}>
+                  {(verification?.status ||
+                    business.verificationStatus ||
+                    "pending").replace(/_/g, " ")}
+                </strong>
+              </div>
             </div>
           </section>
         )}
