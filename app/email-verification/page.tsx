@@ -97,29 +97,36 @@ function VerificationContent() {
           boxShadow: "6px 6px 0 #111",
         }}
       >
+                {/* Top brand — exact 404-style logo */}
         <div
           style={{
             display: "inline-flex",
-            alignItems: "center",
-            gap: 7,
-            marginBottom: 20,
-            fontSize: 11,
+            alignItems: "flex-start",
+            textDecoration: "none",
+            color: "#111",
+            fontSize: "30px",
             fontWeight: 900,
-            letterSpacing: "0.13em",
+            letterSpacing: "-1.5px",
+            lineHeight: 1,
+            marginBottom: 30,
           }}
         >
+          metro
+          <span style={{ color: "#29AB87" }}>vybe</span>
           <span
             style={{
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              background: "#29AB87",
-              border: "1.5px solid #111",
-              display: "inline-block",
+              color: "#D4AF37",
+              fontSize: "14px",
+              lineHeight: 1,
+              marginLeft: "2px",
+              marginTop: "2px",
+              fontWeight: 900,
             }}
-          />
-          METROVYBE
+          >
+            ✦
+          </span>
         </div>
+
 
         <div
           style={{
