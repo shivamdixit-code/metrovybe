@@ -28,12 +28,12 @@ function VerificationContent() {
         : "Link not valid.";
 
   const message = isSuccess
-    ? "Your MetroVybe email has been verified successfully. Your account is ready to go."
+    ? "Your MetroVybe email is verified. Your account is ready to go."
     : isAlreadyVerified
-      ? "This email address has already been verified. You can safely continue to your account."
+      ? "This email is already verified. You can safely continue to your account."
       : isExpired
-        ? "This verification link has expired. Please request a new verification email."
-        : "This verification link is invalid or has already been used. Please request a new verification email.";
+        ? "This verification link has expired. Please request a new one."
+        : "This verification link is invalid or has already been used.";
 
   const eyebrow = isSuccess
     ? "VERIFICATION COMPLETE"
@@ -43,6 +43,16 @@ function VerificationContent() {
         ? "VERIFICATION EXPIRED"
         : "VERIFICATION ERROR";
 
+  const icon = isSuccess ? (
+    <CheckCircle2 size={30} strokeWidth={2.7} />
+  ) : isAlreadyVerified ? (
+    <ShieldCheck size={30} strokeWidth={2.5} />
+  ) : isExpired ? (
+    <Mail size={29} strokeWidth={2.4} />
+  ) : (
+    <CircleAlert size={30} strokeWidth={2.5} />
+  );
+
   return (
     <main
       style={{
@@ -51,30 +61,13 @@ function VerificationContent() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: "28px 18px",
+        padding: "20px 16px",
         background: "#f5f5f0",
         position: "relative",
         overflow: "hidden",
         fontFamily: "Arial, sans-serif",
       }}
     >
-      {/* Decorative MetroVybe background */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          width: 360,
-          height: 360,
-          borderRadius: "50%",
-          background: isSuccess
-            ? "rgba(0,230,118,0.14)"
-            : "rgba(167,139,250,0.12)",
-          top: -190,
-          right: -150,
-          pointerEvents: "none",
-        }}
-      />
-
       <div
         aria-hidden="true"
         style={{
@@ -82,9 +75,11 @@ function VerificationContent() {
           width: 260,
           height: 260,
           borderRadius: "50%",
-          background: "rgba(85,230,232,0.10)",
-          bottom: -150,
-          left: -120,
+          background: isSuccess
+            ? "rgba(0,230,118,0.10)"
+            : "rgba(167,139,250,0.08)",
+          top: -145,
+          right: -125,
           pointerEvents: "none",
         }}
       />
@@ -92,87 +87,75 @@ function VerificationContent() {
       <section
         style={{
           width: "100%",
-          maxWidth: 560,
+          maxWidth: 430,
           position: "relative",
           background: "#fff",
           border: "2px solid #111",
-          borderRadius: 30,
-          padding: "clamp(30px, 7vw, 54px) clamp(22px, 6vw, 46px)",
+          borderRadius: 22,
+          padding: "28px 24px 24px",
           textAlign: "center",
-          boxShadow: "9px 9px 0 #111",
+          boxShadow: "6px 6px 0 #111",
         }}
       >
-        {/* Top brand */}
         <div
           style={{
             display: "inline-flex",
             alignItems: "center",
-            gap: 8,
-            marginBottom: 30,
-            fontSize: 13,
+            gap: 7,
+            marginBottom: 20,
+            fontSize: 11,
             fontWeight: 900,
-            letterSpacing: "0.14em",
+            letterSpacing: "0.13em",
           }}
         >
           <span
             style={{
-              width: 10,
-              height: 10,
+              width: 8,
+              height: 8,
               borderRadius: "50%",
               background: "#00E676",
-              border: "2px solid #111",
+              border: "1.5px solid #111",
               display: "inline-block",
             }}
           />
           METROVYBE
         </div>
 
-        {/* Status icon */}
         <div
           style={{
-            width: 88,
-            height: 88,
-            margin: "0 auto 25px",
-            borderRadius: 26,
+            width: 58,
+            height: 58,
+            margin: "0 auto 18px",
+            borderRadius: 17,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            background: isSuccess ? "#00E676" : "#f1f1ed",
+            background: isSuccess ? "#00E676" : "#f2f2ed",
             border: "2px solid #111",
-            boxShadow: "5px 5px 0 #111",
+            boxShadow: "3px 3px 0 #111",
           }}
         >
-          {isSuccess ? (
-            <CheckCircle2 size={44} strokeWidth={2.5} />
-          ) : isExpired ? (
-            <Mail size={42} strokeWidth={2.3} />
-          ) : isAlreadyVerified ? (
-            <ShieldCheck size={42} strokeWidth={2.3} />
-          ) : (
-            <CircleAlert size={44} strokeWidth={2.3} />
-          )}
+          {icon}
         </div>
 
-        {/* Eyebrow */}
         <div
           style={{
-            fontSize: 11,
+            fontSize: 9,
             fontWeight: 900,
-            letterSpacing: "0.15em",
-            marginBottom: 13,
-            color: "#666",
+            letterSpacing: "0.14em",
+            color: "#777",
+            marginBottom: 8,
           }}
         >
           {eyebrow}
         </div>
 
-        {/* Main heading */}
         <h1
           style={{
             margin: 0,
-            fontSize: "clamp(38px, 9vw, 64px)",
-            lineHeight: 0.91,
-            letterSpacing: "-0.065em",
+            fontSize: "clamp(31px, 7vw, 43px)",
+            lineHeight: 0.96,
+            letterSpacing: "-0.055em",
             fontWeight: 950,
             color: "#111",
           }}
@@ -180,56 +163,53 @@ function VerificationContent() {
           {title}
         </h1>
 
-        {/* Message */}
         <p
           style={{
-            margin: "25px auto 32px",
-            maxWidth: 430,
-            color: "#5f5f5f",
-            fontSize: 16,
-            lineHeight: 1.6,
+            margin: "16px auto 22px",
+            maxWidth: 350,
+            color: "#666",
+            fontSize: 14,
+            lineHeight: 1.5,
           }}
         >
           {message}
         </p>
 
-        {/* Action */}
         <Link
           href="/login"
           style={{
             display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",
-            gap: 10,
+            gap: 8,
             width: "100%",
-            maxWidth: 280,
-            minHeight: 54,
-            padding: "0 22px",
-            borderRadius: 15,
+            minHeight: 46,
+            padding: "0 18px",
+            borderRadius: 12,
             background: "#111",
             color: "#fff",
             textDecoration: "none",
             fontWeight: 900,
-            fontSize: 15,
+            fontSize: 14,
             border: "2px solid #111",
-            boxShadow: "4px 4px 0 #00E676",
+            boxShadow: "3px 3px 0 #00E676",
           }}
         >
           {isSuccess || isAlreadyVerified
             ? "Continue to login"
             : "Back to login"}
-          <ArrowRight size={19} strokeWidth={2.7} />
+          <ArrowRight size={17} strokeWidth={2.7} />
         </Link>
 
-        {/* Bottom micro copy */}
         <div
           style={{
-            marginTop: 28,
-            paddingTop: 18,
-            borderTop: "1px solid #e5e5e0",
-            color: "#999",
-            fontSize: 12,
-            lineHeight: 1.5,
+            marginTop: 18,
+            paddingTop: 13,
+            borderTop: "1px solid #e8e8e3",
+            color: "#aaa",
+            fontSize: 9,
+            fontWeight: 800,
+            letterSpacing: "0.08em",
           }}
         >
           YOUR CITY. YOUR VYBE.
