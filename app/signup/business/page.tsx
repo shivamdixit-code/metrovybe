@@ -268,6 +268,10 @@ function BusinessSignupPageContent() {
         setLocationConfirmed(draft.locationConfirmed);
       }
 
+      if (typeof draft.phoneVerified === "boolean") {
+        setPhoneVerified(draft.phoneVerified);
+      }
+
       businessSignupDraftRestored.current = true;
     } catch {
       businessSignupDraftRestored.current = true;
@@ -295,6 +299,7 @@ function BusinessSignupPageContent() {
           latitude,
           longitude,
           locationConfirmed,
+          phoneVerified,
         })
       );
     } catch {
@@ -316,6 +321,7 @@ function BusinessSignupPageContent() {
     latitude,
     longitude,
     locationConfirmed,
+    phoneVerified,
   ]);
 
   const countryName = COUNTRY_NAMES[country];
@@ -601,6 +607,14 @@ function BusinessSignupPageContent() {
         throw new Error(data.message || "Registration failed.");
       }
 
+      const registrationToken = data.token;
+
+      if (!registrationToken) {
+        throw new Error(
+          "Account was created, but authentication token was not returned."
+        );
+      }
+
       const uploadedDocuments = documents
         .filter((document) => document.fileUrl)
         .map((document) => ({
@@ -624,8 +638,8 @@ function BusinessSignupPageContent() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${registrationToken}`,
           },
-          credentials: "include",
           body: JSON.stringify({
             documents: uploadedDocuments,
           }),
