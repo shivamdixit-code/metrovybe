@@ -859,7 +859,8 @@ const documentRequirements = (() => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              marginBottom: "12px",
+              marginTop: "-6px",
+              marginBottom: "4px",
               minWidth: 0,
             }}
           >
