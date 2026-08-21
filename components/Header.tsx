@@ -71,7 +71,7 @@ export function Header() {
         </div>
 
         <div className="header-actions">
-          {user ? (
+          {user?.role === "admin" ? null : user ? (
             <Link href={profileHref} className="btn">
               <UserRound
                 size={17}
