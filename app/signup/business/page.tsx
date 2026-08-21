@@ -212,8 +212,17 @@ function BusinessSignupPageContent() {
   } | null>(null);
 
   const [documents, setDocuments] = useState<
-    { name: string; file: File }[]
+    {
+      name: string;
+      file: File;
+      fileUrl?: string;
+      publicId?: string;
+      documentType?: string;
+      uploading?: boolean;
+    }[]
   >([]);
+
+  const [documentsUploading, setDocumentsUploading] = useState(false);
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -495,12 +504,40 @@ function BusinessSignupPageContent() {
     setStep(5);
   }
 
+  async function uploadBusinessDocument(file: File) {
+    const formData = new FormData();
+    formData.append("document", file);
+
+    const response = await fetch(`${API_URL}/api/upload/document`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success || !data.url) {
+      throw new Error(data.message || "Document upload failed.");
+    }
+
+    return data;
+  }
+
   function validateDocuments(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
 
+    if (documentsUploading) {
+      setError("Please wait until all documents finish uploading.");
+      return;
+    }
+
     if (documents.length === 0) {
       setError("Please upload at least one business document.");
+      return;
+    }
+
+    if (documents.some((document) => !document.fileUrl)) {
+      setError("Please wait until all documents finish uploading.");
       return;
     }
 
@@ -562,6 +599,45 @@ function BusinessSignupPageContent() {
 
       if (!response.ok) {
         throw new Error(data.message || "Registration failed.");
+      }
+
+      const uploadedDocuments = documents
+        .filter((document) => document.fileUrl)
+        .map((document) => ({
+          documentType:
+            document.documentType ||
+            document.name
+              .replace(/\.[^/.]+$/, "")
+              .trim()
+              .toLowerCase(),
+          fileUrl: document.fileUrl,
+          documentNumber: "",
+        }));
+
+      if (uploadedDocuments.length === 0) {
+        throw new Error("Please upload at least one business document.");
+      }
+
+      const verificationResponse = await fetch(
+        `${API_URL}/api/business/verification`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            documents: uploadedDocuments,
+          }),
+        }
+      );
+
+      const verificationData = await verificationResponse.json();
+
+      if (!verificationResponse.ok) {
+        throw new Error(
+          verificationData.message || "Business verification submission failed."
+        );
       }
 
       setSuccess("Business account created successfully!");
@@ -1593,38 +1669,85 @@ const documentRequirements = (() => {
                 multiple
                 accept=".pdf,.jpg,.jpeg,.png"
                 disabled={documents.length >= 5}
-                onChange={(e) => {
+                onChange={async (e) => {
                   const files = Array.from(e.target.files || []);
-
-                  setDocuments((current) => {
-                    const existing = new Set(current.map((item) => item.name));
-
-                    const newFiles = files
-                      .filter((file) => !existing.has(file.name))
-                      .map((file) => ({
-                        name: file.name,
-                        file,
-                      }));
-
-                    const remaining = 5 - current.length;
-
-                    if (remaining <= 0) {
-                      setError("You can upload a maximum of 5 documents.");
-                      return current;
-                    }
-
-                    if (newFiles.length > remaining) {
-                      setError(
-                        `You can upload a maximum of 5 documents. ${remaining} more can be added.`
-                      );
-                    } else {
-                      setError("");
-                    }
-
-                    return [...current, ...newFiles.slice(0, remaining)];
-                  });
-
                   e.currentTarget.value = "";
+
+                  if (!files.length) return;
+
+                  setError("");
+
+                  const currentNames = new Set(
+                    documents.map((item) => item.name)
+                  );
+
+                  const uniqueFiles = files.filter(
+                    (file) => !currentNames.has(file.name)
+                  );
+
+                  const remaining = 5 - documents.length;
+
+                  if (remaining <= 0) {
+                    setError("You can upload a maximum of 5 documents.");
+                    return;
+                  }
+
+                  if (uniqueFiles.length > remaining) {
+                    setError(
+                      `You can upload a maximum of 5 documents. ${remaining} more can be added.`
+                    );
+                  }
+
+                  const filesToUpload = uniqueFiles.slice(0, remaining);
+
+                  if (!filesToUpload.length) return;
+
+                  setDocumentsUploading(true);
+
+                  const placeholders = filesToUpload.map((file) => ({
+                    name: file.name,
+                    file,
+                    uploading: true,
+                  }));
+
+                  setDocuments((current) => [...current, ...placeholders]);
+
+                  try {
+                    for (const file of filesToUpload) {
+                      try {
+                        const uploaded = await uploadBusinessDocument(file);
+
+                        setDocuments((current) =>
+                          current.map((item) =>
+                            item.name === file.name && item.file === file
+                              ? {
+                                  ...item,
+                                  fileUrl: uploaded.url,
+                                  publicId: uploaded.public_id,
+                                  documentType: uploaded.format || file.type,
+                                  uploading: false,
+                                }
+                              : item
+                          )
+                        );
+                      } catch (uploadError) {
+                        setDocuments((current) =>
+                          current.filter(
+                            (item) =>
+                              !(item.name === file.name && item.file === file)
+                          )
+                        );
+
+                        setError(
+                          uploadError instanceof Error
+                            ? uploadError.message
+                            : `Failed to upload ${file.name}.`
+                        );
+                      }
+                    }
+                  } finally {
+                    setDocumentsUploading(false);
+                  }
                 }}
                 style={{ display: "none" }}
               />
@@ -1727,7 +1850,11 @@ const documentRequirements = (() => {
                             fontWeight: 700,
                           }}
                         >
-                          Ready to upload
+                          {document.uploading
+                            ? "Uploading..."
+                            : document.fileUrl
+                              ? "Uploaded successfully"
+                              : "Upload failed"}
                         </div>
                       </div>
 
