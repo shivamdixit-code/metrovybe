@@ -113,7 +113,7 @@ function VerificationContent() {
               width: 8,
               height: 8,
               borderRadius: "50%",
-              background: "#00E676",
+              background: "#29AB87",
               border: "1.5px solid #111",
               display: "inline-block",
             }}
@@ -130,7 +130,7 @@ function VerificationContent() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            background: isSuccess ? "#00E676" : "#f2f2ed",
+            background: isSuccess ? "#29AB87" : "#f2f2ed",
             border: "2px solid #111",
             boxShadow: "3px 3px 0 #111",
           }}
@@ -192,7 +192,7 @@ function VerificationContent() {
             fontWeight: 900,
             fontSize: 14,
             border: "2px solid #111",
-            boxShadow: "3px 3px 0 #00E676",
+            boxShadow: "3px 3px 0 #29AB87",
           }}
         >
           {isSuccess || isAlreadyVerified
