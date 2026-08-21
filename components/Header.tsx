@@ -33,14 +33,14 @@ export function Header() {
 
   const profileHref =
     user?.role === "business"
-      ? "/business/dashboard"
+      ? "/business/account"
       : user?.role === "admin"
         ? "/admin"
         : "/profile";
 
   const profileLabel =
     user?.role === "business"
-      ? "Dashboard"
+      ? "Account"
       : user?.role === "admin"
         ? "Admin"
         : "Profile";

@@ -4,17 +4,53 @@ import Link from "next/link";
 import {
   Home,
   Search,
-  Plus,
   Heart,
   User,
+  LayoutDashboard,
+  List,
+  MessageSquare,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getToken, getUser, type AuthUser } from "@/lib/auth";
 
 type BottomNavProps = {
-  active?: "home" | "explore" | "list" | "saved" | "profile";
+  active?:
+    | "home"
+    | "explore"
+    | "list"
+    | "saved"
+    | "profile"
+    | "dashboard"
+    | "enquiries"
+    | "account"
+    | "bookings";
 };
 
 export function BottomNav({ active = "home" }: BottomNavProps) {
-  const items = [
+  const [user, setUser] = useState<AuthUser | null>(null);
+
+  useEffect(() => {
+    const syncAuth = () => {
+      const token = getToken();
+      const currentUser = getUser();
+
+      setUser(token && currentUser ? currentUser : null);
+    };
+
+    syncAuth();
+
+    window.addEventListener("storage", syncAuth);
+    window.addEventListener("metrovybe-auth-changed", syncAuth);
+
+    return () => {
+      window.removeEventListener("storage", syncAuth);
+      window.removeEventListener("metrovybe-auth-changed", syncAuth);
+    };
+  }, []);
+
+  const isBusiness = user?.role === "business";
+
+  const customerItems = [
     {
       id: "home",
       label: "Home",
@@ -28,10 +64,10 @@ export function BottomNav({ active = "home" }: BottomNavProps) {
       icon: Search,
     },
     {
-      id: "list",
-      label: "List",
-      href: "/list",
-      icon: Plus,
+      id: "bookings",
+      label: "Bookings",
+      href: "/bookings",
+      icon: List,
     },
     {
       id: "saved",
@@ -42,10 +78,45 @@ export function BottomNav({ active = "home" }: BottomNavProps) {
     {
       id: "profile",
       label: "Profile",
+      href: "/business/account",
+      icon: User,
+    },
+  ];
+
+  const businessItems = [
+    {
+      id: "home",
+      label: "Home",
+      href: "/",
+      icon: Home,
+    },
+    {
+      id: "dashboard",
+      label: "Dashboard",
+      href: "/business/dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      id: "list",
+      label: "Listings",
+      href: "/business/listings/new",
+      icon: List,
+    },
+    {
+      id: "enquiries",
+      label: "Enquiries",
+      href: "/business/dashboard",
+      icon: MessageSquare,
+    },
+    {
+      id: "account",
+      label: "Account",
       href: "/profile",
       icon: User,
     },
   ];
+
+  const items = isBusiness ? businessItems : customerItems;
 
   return (
     <nav className="bottom-nav">
