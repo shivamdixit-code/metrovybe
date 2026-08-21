@@ -1,0 +1,1687 @@
+"use client";
+
+import Link from "next/link";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { getToken } from "@/lib/auth";
+
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
+
+type Business = {
+  _id?: string;
+  businessName: string;
+  description?: string;
+  category?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  logo?: string;
+  images?: string[];
+  verificationStatus?: string;
+  rejectionReason?: string;
+  verifiedAt?: string | null;
+  status?: string;
+  owner?: {
+    _id?: string;
+    name?: string;
+    email?: string;
+    phone?: string;
+    role?: string;
+    status?: string;
+  };
+};
+
+type Listing = {
+  _id: string;
+  title: string;
+  category?: string;
+  location?: string;
+  price?: string;
+  status?: string;
+  image?: string;
+};
+
+function pretty(value?: string) {
+  return (value || "pending")
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (x) => x.toUpperCase());
+}
+
+function statusClass(value?: string) {
+  const v = (value || "pending").toLowerCase();
+
+  if (v === "published" || v === "verified" || v === "active") {
+    return "mv-status mv-status-success";
+  }
+
+  if (v === "rejected" || v === "suspended" || v === "blocked") {
+    return "mv-status mv-status-danger";
+  }
+
+  return "mv-status mv-status-warning";
+}
+
+export default function BusinessDashboard() {
+  const [business, setBusiness] = useState<Business | null>(null);
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [verification, setVerification] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState("");
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+
+  const loadDashboard = useCallback(async (manual = false) => {
+    try {
+      if (manual) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
+
+      setError("");
+
+      const token = getToken();
+
+      if (!token) {
+        window.location.href = "/login";
+        return;
+      }
+
+      const cacheBust = Date.now();
+
+      const [businessResponse, listingsResponse] = await Promise.all([
+        fetch(`${API_URL}/api/business/me?_t=${cacheBust}`, {
+          cache: "no-store",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+          },
+        }),
+
+        fetch(
+          `${API_URL}/api/listings/business/mine?_t=${cacheBust}`,
+          {
+            cache: "no-store",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+            },
+          }
+        ),
+      ]);
+
+      if (!businessResponse.ok) {
+        throw new Error("Unable to load business profile");
+      }
+
+      if (!listingsResponse.ok) {
+        throw new Error("Unable to load listings");
+      }
+
+      const businessData = await businessResponse.json();
+      const listingsData = await listingsResponse.json();
+
+      setBusiness(businessData.business || null);
+      setVerification(businessData.verification || null);
+      setListings(
+        Array.isArray(listingsData)
+          ? listingsData
+          : Array.isArray(listingsData?.listings)
+            ? listingsData.listings
+            : []
+      );
+      setLastUpdated(new Date());
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to load business dashboard"
+      );
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadDashboard();
+  }, [loadDashboard]);
+
+  const stats = useMemo(() => {
+    const published = listings.filter(
+      (x) => x.status?.toLowerCase() === "published"
+    ).length;
+
+    const pending = listings.filter(
+      (x) => x.status?.toLowerCase() === "pending"
+    ).length;
+
+    const other = Math.max(
+      listings.length - published - pending,
+      0
+    );
+
+    return {
+      total: listings.length,
+      published,
+      pending,
+      other,
+    };
+  }, [listings]);
+
+  const verificationStatus =
+    business?.verificationStatus ||
+    verification?.status ||
+    "pending";
+
+  if (loading) {
+    return (
+      <main className="mv-business-dashboard mv-dashboard-loading">
+        <div className="mv-loading-card">
+          <div className="mv-dashboard-brand">
+            metro<span>vybe</span><sup>✦</sup>
+          </div>
+
+          <div className="mv-dashboard-spinner" />
+
+          <strong>Loading your dashboard</strong>
+          <p>Getting your latest business information...</p>
+        </div>
+
+        <style jsx>{styles}</style>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="mv-business-dashboard mv-dashboard-error">
+        <div className="mv-error-card">
+          <div className="mv-error-icon">!</div>
+          <h1>Something went wrong</h1>
+          <p>{error}</p>
+
+          <button
+            type="button"
+            className="mv-primary-btn"
+            onClick={() => loadDashboard(true)}
+          >
+            Try again
+          </button>
+
+          <Link href="/" className="mv-secondary-btn">
+            Back to marketplace
+          </Link>
+        </div>
+
+        <style jsx>{styles}</style>
+      </main>
+    );
+  }
+
+  return (
+    <main className="mv-business-dashboard">
+      <div className="mv-dashboard-shell">
+
+        {/* TOP BAR */}
+        <header className="mv-dashboard-topbar">
+          <Link href="/" className="mv-dashboard-logo">
+            metro<span>vybe</span><sup>✦</sup>
+          </Link>
+
+          <div className="mv-topbar-actions">
+            <button
+              type="button"
+              className="mv-refresh-btn"
+              onClick={() => loadDashboard(true)}
+              disabled={refreshing}
+              aria-label="Refresh dashboard"
+            >
+              <span className={refreshing ? "mv-refresh-spin" : ""}>
+                ↻
+              </span>
+              <span className="mv-refresh-text">
+                {refreshing ? "Refreshing..." : "Refresh"}
+              </span>
+            </button>
+
+            <Link href="/" className="mv-marketplace-btn">
+              Marketplace
+            </Link>
+          </div>
+        </header>
+
+        {/* PAGE INTRO */}
+        <section className="mv-dashboard-intro">
+          <div>
+            <div className="mv-eyebrow">BUSINESS CENTER</div>
+
+            <h1>
+              Welcome back
+              {business?.owner?.name
+                ? `, ${business.owner.name.split(" ")[0]}`
+                : ""}
+              .
+            </h1>
+
+            <p>
+              Manage your business presence, listings and verification
+              from one place.
+            </p>
+          </div>
+
+          {lastUpdated && (
+            <div className="mv-last-updated">
+              <span className="mv-live-dot" />
+              Updated {lastUpdated.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </div>
+          )}
+        </section>
+
+        {/* BUSINESS HERO */}
+        {business && (
+          <section className="mv-business-hero">
+
+            <div className="mv-business-identity">
+
+              <div className="mv-business-avatar">
+                {business.logo ? (
+                  <img
+                    src={business.logo}
+                    alt={business.businessName}
+                  />
+                ) : (
+                  <span>
+                    {(business.businessName || "B")
+                      .charAt(0)
+                      .toUpperCase()}
+                  </span>
+                )}
+              </div>
+
+              <div className="mv-business-main">
+                <div className="mv-business-title-row">
+                  <h2>
+                    {business.businessName || "Your Business"}
+                  </h2>
+
+                  <span className={statusClass(verificationStatus)}>
+                    {verificationStatus === "verified" && "✓ "}
+                    {pretty(verificationStatus)}
+                  </span>
+                </div>
+
+                <p className="mv-business-meta">
+                  {business.category || "Business"}
+                  {business.city ? ` · ${business.city}` : ""}
+                  {business.state ? `, ${business.state}` : ""}
+                </p>
+
+                {business.description && (
+                  <p className="mv-business-description">
+                    {business.description}
+                  </p>
+                )}
+
+                <div className="mv-business-contact-row">
+                  {business.email && (
+                    <span>✉ {business.email}</span>
+                  )}
+
+                  {business.phone && (
+                    <span>☎ {business.phone}</span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="mv-business-hero-side">
+              <div className="mv-account-label">
+                ACCOUNT STATUS
+              </div>
+
+              <strong>
+                {pretty(business.status || "active")}
+              </strong>
+
+              <span>
+                {business.verifiedAt
+                  ? "Verified business account"
+                  : "Business profile active"}
+              </span>
+            </div>
+          </section>
+        )}
+
+        {/* VERIFICATION ALERT */}
+        {business &&
+          verificationStatus !== "verified" && (
+            <section
+              className={`mv-verification-alert ${
+                verificationStatus === "rejected" ||
+                verificationStatus === "suspended"
+                  ? "mv-alert-danger"
+                  : ""
+              }`}
+            >
+              <div className="mv-alert-icon">
+                {verificationStatus === "rejected" ||
+                verificationStatus === "suspended"
+                  ? "!"
+                  : "✓"}
+              </div>
+
+              <div>
+                <strong>
+                  {verificationStatus === "rejected"
+                    ? "Verification needs attention"
+                    : verificationStatus === "suspended"
+                      ? "Business account suspended"
+                      : "Business verification is pending"}
+                </strong>
+
+                <p>
+                  {business.rejectionReason ||
+                    (verificationStatus === "pending"
+                      ? "Your business information is currently under review."
+                      : "Please review your business information and required documents.")}
+                </p>
+              </div>
+            </section>
+          )}
+
+        {/* STATS */}
+        <section className="mv-dashboard-stats">
+
+          <div className="mv-stat-card mv-stat-primary">
+            <div className="mv-stat-icon">▦</div>
+            <div>
+              <span>Total Listings</span>
+              <strong>{stats.total}</strong>
+            </div>
+          </div>
+
+          <div className="mv-stat-card">
+            <div className="mv-stat-icon mv-icon-green">✓</div>
+            <div>
+              <span>Published</span>
+              <strong>{stats.published}</strong>
+            </div>
+          </div>
+
+          <div className="mv-stat-card">
+            <div className="mv-stat-icon mv-icon-yellow">◷</div>
+            <div>
+              <span>Pending Review</span>
+              <strong>{stats.pending}</strong>
+            </div>
+          </div>
+
+          <div className="mv-stat-card">
+            <div className="mv-stat-icon mv-icon-purple">+</div>
+            <div>
+              <span>Other</span>
+              <strong>{stats.other}</strong>
+            </div>
+          </div>
+
+        </section>
+
+        {/* QUICK ACTIONS */}
+        <section className="mv-quick-actions">
+          <div className="mv-section-heading">
+            <div>
+              <div className="mv-eyebrow">MANAGE</div>
+              <h2>Quick actions</h2>
+            </div>
+          </div>
+
+          <div className="mv-action-grid">
+
+            <Link
+              href="/business/listings/new"
+              className="mv-action-card mv-action-main"
+            >
+              <div className="mv-action-icon">+</div>
+              <div>
+                <strong>Add a new listing</strong>
+                <span>Create and publish a new business listing.</span>
+              </div>
+              <b>→</b>
+            </Link>
+
+            <button
+              type="button"
+              className="mv-action-card"
+              onClick={() => loadDashboard(true)}
+            >
+              <div className="mv-action-icon mv-action-refresh">
+                ↻
+              </div>
+              <div>
+                <strong>Refresh business data</strong>
+                <span>Fetch the latest profile and listing information.</span>
+              </div>
+              <b>→</b>
+            </button>
+
+            <Link
+              href="/"
+              className="mv-action-card"
+            >
+              <div className="mv-action-icon mv-action-view">
+                ↗
+              </div>
+              <div>
+                <strong>View marketplace</strong>
+                <span>See how MetroVybe customers discover businesses.</span>
+              </div>
+              <b>→</b>
+            </Link>
+
+          </div>
+        </section>
+
+        {/* LISTINGS */}
+        <section className="mv-listings-section">
+
+          <div className="mv-section-heading mv-listings-heading">
+            <div>
+              <div className="mv-eyebrow">YOUR BUSINESS</div>
+              <h2>Your listings</h2>
+              <p>
+                Keep your MetroVybe listings accurate and up to date.
+              </p>
+            </div>
+
+            <Link
+              href="/business/listings/new"
+              className="mv-add-listing-btn"
+            >
+              <span>+</span>
+              Add Listing
+            </Link>
+          </div>
+
+          {listings.length === 0 ? (
+            <div className="mv-empty-listings">
+              <div className="mv-empty-icon">▦</div>
+
+              <h3>No listings yet</h3>
+
+              <p>
+                Your business profile is ready. Create your first
+                listing to start appearing on MetroVybe.
+              </p>
+
+              <Link
+                href="/business/listings/new"
+                className="mv-primary-btn"
+              >
+                Create your first listing
+                <span>→</span>
+              </Link>
+            </div>
+          ) : (
+            <div className="mv-listings-grid">
+              {listings.map((listing) => (
+                <article
+                  key={listing._id}
+                  className="mv-listing-card"
+                >
+                  <div className="mv-listing-image">
+                    {listing.image ? (
+                      <img
+                        src={listing.image}
+                        alt={listing.title}
+                      />
+                    ) : (
+                      <div className="mv-listing-image-placeholder">
+                        <span>MV</span>
+                      </div>
+                    )}
+
+                    <span className={statusClass(listing.status)}>
+                      {pretty(listing.status)}
+                    </span>
+                  </div>
+
+                  <div className="mv-listing-content">
+                    <div className="mv-listing-category">
+                      {listing.category || "Business listing"}
+                    </div>
+
+                    <h3>{listing.title}</h3>
+
+                    {listing.location && (
+                      <p className="mv-listing-location">
+                        <span>⌖</span>
+                        {listing.location}
+                      </p>
+                    )}
+
+                    <div className="mv-listing-footer">
+                      <strong>
+                        {listing.price || "Contact for price"}
+                      </strong>
+
+                      <span>
+                        Listing ID: {listing._id.slice(-6)}
+                      </span>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* BUSINESS INFORMATION */}
+        {business && (
+          <section className="mv-information-section">
+
+            <div className="mv-section-heading">
+              <div>
+                <div className="mv-eyebrow">PROFILE</div>
+                <h2>Business information</h2>
+              </div>
+            </div>
+
+            <div className="mv-information-grid">
+
+              <div className="mv-info-card">
+                <span>Business email</span>
+                <strong>
+                  {business.email ||
+                    business.owner?.email ||
+                    "Not provided"}
+                </strong>
+              </div>
+
+              <div className="mv-info-card">
+                <span>Phone</span>
+                <strong>
+                  {business.phone ||
+                    business.owner?.phone ||
+                    "Not provided"}
+                </strong>
+              </div>
+
+              <div className="mv-info-card">
+                <span>Category</span>
+                <strong>
+                  {business.category || "Not specified"}
+                </strong>
+              </div>
+
+              <div className="mv-info-card">
+                <span>Owner</span>
+                <strong>
+                  {business.owner?.name || "Business owner"}
+                </strong>
+              </div>
+
+              <div className="mv-info-card mv-info-wide">
+                <span>Address</span>
+                <strong>
+                  {business.address || "Address not provided"}
+                </strong>
+              </div>
+
+              <div className="mv-info-card mv-info-wide">
+                <span>Location</span>
+                <strong>
+                  {[business.city, business.state, business.pincode]
+                    .filter(Boolean)
+                    .join(", ") || "Location not provided"}
+                </strong>
+              </div>
+
+            </div>
+          </section>
+        )}
+
+        {/* FOOTER */}
+        <footer className="mv-dashboard-footer">
+          <span>
+            metro<span>vybe</span> · Business Center
+          </span>
+
+          <Link href="/">
+            Back to marketplace →
+          </Link>
+        </footer>
+
+      </div>
+
+      <style jsx>{styles}</style>
+    </main>
+  );
+}
+
+const styles = `
+  .mv-business-dashboard {
+    min-height: 100vh;
+    background:
+      radial-gradient(circle at 85% 0%, rgba(41,171,135,.10), transparent 30%),
+      #f5f7f8;
+    color: #111;
+  }
+
+  .mv-dashboard-shell {
+    width: min(1240px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 24px 0 50px;
+  }
+
+  .mv-dashboard-topbar {
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 45px;
+  }
+
+  .mv-dashboard-logo {
+    color: #111;
+    text-decoration: none;
+    font-size: 28px;
+    font-weight: 950;
+    letter-spacing: -1.8px;
+  }
+
+  .mv-dashboard-logo span,
+  .mv-dashboard-footer span span {
+    color: #29AB87;
+  }
+
+  .mv-dashboard-logo sup {
+    color: #D4A72C;
+    font-size: 15px;
+    margin-left: 2px;
+    top: -9px;
+    position: relative;
+  }
+
+  .mv-topbar-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .mv-refresh-btn,
+  .mv-marketplace-btn,
+  .mv-add-listing-btn,
+  .mv-primary-btn,
+  .mv-secondary-btn {
+    border: 0;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 800;
+    transition: .2s ease;
+  }
+
+  .mv-refresh-btn {
+    background: #fff;
+    border: 1px solid #e2e6e8;
+    color: #333;
+    border-radius: 11px;
+    padding: 11px 14px;
+    display: flex;
+    gap: 7px;
+    align-items: center;
+  }
+
+  .mv-refresh-btn:hover {
+    border-color: #29AB87;
+    transform: translateY(-1px);
+  }
+
+  .mv-refresh-btn span:first-child {
+    font-size: 19px;
+    line-height: 1;
+  }
+
+  .mv-refresh-spin {
+    display: inline-block;
+    animation: mvSpin .7s linear infinite;
+  }
+
+  @keyframes mvSpin {
+    to { transform: rotate(360deg); }
+  }
+
+  .mv-marketplace-btn {
+    background: #111;
+    color: #fff;
+    padding: 11px 16px;
+    border-radius: 11px;
+  }
+
+  .mv-marketplace-btn:hover {
+    transform: translateY(-1px);
+    background: #222;
+  }
+
+  .mv-dashboard-intro {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 25px;
+    margin-bottom: 25px;
+  }
+
+  .mv-eyebrow {
+    color: #29AB87;
+    font-size: 11px;
+    font-weight: 950;
+    letter-spacing: 1.8px;
+    margin-bottom: 7px;
+  }
+
+  .mv-dashboard-intro h1 {
+    margin: 0;
+    font-size: clamp(32px, 4vw, 48px);
+    letter-spacing: -2px;
+    line-height: 1;
+    font-weight: 950;
+  }
+
+  .mv-dashboard-intro p {
+    margin: 12px 0 0;
+    color: #687176;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .mv-last-updated {
+    background: #fff;
+    border: 1px solid #e5e9ea;
+    padding: 9px 12px;
+    border-radius: 999px;
+    color: #667074;
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .mv-live-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: #29AB87;
+    border-radius: 50%;
+    margin-right: 7px;
+  }
+
+  .mv-business-hero {
+    background: #111;
+    color: #fff;
+    border-radius: 22px;
+    padding: 27px;
+    display: flex;
+    justify-content: space-between;
+    gap: 25px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0,0,0,.12);
+  }
+
+  .mv-business-hero:after {
+    content: "";
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    right: -90px;
+    top: -130px;
+    background: rgba(41,171,135,.18);
+  }
+
+  .mv-business-identity {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .mv-business-avatar {
+    width: 78px;
+    height: 78px;
+    border-radius: 19px;
+    background: #fff;
+    color: #29AB87;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    font-size: 30px;
+    font-weight: 950;
+  }
+
+  .mv-business-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .mv-business-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .mv-business-title-row h2 {
+    margin: 0;
+    font-size: 25px;
+    letter-spacing: -.8px;
+  }
+
+  .mv-business-meta {
+    margin: 5px 0 0;
+    color: #b8c0c3;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .mv-business-description {
+    color: #d5dadd;
+    max-width: 650px;
+    margin: 12px 0 0;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .mv-business-contact-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 13px;
+    color: #aeb7ba;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .mv-business-hero-side {
+    min-width: 175px;
+    padding: 15px 17px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.09);
+    position: relative;
+    z-index: 1;
+    align-self: center;
+  }
+
+  .mv-account-label {
+    color: #899396;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 1.2px;
+  }
+
+  .mv-business-hero-side strong {
+    display: block;
+    margin-top: 4px;
+    font-size: 16px;
+  }
+
+  .mv-business-hero-side span {
+    display: block;
+    color: #aeb7ba;
+    margin-top: 4px;
+    font-size: 11px;
+  }
+
+  .mv-status {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+  }
+
+  .mv-status-success {
+    background: #d9f5eb;
+    color: #146b54;
+  }
+
+  .mv-status-warning {
+    background: #fff0c8;
+    color: #8a5a00;
+  }
+
+  .mv-status-danger {
+    background: #ffe0e0;
+    color: #a32323;
+  }
+
+  .mv-verification-alert {
+    margin-top: 15px;
+    display: flex;
+    gap: 13px;
+    align-items: flex-start;
+    padding: 15px 17px;
+    background: #fff8df;
+    border: 1px solid #f3df9c;
+    border-radius: 15px;
+  }
+
+  .mv-alert-danger {
+    background: #fff0f0;
+    border-color: #f1caca;
+  }
+
+  .mv-alert-icon {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+    border-radius: 50%;
+    background: #e6b92d;
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-weight: 950;
+  }
+
+  .mv-alert-danger .mv-alert-icon {
+    background: #d94141;
+  }
+
+  .mv-verification-alert strong {
+    font-size: 13px;
+  }
+
+  .mv-verification-alert p {
+    margin: 4px 0 0;
+    color: #756a4a;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .mv-dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin: 20px 0 34px;
+  }
+
+  .mv-stat-card {
+    background: #fff;
+    border: 1px solid #e8ebec;
+    border-radius: 17px;
+    padding: 19px;
+    display: flex;
+    gap: 13px;
+    align-items: center;
+    box-shadow: 0 5px 18px rgba(0,0,0,.035);
+  }
+
+  .mv-stat-primary {
+    border-color: rgba(41,171,135,.35);
+  }
+
+  .mv-stat-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #eaf8f4;
+    color: #29AB87;
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    font-weight: 900;
+  }
+
+  .mv-icon-green {
+    background: #e3f7ee;
+    color: #16815f;
+  }
+
+  .mv-icon-yellow {
+    background: #fff4d6;
+    color: #a87400;
+  }
+
+  .mv-icon-purple {
+    background: #eee8ff;
+    color: #7152c7;
+  }
+
+  .mv-stat-card span {
+    display: block;
+    color: #7b8588;
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  .mv-stat-card strong {
+    display: block;
+    margin-top: 3px;
+    font-size: 25px;
+    letter-spacing: -.7px;
+  }
+
+  .mv-section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    margin-bottom: 15px;
+  }
+
+  .mv-section-heading h2 {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: -.6px;
+  }
+
+  .mv-section-heading p {
+    margin: 5px 0 0;
+    color: #7a8386;
+    font-size: 13px;
+  }
+
+  .mv-action-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 13px;
+  }
+
+  .mv-action-card {
+    border: 1px solid #e5e9ea;
+    background: #fff;
+    border-radius: 16px;
+    padding: 17px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+    color: #111;
+    text-decoration: none;
+    cursor: pointer;
+    transition: .2s ease;
+  }
+
+  .mv-action-card:hover {
+    transform: translateY(-2px);
+    border-color: #29AB87;
+    box-shadow: 0 9px 25px rgba(0,0,0,.06);
+  }
+
+  .mv-action-main {
+    background: #29AB87;
+    color: #fff;
+    border-color: #29AB87;
+  }
+
+  .mv-action-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: #e9f8f3;
+    color: #29AB87;
+    font-size: 21px;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+
+  .mv-action-main .mv-action-icon {
+    background: rgba(255,255,255,.18);
+    color: #fff;
+  }
+
+  .mv-action-refresh {
+    color: #6654bd;
+    background: #eeeaff;
+  }
+
+  .mv-action-view {
+    color: #a56a00;
+    background: #fff1d5;
+  }
+
+  .mv-action-card div:nth-child(2) {
+    flex: 1;
+  }
+
+  .mv-action-card strong {
+    display: block;
+    font-size: 13px;
+  }
+
+  .mv-action-card span {
+    display: block;
+    margin-top: 3px;
+    color: #7c8588;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .mv-action-main span {
+    color: rgba(255,255,255,.78);
+  }
+
+  .mv-action-card > b {
+    font-size: 18px;
+  }
+
+  .mv-listings-section {
+    margin-top: 40px;
+  }
+
+  .mv-listings-heading {
+    margin-bottom: 18px;
+  }
+
+  .mv-add-listing-btn {
+    background: #111;
+    color: #fff;
+    padding: 11px 15px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .mv-add-listing-btn span {
+    font-size: 19px;
+    line-height: 1;
+  }
+
+  .mv-add-listing-btn:hover {
+    background: #29AB87;
+  }
+
+  .mv-listings-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+  }
+
+  .mv-listing-card {
+    background: #fff;
+    border: 1px solid #e6e9ea;
+    border-radius: 17px;
+    overflow: hidden;
+    transition: .2s ease;
+  }
+
+  .mv-listing-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0,0,0,.07);
+  }
+
+  .mv-listing-image {
+    height: 165px;
+    background: #edf2f1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mv-listing-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .mv-listing-image .mv-status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  }
+
+  .mv-listing-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(41,171,135,.22), transparent 35%),
+      #e9f1ef;
+  }
+
+  .mv-listing-image-placeholder span {
+    font-weight: 950;
+    font-size: 28px;
+    color: #29AB87;
+  }
+
+  .mv-listing-content {
+    padding: 15px;
+  }
+
+  .mv-listing-category {
+    color: #29AB87;
+    text-transform: uppercase;
+    font-size: 9px;
+    font-weight: 950;
+    letter-spacing: 1px;
+  }
+
+  .mv-listing-content h3 {
+    margin: 5px 0 7px;
+    font-size: 17px;
+    letter-spacing: -.4px;
+  }
+
+  .mv-listing-location {
+    margin: 0;
+    color: #737d80;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mv-listing-location span {
+    margin-right: 4px;
+    color: #29AB87;
+  }
+
+  .mv-listing-footer {
+    border-top: 1px solid #edf0f1;
+    margin-top: 13px;
+    padding-top: 11px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .mv-listing-footer strong {
+    font-size: 13px;
+  }
+
+  .mv-listing-footer span {
+    color: #9aa1a3;
+    font-size: 9px;
+    font-weight: 700;
+  }
+
+  .mv-empty-listings {
+    background: #fff;
+    border: 1px dashed #d8dfe0;
+    border-radius: 18px;
+    padding: 55px 25px;
+    text-align: center;
+  }
+
+  .mv-empty-icon {
+    width: 55px;
+    height: 55px;
+    border-radius: 16px;
+    margin: 0 auto 14px;
+    background: #eaf8f4;
+    color: #29AB87;
+    display: grid;
+    place-items: center;
+    font-size: 24px;
+    font-weight: 900;
+  }
+
+  .mv-empty-listings h3 {
+    margin: 0;
+    font-size: 19px;
+  }
+
+  .mv-empty-listings p {
+    max-width: 480px;
+    margin: 8px auto 20px;
+    color: #7c8588;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .mv-primary-btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    background: #29AB87;
+    color: #fff;
+    padding: 12px 17px;
+    border-radius: 11px;
+  }
+
+  .mv-primary-btn:hover {
+    background: #208c70;
+    transform: translateY(-1px);
+  }
+
+  .mv-secondary-btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    color: #555;
+    padding: 10px 15px;
+    margin-top: 10px;
+  }
+
+  .mv-information-section {
+    margin-top: 42px;
+  }
+
+  .mv-information-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .mv-info-card {
+    background: #fff;
+    border: 1px solid #e7eaeb;
+    border-radius: 14px;
+    padding: 15px;
+    min-width: 0;
+  }
+
+  .mv-info-wide {
+    grid-column: span 2;
+  }
+
+  .mv-info-card span {
+    display: block;
+    color: #8a9395;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    font-weight: 900;
+    margin-bottom: 5px;
+  }
+
+  .mv-info-card strong {
+    display: block;
+    font-size: 12px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+
+  .mv-dashboard-footer {
+    border-top: 1px solid #e1e5e6;
+    margin-top: 45px;
+    padding-top: 18px;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    color: #8a9294;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .mv-dashboard-footer span:first-child {
+    color: #222;
+    font-weight: 900;
+  }
+
+  .mv-dashboard-footer a {
+    color: #555;
+    text-decoration: none;
+  }
+
+  .mv-dashboard-loading,
+  .mv-dashboard-error {
+    display: grid;
+    place-items: center;
+    padding: 20px;
+  }
+
+  .mv-loading-card,
+  .mv-error-card {
+    width: min(420px, 100%);
+    background: #fff;
+    border: 1px solid #e7eaeb;
+    border-radius: 22px;
+    padding: 40px 25px;
+    text-align: center;
+    box-shadow: 0 15px 50px rgba(0,0,0,.07);
+  }
+
+  .mv-dashboard-brand {
+    font-size: 29px;
+    font-weight: 950;
+    letter-spacing: -1.5px;
+    margin-bottom: 25px;
+  }
+
+  .mv-dashboard-brand span {
+    color: #29AB87;
+  }
+
+  .mv-dashboard-brand sup {
+    color: #D4A72C;
+    font-size: 14px;
+  }
+
+  .mv-dashboard-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #e4e8e9;
+    border-top-color: #29AB87;
+    border-radius: 50%;
+    animation: mvSpin .8s linear infinite;
+    margin: 0 auto 15px;
+  }
+
+  .mv-loading-card strong {
+    display: block;
+    font-size: 15px;
+  }
+
+  .mv-loading-card p,
+  .mv-error-card p {
+    color: #7a8386;
+    font-size: 13px;
+    margin: 7px 0 20px;
+  }
+
+  .mv-error-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: #ffe4e4;
+    color: #c52d2d;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 15px;
+    font-size: 22px;
+    font-weight: 950;
+  }
+
+  .mv-error-card h1 {
+    margin: 0;
+    font-size: 23px;
+  }
+
+  @media (max-width: 900px) {
+    .mv-dashboard-stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .mv-action-grid,
+    .mv-listings-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .mv-information-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .mv-info-wide {
+      grid-column: span 2;
+    }
+
+    .mv-business-hero {
+      flex-direction: column;
+    }
+
+    .mv-business-hero-side {
+      width: fit-content;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .mv-dashboard-shell {
+      width: min(100% - 24px, 1240px);
+      padding-top: 12px;
+      padding-bottom: 35px;
+    }
+
+    .mv-dashboard-topbar {
+      margin-bottom: 30px;
+      height: 48px;
+    }
+
+    .mv-dashboard-logo {
+      font-size: 23px;
+    }
+
+    .mv-refresh-text,
+    .mv-marketplace-btn {
+      display: none;
+    }
+
+    .mv-refresh-btn {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      justify-content: center;
+    }
+
+    .mv-dashboard-intro {
+      display: block;
+    }
+
+    .mv-dashboard-intro h1 {
+      font-size: 34px;
+      letter-spacing: -1.5px;
+    }
+
+    .mv-dashboard-intro p {
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .mv-last-updated {
+      display: inline-block;
+      margin-top: 13px;
+    }
+
+    .mv-business-hero {
+      padding: 19px;
+      border-radius: 18px;
+    }
+
+    .mv-business-identity {
+      align-items: flex-start;
+    }
+
+    .mv-business-avatar {
+      width: 57px;
+      height: 57px;
+      border-radius: 14px;
+      font-size: 22px;
+    }
+
+    .mv-business-title-row h2 {
+      font-size: 20px;
+    }
+
+    .mv-business-contact-row {
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .mv-business-hero-side {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .mv-dashboard-stats {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 9px;
+      margin-bottom: 28px;
+    }
+
+    .mv-stat-card {
+      padding: 14px;
+      border-radius: 14px;
+    }
+
+    .mv-stat-icon {
+      width: 35px;
+      height: 35px;
+      border-radius: 10px;
+      font-size: 17px;
+    }
+
+    .mv-stat-card strong {
+      font-size: 22px;
+    }
+
+    .mv-stat-card span {
+      font-size: 9px;
+    }
+
+    .mv-action-grid,
+    .mv-listings-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .mv-action-card {
+      padding: 14px;
+    }
+
+    .mv-section-heading {
+      align-items: flex-start;
+    }
+
+    .mv-section-heading h2 {
+      font-size: 20px;
+    }
+
+    .mv-add-listing-btn {
+      padding: 9px 12px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .mv-listing-image {
+      height: 185px;
+    }
+
+    .mv-information-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .mv-info-wide {
+      grid-column: span 1;
+    }
+
+    .mv-dashboard-footer {
+      flex-direction: column;
+    }
+
+    .mv-verification-alert {
+      padding: 13px;
+    }
+  }
+`;

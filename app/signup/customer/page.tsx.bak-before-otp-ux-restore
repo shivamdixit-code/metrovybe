@@ -177,7 +177,18 @@ export default function CustomerSignupPage() {
     setSuccess("");
   }, [step]);
 
+  // Automatically hide temporary success/error messages
+  // after 5 seconds. OTP countdown remains independent.
+  useEffect(() => {
+    if (!success && !error) return;
 
+    const timer = window.setTimeout(() => {
+      setSuccess("");
+      setError("");
+    }, 5000);
+
+    return () => window.clearTimeout(timer);
+  }, [success, error]);
 
   function handleBack() {
     setError("");
@@ -331,7 +342,7 @@ export default function CustomerSignupPage() {
     setStep(3);
   }
 
-  function continueFromStepThree(event: FormEvent<HTMLFormElement>) {
+  async function continueFromStepThree(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const cleanEmail = email.trim().toLowerCase();
@@ -345,12 +356,14 @@ export default function CustomerSignupPage() {
     setSuccess("");
     setOtp("");
     setOtpResendSeconds(60);
-    setStep(6);
-
-    // Fire OTP request without blocking the screen transition.
-    sendPhoneOtp(phoneNumber).catch((error) => {
+    // Send OTP first. Only move to the OTP screen after the
+    // backend confirms the WhatsApp request succeeded.
+    try {
+      await sendPhoneOtp(phoneNumber);
+      setStep(6);
+    } catch (error) {
       console.error("PHONE OTP SUBMIT ERROR:", error);
-    });
+    }
   }
 
   function continueFromStepFour(event: FormEvent<HTMLFormElement>) {

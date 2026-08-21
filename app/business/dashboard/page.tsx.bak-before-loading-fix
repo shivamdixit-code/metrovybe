@@ -69,8 +69,6 @@ export default function BusinessDashboard() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [verification, setVerification] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [hydrated, setHydrated] = useState(false);
-  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -94,66 +92,35 @@ export default function BusinessDashboard() {
 
       const cacheBust = Date.now();
 
-      const fetchWithTimeout = async (
-        url: string,
-        options: RequestInit,
-        timeout = 10000
-      ) => {
-        const controller = new AbortController();
-        const timer = window.setTimeout(
-          () => controller.abort(),
-          timeout
-        );
-
-        try {
-          return await fetch(url, {
-            ...options,
-            signal: controller.signal,
-          });
-        } catch (err) {
-          if (err instanceof DOMException && err.name === "AbortError") {
-            throw new Error("Dashboard request timed out. Please try again.");
-          }
-          throw err;
-        } finally {
-          window.clearTimeout(timer);
-        }
-      };
-
-      const headers = {
-        Authorization: `Bearer ${token}`,
-        "Cache-Control": "no-cache",
-        Pragma: "no-cache",
-      };
-
       const [businessResponse, listingsResponse] = await Promise.all([
-        fetchWithTimeout(
-          `${API_URL}/api/business/me?_t=${cacheBust}`,
-          {
-            cache: "no-store",
-            headers,
-          }
-        ),
+        fetch(`${API_URL}/api/business/me?_t=${cacheBust}`, {
+          cache: "no-store",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+          },
+        }),
 
-        fetchWithTimeout(
+        fetch(
           `${API_URL}/api/listings/business/mine?_t=${cacheBust}`,
           {
             cache: "no-store",
-            headers,
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+            },
           }
         ),
       ]);
 
       if (!businessResponse.ok) {
-        throw new Error(
-          `Unable to load business profile (${businessResponse.status})`
-        );
+        throw new Error("Unable to load business profile");
       }
 
       if (!listingsResponse.ok) {
-        throw new Error(
-          `Unable to load listings (${listingsResponse.status})`
-        );
+        throw new Error("Unable to load listings");
       }
 
       const businessData = await businessResponse.json();
@@ -161,7 +128,6 @@ export default function BusinessDashboard() {
 
       setBusiness(businessData.business || null);
       setVerification(businessData.verification || null);
-
       setListings(
         Array.isArray(listingsData)
           ? listingsData
@@ -169,7 +135,6 @@ export default function BusinessDashboard() {
             ? listingsData.listings
             : []
       );
-
       setLastUpdated(new Date());
     } catch (err) {
       setError(
@@ -179,21 +144,12 @@ export default function BusinessDashboard() {
       );
     } finally {
       setLoading(false);
-      setShowLoadingScreen(false);
       setRefreshing(false);
     }
   }, []);
 
   useEffect(() => {
-    setHydrated(true);
-
-    const timer = window.setTimeout(() => {
-      setShowLoadingScreen(true);
-    }, 500);
-
     loadDashboard();
-
-    return () => window.clearTimeout(timer);
   }, [loadDashboard]);
 
   const stats = useMemo(() => {
@@ -453,19 +409,7 @@ export default function BusinessDashboard() {
     );
   }
 
-  if (!hydrated) {
-    return (
-      <main
-        style={{
-          minHeight: "100vh",
-          background: "#f7f8fa",
-          visibility: "hidden",
-        }}
-      />
-    );
-  }
-
-  if (loading && showLoadingScreen) {
+  if (loading) {
     return (
       <main className="mv-premium-dashboard loading-screen">
         <div className="loading-orb" />

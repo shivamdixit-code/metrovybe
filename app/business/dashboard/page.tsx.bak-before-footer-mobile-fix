@@ -69,8 +69,6 @@ export default function BusinessDashboard() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [verification, setVerification] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [hydrated, setHydrated] = useState(false);
-  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -94,66 +92,35 @@ export default function BusinessDashboard() {
 
       const cacheBust = Date.now();
 
-      const fetchWithTimeout = async (
-        url: string,
-        options: RequestInit,
-        timeout = 10000
-      ) => {
-        const controller = new AbortController();
-        const timer = window.setTimeout(
-          () => controller.abort(),
-          timeout
-        );
-
-        try {
-          return await fetch(url, {
-            ...options,
-            signal: controller.signal,
-          });
-        } catch (err) {
-          if (err instanceof DOMException && err.name === "AbortError") {
-            throw new Error("Dashboard request timed out. Please try again.");
-          }
-          throw err;
-        } finally {
-          window.clearTimeout(timer);
-        }
-      };
-
-      const headers = {
-        Authorization: `Bearer ${token}`,
-        "Cache-Control": "no-cache",
-        Pragma: "no-cache",
-      };
-
       const [businessResponse, listingsResponse] = await Promise.all([
-        fetchWithTimeout(
-          `${API_URL}/api/business/me?_t=${cacheBust}`,
-          {
-            cache: "no-store",
-            headers,
-          }
-        ),
+        fetch(`${API_URL}/api/business/me?_t=${cacheBust}`, {
+          cache: "no-store",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+          },
+        }),
 
-        fetchWithTimeout(
+        fetch(
           `${API_URL}/api/listings/business/mine?_t=${cacheBust}`,
           {
             cache: "no-store",
-            headers,
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+            },
           }
         ),
       ]);
 
       if (!businessResponse.ok) {
-        throw new Error(
-          `Unable to load business profile (${businessResponse.status})`
-        );
+        throw new Error("Unable to load business profile");
       }
 
       if (!listingsResponse.ok) {
-        throw new Error(
-          `Unable to load listings (${listingsResponse.status})`
-        );
+        throw new Error("Unable to load listings");
       }
 
       const businessData = await businessResponse.json();
@@ -161,7 +128,6 @@ export default function BusinessDashboard() {
 
       setBusiness(businessData.business || null);
       setVerification(businessData.verification || null);
-
       setListings(
         Array.isArray(listingsData)
           ? listingsData
@@ -169,7 +135,6 @@ export default function BusinessDashboard() {
             ? listingsData.listings
             : []
       );
-
       setLastUpdated(new Date());
     } catch (err) {
       setError(
@@ -179,21 +144,12 @@ export default function BusinessDashboard() {
       );
     } finally {
       setLoading(false);
-      setShowLoadingScreen(false);
       setRefreshing(false);
     }
   }, []);
 
   useEffect(() => {
-    setHydrated(true);
-
-    const timer = window.setTimeout(() => {
-      setShowLoadingScreen(true);
-    }, 500);
-
     loadDashboard();
-
-    return () => window.clearTimeout(timer);
   }, [loadDashboard]);
 
   const stats = useMemo(() => {
@@ -453,19 +409,7 @@ export default function BusinessDashboard() {
     );
   }
 
-  if (!hydrated) {
-    return (
-      <main
-        style={{
-          minHeight: "100vh",
-          background: "#f7f8fa",
-          visibility: "hidden",
-        }}
-      />
-    );
-  }
-
-  if (loading && showLoadingScreen) {
+  if (loading) {
     return (
       <main className="mv-premium-dashboard loading-screen">
         <div className="loading-orb" />
@@ -923,6 +867,16 @@ export default function BusinessDashboard() {
         </div>
 
         {/* FOOTER */}
+        <footer className="dashboard-footer">
+          <span>
+            <strong>metro<span>vybe</span></strong>
+            {" "}Business Center
+          </span>
+
+          <span>
+            Manage your city presence smarter.
+          </span>
+        </footer>
 
       </div>
 
@@ -1979,32 +1933,13 @@ const styles = `
     }
 
     .dashboard-footer {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      line-height: 1.5;
-      gap: 4px;
-    }
-
-    .dashboard-footer > span {
-      display: inline-flex;
-      align-items: center;
-      flex-wrap: nowrap;
-      white-space: nowrap;
-    }
-
-    .dashboard-footer > span:last-child {
       display: block;
-      margin-top: 0;
-      white-space: nowrap;
+      line-height: 1.7;
     }
 
-    .dashboard-footer .brand-lockup,
-    .dashboard-footer .brand-lockup span,
-    .dashboard-footer .brand-lockup sup {
-      display: inline-flex;
-      align-items: center;
-      white-space: nowrap;
+    .dashboard-footer span:last-child {
+      display: block;
+      margin-top: 4px;
     }
   }
 
@@ -2056,141 +1991,6 @@ const styles = `
           padding-left: 9px;
         }
       }
-
-
-
-/* ===== FOOTER MOBILE NO-WRAP FIX ===== */
-
-.mv-dashboard-footer,
-.dashboard-footer,
-.premium-dashboard-footer {
-  white-space: nowrap !important;
-}
-
-.mv-dashboard-footer > span,
-.dashboard-footer > span,
-.premium-dashboard-footer > span {
-  white-space: nowrap !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  flex-wrap: nowrap !important;
-}
-
-@media (max-width: 600px) {
-  .mv-dashboard-footer,
-  .dashboard-footer,
-  .premium-dashboard-footer {
-    white-space: nowrap !important;
-    flex-wrap: nowrap !important;
-    font-size: 11px !important;
-  }
-
-  .mv-dashboard-footer > span,
-  .dashboard-footer > span,
-  .premium-dashboard-footer > span {
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-  }
-
-  .mv-dashboard-footer > a,
-  .dashboard-footer > a,
-  .premium-dashboard-footer > a {
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-  }
-}
-
-@media (max-width: 380px) {
-  .mv-dashboard-footer,
-  .dashboard-footer,
-  .premium-dashboard-footer {
-    font-size: 10px !important;
-  }
-}
-
-
-
-
-
-/* ===== CLEAN BUSINESS FOOTER ===== */
-
-.dashboard-footer {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-  width: 100%;
-  min-width: 0;
-}
-
-.footer-brand-line {
-  display: flex;
-  align-items: center;
-  flex-wrap: nowrap;
-  gap: 14px;
-  white-space: nowrap;
-  width: max-content;
-  max-width: 100%;
-}
-
-.footer-brand {
-  display: inline-flex;
-  align-items: center;
-  flex-wrap: nowrap;
-  white-space: nowrap;
-  font-weight: 900;
-}
-
-.footer-brand > span {
-  display: inline !important;
-  white-space: nowrap !important;
-}
-
-.footer-brand sup {
-  display: inline !important;
-  white-space: nowrap !important;
-  margin-left: 2px;
-}
-
-.footer-business {
-  display: inline-block;
-  white-space: nowrap;
-  color: #1677ff;
-  font-weight: 800;
-}
-
-.footer-tagline {
-  display: block;
-  white-space: nowrap;
-  margin: 0;
-  color: #8a8f93;
-  font-weight: 700;
-}
-
-@media (max-width: 600px) {
-  .dashboard-footer {
-    width: 100%;
-    overflow: visible;
-  }
-
-  .footer-brand-line {
-    gap: 10px;
-    width: max-content;
-    max-width: none;
-  }
-
-  .footer-brand,
-  .footer-brand > span,
-  .footer-brand sup,
-  .footer-business,
-  .footer-tagline {
-    white-space: nowrap !important;
-  }
-
-  .footer-tagline {
-    margin-top: 1px;
-  }
-}
 
 `;
 

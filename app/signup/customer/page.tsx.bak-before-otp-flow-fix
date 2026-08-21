@@ -177,7 +177,18 @@ export default function CustomerSignupPage() {
     setSuccess("");
   }, [step]);
 
+  // Automatically hide temporary success/error messages
+  // after 5 seconds. OTP countdown remains independent.
+  useEffect(() => {
+    if (!success && !error) return;
 
+    const timer = window.setTimeout(() => {
+      setSuccess("");
+      setError("");
+    }, 5000);
+
+    return () => window.clearTimeout(timer);
+  }, [success, error]);
 
   function handleBack() {
     setError("");
