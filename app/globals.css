@@ -543,10 +543,10 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
 /* HEADER BUTTONS */
 
 .header .header-actions {
-  width: 245px;
+  width: 180px;
   flex-shrink: 0;
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 10px;
 }
 
