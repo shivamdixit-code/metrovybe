@@ -33,14 +33,14 @@ export function Header() {
 
   const profileHref =
     user?.role === "business"
-      ? "/business/profile"
+      ? "/business/dashboard"
       : user?.role === "admin"
         ? "/admin"
         : "/profile";
 
   const profileLabel =
     user?.role === "business"
-      ? "Business Dashboard"
+      ? "Dashboard"
       : user?.role === "admin"
         ? "Admin"
         : "Profile";
@@ -88,16 +88,7 @@ export function Header() {
             </Link>
           )}
 
-          <Link href="/list" className="btn btn-green">
-            <Plus
-              size={17}
-              style={{
-                verticalAlign: "middle",
-                marginRight: 5,
-              }}
-            />
-            List a service
-          </Link>
+
         </div>
       </div>
     </header>

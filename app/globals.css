@@ -9480,3 +9480,1837 @@ body {
   }
 }
 
+
+/* METROVYBE LOGO STAR — MATCH LOGIN / SIGNUP */
+.logo-star {
+  color: #D4AF37 !important;
+}
+
+
+/* HEADER SEARCH — WIDER, CLOSER TO PROFILE/DASHBOARD */
+@media (min-width: 901px) {
+  .header .searchbar {
+    max-width: 680px !important;
+  }
+}
+
+
+
+/* HEADER — GIVE SEARCH MORE ROOM */
+@media (min-width: 901px) {
+  .header-inner {
+    gap: 18px !important;
+  }
+
+  .header .header-actions {
+    width: 210px !important;
+  }
+}
+
+
+/* HEADER — GIVE SEARCH MORE ROOM */
+@media (min-width: 901px) {
+  .header-inner {
+    gap: 18px !important;
+  }
+
+  .header .header-actions {
+    width: 210px !important;
+  }
+}
+
+
+/* RESTORE DESKTOP HEADER — CLEAN ORIGINAL BALANCE */
+@media (min-width: 901px) {
+  .header-inner {
+    gap: 28px !important;
+  }
+
+  .header .brand {
+    width: 205px !important;
+  }
+
+  .header .searchbar {
+    flex: 1 !important;
+    max-width: 620px !important;
+    width: auto !important;
+    margin: 0 auto !important;
+  }
+
+  .header .header-actions {
+    width: 245px !important;
+    flex: 0 0 245px !important;
+    gap: 10px !important;
+  }
+}
+
+
+/* DESKTOP — WIDER SEARCH BAR */
+@media (min-width: 901px) {
+  .header .searchbar {
+    max-width: 700px !important;
+  }
+}
+
+
+/* DESKTOP — EXTRA WIDE SEARCH BAR */
+@media (min-width: 901px) {
+  .header .searchbar {
+    max-width: 900px !important;
+  }
+}
+
+
+/* DESKTOP — EXTRA WIDE SEARCH BAR */
+@media (min-width: 901px) {
+  .header .searchbar {
+    max-width: 1100px !important;
+  }
+}
+
+
+/* DESKTOP — EXTRA WIDE SEARCH BAR */
+@media (min-width: 901px) {
+  .header .searchbar {
+    max-width: 1300px !important;
+  }
+}
+
+
+/* DESKTOP — ACTUALLY EXPAND SEARCH */
+@media (min-width: 901px) {
+  .header-inner {
+    gap: 14px !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  .header .brand {
+    width: 175px !important;
+  }
+
+  .header .header-actions {
+    width: 210px !important;
+    flex: 0 0 210px !important;
+  }
+
+  .header .searchbar {
+    max-width: none !important;
+    flex: 1 1 auto !important;
+  }
+}
+
+
+/* DESKTOP — CENTER SEARCH BAR */
+@media (min-width: 901px) {
+  .header .searchbar {
+    transform: translateX(25px);
+  }
+}
+
+
+/* DESKTOP — SEARCH BAR 1400PX */
+@media (min-width: 901px) {
+  .header .searchbar {
+    max-width: 1400px !important;
+  }
+}
+
+
+/* DESKTOP — MAXIMUM SEARCH WIDTH */
+@media (min-width: 901px) {
+  .header-inner {
+    max-width: 100% !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    gap: 10px !important;
+  }
+
+  .header .brand {
+    width: 180px !important;
+  }
+
+  .header .header-actions {
+    width: 180px !important;
+    flex: 0 0 180px !important;
+  }
+
+  .header .searchbar {
+    max-width: 1400px !important;
+    flex: 1 1 auto !important;
+    transform: translateX(0) !important;
+  }
+}
+
+
+/* DESKTOP HEADER — STABLE FALLBACK */
+@media (min-width: 901px) {
+  .header-inner {
+    gap: 28px !important;
+    padding-left: 28px !important;
+    padding-right: 28px !important;
+    max-width: 1380px !important;
+  }
+
+  .header .brand {
+    width: 205px !important;
+  }
+
+  .header .searchbar {
+    max-width: none !important;
+    flex: 1 !important;
+    width: auto !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+
+  .header .header-actions {
+    width: 245px !important;
+    flex: 0 0 245px !important;
+    gap: 10px !important;
+  }
+}
+
+
+/* ===== LIGHTWEIGHT METROVYBE HOW IT WORKS ===== */
+
+.mv-how-page .inner {
+  padding-top: 38px;
+  padding-bottom: 110px;
+}
+
+.mv-how-hero {
+  max-width: 850px;
+  margin: 0 auto 34px;
+  text-align: center;
+}
+
+.mv-how-kicker {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  margin-bottom: 10px;
+}
+
+.mv-how-hero .page-title {
+  margin: 0;
+}
+
+.mv-how-hero p {
+  max-width: 650px;
+  margin: 12px auto 0;
+  color: #666;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.mv-how-steps {
+  max-width: 980px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.mv-how-card {
+  position: relative;
+  min-height: 180px;
+  padding: 24px;
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 18px;
+  box-shadow: 4px 5px 0 #111;
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.mv-how-number {
+  font-size: 36px;
+  line-height: 1;
+  font-weight: 900;
+  color: #29ab87;
+  letter-spacing: -2px;
+}
+
+.mv-how-card-content {
+  padding-right: 20px;
+}
+
+.mv-how-card h2 {
+  margin: 2px 0 8px;
+  font-size: 25px;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.mv-how-card p {
+  margin: 0;
+  color: #666;
+  line-height: 1.55;
+  font-size: 14px;
+}
+
+.mv-how-star {
+  position: absolute;
+  right: 18px;
+  bottom: 12px;
+  color: #d4a72c;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+@media (max-width: 700px) {
+  .mv-how-page .inner {
+    padding-top: 28px;
+    padding-bottom: 100px;
+  }
+
+  .mv-how-hero .page-title {
+    font-size: 48px;
+  }
+
+  .mv-how-hero p {
+    font-size: 14px;
+  }
+
+  .mv-how-steps {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .mv-how-card {
+    min-height: 145px;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 3px 4px 0 #111;
+  }
+
+  .mv-how-number {
+    font-size: 30px;
+  }
+
+  .mv-how-card h2 {
+    font-size: 22px;
+  }
+}
+
+
+/* ===== EXPLORE STYLE HOW IT WORKS ===== */
+
+.mv-how-page .inner {
+  padding-top: 52px;
+  padding-bottom: 110px;
+}
+
+.mv-how-intro {
+  max-width: 850px;
+  margin-bottom: 38px;
+}
+
+.mv-how-eyebrow {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+}
+
+.mv-how-intro h1 {
+  margin: 0;
+  font-size: clamp(54px, 7vw, 92px);
+  line-height: .9;
+  font-weight: 900;
+  letter-spacing: -4px;
+}
+
+.mv-how-intro h1 span {
+  color: var(--green);
+}
+
+.mv-how-intro p {
+  max-width: 620px;
+  margin: 18px 0 0;
+  color: #666;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.mv-how-list {
+  max-width: 1000px;
+  display: grid;
+  gap: 12px;
+}
+
+.mv-how-row {
+  min-height: 130px;
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 18px;
+  box-shadow: 3px 4px 0 #111;
+  padding: 24px 26px;
+  display: grid;
+  grid-template-columns: 70px 1fr 40px;
+  align-items: center;
+  gap: 20px;
+}
+
+.mv-how-num {
+  font-size: 25px;
+  font-weight: 900;
+  color: var(--green);
+}
+
+.mv-how-copy h2 {
+  margin: 0 0 7px;
+  font-size: 25px;
+  font-weight: 900;
+  letter-spacing: -.8px;
+}
+
+.mv-how-copy p {
+  margin: 0;
+  max-width: 650px;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.mv-how-arrow {
+  font-size: 24px;
+  font-weight: 900;
+  text-align: right;
+}
+
+@media (max-width: 700px) {
+  .mv-how-page .inner {
+    padding-top: 34px;
+    padding-bottom: 100px;
+  }
+
+  .mv-how-intro {
+    margin-bottom: 28px;
+  }
+
+  .mv-how-intro h1 {
+    font-size: 54px;
+    letter-spacing: -3px;
+  }
+
+  .mv-how-intro p {
+    font-size: 14px;
+    margin-top: 14px;
+  }
+
+  .mv-how-row {
+    min-height: 115px;
+    padding: 19px;
+    grid-template-columns: 45px 1fr 25px;
+    gap: 12px;
+    border-radius: 15px;
+    box-shadow: 2px 3px 0 #111;
+  }
+
+  .mv-how-num {
+    font-size: 20px;
+  }
+
+  .mv-how-copy h2 {
+    font-size: 20px;
+  }
+
+  .mv-how-copy p {
+    font-size: 13px;
+  }
+
+  .mv-how-arrow {
+    font-size: 20px;
+  }
+}
+
+
+/* ===== PROFILE EXPLORE STYLE HOW IT WORKS ===== */
+
+.mv-how-page .inner {
+  padding-top: 34px;
+  padding-bottom: 110px;
+}
+
+.mv-how-head {
+  margin-bottom: 28px;
+}
+
+.mv-how-head h1 {
+  margin: 0;
+  font-size: 48px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -2px;
+}
+
+.mv-how-head p {
+  margin: 9px 0 0;
+  color: #666;
+  font-size: 15px;
+}
+
+.mv-how-list {
+  max-width: 1000px;
+  display: grid;
+  gap: 12px;
+}
+
+.mv-how-row {
+  display: grid;
+  grid-template-columns: 55px 1fr 35px;
+  align-items: center;
+  gap: 16px;
+  min-height: 118px;
+  padding: 20px 22px;
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 16px;
+  box-shadow: 3px 4px 0 #111;
+}
+
+.mv-how-number {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--green);
+}
+
+.mv-how-row h2 {
+  margin: 0 0 5px;
+  font-size: 23px;
+  font-weight: 900;
+  letter-spacing: -.7px;
+}
+
+.mv-how-row p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.mv-how-arrow {
+  font-size: 22px;
+  font-weight: 900;
+  text-align: right;
+}
+
+@media (max-width: 700px) {
+  .mv-how-page .inner {
+    padding-top: 25px;
+    padding-bottom: 100px;
+  }
+
+  .mv-how-head h1 {
+    font-size: 40px;
+    letter-spacing: -1.5px;
+  }
+
+  .mv-how-head p {
+    font-size: 14px;
+  }
+
+  .mv-how-row {
+    grid-template-columns: 42px 1fr 22px;
+    gap: 11px;
+    min-height: 105px;
+    padding: 17px;
+    border-radius: 14px;
+    box-shadow: 2px 3px 0 #111;
+  }
+
+  .mv-how-number {
+    font-size: 18px;
+  }
+
+  .mv-how-row h2 {
+    font-size: 19px;
+  }
+
+  .mv-how-row p {
+    font-size: 13px;
+  }
+}
+
+
+/* ===== HOW IT WORKS TITLE STRIP ===== */
+
+.mv-how-title-strip {
+  background: #111;
+  color: #fff;
+  border-bottom: 2px solid #111;
+}
+
+.mv-how-title-strip .shell {
+  padding-top: 34px;
+  padding-bottom: 34px;
+}
+
+.mv-how-title-strip h1 {
+  margin: 0;
+  font-size: clamp(48px, 6vw, 76px);
+  line-height: .9;
+  font-weight: 900;
+  letter-spacing: -3px;
+}
+
+.mv-how-title-strip h1 span {
+  color: var(--green);
+}
+
+.mv-how-title-strip p {
+  margin: 13px 0 0;
+  color: #d7d7d7;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.mv-how-content {
+  padding-top: 30px;
+  padding-bottom: 110px;
+}
+
+.mv-how-list {
+  max-width: 1000px;
+  display: grid;
+  gap: 12px;
+}
+
+.mv-how-row {
+  display: grid;
+  grid-template-columns: 55px 1fr 35px;
+  align-items: center;
+  gap: 16px;
+  min-height: 118px;
+  padding: 20px 22px;
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 16px;
+  box-shadow: 3px 4px 0 #111;
+}
+
+.mv-how-number {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--green);
+}
+
+.mv-how-row h2 {
+  margin: 0 0 5px;
+  font-size: 23px;
+  font-weight: 900;
+  letter-spacing: -.7px;
+}
+
+.mv-how-row p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.mv-how-arrow {
+  font-size: 22px;
+  font-weight: 900;
+  text-align: right;
+}
+
+@media (max-width: 700px) {
+  .mv-how-title-strip .shell {
+    padding-top: 27px;
+    padding-bottom: 27px;
+  }
+
+  .mv-how-title-strip h1 {
+    font-size: 45px;
+    letter-spacing: -2px;
+  }
+
+  .mv-how-content {
+    padding-top: 22px;
+    padding-bottom: 100px;
+  }
+
+  .mv-how-row {
+    grid-template-columns: 42px 1fr 22px;
+    gap: 11px;
+    min-height: 105px;
+    padding: 17px;
+    border-radius: 14px;
+    box-shadow: 2px 3px 0 #111;
+  }
+
+  .mv-how-number {
+    font-size: 18px;
+  }
+
+  .mv-how-row h2 {
+    font-size: 19px;
+  }
+
+  .mv-how-row p {
+    font-size: 13px;
+  }
+}
+
+
+/* ===== HOW IT WORKS POLISHED UI ===== */
+
+.mv-how-title-strip {
+  background: #111;
+  color: #fff;
+}
+
+.mv-how-title-strip .shell {
+  padding-top: 38px;
+  padding-bottom: 36px;
+}
+
+.mv-how-title-strip h1 {
+  font-size: clamp(48px, 6vw, 72px);
+  letter-spacing: -3px;
+}
+
+.mv-how-title-strip h1 span {
+  color: #29ab87;
+}
+
+.mv-how-title-strip p {
+  max-width: 520px;
+  margin-top: 12px;
+  color: #bdbdbd;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.mv-how-content {
+  padding-top: 34px;
+}
+
+.mv-how-list {
+  max-width: 1040px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.mv-how-row {
+  position: relative;
+  min-height: 175px;
+  padding: 22px 23px;
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 18px;
+  box-shadow: 3px 4px 0 #111;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.mv-how-row:hover {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 3px 0 #111;
+}
+
+.mv-how-number {
+  font-size: 17px;
+  font-weight: 900;
+  color: #29ab87;
+  letter-spacing: .5px;
+}
+
+.mv-how-copy {
+  padding-right: 30px;
+}
+
+.mv-how-copy h2 {
+  margin: 0 0 6px;
+  font-size: 27px;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.mv-how-copy p {
+  margin: 0;
+  color: #666;
+  max-width: 420px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.mv-how-arrow {
+  position: absolute;
+  right: 20px;
+  bottom: 18px;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+@media (max-width: 700px) {
+  .mv-how-title-strip .shell {
+    padding-top: 30px;
+    padding-bottom: 29px;
+  }
+
+  .mv-how-title-strip h1 {
+    font-size: 45px;
+    letter-spacing: -2px;
+  }
+
+  .mv-how-content {
+    padding-top: 22px;
+    padding-bottom: 100px;
+  }
+
+  .mv-how-list {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+
+  .mv-how-row {
+    min-height: 145px;
+    padding: 19px;
+    border-radius: 15px;
+    box-shadow: 2px 3px 0 #111;
+  }
+
+  .mv-how-copy h2 {
+    font-size: 22px;
+  }
+
+  .mv-how-copy p {
+    font-size: 13px;
+  }
+
+  .mv-how-arrow {
+    right: 17px;
+    bottom: 15px;
+  }
+}
+
+
+/* ===== HOW IT WORKS FINAL UI ===== */
+
+.mv-how-title-strip {
+  background: #111;
+  color: #fff;
+  border-bottom: 2px solid #111;
+}
+
+.mv-how-title-strip .shell {
+  padding-top: 32px;
+  padding-bottom: 34px;
+}
+
+.mv-how-title-meta {
+  margin-bottom: 10px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.6px;
+  color: #29ab87;
+}
+
+.mv-how-title-strip h1 {
+  margin: 0;
+  font-size: clamp(48px, 6vw, 76px);
+  line-height: .9;
+  font-weight: 900;
+  letter-spacing: -4px;
+}
+
+.mv-how-title-strip h1 span {
+  color: #29ab87;
+}
+
+.mv-how-title-strip p {
+  margin: 14px 0 0;
+  max-width: 560px;
+  color: #bdbdbd;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.mv-how-content {
+  padding-top: 27px;
+  padding-bottom: 110px;
+}
+
+.mv-how-intro-line {
+  max-width: 1040px;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #777;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+}
+
+.mv-how-list {
+  max-width: 1040px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.mv-how-card {
+  min-height: 205px;
+  padding: 21px 22px 17px;
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 17px;
+  box-shadow: 3px 4px 0 #111;
+  display: flex;
+  flex-direction: column;
+}
+
+.mv-how-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.mv-how-number {
+  font-size: 16px;
+  font-weight: 900;
+  color: #29ab87;
+}
+
+.mv-how-card-star {
+  color: #d5a72c;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.mv-how-copy {
+  margin-top: auto;
+  margin-bottom: 20px;
+}
+
+.mv-how-copy h2 {
+  margin: 0 0 7px;
+  font-size: 27px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.mv-how-copy p {
+  margin: 0;
+  max-width: 430px;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.mv-how-card-bottom {
+  padding-top: 10px;
+  border-top: 1px solid #e5e5e5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #999;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.mv-how-card-bottom span:last-child {
+  color: #111;
+  font-size: 17px;
+}
+
+@media (max-width: 700px) {
+  .mv-how-title-strip .shell {
+    padding-top: 27px;
+    padding-bottom: 28px;
+  }
+
+  .mv-how-title-strip h1 {
+    font-size: 46px;
+    letter-spacing: -2.5px;
+  }
+
+  .mv-how-title-strip p {
+    margin-top: 11px;
+    font-size: 13px;
+  }
+
+  .mv-how-content {
+    padding-top: 21px;
+    padding-bottom: 100px;
+  }
+
+  .mv-how-intro-line {
+    margin-bottom: 12px;
+  }
+
+  .mv-how-list {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .mv-how-card {
+    min-height: 175px;
+    padding: 18px 19px 15px;
+    border-radius: 15px;
+    box-shadow: 2px 3px 0 #111;
+  }
+
+  .mv-how-copy {
+    margin-bottom: 16px;
+  }
+
+  .mv-how-copy h2 {
+    font-size: 23px;
+  }
+
+  .mv-how-copy p {
+    font-size: 13px;
+  }
+}
+
+/* HOW IT WORKS — EXPLORE STYLE ROUNDED HEADING */
+.mv-how-title-strip {
+  border-radius: 0 0 24px 24px !important;
+  overflow: hidden;
+}
+
+@media (max-width: 700px) {
+  .mv-how-title-strip {
+    border-radius: 0 0 18px 18px !important;
+  }
+}
+
+
+/* HOW IT WORKS — FULL ROUNDED HEADING */
+.mv-how-title-strip {
+  border-radius: 24px !important;
+  margin: 0 14px;
+}
+
+@media (max-width: 700px) {
+  .mv-how-title-strip {
+    border-radius: 18px !important;
+    margin: 0 8px;
+  }
+}
+
+
+/* HOW IT WORKS — MORE BREATHING SPACE */
+.mv-how-title-strip .shell {
+  padding-top: 44px !important;
+  padding-bottom: 44px !important;
+}
+
+@media (max-width: 700px) {
+  .mv-how-title-strip .shell {
+    padding-top: 36px !important;
+    padding-bottom: 36px !important;
+  }
+}
+
+
+/* HOW IT WORKS — SPACE AROUND TITLE SECTION ONLY */
+.mv-how-title-strip {
+  margin-top: 14px !important;
+  margin-left: 14px !important;
+  margin-right: 14px !important;
+  margin-bottom: 24px !important;
+}
+
+@media (max-width: 700px) {
+  .mv-how-title-strip {
+    margin-top: 10px !important;
+    margin-left: 8px !important;
+    margin-right: 8px !important;
+    margin-bottom: 18px !important;
+  }
+}
+
+
+/* HOW IT WORKS — EXTRA SPACE AROUND HEADING */
+.mv-how-title-strip {
+  margin-top: 22px !important;
+  margin-left: 18px !important;
+  margin-right: 18px !important;
+  margin-bottom: 32px !important;
+}
+
+@media (max-width: 700px) {
+  .mv-how-title-strip {
+    margin-top: 16px !important;
+    margin-left: 10px !important;
+    margin-right: 10px !important;
+    margin-bottom: 24px !important;
+  }
+}
+
+
+/* HOW IT WORKS — GREEN METROVYBE BACKGROUND DETAILS */
+
+.mv-how-title-strip {
+  position: relative;
+  overflow: hidden;
+}
+
+.mv-how-title-strip::before {
+  content: "";
+  position: absolute;
+  width: 230px;
+  height: 230px;
+  right: 7%;
+  top: -95px;
+  border: 3px solid rgba(41, 171, 135, .55);
+  border-radius: 50%;
+  transform: rotate(-18deg);
+  pointer-events: none;
+}
+
+.mv-how-title-strip::after {
+  content: "✦";
+  position: absolute;
+  right: 11%;
+  bottom: 18px;
+  color: #29ab87;
+  font-size: 42px;
+  font-weight: 900;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.mv-how-title-strip .shell {
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 700px) {
+  .mv-how-title-strip::before {
+    width: 150px;
+    height: 150px;
+    right: -35px;
+    top: -65px;
+    border-width: 2px;
+  }
+
+  .mv-how-title-strip::after {
+    right: 18px;
+    bottom: 14px;
+    font-size: 28px;
+  }
+}
+
+
+/* ===== HOW IT WORKS — PREMIUM CONTENT CARDS ===== */
+
+.mv-how-content {
+  max-width: 1160px;
+}
+
+.mv-how-intro-line {
+  max-width: 1080px;
+  margin-bottom: 17px;
+  padding: 0 3px;
+}
+
+.mv-how-list {
+  max-width: 1080px;
+  gap: 18px;
+}
+
+.mv-how-card {
+  min-height: 225px;
+  padding: 24px 25px 18px;
+  border-radius: 20px;
+  border: 2px solid #111;
+  box-shadow: 4px 5px 0 #111;
+  background:
+    linear-gradient(135deg, #fff 0%, #fff 72%, #f3fbf8 100%);
+  transition:
+    transform .16s ease,
+    box-shadow .16s ease;
+}
+
+.mv-how-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 7px 0 #111;
+}
+
+.mv-how-number {
+  font-size: 18px;
+  letter-spacing: 1px;
+  color: #29ab87;
+}
+
+.mv-how-card-star {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #e8f7f2;
+  display: grid;
+  place-items: center;
+  color: #29ab87;
+  font-size: 17px;
+}
+
+.mv-how-copy {
+  margin-top: 28px;
+  margin-bottom: 24px;
+}
+
+.mv-how-copy h2 {
+  margin-bottom: 9px;
+  font-size: 30px;
+  line-height: .95;
+  letter-spacing: -1.2px;
+}
+
+.mv-how-copy p {
+  max-width: 440px;
+  color: #606060;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.mv-how-card-bottom {
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.mv-how-card-bottom span:first-child {
+  color: #aaa;
+  letter-spacing: 1.5px;
+}
+
+.mv-how-card-bottom span:last-child {
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid #111;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+  .mv-how-content {
+    padding-top: 24px;
+  }
+
+  .mv-how-intro-line {
+    margin-bottom: 13px;
+  }
+
+  .mv-how-list {
+    gap: 14px;
+  }
+
+  .mv-how-card {
+    min-height: 190px;
+    padding: 20px 20px 16px;
+    border-radius: 17px;
+    box-shadow: 3px 4px 0 #111;
+  }
+
+  .mv-how-card:hover {
+    transform: none;
+    box-shadow: 3px 4px 0 #111;
+  }
+
+  .mv-how-copy {
+    margin-top: 22px;
+    margin-bottom: 19px;
+  }
+
+  .mv-how-copy h2 {
+    font-size: 25px;
+  }
+
+  .mv-how-copy p {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+}
+
+
+
+/* ===== HOW IT WORKS — EYE CATCHING FINISH ===== */
+
+.mv-how-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.mv-how-card::after {
+  content: "";
+  position: absolute;
+  width: 95px;
+  height: 95px;
+  right: -35px;
+  bottom: -35px;
+  border-radius: 50%;
+  background: #29ab87;
+  opacity: .10;
+  pointer-events: none;
+}
+
+.mv-how-card:nth-child(2)::after {
+  width: 75px;
+  height: 75px;
+  background: #d5a72c;
+  opacity: .12;
+}
+
+.mv-how-card:nth-child(3)::after {
+  width: 110px;
+  height: 110px;
+  background: #29ab87;
+  opacity: .08;
+}
+
+.mv-how-card:nth-child(4)::after {
+  width: 85px;
+  height: 85px;
+  background: #111;
+  opacity: .06;
+}
+
+.mv-how-number {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 30px;
+  border-radius: 8px;
+  background: #e8f7f2;
+}
+
+.mv-how-card:nth-child(2) .mv-how-number {
+  background: #fff4d6;
+  color: #b08313;
+}
+
+.mv-how-card:nth-child(3) .mv-how-number {
+  background: #e8f7f2;
+}
+
+.mv-how-card:nth-child(4) .mv-how-number {
+  background: #f0f0f0;
+  color: #111;
+}
+
+.mv-how-copy {
+  position: relative;
+  z-index: 2;
+}
+
+.mv-how-copy h2 {
+  position: relative;
+  display: inline-block;
+}
+
+.mv-how-copy h2::after {
+  content: "";
+  display: block;
+  width: 34px;
+  height: 3px;
+  margin-top: 8px;
+  border-radius: 3px;
+  background: #29ab87;
+}
+
+.mv-how-card:nth-child(2) .mv-how-copy h2::after {
+  background: #d5a72c;
+}
+
+.mv-how-card:nth-child(4) .mv-how-copy h2::after {
+  background: #111;
+}
+
+/* ===== HOW IT WORKS — FINAL VISUAL POLISH ===== */
+
+.mv-how-card {
+  min-height: 240px !important;
+  padding: 26px !important;
+  background: #fff !important;
+  position: relative;
+  isolation: isolate;
+}
+
+.mv-how-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: #29ab87;
+  z-index: 1;
+}
+
+.mv-how-card:nth-child(2)::before {
+  background: #d5a72c;
+}
+
+.mv-how-card:nth-child(3)::before {
+  background: #55e6e8;
+}
+
+.mv-how-card:nth-child(4)::before {
+  background: #a78bfa;
+}
+
+.mv-how-card::after {
+  content: "";
+  position: absolute;
+  width: 125px;
+  height: 125px;
+  right: -55px;
+  bottom: -55px;
+  border: 2px solid #29ab87;
+  border-radius: 50%;
+  opacity: .13;
+  z-index: -1;
+}
+
+.mv-how-card:nth-child(2)::after {
+  border-color: #d5a72c;
+}
+
+.mv-how-card:nth-child(3)::after {
+  border-color: #55e6e8;
+}
+
+.mv-how-card:nth-child(4)::after {
+  border-color: #a78bfa;
+}
+
+.mv-how-number {
+  width: 46px !important;
+  height: 32px !important;
+  border: 2px solid #111;
+  box-shadow: 2px 2px 0 #111;
+  font-weight: 900;
+}
+
+.mv-how-copy h2 {
+  font-size: 32px !important;
+  letter-spacing: -1.5px !important;
+}
+
+.mv-how-copy p {
+  font-size: 14px;
+  max-width: 390px;
+}
+
+@media (max-width: 700px) {
+  .mv-how-card {
+    min-height: 205px !important;
+    padding: 21px !important;
+  }
+
+  .mv-how-copy h2 {
+    font-size: 27px !important;
+  }
+}
+
+
+
+/* HOW IT WORKS — REDUCE SPACE ABOVE BOTTOM NAV */
+.page:has(.mv-how-title-strip) {
+  padding-bottom: 24px !important;
+}
+
+@media (max-width: 700px) {
+  .page:has(.mv-how-title-strip) {
+    padding-bottom: 12px !important;
+  }
+}
+
+
+/* HOW IT WORKS — MINIMAL BOTTOM NAV GAP */
+.page:has(.mv-how-title-strip) {
+  padding-bottom: 8px !important;
+}
+
+@media (max-width: 700px) {
+  .page:has(.mv-how-title-strip) {
+    padding-bottom: 4px !important;
+  }
+}
+
+
+/* HOW IT WORKS — CONTENT CLOSE TO BOTTOM NAV */
+@media (max-width: 700px) {
+  .page:has(.mv-how-title-strip) {
+    padding-bottom: 0 !important;
+  }
+
+  .page:has(.mv-how-title-strip) .mv-how-content {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+}
+
+
+/* HOW IT WORKS — REMOVE ALL BOTTOM SPACE BEFORE NAV */
+.page.mv-how-page {
+  padding-bottom: 0 !important;
+}
+
+.page.mv-how-page main {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.page.mv-how-page .mv-how-content {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+
+/* HOW IT WORKS — BALANCED BOTTOM SPACING */
+.page.mv-how-page {
+  padding-bottom: 24px !important;
+}
+
+.page.mv-how-page main,
+.page.mv-how-page .mv-how-content {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+@media (max-width: 700px) {
+  .page.mv-how-page {
+    padding-bottom: 18px !important;
+  }
+}
+
+
+/* HOW IT WORKS — SLIGHTLY TIGHTER BOTTOM GAP */
+.page.mv-how-page {
+  padding-bottom: 18px !important;
+}
+
+@media (max-width: 700px) {
+  .page.mv-how-page {
+    padding-bottom: 12px !important;
+  }
+}
+
+
+/* HOW IT WORKS — FINAL TIGHT BOTTOM GAP */
+.page.mv-how-page {
+  padding-bottom: 12px !important;
+}
+
+@media (max-width: 700px) {
+  .page.mv-how-page {
+    padding-bottom: 8px !important;
+  }
+}
+
+
+/* HOW IT WORKS — DESKTOP 40PX BOTTOM GAP */
+.page.mv-how-page {
+  padding-bottom: 40px !important;
+}
+
+@media (max-width: 700px) {
+  .page.mv-how-page {
+    padding-bottom: 8px !important;
+  }
+}
+
+
+/* HOW IT WORKS — DESKTOP 70PX BOTTOM GAP */
+.page.mv-how-page {
+  padding-bottom: 70px !important;
+}
+
+@media (max-width: 700px) {
+  .page.mv-how-page {
+    padding-bottom: 8px !important;
+  }
+}
+
+
+/* HOW IT WORKS — DESKTOP 90PX BOTTOM GAP */
+.page.mv-how-page {
+  padding-bottom: 90px !important;
+}
+
+@media (max-width: 700px) {
+  .page.mv-how-page {
+    padding-bottom: 8px !important;
+  }
+}
+
+
+/* HOW IT WORKS — DESKTOP 92PX BOTTOM GAP */
+.page.mv-how-page {
+  padding-bottom: 92px !important;
+}
+
+@media (max-width: 700px) {
+  .page.mv-how-page {
+    padding-bottom: 8px !important;
+  }
+}
+
+
+/* HOW IT WORKS — DESKTOP 95PX BOTTOM GAP */
+.page.mv-how-page {
+  padding-bottom: 95px !important;
+}
+
+@media (max-width: 700px) {
+  .page.mv-how-page {
+    padding-bottom: 8px !important;
+  }
+}
+
+
+/* HOW IT WORKS — RESPONSIVE BOTTOM GAP */
+.page.mv-how-page {
+  padding-bottom: 95px !important;
+}
+
+@media (max-width: 700px) {
+  .page.mv-how-page {
+    padding-bottom: 20px !important;
+  }
+}
+
+
+/* HOW IT WORKS — 95PX BOTTOM GAP EVERYWHERE */
+.page.mv-how-page {
+  padding-bottom: 95px !important;
+}
+
+
+/* HOW IT WORKS — DESKTOP 95PX / MOBILE 90PX */
+.page.mv-how-page {
+  padding-bottom: 95px !important;
+}
+
+@media (max-width: 700px) {
+  .page.mv-how-page {
+    padding-bottom: 90px !important;
+  }
+}
+
+
+/* EXPLORE — SHOW ARROWS ON MOBILE */
+@media (max-width: 700px) {
+  .explore-arrow,
+  .explore-show-more-arrow,
+  .explore-card-arrow,
+  .explore-hero-arrow {
+    display: inline !important;
+    visibility: visible !important;
+  }
+}
+
+
+/* EXPLORE — SMALLER GREEN CORNER DESIGN ON PHONE */
+@media (max-width: 700px) {
+  .explore-title-strip::before {
+    width: 110px !important;
+    height: 110px !important;
+    right: -55px !important;
+    top: -55px !important;
+    opacity: .75 !important;
+  }
+
+  .explore-title-strip::after {
+    width: 70px !important;
+    height: 70px !important;
+    right: -35px !important;
+    bottom: -35px !important;
+  }
+}
+
+
+
+
+/* EXPLORE — PHONE SMALL CORNER DESIGN */
+
+@media (max-width: 700px) {
+  .explore-hero-green-circle {
+    width: 150px !important;
+    height: 150px !important;
+    right: -75px !important;
+    top: -75px !important;
+  }
+
+  .explore-hero-pin {
+    right: -8px !important;
+    width: 92px !important;
+    height: 112px !important;
+  }
+
+  .explore-hero-pin svg {
+    width: 92px !important;
+    height: 92px !important;
+  }
+}
+
+/* EXPLORE — MOBILE: MERGE GREEN CIRCLE + PIN */
+@media (max-width: 700px) {
+  .explore-title-strip::before {
+    width: 150px !important;
+    height: 150px !important;
+    right: -75px !important;
+    top: -75px !important;
+  }
+
+  .explore-title-strip::after {
+    width: 90px !important;
+    height: 90px !important;
+    right: -45px !important;
+    bottom: -45px !important;
+  }
+
+  .explore-hero-pin {
+    width: 95px !important;
+    height: 115px !important;
+    right: 18px !important;
+    top: 18px !important;
+    transform: rotate(10deg) !important;
+  }
+}
+
+/* EXPLORE — MOBILE GREEN CIRCLE SLIGHTLY LARGER */
+@media (max-width: 700px) {
+  .explore-hero-green-circle {
+    width: 180px !important;
+    height: 180px !important;
+    right: -90px !important;
+    top: -90px !important;
+  }
+}
+
+
+/* EXPLORE — REMOVE WHITE TEXT BORDER ON MOBILE */
+@media (max-width: 700px) {
+  .explore-hero-vibe,
+  .explore-hero-near-you,
+  .explore-hero-vibe * {
+    -webkit-text-stroke: 0 !important;
+    text-shadow: none !important;
+  }
+}
+
+
+/* HOME HERO — SPACE BETWEEN ONE APP AND ALL VYBES */
+.hero .hero-title span + span {
+  margin-left: 14px !important;
+}
+
+@media (max-width: 600px) {
+  .hero .hero-title span + span {
+    margin-left: 9px !important;
+  }
+}
+
+
+/* HOME HERO — IMPROVED TITLE SPACING */
+.hero .hero-title span + span {
+  margin-left: 18px !important;
+}
+
+@media (max-width: 600px) {
+  .hero .hero-title span + span {
+    margin-left: 9px !important;
+  }
+}
+
+
+/* HOME HERO — VISIBLE GAP BETWEEN ONE APP AND ALL VYBES */
+@media (min-width: 601px) {
+  .hero .hero-title {
+    word-spacing: 10px !important;
+  }
+
+  .hero .hero-title span + span {
+    margin-left: 0 !important;
+  }
+}
+
+
+
+/* HOME HERO — INCREASE LETTER SPACING ONLY */
+@media (max-width: 600px) {
+  .hero .hero-title span {
+    letter-spacing: -0.4px !important;
+  }
+}
+
+
+/* MOBILE HERO TITLE — FIX MIRROR/SHINE POSITION */
+@media (max-width: 600px) {
+  .hero .hero-title span::after {
+    left: 8% !important;
+    right: 8% !important;
+    bottom: -6px !important;
+    height: 5px !important;
+    opacity: .55 !important;
+    filter: blur(2px) !important;
+  }
+}
+
+/* MOBILE HERO TITLE — SHINE OVER TEXT */
+@media (max-width: 600px) {
+  .hero .hero-title span::after {
+    left: 8% !important;
+    right: 8% !important;
+    bottom: auto !important;
+    top: 38% !important;
+    height: 5px !important;
+    opacity: .55 !important;
+    filter: blur(2px) !important;
+    z-index: 3 !important;
+  }
+}
+
+/* MOBILE HERO TITLE — SHINE SLIGHTLY LOWER */
+@media (max-width: 600px) {
+  .hero .hero-title span::after {
+    top: 45% !important;
+  }
+}
+
+/* MOBILE HERO TITLE — SHINE AT LETTER FEET */
+@media (max-width: 600px) {
+  .hero .hero-title span::after {
+    top: auto !important;
+    bottom: 8px !important;
+    left: 8% !important;
+    right: 8% !important;
+    height: 5px !important;
+    opacity: .55 !important;
+    filter: blur(2px) !important;
+    z-index: 3 !important;
+  }
+}
+
+/* MOBILE HERO TITLE — SHINE BAR SLIGHTLY ABOVE LETTER FEET */
+@media (max-width: 600px) {
+  .hero .hero-title span::after {
+    top: auto !important;
+    bottom: 12px !important;
+    height: 4px !important;
+    opacity: .55 !important;
+  }
+}

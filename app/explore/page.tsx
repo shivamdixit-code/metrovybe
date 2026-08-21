@@ -50,6 +50,7 @@ export default async function ExplorePage({
           }}
         >
           <div
+            className="explore-hero-green-circle"
             style={{
               position: "absolute",
               width: 420,
@@ -75,6 +76,7 @@ export default async function ExplorePage({
           />
 
           <div
+            className="explore-hero-pin"
             style={{
               position: "absolute",
               zIndex: 2,

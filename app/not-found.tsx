@@ -22,7 +22,8 @@ export default function NotFound() {
         <Link
           href="/"
           style={{
-            display: "inline-block",
+            display: "inline-flex",
+            alignItems: "flex-start",
             position: "relative",
             textDecoration: "none",
             color: "#111",
@@ -32,19 +33,19 @@ export default function NotFound() {
             marginBottom: "45px",
           }}
         >
+          metro<span style={{ color: "#29AB87" }}>vybe</span>
           <span
             style={{
-              position: "absolute",
-              top: "-15px",
-              right: "-12px",
               color: "#D4AF37",
-              fontSize: "15px",
+              fontSize: "14px",
               lineHeight: 1,
+              marginLeft: "2px",
+              marginTop: "2px",
+              fontWeight: 900,
             }}
           >
             ✦
           </span>
-          metro<span style={{ color: "#29AB87" }}>vybe</span>
         </Link>
 
         <div

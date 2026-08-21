@@ -35,7 +35,7 @@ export default function ProfileSettings() {
 
     if (currentUser.role !== "customer") {
       router.replace(
-        currentUser.role === "business" ? "/business/profile" : "/login"
+        currentUser.role === "business" ? "/business/dashboard" : "/login"
       );
       return;
     }
