@@ -20,7 +20,7 @@ const nav = [
   { label: "Customers", href: "/crm/customers", icon: Users },
   { label: "Orders", href: "/crm/orders", icon: ClipboardList },
   { label: "Payments", href: "/crm/payments", icon: CircleDollarSign },
-  { label: "Providers", href: "/crm/providers", icon: UserRound },
+  { label: "Businesses", href: "/crm/businesses", icon: UserRound },
 ];
 
 export default function CRMLayoutClient({

@@ -57,8 +57,8 @@ type VerificationResponse = {
   verification: Verification | null;
 };
 
-export default function Providers() {
-  const [providers, setProviders] = useState<Business[]>([]);
+export default function Businesses() {
+  const [businesses, setBusinesses] = useState<Business[]>([]);
   const [selected, setSelected] = useState<VerificationResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -67,7 +67,7 @@ export default function Providers() {
   const [reason, setReason] = useState("");
   const [infoMessage, setInfoMessage] = useState("");
 
-  async function loadProviders() {
+  async function loadBusinesses() {
     try {
       setLoading(true);
       setError("");
@@ -79,13 +79,13 @@ export default function Providers() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to load providers");
+        throw new Error(data.message || "Failed to load businesses");
       }
 
-      setProviders(Array.isArray(data) ? data : []);
+      setBusinesses(Array.isArray(data) ? data : []);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to load providers"
+        err instanceof Error ? err.message : "Failed to load businesses"
       );
     } finally {
       setLoading(false);
@@ -147,7 +147,7 @@ export default function Providers() {
 
       setInfoMessage("Business verified successfully.");
       setSelected(null);
-      await loadProviders();
+      await loadBusinesses();
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to approve business"
@@ -191,7 +191,7 @@ export default function Providers() {
       setInfoMessage("Business rejected successfully.");
       setReason("");
       setSelected(null);
-      await loadProviders();
+      await loadBusinesses();
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to reject business"
@@ -237,7 +237,7 @@ export default function Providers() {
       setInfoMessage("Additional information requested.");
       setReason("");
       setSelected(null);
-      await loadProviders();
+      await loadBusinesses();
     } catch (err) {
       setError(
         err instanceof Error
@@ -250,41 +250,41 @@ export default function Providers() {
   }
 
   useEffect(() => {
-    loadProviders();
+    loadBusinesses();
   }, []);
 
-  const pending = providers.filter(
+  const pending = businesses.filter(
     (p) =>
       p.verificationStatus === "pending" ||
       p.verificationStatus === "under_review"
   );
 
-  const verified = providers.filter(
+  const verified = businesses.filter(
     (p) => p.verificationStatus === "verified"
   );
 
   return (
-    <main className="mv-provider-page">
-      <div className="mv-provider-shell">
-        <header className="mv-provider-header">
+    <main className="mv-business-page">
+      <div className="mv-business-shell">
+        <header className="mv-business-header">
           <div>
             <span>PARTNERS</span>
-            <h1>Providers</h1>
+            <h1>Businesses</h1>
             <p>Review businesses and verify their documents.</p>
           </div>
 
-          <div className="mv-provider-count">
-            <strong>{providers.length}</strong>
+          <div className="mv-business-count">
+            <strong>{businesses.length}</strong>
             <small>Pending</small>
           </div>
         </header>
 
-        {error && <div className="mv-provider-alert error">{error}</div>}
+        {error && <div className="mv-business-alert error">{error}</div>}
         {infoMessage && (
-          <div className="mv-provider-alert success">{infoMessage}</div>
+          <div className="mv-business-alert success">{infoMessage}</div>
         )}
 
-        <section className="mv-provider-hero">
+        <section className="mv-business-hero">
           <div>
             <span>BUSINESS VERIFICATION</span>
             <strong>{pending.length}</strong>
@@ -293,7 +293,7 @@ export default function Providers() {
           <BriefcaseBusiness size={28} />
         </section>
 
-        <div className="mv-provider-stats">
+        <div className="mv-business-stats">
           <div>
             <Clock size={16} />
             <strong>{pending.length}</strong>
@@ -307,62 +307,62 @@ export default function Providers() {
           </div>
         </div>
 
-        <div className="mv-provider-heading">
+        <div className="mv-business-heading">
           <span>VERIFICATION QUEUE</span>
           <h2>Businesses</h2>
         </div>
 
         {loading ? (
-          <div className="mv-provider-empty">Loading businesses...</div>
-        ) : providers.length === 0 ? (
-          <div className="mv-provider-empty">
+          <div className="mv-business-empty">Loading businesses...</div>
+        ) : businesses.length === 0 ? (
+          <div className="mv-business-empty">
             No businesses are waiting for verification.
           </div>
         ) : (
-          <div className="mv-provider-list">
-            {providers.map((provider) => (
+          <div className="mv-business-list">
+            {businesses.map((business) => (
               <button
                 type="button"
-                className="mv-provider-card"
-                key={provider._id}
-                onClick={() => openVerification(provider._id)}
+                className="mv-business-card"
+                key={business._id}
+                onClick={() => openVerification(business._id)}
               >
-                <div className="mv-provider-icon">
+                <div className="mv-business-icon">
                   <BriefcaseBusiness size={19} />
                 </div>
 
-                <div className="mv-provider-info">
-                  <div className="mv-provider-title">
-                    <h3>{provider.businessName}</h3>
+                <div className="mv-business-info">
+                  <div className="mv-business-title">
+                    <h3>{business.businessName}</h3>
 
                     <span
                       className={
-                        provider.verificationStatus === "verified"
+                        business.verificationStatus === "verified"
                           ? "mv-verified"
-                          : "mv-provider-pending"
+                          : "mv-business-pending"
                       }
                     >
-                      {provider.verificationStatus === "verified" ? (
+                      {business.verificationStatus === "verified" ? (
                         <BadgeCheck size={10} />
                       ) : (
                         <Clock size={10} />
                       )}
 
-                      {provider.verificationStatus === "verified"
+                      {business.verificationStatus === "verified"
                         ? "Verified"
-                        : provider.verificationStatus === "under_review"
+                        : business.verificationStatus === "under_review"
                         ? "Under Review"
                         : "Pending"}
                     </span>
                   </div>
 
-                  <div className="mv-provider-meta">
-                    <span>{provider.email || "No email"}</span>
+                  <div className="mv-business-meta">
+                    <span>{business.email || "No email"}</span>
 
-                    {(provider.city || provider.state) && (
+                    {(business.city || business.state) && (
                       <span>
                         <MapPin size={10} />
-                        {[provider.city, provider.state]
+                        {[business.city, business.state]
                           .filter(Boolean)
                           .join(", ")}
                       </span>
@@ -372,7 +372,7 @@ export default function Providers() {
 
                 <ChevronRight
                   size={18}
-                  className="mv-provider-arrow"
+                  className="mv-business-arrow"
                 />
               </button>
             ))}
@@ -454,7 +454,7 @@ export default function Providers() {
                       </article>
                     ))
                   ) : (
-                    <div className="mv-provider-empty">
+                    <div className="mv-business-empty">
                       No documents submitted.
                     </div>
                   )}
@@ -507,7 +507,7 @@ export default function Providers() {
       )}
 
       <style jsx global>{`
-        .mv-provider-page {
+        .mv-business-page {
           min-height: 100vh;
           padding: 34px 28px 60px;
           background:
@@ -519,42 +519,43 @@ export default function Providers() {
             #f7f8fa;
         }
 
-        .mv-provider-shell {
+        .mv-business-shell {
           width: min(1050px, 100%);
           margin: auto;
         }
 
-        .mv-provider-header {
+        .mv-business-header {
           display: flex;
           align-items: flex-end;
           justify-content: space-between;
           margin-bottom: 23px;
         }
 
-        .mv-provider-header > div:first-child > span,
-        .mv-provider-heading > span {
+        .mv-business-header > div:first-child > span,
+        .mv-business-heading > span {
           color: #29ab87;
           font-size: 9px;
           font-weight: 950;
           letter-spacing: 0.14em;
         }
 
-        .mv-provider-header h1 {
-          margin: 6px 0 0;
-          font-size: clamp(34px, 5vw, 48px);
-          line-height: 0.95;
-          letter-spacing: -0.055em;
-          font-weight: 950;
+        .mv-business-header h1 {
+          margin: 6px 0 0 !important;
+          font-family: inherit !important;
+          font-size: clamp(34px, 5vw, 48px) !important;
+          line-height: 0.95 !important;
+          letter-spacing: -0.055em !important;
+          font-weight: 950 !important;
         }
 
-        .mv-provider-header p {
+        .mv-business-header p {
           margin: 8px 0 0;
           color: #858990;
           font-size: 13px;
           font-weight: 600;
         }
 
-        .mv-provider-count {
+        .mv-business-count {
           width: 62px;
           height: 62px;
           display: flex;
@@ -566,18 +567,18 @@ export default function Providers() {
           color: #fff;
         }
 
-        .mv-provider-count strong {
+        .mv-business-count strong {
           font-size: 20px;
           font-weight: 950;
         }
 
-        .mv-provider-count small {
+        .mv-business-count small {
           color: #aaa;
           font-size: 8px;
           font-weight: 800;
         }
 
-        .mv-provider-hero {
+        .mv-business-hero {
           min-height: 145px;
           padding: 23px;
           display: flex;
@@ -596,34 +597,34 @@ export default function Providers() {
           margin-bottom: 18px;
         }
 
-        .mv-provider-hero span {
+        .mv-business-hero span {
           color: rgba(255, 255, 255, 0.48);
           font-size: 9px;
           font-weight: 900;
           letter-spacing: 0.12em;
         }
 
-        .mv-provider-hero strong {
+        .mv-business-hero strong {
           display: block;
           margin-top: 10px;
           font-size: 32px;
           font-weight: 950;
         }
 
-        .mv-provider-hero p {
+        .mv-business-hero p {
           margin: 4px 0 0;
           color: rgba(255, 255, 255, 0.55);
           font-size: 10px;
         }
 
-        .mv-provider-stats {
+        .mv-business-stats {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
           gap: 10px;
           margin-bottom: 28px;
         }
 
-        .mv-provider-stats > div {
+        .mv-business-stats > div {
           display: flex;
           align-items: center;
           gap: 9px;
@@ -633,43 +634,43 @@ export default function Providers() {
           background: #fff;
         }
 
-        .mv-provider-stats svg {
+        .mv-business-stats svg {
           color: #29ab87;
         }
 
-        .mv-provider-stats strong {
+        .mv-business-stats strong {
           font-size: 16px;
           font-weight: 950;
         }
 
-        .mv-provider-stats span {
+        .mv-business-stats span {
           color: #999;
           font-size: 9px;
           font-weight: 800;
         }
 
-        .mv-provider-heading {
+        .mv-business-heading {
           margin-bottom: 12px;
         }
 
-        .mv-provider-heading > span {
+        .mv-business-heading > span {
           color: #aaa;
         }
 
-        .mv-provider-heading h2 {
+        .mv-business-heading h2 {
           margin: 4px 0 0;
           font-size: 21px;
           font-weight: 950;
           letter-spacing: -0.035em;
         }
 
-        .mv-provider-list {
+        .mv-business-list {
           display: flex;
           flex-direction: column;
           gap: 9px;
         }
 
-        .mv-provider-card {
+        .mv-business-card {
           width: 100%;
           min-height: 82px;
           display: flex;
@@ -684,12 +685,12 @@ export default function Providers() {
           cursor: pointer;
         }
 
-        .mv-provider-card:hover {
+        .mv-business-card:hover {
           border-color: #29ab87;
           transform: translateY(-1px);
         }
 
-        .mv-provider-icon {
+        .mv-business-icon {
           width: 48px;
           height: 48px;
           display: grid;
@@ -700,18 +701,18 @@ export default function Providers() {
           color: #29ab87;
         }
 
-        .mv-provider-info {
+        .mv-business-info {
           min-width: 0;
           flex: 1;
         }
 
-        .mv-provider-title {
+        .mv-business-title {
           display: flex;
           align-items: center;
           gap: 7px;
         }
 
-        .mv-provider-title h3 {
+        .mv-business-title h3 {
           overflow: hidden;
           margin: 0;
           font-size: 13px;
@@ -721,7 +722,7 @@ export default function Providers() {
         }
 
         .mv-verified,
-        .mv-provider-pending {
+        .mv-business-pending {
           display: inline-flex;
           align-items: center;
           gap: 3px;
@@ -737,12 +738,12 @@ export default function Providers() {
           color: #16a05d;
         }
 
-        .mv-provider-pending {
+        .mv-business-pending {
           background: #fff5dc;
           color: #b57900;
         }
 
-        .mv-provider-meta {
+        .mv-business-meta {
           display: flex;
           align-items: center;
           gap: 10px;
@@ -752,18 +753,18 @@ export default function Providers() {
           font-weight: 700;
         }
 
-        .mv-provider-meta span {
+        .mv-business-meta span {
           display: inline-flex;
           align-items: center;
           gap: 3px;
         }
 
-        .mv-provider-arrow {
+        .mv-business-arrow {
           color: #aaa;
           flex-shrink: 0;
         }
 
-        .mv-provider-empty {
+        .mv-business-empty {
           padding: 30px;
           border: 1px dashed #dfe1e5;
           border-radius: 20px;
@@ -774,7 +775,7 @@ export default function Providers() {
           font-weight: 700;
         }
 
-        .mv-provider-alert {
+        .mv-business-alert {
           margin-bottom: 14px;
           padding: 12px 15px;
           border-radius: 14px;
@@ -782,13 +783,13 @@ export default function Providers() {
           font-weight: 800;
         }
 
-        .mv-provider-alert.error {
+        .mv-business-alert.error {
           color: #b42318;
           background: #fff0ef;
           border: 1px solid #ffd4d0;
         }
 
-        .mv-provider-alert.success {
+        .mv-business-alert.success {
           color: #087443;
           background: #eaf8f0;
           border: 1px solid #c8ead8;
@@ -1008,19 +1009,19 @@ export default function Providers() {
         }
 
         @media (max-width: 640px) {
-          .mv-provider-page {
+          .mv-business-page {
             padding: 22px 14px 80px;
           }
 
-          .mv-provider-header {
+          .mv-business-header {
             align-items: center;
           }
 
-          .mv-provider-header h1 {
+          .mv-business-header h1 {
             font-size: 34px;
           }
 
-          .mv-provider-stats {
+          .mv-business-stats {
             grid-template-columns: 1fr;
           }
 

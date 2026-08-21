@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getListings, type Listing } from "@/lib/api";
+import { authenticatedFetch } from "@/lib/auth";
 import {
   ChevronRight,
   MapPin,
@@ -13,6 +14,13 @@ export default function Listings() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const [pendingListings, setPendingListings] = useState<any[]>([]);
+  const [pendingLoading, setPendingLoading] = useState(true);
+  const [pendingError, setPendingError] = useState("");
+  const [pendingAction, setPendingAction] = useState("");
+  const [rejectingId, setRejectingId] = useState<string | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
 
   async function loadListings() {
     try {
@@ -29,8 +37,106 @@ export default function Listings() {
     }
   }
 
+  async function loadPendingListings() {
+    try {
+      setPendingLoading(true);
+      setPendingError("");
+
+      const response = await authenticatedFetch("/api/admin/listings/pending");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to load pending listings");
+      }
+
+      setPendingListings(
+        Array.isArray(data?.listings) ? data.listings : []
+      );
+    } catch (err: any) {
+      setPendingError(
+        err?.message || "Failed to load pending listings"
+      );
+      setPendingListings([]);
+    } finally {
+      setPendingLoading(false);
+    }
+  }
+
+  async function handleApproveListing(id: string) {
+    try {
+      setPendingAction(id);
+
+      const response = await authenticatedFetch(
+        `/api/admin/listings/${id}/approve`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to approve listing");
+      }
+
+      await Promise.all([
+        loadPendingListings(),
+        loadListings(),
+      ]);
+    } catch (err: any) {
+      window.alert(err?.message || "Failed to approve listing");
+    } finally {
+      setPendingAction("");
+    }
+  }
+
+  async function handleRejectListing(id: string) {
+    const reason = rejectReason.trim();
+
+    if (!reason) {
+      window.alert("Please enter a rejection reason.");
+      return;
+    }
+
+    try {
+      setPendingAction(id);
+
+      const response = await authenticatedFetch(
+        `/api/admin/listings/${id}/reject`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            reason,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to reject listing");
+      }
+
+      setRejectingId(null);
+      setRejectReason("");
+
+      await loadPendingListings();
+    } catch (err: any) {
+      window.alert(err?.message || "Failed to reject listing");
+    } finally {
+      setPendingAction("");
+    }
+  }
+
   useEffect(() => {
     loadListings();
+    loadPendingListings();
   }, []);
 
   return (
@@ -60,6 +166,166 @@ export default function Listings() {
           <div className="mv-hero-icon">
             <Store size={27} />
           </div>
+        </section>
+
+        <section className="mv-pending-section">
+          <div className="mv-section-heading mv-pending-heading">
+            <div>
+              <span>ADMIN REVIEW</span>
+              <h2>Pending Listings</h2>
+            </div>
+
+            <div className="mv-pending-count">
+              {pendingLoading ? "…" : pendingListings.length}
+            </div>
+          </div>
+
+          {pendingLoading ? (
+            <div className="mv-list-loading mv-pending-loading">
+              <strong>Loading pending listings</strong>
+              <span>Fetching listings awaiting admin approval.</span>
+            </div>
+          ) : pendingError ? (
+            <div className="mv-list-loading mv-pending-loading">
+              <strong>Unable to load pending listings</strong>
+              <span>{pendingError}</span>
+              <button type="button" onClick={loadPendingListings}>
+                Try again
+              </button>
+            </div>
+          ) : pendingListings.length === 0 ? (
+            <div className="mv-list-loading mv-pending-loading">
+              <strong>No pending listings</strong>
+              <span>Everything is currently reviewed.</span>
+            </div>
+          ) : (
+            <div className="mv-pending-list">
+              {pendingListings.map((item, index) => {
+                const businessName =
+                  item?.business?.businessName ||
+                  item?.business?.name ||
+                  "Unknown business";
+
+                const isWorking = pendingAction === String(item._id);
+
+                return (
+                  <article
+                    className="mv-pending-card"
+                    key={String(item._id)}
+                  >
+                    <div className="mv-pending-top">
+                      <div className={`mv-list-avatar avatar-${index % 4}`}>
+                        <Store size={20} />
+                      </div>
+
+                      <div className="mv-pending-main">
+                        <div className="mv-pending-title-row">
+                          <h3>{item.title || "Untitled listing"}</h3>
+                          <span className="mv-pending-pill">
+                            PENDING
+                          </span>
+                        </div>
+
+                        <div className="mv-pending-business">
+                          {businessName}
+                        </div>
+
+                        <div className="mv-list-details">
+                          <span>
+                            {item.category || "Uncategorized"}
+                          </span>
+
+                          <span>
+                            <MapPin size={11} />
+                            {item.location || "Location not provided"}
+                          </span>
+                        </div>
+
+                        <div className="mv-pending-meta">
+                          <strong>{item.price || "Price not set"}</strong>
+
+                          {item.description && (
+                            <span>{item.description}</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {rejectingId === String(item._id) && (
+                      <div className="mv-reject-box">
+                        <label htmlFor={`reject-${item._id}`}>
+                          Rejection reason
+                        </label>
+
+                        <textarea
+                          id={`reject-${item._id}`}
+                          value={rejectReason}
+                          onChange={(event) =>
+                            setRejectReason(event.target.value)
+                          }
+                          placeholder="Tell the business why this listing was rejected..."
+                          rows={3}
+                          disabled={isWorking}
+                        />
+
+                        <div className="mv-reject-box-actions">
+                          <button
+                            type="button"
+                            className="mv-pending-cancel"
+                            onClick={() => {
+                              setRejectingId(null);
+                              setRejectReason("");
+                            }}
+                            disabled={isWorking}
+                          >
+                            Cancel
+                          </button>
+
+                          <button
+                            type="button"
+                            className="mv-pending-confirm-reject"
+                            onClick={() =>
+                              handleRejectListing(String(item._id))
+                            }
+                            disabled={isWorking}
+                          >
+                            {isWorking ? "Rejecting…" : "Confirm Reject"}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {rejectingId !== String(item._id) && (
+                      <div className="mv-pending-actions">
+                        <button
+                          type="button"
+                          className="mv-pending-reject"
+                          onClick={() => {
+                            setRejectingId(String(item._id));
+                            setRejectReason("");
+                          }}
+                          disabled={isWorking}
+                        >
+                          Reject
+                        </button>
+
+                        <button
+                          type="button"
+                          className="mv-pending-approve"
+                          onClick={() =>
+                            handleApproveListing(String(item._id))
+                          }
+                          disabled={isWorking}
+                        >
+                          {isWorking ? "Approving…" : "Approve & Publish"}
+                        </button>
+                      </div>
+                    )}
+                  </article>
+                );
+              })}
+            </div>
+          )}
         </section>
 
         <div className="mv-section-heading">
@@ -456,6 +722,214 @@ export default function Listings() {
           cursor: pointer;
         }
 
+        .mv-pending-section {
+          margin-bottom: 32px;
+        }
+
+        .mv-pending-heading {
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          gap: 15px;
+        }
+
+        .mv-pending-count {
+          min-width: 34px;
+          height: 34px;
+          display: grid;
+          place-items: center;
+          padding: 0 9px;
+          border-radius: 12px;
+          background: #111;
+          color: #fff;
+          font-size: 11px;
+          font-weight: 950;
+        }
+
+        .mv-pending-list {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .mv-pending-card {
+          padding: 14px;
+          border: 1px solid #e8e9ec;
+          border-radius: 22px;
+          background: #fff;
+          box-shadow: 0 7px 25px rgba(0,0,0,.035);
+        }
+
+        .mv-pending-top {
+          display: flex;
+          align-items: flex-start;
+          gap: 13px;
+        }
+
+        .mv-pending-main {
+          min-width: 0;
+          flex: 1;
+        }
+
+        .mv-pending-title-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          min-width: 0;
+        }
+
+        .mv-pending-title-row h3 {
+          min-width: 0;
+          margin: 0;
+          overflow: hidden;
+          font-size: 14px;
+          font-weight: 950;
+          letter-spacing: -.02em;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .mv-pending-pill {
+          flex-shrink: 0;
+          padding: 4px 7px;
+          border-radius: 999px;
+          background: #fff4df;
+          color: #b56a00;
+          font-size: 7px;
+          font-weight: 950;
+          letter-spacing: .06em;
+        }
+
+        .mv-pending-business {
+          margin-top: 4px;
+          color: #555b63;
+          font-size: 10px;
+          font-weight: 800;
+        }
+
+        .mv-pending-meta {
+          display: flex;
+          align-items: center;
+          gap: 9px;
+          margin-top: 8px;
+        }
+
+        .mv-pending-meta strong {
+          font-size: 11px;
+          font-weight: 950;
+        }
+
+        .mv-pending-meta span {
+          min-width: 0;
+          overflow: hidden;
+          color: #999da3;
+          font-size: 9px;
+          font-weight: 600;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .mv-pending-actions {
+          display: grid;
+          grid-template-columns: .8fr 1.2fr;
+          gap: 8px;
+          margin-top: 13px;
+        }
+
+        .mv-pending-actions button,
+        .mv-reject-box-actions button {
+          min-height: 39px;
+          border: 0;
+          border-radius: 12px;
+          font-size: 10px;
+          font-weight: 900;
+          cursor: pointer;
+          transition: .15s ease;
+        }
+
+        .mv-pending-actions button:disabled,
+        .mv-reject-box-actions button:disabled {
+          opacity: .55;
+          cursor: not-allowed;
+        }
+
+        .mv-pending-reject {
+          background: #f3f4f6;
+          color: #222;
+        }
+
+        .mv-pending-reject:hover {
+          background: #ececef;
+        }
+
+        .mv-pending-approve {
+          background: #29AB87;
+          color: #fff;
+          box-shadow: 0 7px 18px rgba(41,171,135,.18);
+        }
+
+        .mv-pending-approve:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 10px 22px rgba(41,171,135,.24);
+        }
+
+        .mv-reject-box {
+          margin-top: 13px;
+          padding: 12px;
+          border-radius: 15px;
+          background: #f7f8fa;
+          border: 1px solid #e8e9ec;
+        }
+
+        .mv-reject-box label {
+          display: block;
+          margin-bottom: 6px;
+          color: #333;
+          font-size: 9px;
+          font-weight: 900;
+        }
+
+        .mv-reject-box textarea {
+          width: 100%;
+          resize: vertical;
+          box-sizing: border-box;
+          padding: 10px;
+          border: 1px solid #dddfe3;
+          border-radius: 11px;
+          outline: none;
+          background: #fff;
+          color: #111;
+          font-family: inherit;
+          font-size: 10px;
+          font-weight: 600;
+        }
+
+        .mv-reject-box textarea:focus {
+          border-color: #29AB87;
+          box-shadow: 0 0 0 3px rgba(41,171,135,.08);
+        }
+
+        .mv-reject-box-actions {
+          display: grid;
+          grid-template-columns: 1fr 1.4fr;
+          gap: 8px;
+          margin-top: 8px;
+        }
+
+        .mv-pending-cancel {
+          background: #e9eaed;
+          color: #333;
+        }
+
+        .mv-pending-confirm-reject {
+          background: #111;
+          color: #fff;
+        }
+
+        .mv-pending-loading {
+          margin-bottom: 0;
+        }
+
         @media(max-width:700px) {
 
           .mv-section-page {
@@ -512,6 +986,32 @@ export default function Listings() {
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
+          }
+
+          .mv-pending-card {
+            padding: 12px;
+            border-radius: 19px;
+          }
+
+          .mv-pending-top {
+            gap: 10px;
+          }
+
+          .mv-pending-title-row {
+            gap: 6px;
+          }
+
+          .mv-pending-title-row h3 {
+            font-size: 12px;
+          }
+
+          .mv-pending-actions {
+            grid-template-columns: .85fr 1.15fr;
+          }
+
+          .mv-pending-actions button {
+            width: 100%;
+            padding: 0 8px;
           }
         }
 

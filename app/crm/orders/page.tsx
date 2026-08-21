@@ -6,8 +6,8 @@ export default function Orders() {
   return (
     <main className="crm-empty-page">
       <div className="crm-empty-shell">
-        <span>OPERATIONS</span>
-        <h1>Orders</h1>
+        <span>PARTNERS</span>
+        <h1>Businesses</h1>
         <p>Orders will appear here once real order records exist.</p>
 
         <section className="crm-empty-card">
