@@ -4,7 +4,7 @@ import { MapPin, SlidersHorizontal, ArrowUpRight } from "lucide-react";
 
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
-import { getListings } from "@/lib/api";
+import { getServerListings } from "@/lib/serverListings";
 import ExploreMapClient from "@/components/ExploreMapClient";
 import {
   Grid2X2,
@@ -20,7 +20,7 @@ export default async function ExplorePage({
   searchParams: Promise<{ category?: string }>;
 }) {
   const params = await searchParams;
-  const listings = await getListings(
+  const listings = await getServerListings(
     params.category ? { category: params.category } : {}
   );
   const pins = [

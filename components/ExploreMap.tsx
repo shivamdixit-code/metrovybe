@@ -393,6 +393,24 @@ function MyLocationButton({
 
 
 
+function ProfileLocationController({
+  location,
+}: {
+  location: [number, number] | null;
+}) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!location) return;
+
+    map.flyTo(location, 14, {
+      duration: 1.1,
+    });
+  }, [location, map]);
+
+  return null;
+}
+
 export default function ExploreMap({
 
   listings,
@@ -471,6 +489,7 @@ export default function ExploreMap({
         zoomControl={false}
         className="metro-map"
       >
+        <ProfileLocationController location={userLocation} />
         <TileLayer
           key={mapStyle}
           attribution={MAP_STYLES[mapStyle].attribution}

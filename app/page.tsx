@@ -4,11 +4,11 @@ import { ArrowRight, MapPin, PlayCircle } from "lucide-react";
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
 import { categories } from "@/lib/data";
-import { getListings } from "@/lib/api";
+import { getServerListings } from "@/lib/serverListings";
 import { ListingCard } from "@/components/ListingCard";
 
 export default async function Home() {
-  const listings = await getListings();
+  const listings = await getServerListings();
 
   return (
     <div className="page">

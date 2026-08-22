@@ -34,10 +34,21 @@ export async function getListings(
 ): Promise<Listing[]> {
   const query = new URLSearchParams(params).toString();
 
+  const headers = new Headers();
+
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("metrovybe_token");
+
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+  }
+
   const response = await fetch(
     `${API_URL}/api/listings${query ? `?${query}` : ""}`,
     {
       cache: "no-store",
+      headers,
     }
   );
 

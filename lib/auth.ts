@@ -5,6 +5,11 @@ export type AuthUser = {
   phone?: string;
   role: "customer" | "business" | "admin";
   status: string;
+  location?: {
+    latitude?: number;
+    longitude?: number;
+    label?: string;
+  };
 };
 
 export type LoginResponse = {
@@ -41,6 +46,7 @@ export async function login(
   }
 
   localStorage.setItem("metrovybe_token", data.token);
+  document.cookie = `metrovybe_token=${encodeURIComponent(data.token)}; path=/; SameSite=Lax`;
   localStorage.setItem("metrovybe_user", JSON.stringify(data.user));
 
   if (data.business) {
@@ -108,6 +114,7 @@ export async function verifyLoginPhoneOtp(
   }
 
   localStorage.setItem("metrovybe_token", data.token);
+  document.cookie = `metrovybe_token=${encodeURIComponent(data.token)}; path=/; SameSite=Lax`;
   localStorage.setItem(
     "metrovybe_user",
     JSON.stringify(data.user)
