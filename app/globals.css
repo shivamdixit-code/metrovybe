@@ -80,7 +80,20 @@ img{max-width:100%;display:block}
 .card{background:#fff;border:var(--line);border-radius:22px;overflow:hidden;box-shadow:3px 4px 0 #111;transition:.15s transform}
 .card:hover{transform:translateY(-4px)}
 .card-image{height:205px;position:relative;overflow:hidden;background:#ddd}
-.fake-img{width:100%;height:100%;display:grid;place-items:center;font-size:80px;background:linear-gradient(135deg,#d8d8d8,#f4f4f4)}
+.fake-img{
+  width:100%;
+  height:100%;
+  display:grid;
+  place-items:center;
+  font-size:80px;
+  background:
+    linear-gradient(
+      135deg,
+      var(--green) 0%,
+      var(--cyan) 45%,
+      var(--purple) 100%
+    );
+}
 .badge{position:absolute;top:12px;left:12px;border:var(--line);border-radius:10px;padding:6px 10px;font-size:12px;font-weight:900}
 .heart{position:absolute;top:10px;right:10px;border:var(--line);background:#fff;border-radius:50%;width:44px;height:44px;font-size:24px;display:grid;place-items:center}
 .card-body{padding:14px}
@@ -2040,7 +2053,7 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
   display:grid;
   place-items:center;
   font-size:48px;
-  background:var(--green);
+  background:linear-gradient(135deg,var(--green) 0%,var(--cyan) 45%,var(--purple) 100%);
 }
 
 .explore-featured{
@@ -2631,7 +2644,7 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
   display:grid;
   place-items:center;
   font-size:55px;
-  background:var(--green);
+  background:linear-gradient(135deg,var(--green) 0%,var(--cyan) 45%,var(--purple) 100%);
 }
 
 .explore-featured-clean{
@@ -13723,3 +13736,37 @@ body {
   }
 
 }
+
+/* Booking date hover tooltip */
+.mv-booking-tooltip {
+  position: relative;
+}
+
+.mv-booking-tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 7px);
+  transform: translate(-50%, 4px);
+  padding: 6px 9px;
+  border-radius: 7px;
+  background: #111318;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 200;
+  transition: opacity .14s ease, transform .14s ease, visibility .14s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,.16);
+}
+
+.mv-booking-tooltip:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+}
+

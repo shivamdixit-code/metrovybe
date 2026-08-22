@@ -353,7 +353,7 @@ export default function Listing({
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    background: "#eee",
+                    background: "linear-gradient(135deg, var(--green) 0%, var(--cyan) 45%, var(--purple) 100%)",
                     fontSize: 42,
                   }}
                 >

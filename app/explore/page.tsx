@@ -338,7 +338,7 @@ export default async function ExplorePage({
                     width: 180,
                     minWidth: 180,
                     overflow: "hidden",
-                    background: "#eee",
+                    background: "linear-gradient(135deg, var(--green) 0%, var(--cyan) 45%, var(--purple) 100%), #eee",
                   }}
                 >
                   {x.image ? (
