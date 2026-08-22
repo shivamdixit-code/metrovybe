@@ -13723,3 +13723,13 @@ body {
   }
 
 }
+
+/* ===== EXPLORE LISTING LOCATION PIN — CONSISTENT SIZE ===== */
+.explore-listing-location-pin {
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  min-height: 20px !important;
+  flex: 0 0 20px !important;
+  display: block !important;
+}

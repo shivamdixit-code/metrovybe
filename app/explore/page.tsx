@@ -450,7 +450,7 @@ export default async function ExplorePage({
                         fontWeight: 750,
                       }}
                     >
-                      <MapPin size={16} strokeWidth={2.3} />
+                      <MapPin className="explore-listing-location-pin" size={20} strokeWidth={2.5} />
                       {x.location}
                     </div>
                   </div>
