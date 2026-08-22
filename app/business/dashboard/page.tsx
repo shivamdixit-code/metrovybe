@@ -70,7 +70,6 @@ export default function BusinessDashboard() {
   const [verification, setVerification] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [hydrated, setHydrated] = useState(false);
-  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -179,21 +178,13 @@ export default function BusinessDashboard() {
       );
     } finally {
       setLoading(false);
-      setShowLoadingScreen(false);
       setRefreshing(false);
     }
   }, []);
 
   useEffect(() => {
     setHydrated(true);
-
-    const timer = window.setTimeout(() => {
-      setShowLoadingScreen(true);
-    }, 500);
-
     loadDashboard();
-
-    return () => window.clearTimeout(timer);
   }, [loadDashboard]);
 
   const stats = useMemo(() => {
@@ -465,7 +456,7 @@ export default function BusinessDashboard() {
     );
   }
 
-  if (loading && showLoadingScreen) {
+  if (loading) {
     return (
       <main className="mv-premium-dashboard loading-screen">
         <div className="loading-orb" />
