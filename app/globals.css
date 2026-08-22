@@ -13687,3 +13687,17 @@ body {
 }
 
 /* ===== END PROFILE MOBILE GAP FIX ===== */
+
+/* ===== PROFILE NAME — KEEP FULL NAME ON ONE LINE ===== */
+.profile-person-info strong{
+  white-space:nowrap;
+  display:block;
+}
+
+@media(max-width:520px){
+  .profile-person-info strong{
+    white-space:nowrap;
+    font-size:18px;
+    letter-spacing:-0.025em;
+  }
+}
