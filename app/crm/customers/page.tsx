@@ -110,10 +110,40 @@ export default function CustomersPage() {
           </div>
 
           {loading ? (
-            <div className="empty-card">
-              <div className="loader" />
-              <strong>Loading customers</strong>
-              <p>Fetching current records from MongoDB.</p>
+            <div
+              className="mv-light-state"
+              style={{
+                minHeight: 220,
+                display: "grid",
+                placeItems: "center",
+                textAlign: "center",
+                padding: "32px 16px",
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    width: 34,
+                    height: 34,
+                    margin: "0 auto 14px",
+                    border: "3px solid #e5e7eb",
+                    borderTopColor: "#111",
+                    borderRadius: "50%",
+                    animation: "mvCustomersLoadingSpin 0.8s linear infinite",
+                  }}
+                />
+                <div className="mv-light-state-title">
+                  Loading customers...
+                </div>
+                <div className="mv-light-state-text">
+                  Fetching current customer records.
+                </div>
+              </div>
+              <style jsx>{`
+                @keyframes mvCustomersLoadingSpin {
+                  to { transform: rotate(360deg); }
+                }
+              `}</style>
             </div>
           ) : error ? (
             <div className="empty-card error">

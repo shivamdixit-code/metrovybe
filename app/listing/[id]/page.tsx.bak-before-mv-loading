@@ -81,89 +81,12 @@ export default function Listing({
     return (
       <div className="page">
         <Header />
-
         <main className="shell inner">
-          <div
-            style={{
-              minHeight: "55vh",
-              display: "grid",
-              placeItems: "center",
-              padding: "32px 16px",
-            }}
-          >
-            <div
-              style={{
-                width: "min(100%, 280px)",
-                textAlign: "center",
-              }}
-            >
-              <div
-                style={{
-                  width: 54,
-                  height: 54,
-                  margin: "0 auto 16px",
-                  borderRadius: 18,
-                  background: "rgba(41,171,135,0.12)",
-                  display: "grid",
-                  placeItems: "center",
-                  animation: "mvLoaderPulse 1.4s ease-in-out infinite",
-                }}
-              >
-                <div
-                  style={{
-                    width: 22,
-                    height: 22,
-                    borderRadius: "50%",
-                    border: "3px solid rgba(41,171,135,0.22)",
-                    borderTopColor: "#29AB87",
-                    animation: "mvLoaderSpin 0.8s linear infinite",
-                  }}
-                />
-              </div>
-
-              <div
-                style={{
-                  fontSize: 15,
-                  fontWeight: 800,
-                  letterSpacing: "-0.02em",
-                  color: "#111",
-                }}
-              >
-                Finding your Vybe...
-              </div>
-
-              <div
-                style={{
-                  marginTop: 5,
-                  fontSize: 12,
-                  fontWeight: 500,
-                  color: "#777",
-                }}
-              >
-                Getting everything ready for you.
-              </div>
-            </div>
+          <div className="panel" style={{ padding: 30 }}>
+            Loading listing...
           </div>
         </main>
-
         <BottomNav active="explore" />
-
-        <style jsx>{`
-          @keyframes mvLoaderSpin {
-            to {
-              transform: rotate(360deg);
-            }
-          }
-
-          @keyframes mvLoaderPulse {
-            0%, 100% {
-              transform: scale(1);
-            }
-            50% {
-              transform: scale(1.04);
-            }
-          }
-        `}</style>
       </div>
     );
   }

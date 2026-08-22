@@ -236,10 +236,40 @@ export default function EmailVerificationPage() {
             display: "grid",
             placeItems: "center",
             background: "#f5f5f0",
-            fontWeight: 900,
+            padding: "32px 16px",
           }}
         >
-          Loading...
+          <div
+            className="mv-light-state"
+            style={{
+              width: "min(100%, 360px)",
+              textAlign: "center",
+              padding: "32px 20px",
+            }}
+          >
+            <div
+              style={{
+                width: 34,
+                height: 34,
+                margin: "0 auto 14px",
+                border: "3px solid #e5e7eb",
+                borderTopColor: "#111",
+                borderRadius: "50%",
+                animation: "mvEmailLoadingSpin 0.8s linear infinite",
+              }}
+            />
+            <div className="mv-light-state-title">
+              Loading...
+            </div>
+            <div className="mv-light-state-text">
+              Preparing email verification.
+            </div>
+            <style jsx>{`
+              @keyframes mvEmailLoadingSpin {
+                to { transform: rotate(360deg); }
+              }
+            `}</style>
+          </div>
         </main>
       }
     >

@@ -32,7 +32,13 @@ type Listing = {
   tags?: string[];
 };
 
-export function ListingCard({ item }: { item: Listing }) {
+export function ListingCard({
+  item,
+  featured = true,
+}: {
+  item: Listing;
+  featured?: boolean;
+}) {
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -47,8 +53,15 @@ export function ListingCard({ item }: { item: Listing }) {
         return;
       }
 
+      const listingId = String(item.id || "").trim();
+
+      // Saved API requires a valid MongoDB ObjectId.
+      if (!/^[a-fA-F0-9]{24}$/.test(listingId)) {
+        return;
+      }
+
       try {
-        const result = await checkSavedListing(item.id);
+        const result = await checkSavedListing(listingId);
 
         if (mounted) {
           setSaved(result.saved);
@@ -87,14 +100,22 @@ export function ListingCard({ item }: { item: Listing }) {
       return;
     }
 
+    const listingId = String(item.id || "").trim();
+
+    // Do not send invalid IDs to the saved API.
+    if (!/^[a-fA-F0-9]{24}$/.test(listingId)) {
+      console.error("Invalid listing ID:", item.id);
+      return;
+    }
+
     try {
       setSaving(true);
 
       if (saved) {
-        await unsaveListing(item.id);
+        await unsaveListing(listingId);
         setSaved(false);
       } else {
-        await saveListing(item.id);
+        await saveListing(listingId);
         setSaved(true);
       }
 
@@ -189,19 +210,21 @@ export function ListingCard({ item }: { item: Listing }) {
             </span>
           )}
 
-          <span
-            className="badge"
-            style={{
-              background:
-                "linear-gradient(135deg, #FFF3A3 0%, #FFD700 28%, #F5B700 55%, #FFF0A0 78%, #D99A00 100%)",
-              color: "#111",
-              border: "1px solid #FFE45C",
-              boxShadow: "0 2px 10px rgba(255, 193, 7, 0.45)",
-              textShadow: "0 1px 0 rgba(255,255,255,0.55)",
-            }}
-          >
-            FEATURED
-          </span>
+          {featured && (
+            <span
+              className="badge"
+              style={{
+                background:
+                  "linear-gradient(135deg, #FFF3A3 0%, #FFD700 28%, #F5B700 55%, #FFF0A0 78%, #D99A00 100%)",
+                color: "#111",
+                border: "1px solid #FFE45C",
+                boxShadow: "0 2px 10px rgba(255, 193, 7, 0.45)",
+                textShadow: "0 1px 0 rgba(255,255,255,0.55)",
+              }}
+            >
+              FEATURED
+            </span>
+          )}
 
           <button
             type="button"

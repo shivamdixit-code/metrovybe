@@ -2,6 +2,7 @@ import { authenticatedFetch } from "@/lib/auth";
 
 export type Listing = {
   id: string;
+  _id?: string;
   title: string;
   category?: string;
   description?: string;

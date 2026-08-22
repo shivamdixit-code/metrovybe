@@ -341,15 +341,30 @@ export default async function ExplorePage({
                     background: "#eee",
                   }}
                 >
-                  <img
-                    src={x.image}
-                    alt={x.title}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
+                  {x.image ? (
+                    <img
+                      src={x.image}
+                      alt={x.title}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 42,
+                      }}
+                    >
+                      🏠
+                    </div>
+                  )}
 
                   <div
                     style={{
