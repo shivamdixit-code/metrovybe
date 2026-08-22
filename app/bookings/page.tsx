@@ -1,8 +1,8 @@
 "use client";
+import { CalendarDays, Clock3 } from "lucide-react";
 
-import { CalendarDays } from "lucide-react";
- 
 import { Header } from "@/components/Header";
+
 import { BottomNav } from "@/components/BottomNav";
 import { useEffect, useState } from "react";
 import {
@@ -264,13 +264,78 @@ export default function Bookings() {
                         {title}
                       </h2>
 
-                      {business?.businessName && (
-                        <div
-                          className="mv-booking-business"
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          flexWrap: "wrap",
+                          gap: 8,
+                        }}
+                      >
+                        {business?.businessName && (
+                          <div className="mv-booking-business">
+                            {business.businessName}
+                          </div>
+                        )}
+
+                        <span
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 7,
+                            marginTop: 2,
+                            flexWrap: "wrap",
+                          }}
                         >
-                          {business.businessName}
-                        </div>
-                      )}
+                          <span
+                            className="mv-booking-tooltip"
+                            data-tooltip="Booking date"
+                            style={{
+                              display: "inline-flex",
+                              position: "relative",
+                              cursor: "pointer",
+                              alignItems: "center",
+                              gap: 5,
+                              padding: "4px 8px",
+                              borderRadius: 999,
+                              background: "#EEF4FF",
+                              border: "1px solid #C9DBFF",
+                              color: "#1767D8",
+                              fontSize: 10.5,
+                              fontWeight: 800,
+                              lineHeight: 1,
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            <CalendarDays size={12} strokeWidth={2.4} />
+                            {formatDate(booking.bookingDate)}
+                          </span>
+
+                          <span
+                            className="mv-booking-tooltip"
+                            data-tooltip="Requested on"
+                            style={{
+                              display: "inline-flex",
+                              position: "relative",
+                              cursor: "pointer",
+                              alignItems: "center",
+                              gap: 5,
+                              padding: "4px 8px",
+                              borderRadius: 999,
+                              background: "#FFF8E6",
+                              border: "1px solid #F2E0A8",
+                              color: "#8A6818",
+                              fontSize: 10.5,
+                              fontWeight: 800,
+                              lineHeight: 1,
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            <Clock3 size={12} strokeWidth={2.4} />
+                            {formatDate(booking.createdAt)}
+                          </span>
+                        </span>
+                      </div>
                     </div>
 
                     <span
@@ -314,19 +379,30 @@ export default function Bookings() {
                       fontSize: 14,
                     }}
                   >
-                    <div>
-                      <strong>Booking date:</strong>{" "}
-                      {formatDate(booking.bookingDate)}
-                    </div>
-
-                    <div>
-                      <strong>Requested:</strong>{" "}
-                      {formatDate(booking.createdAt)}
-                    </div>
-
                     {booking.message && (
-                      <div>
-                        <strong>Message:</strong>{" "}
+                      <div
+                        style={{
+                          gridColumn: "1 / -1",
+                          width: "100%",
+                          maxWidth: "none",
+                          padding: "11px 14px",
+                          borderRadius: 12,
+                          background: "#F7F9FC",
+                          border: "1px solid #DCE3EC",
+                          color: "#20252B",
+                          lineHeight: 1.5,
+                          boxSizing: "border-box",
+                        }}
+                      >
+                        <strong
+                          style={{
+                            color: "#111827",
+                            fontWeight: 800,
+                            marginRight: 4,
+                          }}
+                        >
+                          Message:
+                        </strong>
                         {booking.message}
                       </div>
                     )}
