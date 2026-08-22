@@ -436,21 +436,22 @@ export default async function ExplorePage({
                       style={{
                         display: "flex",
                         alignItems: "flex-start",
-                        gap: 7,
+                        gap: 8,
                         marginTop: 10,
-                        padding: "7px 10px",
+                        padding: "8px 10px",
                         borderRadius: 12,
                         background: "#f7f7f7",
                         boxSizing: "border-box",
                         maxWidth: "100%",
-                        width: "fit-content",
+                        width: "100%",
                         lineHeight: 1.35,
+                        overflow: "hidden",
                         color: "#555",
                         fontSize: 12,
                         fontWeight: 750,
                       }}
                     >
-                      <MapPin className="explore-listing-location-pin" size={20} strokeWidth={2.5} />
+                      <MapPin size={21} strokeWidth={2.4} style={{ flexShrink: 0, minWidth: 21, width: 21, height: 21, display: "block" }} />
                       {x.location}
                     </div>
                   </div>
