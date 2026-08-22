@@ -13778,3 +13778,28 @@ body {
     letter-spacing:-0.02em !important;
   }
 }
+
+/* ===== PROFILE NAME — iPHONE SINGLE LINE FIX ===== */
+.profile-person-info{
+  min-width:0 !important;
+  flex:1 1 auto !important;
+}
+
+.profile-person-info strong{
+  display:block !important;
+  white-space:nowrap !important;
+  word-break:normal !important;
+  overflow-wrap:normal !important;
+  font-size:18px !important;
+  line-height:1.15 !important;
+}
+
+@media(max-width:520px){
+  .profile-person-info strong{
+    font-size:17px !important;
+    white-space:nowrap !important;
+    word-break:keep-all !important;
+    overflow-wrap:normal !important;
+  }
+}
+
