@@ -78,7 +78,7 @@ export function BottomNav({ active = "home" }: BottomNavProps) {
     {
       id: "profile",
       label: "Profile",
-      href: "/business/account",
+      href: "/profile",
       icon: User,
     },
   ];
@@ -110,8 +110,8 @@ export function BottomNav({ active = "home" }: BottomNavProps) {
     },
     {
       id: "account",
-      label: "Account",
-      href: "/profile",
+      label: "Profile",
+      href: "/business/dashboard",
       icon: User,
     },
   ];
