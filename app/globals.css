@@ -3021,7 +3021,7 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
   height: 38px;
   border: 3px solid #111;
   border-radius: 50% 50% 50% 0;
-  background: var(--green);
+  background: #f4c542;
   transform: rotate(-45deg);
   box-shadow: 3px 3px 0 #111;
   display: grid;
