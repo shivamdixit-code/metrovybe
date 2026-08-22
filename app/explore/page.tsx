@@ -428,7 +428,7 @@ export default async function ExplorePage({
                           fontWeight: 900,
                         }}
                       >
-                        ↗
+                        <ArrowUpRight size={18} strokeWidth={2.2} />
                       </div>
                     </div>
 
@@ -439,8 +439,11 @@ export default async function ExplorePage({
                         gap: 6,
                         marginTop: 10,
                         padding: "6px 9px",
-                        borderRadius: 999,
+                        borderRadius: 12,
                         background: "#f7f7f7",
+                        boxSizing: "border-box",
+                        maxWidth: "100%",
+                        lineHeight: 1.35,
                         color: "#555",
                         fontSize: 12,
                         fontWeight: 750,
