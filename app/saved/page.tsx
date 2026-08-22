@@ -169,12 +169,6 @@ export default function Saved() {
           </div>
         ) : (
           <>
-            <div
-              className="mv-list-count"
-            >
-              {saved.length}{" "}
-              {saved.length === 1 ? "saved listing" : "saved listings"}
-            </div>
 
             <div className="mv-account-grid">
               {saved.map((item) => (
