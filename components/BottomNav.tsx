@@ -128,6 +128,7 @@ export function BottomNav({ active = "home" }: BottomNavProps) {
           <Link
             key={item.id}
             href={item.href}
+            prefetch={false}
             className={`bottom-nav-item ${
               isActive ? "active" : ""
             }`}
