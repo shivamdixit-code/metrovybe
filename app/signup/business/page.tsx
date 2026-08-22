@@ -208,7 +208,7 @@ function BusinessSignupPageContent() {
   const [longitude, setLongitude] = useState<number | null>(null);
   const [locationConfirmed, setLocationConfirmed] = useState(false);
   const listingLocationPickerRef = useRef<{
-    confirmLocation: () => void;
+    confirmLocation: () => boolean;
   } | null>(null);
 
   const [documents, setDocuments] = useState<
@@ -1486,13 +1486,16 @@ const documentRequirements = (() => {
               event.preventDefault();
               setError("");
 
-              listingLocationPickerRef.current?.confirmLocation();
+              const confirmed =
+                listingLocationPickerRef.current?.confirmLocation() ?? false;
 
-
+              if (!confirmed) {
+                return;
+              }
 
               setStep(6);
             }}
-          >
+            >
             <div
               style={{
                 height: "auto",

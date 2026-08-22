@@ -24,7 +24,7 @@ type SelectedLocation = LocationValue & {
 };
 
 export type ListingLocationPickerHandle = {
-  confirmLocation: () => void;
+  confirmLocation: () => boolean;
 };
 
 type Props = {
@@ -348,26 +348,39 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
 
   useImperativeHandle(ref, () => ({
     confirmLocation,
-  }), [address, position, details, onConfirm, saving]);
+  }), [address, position, details, onConfirm]);
 
-  function confirmLocation() {
-    if (!address.trim()) {
+  function confirmLocation(): boolean {
+    const latitude = Number(position.latitude);
+    const longitude = Number(position.longitude);
+
+    if (
+      !Number.isFinite(latitude) ||
+      !Number.isFinite(longitude) ||
+      latitude < -90 ||
+      latitude > 90 ||
+      longitude < -180 ||
+      longitude > 180
+    ) {
       setError("Please select a valid location first.");
-      return;
+      return false;
     }
 
     setSaving(true);
 
     onConfirm({
-      latitude: position.latitude,
-      longitude: position.longitude,
-      address,
+      latitude,
+      longitude,
+      address:
+        address.trim() ||
+        `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`,
       city: details.city,
       state: details.state,
       pincode: details.pincode,
     });
 
     setSaving(false);
+    return true;
   }
 
   return (
