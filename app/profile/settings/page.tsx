@@ -153,7 +153,7 @@ export default function ProfileSettings() {
             </div>
 
             <div className="settings-account-info">
-              <strong>{displayName}</strong>
+              <strong className="settings-display-name">{displayName}</strong>
               <span>{user.email}</span>
             </div>
 

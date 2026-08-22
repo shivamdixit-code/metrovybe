@@ -13688,56 +13688,38 @@ body {
 
 /* ===== END PROFILE MOBILE GAP FIX ===== */
 
-/* ===== PROFILE NAME — KEEP FULL NAME ON ONE LINE ===== */
-.profile-person-info strong{
-  white-space:nowrap;
-  display:block;
-}
 
-@media(max-width:520px){
-  .profile-person-info strong{
-    white-space:nowrap;
-    font-size:18px;
-    letter-spacing:-0.025em;
-  }
-}
+/* ===== PROFILE / SETTINGS DISPLAY NAME — iPHONE 14 PRO ===== */
 
-/* ===== PROFILE PERSON — iPHONE FINAL FIX ===== */
-.profile-person{
-  display:flex !important;
-  align-items:center !important;
-  gap:12px !important;
-  width:100% !important;
-  min-width:0 !important;
-}
-
-.profile-avatar-large{
-  flex:0 0 auto !important;
-}
-
-.profile-person-info{
-  flex:1 1 auto !important;
-  min-width:0 !important;
-  width:auto !important;
-}
-
-.profile-person-info strong{
+.profile-display-name,
+.settings-display-name{
   display:block !important;
   white-space:nowrap !important;
   word-break:normal !important;
   overflow-wrap:normal !important;
-  font-size:18px !important;
-  line-height:1.2 !important;
-  letter-spacing:-0.02em !important;
-}
-
-.profile-settings-button{
-  flex:0 0 auto !important;
+  flex-shrink:0 !important;
 }
 
 @media(max-width:520px){
-  .profile-person-info strong{
-    font-size:17px !important;
+
+  .profile-display-name{
     white-space:nowrap !important;
+    display:block !important;
+    width:max-content !important;
+    max-width:none !important;
+    font-size:17px !important;
+    line-height:1.2 !important;
+    word-break:keep-all !important;
   }
+
+  .settings-display-name{
+    white-space:nowrap !important;
+    display:block !important;
+    width:max-content !important;
+    max-width:none !important;
+    font-size:17px !important;
+    line-height:1.2 !important;
+    word-break:keep-all !important;
+  }
+
 }

@@ -167,7 +167,7 @@ export default function Profile() {
             </div>
 
             <div className="profile-person-info">
-              <strong>{displayName}</strong>
+              <strong className="profile-display-name">{displayName}</strong>
               <span>{user.email}</span>
             </div>
 
