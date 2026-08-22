@@ -139,11 +139,6 @@ export default function CustomersPage() {
                   Fetching current customer records.
                 </div>
               </div>
-              <style jsx>{`
-                @keyframes mvCustomersLoadingSpin {
-                  to { transform: rotate(360deg); }
-                }
-              `}</style>
             </div>
           ) : error ? (
             <div className="empty-card error">
