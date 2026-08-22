@@ -188,6 +188,49 @@ export async function authenticatedFetch(
 
 
 
+
+export async function getMyProfile(): Promise<AuthUser> {
+  const response = await authenticatedFetch("/api/auth/me");
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Unable to load profile");
+  }
+
+  localStorage.setItem("metrovybe_user", JSON.stringify(data.user));
+  return data.user;
+}
+
+export async function updateMyProfile(payload: {
+  name: string;
+  phone: string;
+  gender?: AuthUser extends any ? string : never;
+  dateOfBirth?: string;
+  location?: {
+    latitude?: number;
+    longitude?: number;
+    label?: string;
+  };
+}): Promise<AuthUser> {
+  const response = await authenticatedFetch("/api/auth/me", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Unable to update profile");
+  }
+
+  localStorage.setItem("metrovybe_user", JSON.stringify(data.user));
+  return data.user;
+}
+
+
 export async function forgotPassword(email: string) {
   const response = await fetch(
     `${API_URL}/api/auth/forgot-password`,
