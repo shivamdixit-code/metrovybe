@@ -619,6 +619,7 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{text-align:left;
 
   .header-inner {
     height: 70px;
+    gap: 8px !important;
   }
 
   .header .logo {
