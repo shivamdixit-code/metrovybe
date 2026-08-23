@@ -17216,3 +17216,76 @@ body {
 .header .header-actions .btn:hover {
   background: var(--green2) !important;
 }
+
+/* ===== HEADER ACTIONS — PREVENT CLICK OVERLAP ===== */
+@media (min-width: 901px) {
+  .header .header-actions {
+    z-index: 10 !important;
+    pointer-events: auto !important;
+  }
+
+  .header .header-notification-button {
+    position: relative !important;
+    z-index: 11 !important;
+    flex-shrink: 0 !important;
+    pointer-events: auto !important;
+  }
+
+  .header .header-actions > a {
+    pointer-events: auto !important;
+  }
+}
+
+/* ===== NOTIFICATION BELL — CLEAN HOVER ===== */
+.header .header-notification-button:hover,
+.header .header-notification-button:active {
+  background: #f0f0ed !important;
+  color: #111 !important;
+}
+
+/* ===== NOTIFICATION BELL — GREY HOVER ===== */
+.header .header-notification-button:hover,
+.header .header-notification-button:active {
+  background: #e5e5e5 !important;
+  color: #111 !important;
+}
+
+/* ===== NOTIFICATION BELL — FORCE GREY INTERACTION ===== */
+.header .header-notification-button:hover,
+.header .header-notification-button:active,
+.header .header-notification-button:focus,
+.header .header-notification-button:focus-visible {
+  background-color: #d1d1d1 !important;
+  color: #111 !important;
+  opacity: 1 !important;
+}
+
+/* ===== NOTIFICATION BELL — SUBTLE THEME GREEN INTERACTION ===== */
+.header .header-notification-button:hover,
+.header .header-notification-button:active,
+.header .header-notification-button:focus,
+.header .header-notification-button:focus-visible {
+  background-color: rgba(41, 171, 135, 0.18) !important;
+  color: #111 !important;
+  opacity: 1 !important;
+}
+
+/* ===== NOTIFICATION BELL — SOFT METROVYBE GREEN ===== */
+.header .header-notification-button:hover,
+.header .header-notification-button:active,
+.header .header-notification-button:focus,
+.header .header-notification-button:focus-visible {
+  background-color: rgba(41, 171, 135, 0.32) !important;
+  color: #111 !important;
+  opacity: 1 !important;
+}
+
+/* ===== HEADER LOGIN — SOFT METROVYBE GREEN INTERACTION ===== */
+.header .header-actions .btn:hover,
+.header .header-actions .btn:active,
+.header .header-actions .btn:focus,
+.header .header-actions .btn:focus-visible {
+  background-color: rgba(41, 171, 135, 0.32) !important;
+  color: #111 !important;
+  opacity: 1 !important;
+}
