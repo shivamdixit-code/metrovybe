@@ -28,7 +28,7 @@ export function EnquiryButton({ listingId, listingTitle }: Props) {
     }
 
     if (user?.role !== "customer") {
-      setResult("Please log in with a customer account to send an enquiry.");
+      setResult("Please Login as customer to send an enquiry.");
       return;
     }
 

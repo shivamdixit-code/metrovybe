@@ -102,7 +102,7 @@ export default function Saved() {
                   marginTop: 14,
                 }}
               >
-                Login to view saved
+                Login as customer to view saved
               </a>
             )}
           </div>

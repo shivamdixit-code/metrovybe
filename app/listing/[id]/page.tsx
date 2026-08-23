@@ -182,7 +182,7 @@ export default function Listing({
     }
 
     if (user.role !== "customer") {
-      setMessage("Please use a customer account to save listings.");
+      setMessage("Please Login as customer to save listings.");
       return;
     }
 
@@ -223,7 +223,7 @@ export default function Listing({
     }
 
     if (user.role !== "customer") {
-      setMessage("Please use a customer account to make a booking.");
+      setMessage("Please Login as customer to make a booking.");
       return;
     }
 
@@ -265,7 +265,7 @@ export default function Listing({
     }
 
     if (user.role !== "customer") {
-      setMessage("Please use a customer account to send an enquiry.");
+      setMessage("Please Login as customer to send an enquiry.");
       return;
     }
 
