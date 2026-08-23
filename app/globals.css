@@ -11021,7 +11021,7 @@ body {
 
 /* HOW IT WORKS — DESKTOP 40PX BOTTOM GAP */
 .page.mv-how-page {
-  padding-bottom: 40px !important;
+  padding-bottom: 50px !important;
 }
 
 @media (max-width: 700px) {
@@ -15660,3 +15660,780 @@ body {
   color: #2878b8 !important;
   box-shadow: none !important;
 }
+
+/* =========================================================
+   PROFILE NOTIFICATIONS — PREMIUM UI
+   ========================================================= */
+
+.page.profile-notifications-page .settings-shell {
+  padding-bottom: 120px;
+}
+
+.profile-notifications-intro {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 20px;
+  margin-bottom: 18px;
+  border: 1px solid #e7e7e7;
+  border-radius: 18px;
+  background: #fafafa;
+}
+
+.profile-notifications-intro-icon {
+  flex: 0 0 46px;
+  width: 46px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: #eef6ff;
+  color: #2878b8;
+}
+
+.profile-notifications-intro span,
+.profile-notifications-card-heading > span {
+  display: block;
+  margin-bottom: 5px;
+  color: #777;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.profile-notifications-intro strong {
+  display: block;
+  color: #111;
+  font-size: 15px;
+}
+
+.profile-notifications-intro small {
+  display: block;
+  margin-top: 4px;
+  color: #777;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.profile-notifications-card {
+  border: 1px solid #e7e7e7;
+  border-radius: 18px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.profile-notifications-card-heading {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.profile-notifications-card-heading h2 {
+  margin: 0;
+  color: #111;
+  font-size: 17px;
+  line-height: 1.3;
+}
+
+.profile-notification-row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 17px 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.profile-notification-row:last-child {
+  border-bottom: 0;
+}
+
+.profile-notification-icon {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: #f5f5f5;
+  color: #222;
+}
+
+.profile-notification-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.profile-notification-copy strong {
+  display: block;
+  color: #111;
+  font-size: 13px;
+}
+
+.profile-notification-copy small {
+  display: block;
+  margin-top: 4px;
+  color: #777;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.profile-notification-toggle {
+  position: relative;
+  flex: 0 0 auto;
+  width: 42px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: #d7d7d7;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.profile-notification-toggle span {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.16);
+  transition: transform 0.2s ease;
+}
+
+.profile-notification-toggle.is-on {
+  background: #2878b8;
+}
+
+.profile-notification-toggle.is-on span {
+  transform: translateX(18px);
+}
+
+.profile-notifications-note {
+  margin: 14px 4px 0;
+  color: #888;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+  .profile-notifications-intro {
+    padding: 15px;
+    gap: 11px;
+    border-radius: 16px;
+  }
+
+  .profile-notifications-intro-icon {
+    flex-basis: 40px;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+
+  .profile-notifications-card-heading {
+    padding: 17px 15px 14px;
+  }
+
+  .profile-notification-row {
+    gap: 10px;
+    padding: 15px;
+  }
+
+  .profile-notification-icon {
+    flex-basis: 37px;
+    width: 37px;
+    height: 37px;
+  }
+}
+
+
+/* ===== NOTIFICATIONS — EXTRA BOTTOM SPACE ===== */
+.profile-notifications-page .settings-shell {
+  padding-bottom: 40px;
+}
+
+@media (max-width: 700px) {
+  .profile-notifications-page .settings-shell {
+    padding-bottom: 145px;
+  }
+}
+
+/* ===== NOTIFICATIONS — FOOTER BOTTOM BREATHING SPACE ===== */
+.page.profile-notifications-page .settings-page {
+  padding-bottom: 150px !important;
+}
+
+@media (max-width: 700px) {
+  .page.profile-notifications-page .settings-page {
+    padding-bottom: 190px !important;
+  }
+}
+
+/* ===== NOTIFICATIONS — COMPACT DESKTOP BOTTOM GAP ===== */
+@media (min-width: 701px) {
+  .page.profile-notifications-page .settings-page {
+    padding-bottom: 40px !important;
+  }
+
+  .page.profile-notifications-page .settings-shell {
+    padding-bottom: 0 !important;
+  }
+}
+
+/* ===== NOTIFICATIONS — ALIGN CONTENT WITH BOTTOM NAV ===== */
+@media (min-width: 701px) {
+  .page.profile-notifications-page .settings-shell {
+    padding-bottom: 0 !important;
+  }
+
+  .page.profile-notifications-page .settings-page {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
+}
+
+/* ===== NOTIFICATIONS — MORE SPACE ABOVE BOTTOM NAV ===== */
+.page.profile-notifications-page .settings-shell {
+  padding-bottom: 90px !important;
+}
+
+@media (max-width: 700px) {
+  .page.profile-notifications-page .settings-shell {
+    padding-bottom: 145px !important;
+  }
+}
+
+/* ===== NOTIFICATIONS — MOBILE GAP FIX ===== */
+@media (max-width: 700px) {
+  .profile-notifications-page .settings-shell {
+    padding-bottom: 50px !important;
+  }
+}
+
+/* ===== NOTIFICATIONS — MOBILE FINAL GAP FIX ===== */
+@media (max-width: 700px) {
+  .page.profile-notifications-page .settings-page {
+    padding-bottom: 0 !important;
+  }
+
+  .page.profile-notifications-page .settings-shell {
+    padding-bottom: 50px !important;
+  }
+}
+
+/* ===== NOTIFICATIONS — MOBILE GAP FINE TUNE ===== */
+@media (max-width: 700px) {
+  .page.profile-notifications-page .settings-shell {
+    padding-bottom: 65px !important;
+  }
+}
+
+/* ===== NOTIFICATIONS — MOBILE GAP 70PX ===== */
+@media (max-width: 700px) {
+  .page.profile-notifications-page .settings-shell {
+    padding-bottom: 70px !important;
+  }
+}
+
+/* ===== NOTIFICATIONS — DARK INTRO CARD ===== */
+.profile-notifications-intro {
+  background: #000 !important;
+  border-color: #222 !important;
+}
+
+.profile-notifications-intro strong {
+  color: #fff !important;
+}
+
+.profile-notifications-intro span,
+.profile-notifications-intro small {
+  color: #aaa !important;
+}
+
+/* ===== NOTIFICATION CENTER — PROFILE LAYOUT ===== */
+
+.page.notification-center-page .settings-page {
+  width: 100%;
+}
+
+.page.notification-center-page .settings-shell {
+  width: 100%;
+}
+
+.notification-center-heading {
+  margin-bottom: 18px;
+}
+
+.notification-center-heading h1 {
+  margin-bottom: 6px;
+}
+
+.notification-center-heading p {
+  margin: 0;
+}
+
+.notification-empty-state {
+  width: 100%;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  border: 1px solid #e7e7e7;
+  border-radius: 18px;
+  background: #fff;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.notification-empty-icon {
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  border-radius: 14px;
+  background: #f5f5f5;
+  color: #222;
+}
+
+.notification-empty-state h2 {
+  margin: 0;
+  color: #111;
+  font-size: 17px;
+  line-height: 1.3;
+}
+
+.notification-empty-state p {
+  margin: 6px 0 0;
+  color: #777;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+@media (max-width: 700px) {
+  .notification-center-heading {
+    margin-bottom: 16px;
+  }
+
+  .notification-empty-state {
+    min-height: 165px;
+    padding: 28px 18px;
+    border-radius: 16px;
+  }
+}
+
+
+/* ===== NOTIFICATION CENTER — MATCH SETTINGS WIDTH ===== */
+
+.page.notification-center-page .settings-shell {
+  width: min(760px, 100%) !important;
+  max-width: 760px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box !important;
+}
+
+
+/* =========================================================
+   METROVYBE HEADER — NOTIFICATION + PROFILE POLISH
+   ========================================================= */
+
+.header .header-actions {
+  width: auto;
+  min-width: 0;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Notification button */
+
+.header .header-notification-button {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #111;
+  border-radius: 13px;
+  background: #fff;
+  color: #111;
+  box-shadow: 3px 4px 0 #111;
+  transition:
+    transform .15s ease,
+    box-shadow .15s ease,
+    background .15s ease;
+}
+
+.header .header-notification-button:hover {
+  transform: translate(1px, 2px);
+  box-shadow: 2px 2px 0 #111;
+  background: #f1f0eb;
+}
+
+.header .header-notification-button:active {
+  transform: translate(2px, 3px);
+  box-shadow: 1px 1px 0 #111;
+}
+
+.header .header-notification-button svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.2;
+}
+
+/* Notification badge */
+
+.header .header-notification-badge {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #111;
+  border-radius: 999px;
+  background: #ff4fd8;
+  color: #111;
+  font-size: 9px;
+  line-height: 1;
+  font-weight: 900;
+  box-shadow: 2px 2px 0 #111;
+}
+
+/* Logged-in profile chip */
+
+.header .header-user-button {
+  min-width: 0;
+  max-width: 230px;
+  height: 46px;
+  padding: 0 13px;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 9px !important;
+  border: 2px solid #111;
+  border-radius: 14px;
+  background: #fff;
+  color: #111;
+  box-shadow: 3px 4px 0 #111;
+  transition:
+    transform .15s ease,
+    box-shadow .15s ease,
+    background .15s ease;
+}
+
+.header .header-user-button:hover {
+  transform: translate(1px, 2px);
+  box-shadow: 2px 2px 0 #111;
+  background: #f1f0eb;
+}
+
+.header .header-user-button > svg {
+  width: 19px;
+  height: 19px;
+  flex: 0 0 auto;
+  stroke-width: 2.2;
+}
+
+.header .header-user-details {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  line-height: 1.15 !important;
+}
+
+.header .header-user-name {
+  display: block;
+  max-width: 145px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px !important;
+  line-height: 1.15;
+  font-weight: 900;
+}
+
+.header .header-user-email {
+  display: block;
+  max-width: 145px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 9px !important;
+  line-height: 1.1;
+  font-weight: 600;
+  opacity: .58 !important;
+}
+
+@media (max-width: 900px) {
+
+  .header .header-actions {
+    gap: 8px;
+  }
+
+  .header .header-notification-button {
+    width: 42px;
+    height: 42px;
+    flex-basis: 42px;
+    border-radius: 12px;
+    box-shadow: 2px 3px 0 #111;
+  }
+
+  .header .header-user-button {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    max-width: 42px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 12px;
+    box-shadow: 2px 3px 0 #111;
+  }
+
+  .header .header-user-details {
+    display: none;
+  }
+
+  .header .header-user-button > svg {
+    width: 19px;
+    height: 19px;
+  }
+
+}
+
+@media (max-width: 600px) {
+
+  .header .header-actions {
+    gap: 7px;
+  }
+
+  .header .header-notification-button {
+    width: 39px;
+    height: 39px;
+    flex-basis: 39px;
+    border-radius: 11px;
+    box-shadow: 2px 3px 0 #111;
+  }
+
+  .header .header-user-button {
+    width: 39px;
+    height: 39px;
+    min-width: 39px;
+    max-width: 39px;
+    border-radius: 11px;
+    box-shadow: 2px 3px 0 #111;
+  }
+
+  .header .header-notification-button svg,
+  .header .header-user-button > svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .header .header-notification-badge {
+    top: -6px;
+    right: -6px;
+    min-width: 18px;
+    height: 18px;
+    font-size: 8px;
+    box-shadow: 1px 1px 0 #111;
+  }
+
+}
+
+
+/* ===== HEADER — METROVYBE COLOR FILL ===== */
+
+.header .header-notification-button {
+  background: #55E6E8;
+  color: #111;
+}
+
+.header .header-notification-button:hover {
+  background: #55E6E8;
+}
+
+.header .header-user-button {
+  background: #29AB87;
+  color: #111;
+}
+
+.header .header-user-button:hover {
+  background: #00E676;
+}
+
+.header .header-notification-badge {
+  background: #FF4FD8;
+  color: #111;
+}
+
+@media (max-width: 900px) {
+
+  .header .header-notification-button {
+    background: #55E6E8;
+  }
+
+  .header .header-user-button {
+    background: #29AB87;
+  }
+
+}
+
+@media (max-width: 600px) {
+
+  .header .header-notification-button {
+    background: #55E6E8;
+  }
+
+  .header .header-user-button {
+    background: #29AB87;
+  }
+
+}
+
+
+/* ===== HEADER — FINAL COLOR SWAP ===== */
+
+.header .header-notification-button {
+  background: #29AB87;
+}
+
+.header .header-notification-button:hover {
+  background: #00E676;
+}
+
+.header .header-user-button {
+  background: #55E6E8;
+}
+
+.header .header-user-button:hover {
+  background: #55E6E8;
+}
+
+.header .header-notification-badge {
+  background: #FF4FD8;
+}
+
+@media (max-width: 900px) {
+  .header .header-notification-button {
+    background: #29AB87;
+  }
+
+  .header .header-user-button {
+    background: #55E6E8;
+  }
+}
+
+@media (max-width: 600px) {
+  .header .header-notification-button {
+    background: #29AB87;
+  }
+
+  .header .header-user-button {
+    background: #55E6E8;
+  }
+}
+
+
+/* ===== MOBILE HEADER — HIDE PROFILE BUTTON ===== */
+
+@media (max-width: 600px) {
+  .header .header-user-button {
+    display: none !important;
+  }
+}
+
+
+/* ===== MOBILE HEADER — SEARCH TO BELL ===== */
+
+@media (max-width: 600px) {
+
+  .header-inner {
+    gap: 7px !important;
+    padding: 0 10px !important;
+  }
+
+  .header .brand {
+    flex: 0 0 auto;
+  }
+
+  .header .searchbar {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+    margin: 0 !important;
+  }
+
+  .header .header-actions {
+    flex: 0 0 auto;
+    margin-left: 0;
+    gap: 0 !important;
+  }
+
+  .header .header-notification-button {
+    flex: 0 0 39px;
+  }
+
+  .header .header-user-button {
+    display: none !important;
+  }
+
+}
+
+
+/* ===== MOBILE HEADER — SLIGHTLY NARROWER SEARCH ===== */
+
+@media (max-width: 600px) {
+
+  .header-inner {
+    gap: 10px !important;
+  }
+
+  .header .searchbar {
+    margin-right: 3px !important;
+  }
+
+}
+
+
+/* ===== MOBILE HEADER — SEARCH WIDTH FINAL TUNE ===== */
+
+@media (max-width: 600px) {
+
+  .header .searchbar {
+    margin-right: 9px !important;
+  }
+
+}
+
+
+/* ===== NOTIFICATION CENTER — BOTTOM NAV ALIGNMENT ===== */
+
+@media (max-width: 700px) {
+
+  .page.notification-center-page .notification-list,
+  .page.notification-center-page .notification-empty-state {
+
+    min-height: calc(100dvh - 300px) !important;
+    box-sizing: border-box;
+
+  }
+
+}
+
+
