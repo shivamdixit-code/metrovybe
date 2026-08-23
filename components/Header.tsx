@@ -1,13 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Search, Plus, UserRound, Bell } from "lucide-react";
 import { getToken, getUser, type AuthUser } from "@/lib/auth";
 import { getNotifications } from "@/lib/api";
 
 export function Header() {
+  const router = useRouter();
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [search, setSearch] = useState("");
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
@@ -90,14 +93,29 @@ export function Header() {
           <div className="tagline">YOUR CITY. YOUR VYBE.</div>
         </Link>
 
-        <div className="searchbar">
+        <form
+          className="searchbar"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const value = search.trim();
+
+            if (value) {
+              router.push(`/explore?search=${encodeURIComponent(value)}`);
+            } else {
+              router.push("/explore");
+            }
+          }}
+        >
           <Search size={21} />
 
           <input
             type="search"
-            placeholder="Search services, places, neighborhoods..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search places, services, stays & more..."
+            aria-label="Search services, places, neighborhoods"
           />
-        </div>
+        </form>
 
         <div className="header-actions">
           {user?.role === "admin" ? (

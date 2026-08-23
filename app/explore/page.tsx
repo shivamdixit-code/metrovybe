@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
 import { getServerListings } from "@/lib/serverListings";
 import ExploreMapClient from "@/components/ExploreMapClient";
+import ExploreFilters from "@/components/ExploreFilters";
 import {
   Grid2X2,
   House,
@@ -17,12 +18,35 @@ import {
 export default async function ExplorePage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string }>;
+  searchParams: Promise<{
+    search?: string;
+    category?: string;
+    minPrice?: string;
+    maxPrice?: string;
+    minRating?: string;
+    location?: string;
+    featured?: string;
+    sort?: string;
+  }>;
 }) {
   const params = await searchParams;
-  const listings = await getServerListings(
-    params.category ? { category: params.category } : {}
-  );
+
+  const listingParams: Record<string, string> = {};
+
+  if (params.search?.trim()) {
+    listingParams.search = params.search.trim();
+  }
+  if (params.category) listingParams.category = params.category;
+  if (params.minPrice) listingParams.minPrice = params.minPrice;
+  if (params.maxPrice) listingParams.maxPrice = params.maxPrice;
+  if (params.minRating) listingParams.minRating = params.minRating;
+  if (params.location?.trim()) {
+    listingParams.location = params.location.trim();
+  }
+  if (params.featured) listingParams.featured = params.featured;
+  if (params.sort) listingParams.sort = params.sort;
+
+  const listings = await getServerListings(listingParams);
   const pins = [
     [18, 28],
     [42, 45],
@@ -211,32 +235,7 @@ export default async function ExplorePage({
             );
           })}
 
-          <button
-            type="button"
-            className="filter-btn"
-            style={{
-              marginLeft: "auto",
-              flexShrink: 0,
-              height: 40,
-              padding: "0 15px",
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 7,
-              borderRadius: 999,
-              border: "1.5px solid rgba(17,17,17,0.14)",
-              background: "#fff",
-              color: "#111",
-              boxShadow: "0 2px 8px rgba(17,17,17,0.08)",
-              fontWeight: 800,
-              fontSize: 13,
-              cursor: "pointer",
-              whiteSpace: "nowrap",
-            }}
-          >
-            <SlidersHorizontal size={16} strokeWidth={2.2} />
-            Filters
-          </button>
+          <ExploreFilters />
 
         </div>
 
