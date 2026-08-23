@@ -17062,3 +17062,34 @@ body {
   }
 }
 
+
+/* ===== MOBILE HEADER — SEARCH / LOGIN GAP ===== */
+@media (max-width: 600px) {
+  .header .searchbar {
+    margin-right: 8px !important;
+  }
+
+  .header .header-actions {
+    gap: 8px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .header .searchbar {
+    margin-right: 12px !important;
+  }
+
+  .header .header-actions {
+    gap: 12px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .header .searchbar {
+    margin-right: 15px !important;
+  }
+
+  .header .header-actions {
+    gap: 15px !important;
+  }
+}
