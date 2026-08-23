@@ -76,15 +76,45 @@ export function Header() {
               Log in
             </Link>
           ) : user ? (
-            <Link href={profileHref} className="btn">
-              <UserRound
-                size={17}
+            <Link
+              href={profileHref}
+              className="btn header-user-button"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                textAlign: "left",
+              }}
+            >
+              <UserRound size={18} />
+
+              <span
+                className="header-user-details"
                 style={{
-                  verticalAlign: "middle",
-                  marginRight: 6,
+                  display: "flex",
+                  flexDirection: "column",
+                  lineHeight: 1.2,
                 }}
-              />
-              {profileLabel}
+              >
+                <strong className="header-user-name" style={{ fontSize: 13 }}>
+                  {user.name || profileLabel}
+                </strong>
+
+                <span
+                  className="header-user-email"
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 500,
+                    opacity: 0.7,
+                    maxWidth: 160,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {user.email}
+                </span>
+              </span>
             </Link>
           ) : (
             <Link href="/login" className="btn">

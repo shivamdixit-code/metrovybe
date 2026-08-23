@@ -8491,7 +8491,9 @@ body {
 
 
 /* SETTINGS MOBILE NAV — PHONE APP POSITION */
+
 @media (max-width: 600px) {
+
   .mv-mobile-nav {
     position: fixed !important;
     left: 0 !important;
@@ -8506,13 +8508,7 @@ body {
     box-sizing: border-box !important;
   }
 
-  .settings-page,
-  .settings-shell {
-    padding-bottom: 0 !important;
-    margin-bottom: 0 !important;
-  }
 }
-
 
 
 /* ===== SETTINGS — FINAL BOTTOM SPACING ===== */
@@ -8533,17 +8529,6 @@ body {
   margin-bottom: 0 !important;
 }
 
-@media (max-width: 600px) {
-  .settings-page {
-    padding-bottom: 65px !important;
-    margin-bottom: 0 !important;
-  }
-
-  .settings-shell {
-    padding-bottom: 0 !important;
-    margin-bottom: 0 !important;
-  }
-}
 
 /* ===== SETTINGS EDIT LINK — DARK GREEN ===== */
 .settings-edit-link {
@@ -13898,9 +13883,12 @@ body {
 
 .profile-edit-actions {
   display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
   gap: 10px;
   flex-wrap: wrap;
   padding-top: 4px;
+  width: 100%;
 }
 
 .profile-edit-save {
@@ -14077,7 +14065,9 @@ body {
 .profile-edit-inline-action {
   display: flex;
   justify-content: flex-start;
-  margin-top: -6px;
+  align-items: flex-start;
+  width: 100%;
+  margin-top: 12px;
 }
 
 .profile-edit-security-section {
@@ -14235,7 +14225,7 @@ body {
 
 @media (max-width: 600px) {
   .profile-edit-inline-action {
-    margin-top: -3px;
+    margin-top: 6px;
   }
 
   .profile-edit-security-section {
@@ -14280,3 +14270,1087 @@ body {
 }
 
 /* ===== END PROFILE EDIT — SECURE CONTACT VERIFICATION ===== */
+
+/* ===== PROFILE EDIT — BOTTOM NAV FINAL ALIGNMENT ===== */
+
+/* Desktop + mobile: keep nav anchored to viewport bottom */
+.page.profile-edit-page .bottom-nav {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: 12px !important;
+  top: auto !important;
+  margin: 0 !important;
+  transform: translateX(-50%) !important;
+  z-index: 99999 !important;
+}
+
+/* Mobile full-width app navigation */
+@media (max-width: 700px) {
+  .page.profile-edit-page .settings-page {
+    padding-bottom: 76px !important;
+  }
+
+  .page.profile-edit-page .bottom-nav {
+    width: 100% !important;
+    bottom: 0 !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* ===== SETTINGS — BOTTOM NAV POSITION ===== */
+@media (max-width: 700px) {
+  .page:has(.settings-page):not(.profile-edit-page) .bottom-nav {
+    position: fixed !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: 0 !important;
+    top: auto !important;
+    margin: 0 !important;
+    transform: translateX(-50%) !important;
+    width: 100% !important;
+  }
+}
+
+/* ===== PROFILE EDIT — KEEP CONTENT ABOVE FIXED BOTTOM NAV ===== */
+.page.profile-edit-page .settings-page {
+  padding-bottom: 120px !important;
+  box-sizing: border-box !important;
+}
+
+/* ===== PROFILE EDIT — FINAL BOTTOM NAV DESKTOP + MOBILE FIX ===== */
+
+.page.profile-edit-page .bottom-nav {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: 16px !important;
+  margin: 0 !important;
+  transform: translateX(-50%) !important;
+  z-index: 99999 !important;
+}
+
+/* Only reserve enough space so page content doesn't sit behind the nav */
+.page.profile-edit-page .settings-page {
+  padding-bottom: 24px !important;
+}
+
+/* ===== PROFILE EDIT — MATCH SETTINGS NAV HEIGHT ===== */
+.page.profile-edit-page .bottom-nav {
+  bottom: 28px !important;
+}
+
+/* ===== PROFILE EDIT — PREVENT CONTENT FROM HIDING BEHIND NAV ===== */
+.page.profile-edit-page .settings-shell {
+  padding-bottom: 140px !important;
+}
+
+/* Keep nav at the same visual position */
+.page.profile-edit-page .bottom-nav {
+  bottom: 20px !important;
+}
+
+/* ===== PROFILE EDIT — FINAL CLEAN BOTTOM NAV ALIGNMENT ===== */
+.page.profile-edit-page .bottom-nav {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: 28px !important;
+  transform: translateX(-50%) !important;
+  z-index: 99999 !important;
+}
+
+.page.profile-edit-page .settings-shell {
+  padding-bottom: 75px !important;
+}
+
+
+/* ===== PROFILE EDIT — ACCOUNT CARD DARK BACKGROUND ===== */
+.page.profile-edit-page .profile-edit-identity {
+  background: #111111 !important;
+  border-color: #111111 !important;
+}
+
+.page.profile-edit-page .profile-edit-identity-copy > span {
+  color: #a3a3a3 !important;
+}
+
+.page.profile-edit-page .profile-edit-identity-copy strong {
+  color: #ffffff !important;
+}
+
+.page.profile-edit-page .profile-edit-identity-copy small {
+  color: #bdbdbd !important;
+}
+
+/* ===== PROFILE SECURITY ===== */
+
+.profile-security-page {
+  background: #000 !important;
+}
+
+.profile-security-page .settings-page {
+  background: #000 !important;
+  color: #fff;
+  padding-bottom: 75px !important;
+}
+
+.profile-security-page .settings-shell {
+  color: #fff;
+}
+
+.profile-security-page .settings-back,
+.profile-security-page .settings-heading p {
+  color: rgba(255,255,255,.65);
+}
+
+.profile-security-page .settings-heading h1 {
+  color: #fff;
+}
+
+.profile-security-identity,
+.profile-security-form {
+  background: #fff;
+  color: #111;
+  border: 1px solid rgba(255,255,255,.15);
+  box-shadow: 5px 5px 0 rgba(41,171,135,.45);
+}
+
+.profile-security-identity {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 22px;
+  padding: 20px;
+  border-radius: 22px;
+}
+
+.profile-security-icon {
+  width: 54px;
+  height: 54px;
+  min-width: 54px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: #29AB87;
+  color: #fff;
+}
+
+.profile-security-identity-copy {
+  min-width: 0;
+}
+
+.profile-security-identity-copy > span,
+.profile-security-form-heading > span {
+  display: block;
+  color: #29AB87;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+
+.profile-security-identity-copy > span {
+  margin-bottom: 5px;
+}
+
+.profile-security-identity-copy strong {
+  display: block;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.profile-security-identity-copy small {
+  display: block;
+  margin-top: 4px;
+  color: #777;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.profile-security-form {
+  margin-top: 20px;
+  padding: 27px;
+  border-radius: 24px;
+}
+
+.profile-security-form-inner {
+  display: grid;
+  gap: 20px;
+}
+
+.profile-security-form-heading {
+  padding-bottom: 18px;
+  border-bottom: 1px solid #eee;
+}
+
+.profile-security-form-heading > span {
+  margin-bottom: 7px;
+}
+
+.profile-security-form-heading h2 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1;
+  letter-spacing: -.04em;
+}
+
+.profile-security-form-heading p {
+  margin: 9px 0 0;
+  color: #777;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.profile-security-field {
+  display: block;
+  margin: 0 0 16px;
+}
+
+.profile-security-input-wrap {
+  position: relative;
+}
+
+.profile-security-input-wrap > svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  pointer-events: none;
+}
+
+.profile-security-input-wrap input {
+  width: 100%;
+  padding-left: 46px !important;
+  padding-right: 48px !important;
+  box-sizing: border-box;
+}
+
+.profile-security-password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  background: transparent;
+  color: #777;
+  cursor: pointer;
+}
+
+.profile-security-message {
+  margin: 4px 0 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.profile-security-message.success {
+  background: rgba(41,171,135,.12);
+  color: #147a5e;
+  border: 1px solid rgba(41,171,135,.3);
+}
+
+.profile-security-message.error {
+  background: rgba(220,38,38,.08);
+  color: #b91c1c;
+  border: 1px solid rgba(220,38,38,.2);
+}
+
+.profile-security-action {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 4px;
+}
+
+.profile-security-save {
+  min-height: 46px;
+  padding: 0 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 12px;
+  background: #111;
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.profile-security-save:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+@media (max-width: 600px) {
+  .profile-security-page .settings-page {
+    padding-bottom: 75px !important;
+  }
+
+  .profile-security-identity {
+    padding: 16px;
+  }
+
+  .profile-security-form {
+    padding: 20px 16px;
+    border-radius: 20px;
+  }
+
+  .profile-security-identity-copy small {
+    font-size: 12px;
+  }
+}
+
+/* ===== PROFILE SECURITY — MATCH BOTTOM NAV WIDTH & LIGHT CARDS ===== */
+
+.profile-security-page,
+.page.profile-security-page {
+  background: #000 !important;
+  min-height: 100vh !important;
+}
+
+/* Keep the security content aligned to the BottomNav width */
+.profile-security-page .security-shell,
+.profile-security-page .security-container,
+.profile-security-page main {
+  max-width: 720px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Light, clean cards */
+.profile-security-page .security-card,
+.profile-security-page .security-status-card,
+.profile-security-page .security-password-card,
+.profile-security-page .security-protection-card {
+  background: #fff !important;
+  background-image: none !important;
+  border-color: rgba(255,255,255,0.18) !important;
+  box-shadow: 6px 7px 0 rgba(41, 171, 135, 0.55) !important;
+}
+
+/* Make cards use the same available width */
+.profile-security-page .security-card,
+.profile-security-page .security-status-card,
+.profile-security-page .security-password-card,
+.profile-security-page .security-protection-card {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+
+/* ===== PROFILE SECURITY — WHITE PAGE + MATCHED WIDTH ===== */
+
+.page.profile-security-page,
+.profile-security-page {
+  background: #fff !important;
+  min-height: 100vh !important;
+}
+
+/* Security content width aligned with BottomNav */
+.profile-security-page .security-shell,
+.profile-security-page .security-container,
+.profile-security-page main {
+  max-width: 720px !important;
+  width: calc(100% - 32px) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Clean light cards */
+.profile-security-page .security-card,
+.profile-security-page .security-status-card,
+.profile-security-page .security-password-card,
+.profile-security-page .security-protection-card {
+  background: #fff !important;
+  box-sizing: border-box !important;
+}
+
+
+/* ===== SECURITY PAGE — MATCH PROFILE EDIT PAGE ===== */
+
+/* Same page canvas as /profile/edit */
+.page.profile-security-page {
+  background: #fff !important;
+}
+
+/* Same main content container and bottom spacing */
+.page.profile-security-page .settings-page {
+  background: #fff !important;
+  padding-bottom: 75px !important;
+  margin-bottom: 0 !important;
+}
+
+/* Match Profile Edit content alignment */
+.page.profile-security-page .settings-shell {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Security cards: clean, lightweight Profile Edit style */
+.page.profile-security-page .security-card,
+.page.profile-security-page .security-status-card,
+.page.profile-security-page .security-password-card,
+.page.profile-security-page .security-protection-card {
+  background: #fff !important;
+  box-shadow: none !important;
+  border: 1px solid #e7e7e7 !important;
+  border-radius: 24px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 600px) {
+  .page.profile-security-page .settings-page {
+    padding-bottom: 75px !important;
+  }
+
+  .page.profile-security-page .security-card,
+  .page.profile-security-page .security-status-card,
+  .page.profile-security-page .security-password-card,
+  .page.profile-security-page .security-protection-card {
+    border-radius: 20px !important;
+  }
+}
+
+/* Same fixed BottomNav behavior as Profile Edit */
+@media (max-width: 700px) {
+  .page.profile-security-page .bottom-nav {
+    position: fixed !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: 0 !important;
+    top: auto !important;
+    margin: 0 !important;
+    transform: translateX(-50%) !important;
+    width: 100% !important;
+  }
+}
+
+
+/* ===== SECURITY PAGE — EXACT PROFILE EDIT VISUAL THEME ===== */
+
+.page.profile-security-page,
+.page.profile-security-page .settings-page,
+.page.profile-security-page .settings-shell {
+  background: #fff !important;
+  color: #111 !important;
+}
+
+/* Same clean card appearance as Profile Edit */
+.page.profile-security-page .security-card,
+.page.profile-security-page .security-status-card,
+.page.profile-security-page .security-password-card,
+.page.profile-security-page .security-protection-card {
+  background: #fff !important;
+  color: #111 !important;
+  border: 1px solid #e7e7e7 !important;
+  box-shadow: none !important;
+}
+
+/* Headings and strong text */
+.page.profile-security-page h1,
+.page.profile-security-page h2,
+.page.profile-security-page h3,
+.page.profile-security-page strong {
+  color: #111 !important;
+}
+
+/* Description and helper text — same as Profile Edit */
+.page.profile-security-page p,
+.page.profile-security-page small {
+  color: #777 !important;
+}
+
+/* Field labels */
+.page.profile-security-page .field > span {
+  color: #111 !important;
+}
+
+/* Inputs */
+.page.profile-security-page input {
+  background: #fff !important;
+  color: #111 !important;
+  border-color: #ddd !important;
+}
+
+/* Accent labels/icons use MetroVybe green */
+.page.profile-security-page .security-eyebrow,
+.page.profile-security-page .security-card > span,
+.page.profile-security-page .profile-edit-form-heading > span {
+  color: #29AB87 !important;
+}
+
+/* Primary action — same black button style as Save name */
+.page.profile-security-page .security-submit,
+.page.profile-security-page button[type="submit"] {
+  background: #111 !important;
+  color: #fff !important;
+  border-color: #111 !important;
+}
+
+
+/* ===== SECURITY — LIGHTWEIGHT CARDS LIKE PROFILE EDIT ===== */
+
+.page.profile-security-page .security-card,
+.page.profile-security-page .security-status-card,
+.page.profile-security-page .security-password-card,
+.page.profile-security-page .security-protection-card {
+  background: #fff !important;
+  border: 1px solid #e7e7e7 !important;
+  border-radius: 24px !important;
+  box-shadow: none !important;
+  color: #111 !important;
+}
+
+/* Match the Profile Edit form's internal spacing */
+.page.profile-security-page .security-card,
+.page.profile-security-page .security-password-card,
+.page.profile-security-page .security-protection-card {
+  padding: 27px !important;
+}
+
+@media (max-width: 600px) {
+  .page.profile-security-page .security-card,
+  .page.profile-security-page .security-status-card,
+  .page.profile-security-page .security-password-card,
+  .page.profile-security-page .security-protection-card {
+    border-radius: 20px !important;
+    padding: 20px 16px !important;
+  }
+}
+
+
+/* ===== SECURITY — EXACT CARD STYLE AS PROFILE EDIT ===== */
+
+/* Same account/info card as .profile-edit-identity */
+.page.profile-security-page .profile-security-identity {
+  margin-top: 20px !important;
+  padding: 20px !important;
+  background: #fff !important;
+  border: 1px solid #e7e7e7 !important;
+  border-radius: 24px !important;
+  box-shadow: none !important;
+  color: #111 !important;
+}
+
+/* Same main form card as .profile-edit-form */
+.page.profile-security-page .profile-security-form {
+  margin-top: 20px !important;
+  padding: 27px !important;
+  background: #fff !important;
+  border: 1px solid #e7e7e7 !important;
+  border-radius: 24px !important;
+  box-shadow: none !important;
+  color: #111 !important;
+}
+
+/* Same internal spacing as Profile Edit */
+.page.profile-security-page .profile-security-form-inner {
+  display: grid !important;
+  gap: 20px !important;
+}
+
+/* Same heading divider */
+.page.profile-security-page .profile-security-form-heading {
+  padding-bottom: 18px !important;
+  border-bottom: 1px solid #eee !important;
+}
+
+/* Same Profile Edit typography */
+.page.profile-security-page .profile-security-form-heading > span {
+  display: block !important;
+  margin-bottom: 7px !important;
+  color: #29AB87 !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: .14em !important;
+}
+
+.page.profile-security-page .profile-security-form-heading h2 {
+  margin: 0 !important;
+  color: #111 !important;
+  font-size: 28px !important;
+  line-height: 1 !important;
+  letter-spacing: -.04em !important;
+}
+
+.page.profile-security-page .profile-security-form-heading p {
+  margin: 9px 0 0 !important;
+  color: #777 !important;
+  font-size: 13px !important;
+  line-height: 1.55 !important;
+}
+
+@media (max-width: 600px) {
+  .page.profile-security-page .profile-security-identity {
+    padding: 16px !important;
+  }
+
+  .page.profile-security-page .profile-security-form {
+    padding: 20px 16px !important;
+    border-radius: 20px !important;
+  }
+}
+
+
+/* ===== PROFILE SECURITY — ACCOUNT PROTECTION BLACK CARD ===== */
+
+.page.profile-security-page .profile-security-identity {
+  background: #111 !important;
+  color: #fff !important;
+}
+
+.page.profile-security-page .profile-security-identity strong,
+.page.profile-security-page .profile-security-identity span,
+.page.profile-security-page .profile-security-identity small {
+  color: #fff !important;
+}
+
+.page.profile-security-page .profile-security-icon {
+  color: #fff !important;
+}
+
+
+
+
+/* ===== PROFILE SECURITY — PASSWORD HEADING BOTTOM GAP ===== */
+
+.page.profile-security-page .profile-security-form-heading {
+  margin-bottom: 20px !important;
+}
+
+
+/* ===== PROFILE SECURITY — SPACE ABOVE BOTTOM NAV ===== */
+
+.page.profile-security-page .profile-security-form {
+  margin-bottom: 25px !important;
+}
+
+
+/* ===== PROFILE SECURITY — DELETE ACCOUNT DANGER ZONE ===== */
+
+.page.profile-security-page .profile-security-danger-zone {
+  margin-top: 24px;
+  padding-top: 22px;
+  border-top: 1px solid #e7e7e7;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.page.profile-security-page .profile-security-danger-zone > div {
+  display: grid;
+  gap: 6px;
+}
+
+.page.profile-security-page .profile-security-danger-label {
+  color: #c93636;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+
+.page.profile-security-page .profile-security-danger-zone strong {
+  color: #111;
+  font-size: 17px;
+}
+
+.page.profile-security-page .profile-security-danger-zone p {
+  margin: 0;
+  color: #777;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.page.profile-security-page .profile-security-delete {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid #d94a4a;
+  border-radius: 12px;
+  background: #fff;
+  color: #c93636;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.page.profile-security-page .profile-security-delete:hover {
+  background: #fff5f5;
+}
+
+@media (max-width: 600px) {
+  .page.profile-security-page .profile-security-danger-zone {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .page.profile-security-page .profile-security-delete {
+    width: 100%;
+  }
+}
+
+
+/* ===== PROFILE SECURITY — MATCH PROFILE EDIT BACK LINK ===== */
+
+.page.profile-security-page .settings-back {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  color: #111 !important;
+  text-decoration: none !important;
+  margin-bottom: 24px !important;
+  position: relative !important;
+  z-index: 2 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.page.profile-security-page .settings-back svg {
+  color: inherit !important;
+  flex: 0 0 auto !important;
+}
+
+
+/* ===== PROFILE SECURITY — ACCOUNT PROTECTION SECTION ===== */
+
+.page.profile-security-page .profile-security-account-protection {
+  margin-top: 28px;
+  padding-top: 26px;
+  border-top: 1px solid #e7e7e7;
+}
+
+.page.profile-security-page .profile-security-account-heading > span {
+  display: block;
+  margin-bottom: 6px;
+  color: #29AB87;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+
+.page.profile-security-page .profile-security-account-heading h3 {
+  margin: 0;
+  color: #111;
+  font-size: 20px;
+}
+
+.page.profile-security-page .profile-security-account-heading p {
+  margin: 7px 0 18px;
+  color: #777;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.page.profile-security-page .profile-security-protection-list {
+  display: grid;
+  gap: 10px;
+}
+
+.page.profile-security-page .profile-security-protection-item {
+  min-height: 64px;
+  padding: 14px 16px;
+  border: 1px solid #e7e7e7;
+  border-radius: 14px;
+  background: #fff;
+  color: #111;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+.page.profile-security-page .profile-security-protection-item strong {
+  display: block;
+  font-size: 14px;
+}
+
+.page.profile-security-page .profile-security-protection-item small {
+  display: block;
+  margin-top: 4px;
+  color: #777;
+  font-size: 12px;
+}
+
+.page.profile-security-page .profile-security-protection-item > span {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.page.profile-security-page .profile-security-coming-soon {
+  opacity: .72;
+}
+
+.page.profile-security-page .profile-security-coming-soon em {
+  color: #777;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+
+/* ===== PROFILE SECURITY — ACCOUNT PROTECTION SECTION ===== */
+
+.page.profile-security-page .profile-security-account-protection {
+  margin-top: 28px;
+  padding-top: 26px;
+  border-top: 1px solid #e7e7e7;
+}
+
+.page.profile-security-page .profile-security-account-heading > span {
+  display: block;
+  margin-bottom: 6px;
+  color: #29AB87;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+
+.page.profile-security-page .profile-security-account-heading h3 {
+  margin: 0;
+  color: #111;
+  font-size: 20px;
+}
+
+.page.profile-security-page .profile-security-account-heading p {
+  margin: 7px 0 18px;
+  color: #777;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.page.profile-security-page .profile-security-protection-list {
+  display: grid;
+  gap: 10px;
+}
+
+.page.profile-security-page .profile-security-protection-item {
+  min-height: 64px;
+  padding: 14px 16px;
+  border: 1px solid #e7e7e7;
+  border-radius: 14px;
+  background: #fff;
+  color: #111;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+.page.profile-security-page .profile-security-protection-item strong {
+  display: block;
+  font-size: 14px;
+}
+
+.page.profile-security-page .profile-security-protection-item small {
+  display: block;
+  margin-top: 4px;
+  color: #777;
+  font-size: 12px;
+}
+
+.page.profile-security-page .profile-security-protection-item > span {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.page.profile-security-page .profile-security-coming-soon {
+  opacity: .72;
+}
+
+.page.profile-security-page .profile-security-coming-soon em {
+  color: #777;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+
+/* ===== PROFILE SECURITY — ACTIVE SESSIONS ===== */
+
+.page.profile-security-page .profile-security-sessions-trigger {
+  width: 100%;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.page.profile-security-page .profile-security-sessions-count {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 700;
+  color: #29AB87;
+}
+
+.page.profile-security-page .profile-security-sessions-panel {
+  margin-top: 14px;
+  padding: 18px;
+  border: 1px solid #e7e7e7;
+  border-radius: 18px;
+  background: #fff;
+}
+
+.page.profile-security-page .profile-security-sessions-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.page.profile-security-page .profile-security-sessions-panel-head strong {
+  display: block;
+  color: #111;
+  font-size: 14px;
+}
+
+.page.profile-security-page .profile-security-sessions-panel-head small {
+  display: block;
+  margin-top: 4px;
+  color: #777;
+  font-size: 12px;
+}
+
+.page.profile-security-page .profile-security-refresh {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e7e7e7;
+  border-radius: 10px;
+  background: #fff;
+  color: #111;
+  cursor: pointer;
+}
+
+.page.profile-security-page .profile-security-session-list {
+  display: grid;
+  gap: 10px;
+}
+
+.page.profile-security-page .profile-security-session {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px;
+  border: 1px solid #ededed;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.page.profile-security-page .profile-security-session-device {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  background: #f5f5f5;
+  color: #111;
+}
+
+.page.profile-security-page .profile-security-session-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.page.profile-security-page .profile-security-session-copy strong {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  color: #111;
+  font-size: 13px;
+}
+
+.page.profile-security-page .profile-security-session-copy small {
+  display: block;
+  margin-top: 4px;
+  color: #777;
+  font-size: 11px;
+}
+
+.page.profile-security-page .profile-security-current-session {
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: rgba(41, 171, 135, 0.12);
+  color: #168064;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.page.profile-security-page .profile-security-remove-session {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 0;
+  background: transparent;
+  color: #d33;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.page.profile-security-page .profile-security-signout-others {
+  width: 100%;
+  min-height: 42px;
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid #e7e7e7;
+  border-radius: 12px;
+  background: #fff;
+  color: #111;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.page.profile-security-page .profile-security-sessions-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 0;
+  color: #777;
+  font-size: 13px;
+}
+
+.page.profile-security-page .profile-security-empty-sessions {
+  margin: 0;
+  padding: 10px 0;
+  font-size: 13px;
+  color: #777;
+}
+
+@media (max-width: 600px) {
+  .page.profile-security-page .profile-security-sessions-panel {
+    padding: 14px;
+  }
+
+  .page.profile-security-page .profile-security-session {
+    padding: 11px;
+  }
+
+  .page.profile-security-page .profile-security-remove-session {
+    padding: 6px 0 6px 6px;
+  }
+}

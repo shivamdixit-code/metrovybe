@@ -220,3 +220,79 @@ export async function cancelBooking(
   return data;
 }
 
+
+/* ===== PROFILE SECURITY ===== */
+export async function changePassword(data: {
+  currentPassword: string;
+  newPassword: string;
+}): Promise<{ message: string }> {
+  const response = await authenticatedFetch("/api/auth/change-password", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message || "Unable to update password");
+  }
+
+  return result;
+}
+
+/* ===== ACTIVE SESSIONS ===== */
+
+export type ActiveSession = {
+  sessionId: string;
+  deviceName: string;
+  userAgent?: string;
+  ipAddress?: string;
+  createdAt: string;
+  lastActiveAt: string;
+  current?: boolean;
+};
+
+export async function getActiveSessions(): Promise<ActiveSession[]> {
+  const response = await authenticatedFetch("/api/auth/sessions");
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Unable to load active sessions");
+  }
+
+  return data.sessions || [];
+}
+
+export async function removeActiveSession(
+  sessionId: string
+): Promise<{ message: string }> {
+  const response = await authenticatedFetch(
+    `/api/auth/sessions/${encodeURIComponent(sessionId)}`,
+    { method: "DELETE" }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Unable to remove session");
+  }
+
+  return data;
+}
+
+export async function removeOtherActiveSessions(): Promise<{ message: string }> {
+  const response = await authenticatedFetch("/api/auth/sessions", {
+    method: "DELETE",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Unable to remove other sessions");
+  }
+
+  return data;
+}

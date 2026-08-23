@@ -325,7 +325,7 @@ export default function ProfileEdit() {
   }
 
   return (
-    <div className="page">
+    <div className="page profile-edit-page">
       <Header />
 
       <main className="settings-page">
@@ -555,14 +555,6 @@ export default function ProfileEdit() {
                 </div>
               )}
 
-              <div className="profile-edit-actions">
-                <Link
-                  href="/profile/settings"
-                  className="profile-edit-cancel"
-                >
-                  Back to settings
-                </Link>
-              </div>
             </div>
           </div>
         </div>
