@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Building2, Eye, EyeOff, UserRound, ArrowLeft, Mail, MessageCircle } from "lucide-react";
 
 import {
@@ -41,8 +41,25 @@ function getInternationalPhone(country: PhoneCountry, phone: string): string {
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [selectedRole, setSelectedRole] = useState<Role | "">("");
+  const [redirectPath, setRedirectPath] = useState("/profile");
+
+  useEffect(() => {
+    const role = searchParams.get("role");
+    const redirect = searchParams.get("redirect");
+
+    if (redirect && redirect.startsWith("/") && !redirect.startsWith("//")) {
+      setRedirectPath(redirect);
+    }
+
+    if (role === "customer" || role === "business") {
+      setSelectedRole(role);
+      setError("");
+    }
+  }, [searchParams]);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -294,7 +311,7 @@ export default function LoginPage() {
           if (result.user.role === "business") {
             router.push("/business/dashboard");
           } else {
-            router.push("/profile");
+            router.push(redirectPath);
           }
         } catch (error) {
           setError(
@@ -351,7 +368,7 @@ export default function LoginPage() {
         return;
       }
 
-      router.push("/profile");
+      router.push(redirectPath);
     } catch (error) {
       setError(
         error instanceof Error ? error.message : "Login failed"

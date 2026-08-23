@@ -4,6 +4,8 @@ import { CalendarDays, Clock3 } from "lucide-react";
 import { Header } from "@/components/Header";
 
 import { BottomNav } from "@/components/BottomNav";
+
+import { getUser } from "@/lib/auth";
 import { useEffect, useState } from "react";
 import {
   cancelBooking,
@@ -16,6 +18,8 @@ export default function Bookings() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [cancelling, setCancelling] = useState<string | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
+  const [isCustomer, setIsCustomer] = useState(false);
 
   const loadBookings = async () => {
     try {
@@ -42,6 +46,17 @@ export default function Bookings() {
   };
 
   useEffect(() => {
+    const user = getUser();
+
+    if (!user || user.role !== "customer") {
+      setIsCustomer(false);
+      setAuthChecked(true);
+      setLoading(false);
+      return;
+    }
+
+    setIsCustomer(true);
+    setAuthChecked(true);
     loadBookings();
   }, []);
 
@@ -131,7 +146,93 @@ export default function Bookings() {
       </div>
     </div>
 
-        {loading ? (
+        {!authChecked ? (
+          <div className="mv-light-state">
+            <div className="mv-light-state-title">Checking your account...</div>
+            <div className="mv-light-state-text">
+              Please wait while we check your login.
+            </div>
+          </div>
+        ) : !isCustomer ? (
+          <div
+            className="mv-light-state"
+            style={{
+              minHeight: "400px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              padding: "40px 24px",
+              boxSizing: "border-box",
+            }}
+          >
+            <div style={{ maxWidth: "480px", margin: "0 auto" }}>
+              <div
+                aria-hidden="true"
+                style={{
+                  width: "76px",
+                  height: "76px",
+                  margin: "0 auto 22px",
+                  borderRadius: "50%",
+                  background: "#29AB87",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#111",
+                }}
+              >
+                <CalendarDays size={28} strokeWidth={2.5} />
+              </div>
+
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: "28px",
+                  lineHeight: 1.08,
+                  fontWeight: 850,
+                  letterSpacing: "-0.045em",
+                  color: "#111",
+                }}
+              >
+                Login to view your bookings
+              </h2>
+
+              <p
+                style={{
+                  margin: "14px auto 0",
+                  maxWidth: "430px",
+                  fontSize: "15px",
+                  lineHeight: 1.5,
+                  fontWeight: 600,
+                  color: "#777",
+                }}
+              >
+                Please login as a customer to view your bookings, booking
+                status and upcoming plans.
+              </p>
+
+              <button
+                type="button"
+                onClick={() => {
+                  window.location.href = "/login?redirect=/bookings&role=customer";
+                }}
+                style={{
+                  marginTop: 22,
+                  border: "2px solid #111",
+                  background: "#111",
+                  color: "#fff",
+                  borderRadius: 14,
+                  padding: "12px 22px",
+                  fontWeight: 800,
+                  fontSize: 14,
+                  cursor: "pointer",
+                }}
+              >
+                Login as Customer
+              </button>
+            </div>
+          </div>
+        ) : loading ? (
           <div className="mv-light-state">
             <div className="mv-light-state-title">Loading bookings...</div>
             <div className="mv-light-state-text">
