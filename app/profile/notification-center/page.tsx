@@ -57,6 +57,12 @@ export default function NotificationCenterPage() {
 
   useEffect(() => {
     loadNotifications();
+
+    const interval = window.setInterval(() => {
+      loadNotifications();
+    }, 5000);
+
+    return () => window.clearInterval(interval);
   }, []);
 
   async function handleNotificationClick(notification: AppNotification) {

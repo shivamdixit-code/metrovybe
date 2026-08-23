@@ -52,7 +52,7 @@ export function Header() {
     };
 
     loadNotifications();
-    const interval = window.setInterval(loadNotifications, 30000);
+    const interval = window.setInterval(loadNotifications, 5000);
 
     return () => {
       mounted = false;
