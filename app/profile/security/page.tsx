@@ -417,8 +417,7 @@ export default function ProfileSecurityPage() {
                             {sessions.some((session) => !session.current) && (
                               <button
                                 type="button"
-                                className="profile-security-sign-out-others"
-                                className="sessions-signout-all"
+                                className="profile-security-sign-out-others sessions-signout-all"
                                 onClick={handleRemoveOtherSessions}
                                 disabled={sessionActionLoading === "others"}
                               >
