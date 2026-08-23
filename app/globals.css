@@ -17045,3 +17045,19 @@ body {
     border-radius: 16px !important;
   }
 }
+
+/* ===== MOBILE HEADER — SEARCH / LOGIN GAP ===== */
+@media (max-width: 600px) {
+  .header-inner {
+    gap: 10px !important;
+  }
+
+  .header .searchbar {
+    margin-right: 4px !important;
+  }
+
+  .header .header-actions {
+    gap: 8px !important;
+  }
+}
+
