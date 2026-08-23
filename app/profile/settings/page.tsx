@@ -157,20 +157,14 @@ export default function ProfileSettings() {
               <span>{user.email}</span>
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <Link href="/profile/edit" className="settings-edit-link">
-                Edit
-              </Link>
-
-              <button
-                type="button"
-                className="settings-top-logout"
-                onClick={handleLogout}
-              >
-                <LogOut size={16} />
-                <span>Logout</span>
-              </button>
-            </div>
+            <button
+              type="button"
+              className="settings-top-logout"
+              onClick={handleLogout}
+            >
+              <LogOut size={16} />
+              <span>Logout</span>
+            </button>
           </section>
 
           <section className="settings-section">

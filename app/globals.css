@@ -17013,3 +17013,35 @@ body {
   }
 }
 
+
+/* ===== HELP PAGE — BLACK HERO CARD ===== */
+
+.help-page .help-hero {
+  background: #000 !important;
+  color: #fff !important;
+  border-radius: 18px !important;
+  padding: 28px 30px !important;
+  margin-bottom: 24px !important;
+  box-sizing: border-box;
+}
+
+.help-page .help-hero .help-eyebrow {
+  color: #fff !important;
+}
+
+.help-page .help-hero h1 {
+  color: #fff !important;
+  margin-bottom: 8px !important;
+}
+
+.help-page .help-hero p {
+  color: rgba(255, 255, 255, 0.78) !important;
+  margin-bottom: 0 !important;
+}
+
+@media (max-width: 600px) {
+  .help-page .help-hero {
+    padding: 22px 20px !important;
+    border-radius: 16px !important;
+  }
+}
