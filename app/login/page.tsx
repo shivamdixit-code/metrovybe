@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Building2, Eye, EyeOff, UserRound, ArrowLeft, Mail, MessageCircle } from "lucide-react";
@@ -39,7 +39,7 @@ function getInternationalPhone(country: PhoneCountry, phone: string): string {
   return `+${PHONE_DIAL_CODES[country]}${phone.replace(/\D/g, "")}`;
 }
 
-export default function LoginPage() {
+function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -1520,5 +1520,13 @@ export default function LoginPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginPageContent />
+    </Suspense>
   );
 }
