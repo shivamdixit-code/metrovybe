@@ -1,0 +1,190 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import {
+  ArrowLeft,
+  Bell,
+  Heart,
+  MessageCircle,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
+
+import { Header } from "@/components/Header";
+import { BottomNav } from "@/components/BottomNav";
+
+import { getNotificationPreferences, updateNotificationPreferences } from "@/lib/api";
+
+type NotificationOption = {
+  key: string;
+  icon: typeof Bell;
+  title: string;
+  description: string;
+};
+
+const options: NotificationOption[] = [
+  {
+    key: "updates",
+    icon: Bell,
+    title: "MetroVybe updates",
+    description: "Important updates and news about MetroVybe.",
+  },
+  {
+    key: "saved",
+    icon: Heart,
+    title: "Saved places",
+    description: "Updates related to places you've saved.",
+  },
+  {
+    key: "messages",
+    icon: MessageCircle,
+    title: "Messages & activity",
+    description: "Stay updated when there's activity on your account.",
+  },
+  {
+    key: "security",
+    icon: ShieldCheck,
+    title: "Security alerts",
+    description: "Important alerts to help keep your account secure.",
+  },
+];
+
+export default function ProfileNotificationsPage() {
+  const [preferences, setPreferences] = useState<Record<string, boolean>>({
+    updates: true,
+    saved: true,
+    messages: true,
+    security: true,
+  });
+  const [loadingPreferences, setLoadingPreferences] = useState(true);
+  const [savingKey, setSavingKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadPreferences() {
+      try {
+        const data = await getNotificationPreferences();
+        setPreferences(data.preferences);
+      } catch (error) {
+        console.error("Failed to load notification preferences:", error);
+      } finally {
+        setLoadingPreferences(false);
+      }
+    }
+
+    loadPreferences();
+  }, []);
+
+  async function togglePreference(key: string) {
+    if (loadingPreferences || savingKey) return;
+
+    const previousValue = preferences[key];
+    const nextValue = !previousValue;
+
+    setPreferences((current) => ({
+      ...current,
+      [key]: nextValue,
+    }));
+    setSavingKey(key);
+
+    try {
+      const data = await updateNotificationPreferences({
+        [key]: nextValue,
+      });
+      setPreferences(data.preferences);
+    } catch (error) {
+      console.error("Failed to save notification preference:", error);
+      setPreferences((current) => ({
+        ...current,
+        [key]: previousValue,
+      }));
+    } finally {
+      setSavingKey(null);
+    }
+  }
+
+  return (
+    <div className="page profile-notifications-page">
+      <Header />
+
+      <main className="settings-page">
+        <div className="settings-shell">
+          <Link href="/profile/settings" className="settings-back">
+            <ArrowLeft size={17} />
+            <span>Back to settings</span>
+          </Link>
+
+          <header className="settings-heading">
+            <div>
+              <span className="settings-eyebrow">ACCOUNT</span>
+              <h1>Notifications</h1>
+              <p>Choose which MetroVybe updates you'd like to receive.</p>
+            </div>
+          </header>
+
+          <section className="profile-notifications-intro">
+            <div className="profile-notifications-intro-icon">
+              <Sparkles size={23} strokeWidth={2.2} />
+            </div>
+            <div>
+              <span>STAY IN THE LOOP</span>
+              <strong>Notifications, your way.</strong>
+              <small>
+                Control the updates that matter to you. Security alerts are
+                recommended to keep your account protected.
+              </small>
+            </div>
+          </section>
+
+          <section className="profile-notifications-card">
+            <div className="profile-notifications-card-heading">
+              <span>NOTIFICATION PREFERENCES</span>
+              <h2>What would you like to hear about?</h2>
+              <p className="profile-notifications-note">
+                Some essential account and security notifications may still be sent when necessary.
+              </p>
+            </div>
+
+            <div className="profile-notifications-list">
+              {options.map((option) => {
+                const Icon = option.icon;
+                const enabled = preferences[option.key];
+
+                return (
+                  <div className="profile-notification-row" key={option.key}>
+                    <div className="profile-notification-icon">
+                      <Icon size={19} strokeWidth={2.2} />
+                    </div>
+
+                    <div className="profile-notification-copy">
+                      <strong>{option.title}</strong>
+                      <small>{option.description}</small>
+                    </div>
+
+                    <button
+                      type="button"
+                      className={`profile-notification-toggle ${
+                        enabled ? "is-on" : ""
+                      }`}
+                      onClick={() => togglePreference(option.key)}
+              disabled={loadingPreferences || savingKey === option.key}
+                      role="switch"
+                      aria-checked={enabled}
+                      aria-label={`Toggle ${option.title}`}
+                    >
+                      <span />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+
+            
+          </section>
+        </div>
+      </main>
+
+      <BottomNav active="profile" />
+    </div>
+  );
+}

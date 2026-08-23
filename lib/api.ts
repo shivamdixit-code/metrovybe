@@ -221,6 +221,111 @@ export async function cancelBooking(
 }
 
 
+/* ===== NOTIFICATIONS ===== */
+
+export type AppNotification = {
+  _id: string;
+  recipient: string;
+  type: "booking" | "saved" | "message" | "update" | "security" | "system";
+  preferenceKey: "updates" | "saved" | "messages" | "security";
+  title: string;
+  body: string;
+  link?: string;
+  read: boolean;
+  essential?: boolean;
+  metadata?: Record<string, any>;
+  createdAt: string;
+  updatedAt?: string;
+};
+
+export type NotificationPreferences = {
+  updates: boolean;
+  saved: boolean;
+  messages: boolean;
+  security: boolean;
+};
+
+export async function getNotificationPreferences(): Promise<{
+  preferences: NotificationPreferences;
+}> {
+  const response = await authenticatedFetch("/api/notifications/preferences");
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to fetch notification preferences");
+  }
+
+  return data;
+}
+
+export async function updateNotificationPreferences(
+  preferences: Partial<NotificationPreferences>
+): Promise<{
+  message: string;
+  preferences: NotificationPreferences;
+}> {
+  const response = await authenticatedFetch("/api/notifications/preferences", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ preferences }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to update notification preferences");
+  }
+
+  return data;
+}
+
+export async function getNotifications(): Promise<{
+  notifications: AppNotification[];
+  unreadCount: number;
+}> {
+  const response = await authenticatedFetch("/api/notifications");
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to fetch notifications");
+  }
+
+  return data;
+}
+
+export async function markNotificationRead(
+  notificationId: string
+): Promise<{ message: string; notification: AppNotification }> {
+  const response = await authenticatedFetch(
+    `/api/notifications/${notificationId}/read`,
+    { method: "PATCH" }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to update notification");
+  }
+
+  return data;
+}
+
+export async function markAllNotificationsRead(): Promise<{ message: string }> {
+  const response = await authenticatedFetch("/api/notifications/read-all", {
+    method: "PATCH",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to update notifications");
+  }
+
+  return data;
+}
+
 /* ===== PROFILE SECURITY ===== */
 export async function changePassword(data: {
   currentPassword: string;

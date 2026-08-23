@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Search, Plus, UserRound } from "lucide-react";
+import { Search, Plus, UserRound, Bell } from "lucide-react";
 import { getToken, getUser, type AuthUser } from "@/lib/auth";
+import { getNotifications } from "@/lib/api";
 
 export function Header() {
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     const syncAuth = () => {
@@ -30,6 +32,33 @@ export function Header() {
       window.removeEventListener("metrovybe-auth-changed", syncAuth);
     };
   }, []);
+
+  useEffect(() => {
+    if (!user) {
+      setUnreadCount(0);
+      return;
+    }
+
+    let mounted = true;
+
+    const loadNotifications = async () => {
+      try {
+        const data = await getNotifications();
+        if (mounted) setUnreadCount(data.unreadCount || 0);
+      } catch (error) {
+        // Keep the header usable even if notifications are temporarily unavailable.
+        console.error("Failed to load notifications:", error);
+      }
+    };
+
+    loadNotifications();
+    const interval = window.setInterval(loadNotifications, 30000);
+
+    return () => {
+      mounted = false;
+      window.clearInterval(interval);
+    };
+  }, [user]);
 
   const profileHref =
     user?.role === "business"
@@ -76,7 +105,25 @@ export function Header() {
               Log in
             </Link>
           ) : user ? (
-            <Link
+            <>
+              <Link
+                href="/profile/notification-center"
+                className="header-notification-button"
+                aria-label={
+                  unreadCount > 0
+                    ? `${unreadCount} unread notifications`
+                    : "Notifications"
+                }
+              >
+                <Bell size={20} />
+                {unreadCount > 0 && (
+                  <span className="header-notification-badge">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
+              </Link>
+
+              <Link
               href={profileHref}
               className="btn header-user-button"
               style={{
@@ -115,7 +162,8 @@ export function Header() {
                   {user.email}
                 </span>
               </span>
-            </Link>
+              </Link>
+            </>
           ) : (
             <Link href="/login" className="btn">
               Log in
