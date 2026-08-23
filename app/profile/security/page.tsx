@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -10,9 +10,11 @@ import {
   Loader2,
   LockKeyhole,
   ShieldCheck,
+  BadgeCheck,
   LogOut,
   MonitorSmartphone,
 } from "lucide-react";
+
 
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
@@ -23,6 +25,8 @@ import {
   removeOtherActiveSessions,
   type ActiveSession,
 } from "@/lib/api";
+
+import { getMyProfile, type AuthUser } from "@/lib/auth";
 
 export default function ProfileSecurityPage() {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -35,10 +39,28 @@ export default function ProfileSecurityPage() {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error" | "">("");
 
+
   const [sessionsOpen, setSessionsOpen] = useState(false);
   const [sessions, setSessions] = useState<ActiveSession[]>([]);
   const [sessionsLoading, setSessionsLoading] = useState(false);
   const [sessionActionLoading, setSessionActionLoading] = useState("");
+  const [authUser, setAuthUser] = useState<AuthUser | null>(null);
+  const [verificationLoading, setVerificationLoading] = useState(true);
+
+  useEffect(() => {
+    loadVerificationStatus();
+  }, []);
+
+  async function loadVerificationStatus() {
+    try {
+      const currentUser = await getMyProfile();
+      setAuthUser(currentUser);
+    } catch (error) {
+      console.error("Unable to load verification status:", error);
+    } finally {
+      setVerificationLoading(false);
+    }
+  }
 
   async function loadSessions() {
     setSessionsLoading(true);
@@ -168,6 +190,53 @@ export default function ProfileSecurityPage() {
 
           <section className="profile-security-form">
             <div className="profile-security-form-inner">
+              <div className="profile-security-contact-status">
+                <div className="profile-security-contact-status-heading">
+                  <div className="profile-security-contact-status-icon">
+                    <BadgeCheck size={20} strokeWidth={2.2} />
+                  </div>
+                  <div>
+                    <span>CONTACT VERIFICATION</span>
+                    <h3>Your contact details.</h3>
+                    <p>
+                      Verified contact details help protect your MetroVybe account.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="profile-security-contact-grid">
+                  <div className="profile-security-contact-item">
+                    <div className="profile-security-contact-item-top">
+                      <span className="profile-security-contact-label">Email</span>
+                      <span
+                        className={`profile-security-verification-badge ${
+                          authUser?.emailVerified ? "verified" : "unverified"
+                        }`}
+                      >
+                        {authUser?.emailVerified ? "Verified" : "Not verified"}
+                      </span>
+                    </div>
+
+                    <strong>{authUser?.email || "Not available"}</strong>
+                  </div>
+
+                  <div className="profile-security-contact-item">
+                    <div className="profile-security-contact-item-top">
+                      <span className="profile-security-contact-label">WhatsApp</span>
+                      <span
+                        className={`profile-security-verification-badge ${
+                          authUser?.phoneVerified ? "verified" : "unverified"
+                        }`}
+                      >
+                        {authUser?.phoneVerified ? "Verified" : "Not verified"}
+                      </span>
+                    </div>
+
+                    <strong>{authUser?.phone || "Not available"}</strong>
+                  </div>
+                </div>
+              </div>
+
               <div className="profile-security-form-heading">
                 <span>PASSWORD</span>
                 <h2>Update your password.</h2>
@@ -349,6 +418,7 @@ export default function ProfileSecurityPage() {
                               <button
                                 type="button"
                                 className="profile-security-sign-out-others"
+                                className="sessions-signout-all"
                                 onClick={handleRemoveOtherSessions}
                                 disabled={sessionActionLoading === "others"}
                               >

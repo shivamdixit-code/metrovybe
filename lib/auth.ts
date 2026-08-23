@@ -5,6 +5,8 @@ export type AuthUser = {
   phone?: string;
   role: "customer" | "business" | "admin";
   status: string;
+  emailVerified?: boolean;
+  phoneVerified?: boolean;
   location?: {
     latitude?: number;
     longitude?: number;
@@ -213,7 +215,7 @@ export async function updateMyProfile(payload: {
   };
 }): Promise<AuthUser> {
   const response = await authenticatedFetch("/api/auth/me", {
-    method: "PATCH",
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
