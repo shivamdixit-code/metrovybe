@@ -18104,189 +18104,6 @@ body {
 }
 
 
-/* ===== PROFILE BUTTON — FEATURED BADGE GOLD + SUBTLE SHINE ===== */
-@media (min-width: 701px) {
-
-  .header .header-actions .header-user-button {
-    background: #f4c542 !important;
-    color: #111 !important;
-    border: 2px solid #111 !important;
-    border-radius: 12px !important;
-    box-shadow: 3px 3px 0 #111 !important;
-    position: relative !important;
-    overflow: hidden !important;
-    isolation: isolate !important;
-  }
-
-  .header .header-actions .header-user-button::before {
-    content: "" !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: -45% !important;
-    width: 22% !important;
-    height: 100% !important;
-
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255,255,255,.55),
-      transparent
-    ) !important;
-
-    transform: skewX(-20deg) !important;
-    animation: featuredButtonShine 3.5s ease-in-out infinite !important;
-    pointer-events: none !important;
-    z-index: 1 !important;
-  }
-
-  .header .header-actions .header-user-button::after {
-    content: "" !important;
-    position: absolute !important;
-    inset: 0 !important;
-
-    background: linear-gradient(
-      180deg,
-      rgba(255,255,255,.18),
-      transparent 35%
-    ) !important;
-
-    pointer-events: none !important;
-    z-index: 1 !important;
-  }
-
-  .header .header-actions .header-user-button > * {
-    position: relative !important;
-    z-index: 2 !important;
-  }
-
-  .header .header-actions .header-user-button:hover {
-    background: #f4c542 !important;
-    color: #111 !important;
-  }
-}
-
-@keyframes featuredButtonShine {
-  0%,
-  55% {
-    left: -45%;
-  }
-
-  75% {
-    left: 125%;
-  }
-
-  100% {
-    left: 125%;
-  }
-}
-
-
-/* ===== PROFILE BUTTON — STRONG VISIBLE GOLD SHINE ===== */
-@media (min-width: 701px) {
-
-  .header .header-actions .header-user-button {
-    background:
-      linear-gradient(
-        105deg,
-        #f4c542 0%,
-        #f4c542 28%,
-        #ffe98a 38%,
-        #ffffff 44%,
-        #fff8c7 48%,
-        #ffe98a 52%,
-        #f4c542 62%,
-        #f4c542 100%
-      ) !important;
-
-    background-size: 300% 100% !important;
-    animation: profileFeaturedShine 2.2s linear infinite !important;
-
-    color: #111 !important;
-    border: 2px solid #111 !important;
-    border-radius: 12px !important;
-    box-shadow: 3px 3px 0 #111 !important;
-  }
-
-  .header .header-actions .header-user-button::before,
-  .header .header-actions .header-user-button::after {
-    display: none !important;
-    content: none !important;
-  }
-}
-
-@keyframes profileFeaturedShine {
-
-  0% {
-    background-position: 150% 0;
-  }
-
-  100% {
-    background-position: -150% 0;
-  }
-
-}
-
-
-/* ===== PROFILE BUTTON — HIGH VISIBILITY GOLD SHIMMER ===== */
-@media (min-width: 701px) {
-
-  .header .header-actions .header-user-button {
-    background:
-      linear-gradient(
-        110deg,
-        #f4c542 0%,
-        #f4c542 20%,
-        #f9d96a 28%,
-        #fff0a0 36%,
-        #ffffff 43%,
-        #fff0a0 50%,
-        #f9d96a 58%,
-        #f4c542 68%,
-        #f4c542 100%
-      ) !important;
-
-    background-size: 320% 100% !important;
-    animation: profileGoldMegaShine 2.8s ease-in-out infinite !important;
-
-    color: #111 !important;
-    border: 2px solid #111 !important;
-    border-radius: 12px !important;
-
-    box-shadow:
-      3px 3px 0 #111,
-      inset 0 1px 2px rgba(255,255,255,.7),
-      inset 0 -2px 3px rgba(120,80,0,.22) !important;
-  }
-
-  .header .header-actions .header-user-button::before,
-  .header .header-actions .header-user-button::after {
-    display: none !important;
-    content: none !important;
-  }
-}
-
-@keyframes profileGoldMegaShine {
-
-  0% {
-    background-position: 160% 0;
-  }
-
-  20% {
-    background-position: 100% 0;
-  }
-
-  45% {
-    background-position: 0% 0;
-  }
-
-  65%,
-  100% {
-    background-position: -60% 0;
-  }
-
-}
-
-
 /* ===== REVIEW ACTIONS — CLEAN COMPACT UI ===== */
 .mv-review-existing-actions {
   display: flex !important;
@@ -18576,5 +18393,100 @@ body {
     width: 44px;
     height: 44px;
     flex-basis: 44px;
+  }
+}
+
+
+/* ===== PROFILE BUTTON — CLEAN + SUBTLE SHINE (DESKTOP) ===== */
+@media (min-width: 701px) {
+  .header .header-actions .header-user-button {
+    background: #fff !important;
+    color: #111 !important;
+    border: 2px solid #111 !important;
+    border-radius: 12px !important;
+    box-shadow: 3px 3px 0 #111 !important;
+    position: relative !important;
+    overflow: hidden !important;
+    isolation: isolate !important;
+  }
+
+  .header .header-actions .header-user-button::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -50% !important;
+    width: 25% !important;
+    height: 100% !important;
+    background: linear-gradient(
+      105deg,
+      transparent,
+      rgba(255,255,255,.15),
+      rgba(255,255,255,.8),
+      rgba(255,255,255,.15),
+      transparent
+    ) !important;
+    transform: skewX(-20deg) !important;
+    animation: profileCleanShine 4.5s ease-in-out infinite !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+  }
+
+  .header .header-actions .header-user-button::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  .header .header-actions .header-user-button > * {
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .header .header-actions .header-user-button:hover {
+    background: #f7f7f7 !important;
+    color: #111 !important;
+  }
+}
+
+@keyframes profileCleanShine {
+  0%, 60% {
+    left: -50%;
+  }
+  82%, 100% {
+    left: 130%;
+  }
+}
+
+/* ===== PROFILE BUTTON — MORE VISIBLE CLEAN SHINE ===== */
+@media (min-width: 701px) {
+  .header .header-actions .header-user-button::before {
+    width: 35% !important;
+    background: linear-gradient(
+      105deg,
+      transparent 0%,
+      rgba(210,210,210,.08) 20%,
+      rgba(255,255,255,.95) 45%,
+      rgba(210,210,210,.35) 55%,
+      transparent 80%
+    ) !important;
+    animation: profileCleanShineVisible 3s ease-in-out infinite !important;
+    filter: brightness(1.15) !important;
+  }
+}
+
+@keyframes profileCleanShineVisible {
+  0%, 45% {
+    left: -45%;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  75% {
+    left: 120%;
+    opacity: 1;
+  }
+  100% {
+    left: 120%;
+    opacity: 0;
   }
 }
