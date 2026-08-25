@@ -18444,3 +18444,137 @@ body {
     font-size: 16px;
   }
 }
+
+/* ===== PROFILE EDIT — INLINE NAME SAVE ===== */
+
+.profile-edit-form form {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.profile-edit-form form .profile-edit-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-edit-form form .profile-edit-inline-action {
+  margin: 0 !important;
+  flex: 0 0 auto;
+}
+
+.profile-edit-form form .profile-edit-save {
+  min-height: 48px;
+  padding: 0 16px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .profile-edit-form form {
+    gap: 8px;
+  }
+
+  .profile-edit-form form .profile-edit-save {
+    min-height: 50px;
+    padding: 0 14px;
+    font-size: 14px;
+  }
+}
+
+
+/* ===== PROFILE EDIT — MINIMAL NAME SAVE ===== */
+.profile-edit-name-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.profile-edit-name-form .profile-edit-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-edit-name-save {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #cfe3dd;
+  border-radius: 13px;
+  background: #f4fbf8;
+  color: #24856d;
+  cursor: pointer;
+  transition: transform .15s ease, background .15s ease;
+}
+
+.profile-edit-name-save:hover:not(:disabled) {
+  background: #e7f6f0;
+  transform: translateY(-1px);
+}
+
+.profile-edit-name-save:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .profile-edit-name-form {
+    gap: 8px;
+  }
+
+  .profile-edit-name-save {
+    width: 44px;
+    height: 44px;
+    flex-basis: 44px;
+  }
+}
+
+/* ===== PROFILE EDIT — MINIMAL NAME SAVE ===== */
+.profile-edit-name-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.profile-edit-name-form .profile-edit-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-edit-name-save {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #cfe3dd;
+  border-radius: 13px;
+  background: #f4fbf8;
+  color: #24856d;
+  cursor: pointer;
+}
+
+.profile-edit-name-save:hover:not(:disabled) {
+  background: #e7f6f0;
+}
+
+.profile-edit-name-save:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .profile-edit-name-form {
+    gap: 8px;
+  }
+
+  .profile-edit-name-save {
+    width: 44px;
+    height: 44px;
+    flex-basis: 44px;
+  }
+}

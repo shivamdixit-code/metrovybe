@@ -406,7 +406,7 @@ export default function ProfileEdit() {
                 </p>
               </div>
 
-              <form onSubmit={handleSaveName}>
+              <form onSubmit={handleSaveName} className="profile-edit-name-form">
                 <label className="field profile-edit-field">
                   <span>Name</span>
                   <div className="profile-edit-input-wrap">
@@ -421,18 +421,19 @@ export default function ProfileEdit() {
                   </div>
                 </label>
 
-                <div className="profile-edit-inline-action">
-                  <button
-                    type="submit"
-                    disabled={savingName || name.trim() === user.name}
-                    className="profile-edit-save"
-                  >
-                    {savingName && (
-                      <Loader2 size={17} className="animate-spin" />
-                    )}
-                    {savingName ? "Saving..." : "Save name"}
-                  </button>
-                </div>
+                <button
+                  type="submit"
+                  disabled={savingName || name.trim() === user.name}
+                  className="profile-edit-name-save"
+                  aria-label="Save name"
+                  title="Save name"
+                >
+                  {savingName ? (
+                    <Loader2 size={18} className="animate-spin" />
+                  ) : (
+                    <CheckCircle2 size={20} />
+                  )}
+                </button>
               </form>
 
               <div className="profile-edit-security-section">
