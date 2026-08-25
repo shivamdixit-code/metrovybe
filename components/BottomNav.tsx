@@ -103,7 +103,7 @@ export function BottomNav({ active = "home" }: BottomNavProps) {
       id: "list",
       label: "List",
       href: "/business/listings/new",
-      icon: List,
+      icon: Plus,
     },
     {
       id: "enquiries",
