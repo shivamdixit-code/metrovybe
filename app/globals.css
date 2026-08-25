@@ -21495,3 +21495,43 @@ body {
     max-width: 560px !important;
   }
 }
+
+/* ===== CUSTOMER HEADER SEARCH — INCREASE SIZE ===== */
+.header:not(.header-business) .searchbar {
+  height: 50px !important;
+  max-width: 560px !important;
+  padding: 0 17px !important;
+  gap: 11px !important;
+  border-radius: 27px !important;
+}
+
+.header:not(.header-business) .searchbar input {
+  font-size: 15px !important;
+}
+
+.header:not(.header-business) .searchbar svg {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+
+/* ===== CUSTOMER SEARCH — WIDER ===== */
+.header:not(.header-business) .searchbar {
+  max-width: 700px !important;
+  width: min(700px, 55vw) !important;
+}
+
+
+/* ===== CUSTOMER SEARCH — SLIGHTLY WIDER ===== */
+.header:not(.header-business) .searchbar {
+  max-width: 760px !important;
+  width: min(760px, 58vw) !important;
+}
+
+
+/* ===== CUSTOMER SEARCH — WIDER ===== */
+.header:not(.header-business) .searchbar {
+  max-width: 800px !important;
+  width: min(800px, 58vw) !important;
+}
+
