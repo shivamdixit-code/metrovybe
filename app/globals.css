@@ -17716,3 +17716,573 @@ body {
     height: 44px !important;
   }
 }
+
+/* ===== DESKTOP HEADER PROFILE BUTTON ===== */
+@media (min-width: 701px) {
+  .header-profile,
+  .header-profile-button,
+  .profile-button,
+  .header-user-profile {
+    height: 64px !important;
+    min-height: 64px !important;
+    width: auto !important;
+    min-width: 245px !important;
+    max-width: 270px !important;
+    padding: 0 18px !important;
+    border-radius: 18px !important;
+    background: #f5f5f5 !important;
+    color: #111 !important;
+    border: 2px solid #111 !important;
+    box-shadow: 3px 4px 0 #111 !important;
+  }
+
+  .header-profile:hover,
+  .header-profile-button:hover,
+  .profile-button:hover,
+  .header-user-profile:hover {
+    background: #ffffff !important;
+  }
+}
+
+/* ===== DESKTOP HEADER PROFILE BUTTON — COMPACT ===== */
+@media (min-width: 701px) {
+  .header .header-user-button {
+    height: 44px !important;
+    min-height: 44px !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 210px !important;
+    padding: 0 12px !important;
+    gap: 8px !important;
+    border-radius: 12px !important;
+    background: #f5f5f5 !important;
+    color: #111 !important;
+    border: 2px solid #111 !important;
+    box-shadow: 3px 3px 0 #111 !important;
+    box-sizing: border-box !important;
+  }
+
+  .header .header-user-button:hover {
+    background: #ffffff !important;
+  }
+
+  .header .header-user-button .header-user-name {
+    font-size: 13px !important;
+    line-height: 1.15 !important;
+  }
+
+  .header .header-user-button .header-user-email {
+    font-size: 10px !important;
+    line-height: 1.1 !important;
+    max-width: 125px !important;
+  }
+
+  .header .header-user-button svg {
+    width: 17px !important;
+    height: 17px !important;
+    flex: 0 0 auto !important;
+  }
+}
+
+
+/* ===== FINAL DESKTOP PROFILE BUTTON COLOR OVERRIDE ===== */
+@media (min-width: 701px) {
+  .header .header-actions .header-user-button {
+    background: #f5f5f5 !important;
+    color: #111 !important;
+    border-color: #111 !important;
+  }
+
+  .header .header-actions .header-user-button:hover {
+    background: #ffffff !important;
+    color: #111 !important;
+  }
+}
+
+
+/* ===== DESKTOP PROFILE BUTTON — GOLD TEST ===== */
+@media (min-width: 701px) {
+  .header .header-actions .header-user-button {
+    background: #F4C542 !important;
+    color: #111 !important;
+    border: 2px solid #111 !important;
+    box-shadow: 3px 3px 0 #111 !important;
+  }
+
+  .header .header-actions .header-user-button:hover {
+    background: #FFD65A !important;
+    color: #111 !important;
+  }
+}
+
+
+/* ===== DESKTOP PROFILE BUTTON — LOGO GOLD ===== */
+@media (min-width: 701px) {
+  .header .header-actions .header-user-button {
+    background: #D4AF37 !important;
+    color: #111 !important;
+    border: 2px solid #111 !important;
+    box-shadow: 3px 3px 0 #111 !important;
+  }
+
+  .header .header-actions .header-user-button:hover {
+    background: #D4AF37 !important;
+    color: #111 !important;
+  }
+}
+
+
+/* ===== DESKTOP PROFILE BUTTON — SHINING GOLD ===== */
+@media (min-width: 701px) {
+  .header .header-actions .header-user-button {
+    background: linear-gradient(
+      135deg,
+      #FFF3A3 0%,
+      #F6D365 22%,
+      #D4AF37 48%,
+      #F7D774 72%,
+      #FFF1A8 100%
+    ) !important;
+    color: #111 !important;
+    border: 2px solid #111 !important;
+    box-shadow:
+      3px 3px 0 #111,
+      inset 0 1px 0 rgba(255,255,255,.75) !important;
+    position: relative !important;
+    overflow: hidden !important;
+  }
+
+  .header .header-actions .header-user-button::after {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -75% !important;
+    width: 45% !important;
+    height: 100% !important;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.65),
+      transparent
+    ) !important;
+    transform: skewX(-20deg) !important;
+    transition: left .65s ease !important;
+    pointer-events: none !important;
+  }
+
+  .header .header-actions .header-user-button:hover::after {
+    left: 135% !important;
+  }
+
+  .header .header-actions .header-user-button:hover {
+    background: linear-gradient(
+      135deg,
+      #FFF7BD 0%,
+      #F9DD70 25%,
+      #DDBB3F 50%,
+      #FFE58A 75%,
+      #FFF5B5 100%
+    ) !important;
+  }
+}
+
+
+/* ===== PROFILE BUTTON — FEATURED GOLD STYLE ===== */
+@media (min-width: 701px) {
+  .header .header-actions .header-user-button {
+    background: #D4AF37 !important;
+    color: #111 !important;
+    border: 2px solid #111 !important;
+    box-shadow: 3px 3px 0 #111 !important;
+  }
+
+  .header .header-actions .header-user-button::after {
+    display: none !important;
+  }
+
+  .header .header-actions .header-user-button:hover {
+    background: #E2BE4A !important;
+    color: #111 !important;
+  }
+}
+
+
+/* ===== PROFILE BUTTON — FEATURED GOLD + SHINE ===== */
+@media (min-width: 701px) {
+  .header .header-actions .header-user-button {
+    background: #D4AF37 !important;
+    color: #111 !important;
+    border: 2px solid #111 !important;
+    box-shadow: 3px 3px 0 #111 !important;
+    position: relative !important;
+    overflow: hidden !important;
+    isolation: isolate !important;
+  }
+
+  .header .header-actions .header-user-button::after {
+    content: "" !important;
+    display: block !important;
+    position: absolute !important;
+    top: -20% !important;
+    left: -60% !important;
+    width: 35% !important;
+    height: 140% !important;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255,255,255,0.15) 25%,
+      rgba(255,255,255,0.85) 50%,
+      rgba(255,255,255,0.15) 75%,
+      transparent 100%
+    ) !important;
+    transform: skewX(-20deg) !important;
+    animation: profileGoldShine 2.4s ease-in-out infinite !important;
+    pointer-events: none !important;
+    z-index: 2 !important;
+  }
+
+  .header .header-actions .header-user-button > * {
+    position: relative !important;
+    z-index: 3 !important;
+  }
+
+  .header .header-actions .header-user-button:hover {
+    background: #DDBB3F !important;
+  }
+}
+
+@keyframes profileGoldShine {
+  0% {
+    left: -60%;
+  }
+
+  45%,
+  100% {
+    left: 130%;
+  }
+}
+
+
+/* ===== PROFILE — FEATURED GOLD WITH VISIBLE SHINE ===== */
+@media (min-width: 701px) {
+  .header .header-actions .header-user-button {
+    background:
+      linear-gradient(
+        115deg,
+        #D4AF37 0%,
+        #D4AF37 30%,
+        #FFF4B0 42%,
+        #FFFFFF 47%,
+        #FFF4B0 52%,
+        #D4AF37 64%,
+        #D4AF37 100%
+      ) !important;
+    background-size: 250% 100% !important;
+    animation: featuredGoldShine 2.2s linear infinite !important;
+    color: #111 !important;
+    border: 2px solid #111 !important;
+    box-shadow: 3px 3px 0 #111 !important;
+  }
+
+  .header .header-actions .header-user-button::after {
+    content: none !important;
+    display: none !important;
+  }
+}
+
+@keyframes featuredGoldShine {
+  0% {
+    background-position: 150% 0;
+  }
+
+  100% {
+    background-position: -150% 0;
+  }
+}
+
+
+/* ===== PROFILE BUTTON — PREMIUM METALLIC FEATURED GOLD ===== */
+@media (min-width: 701px) {
+
+  .header .header-actions .header-user-button {
+    background:
+      linear-gradient(
+        180deg,
+        #FFF1A8 0%,
+        #F8D96A 12%,
+        #D4AF37 35%,
+        #C49A22 52%,
+        #E8C653 72%,
+        #FFF0A0 100%
+      ) !important;
+
+    background-size: 100% 180% !important;
+    background-position: 50% 0% !important;
+
+    color: #111 !important;
+    border: 2px solid #111 !important;
+    box-shadow:
+      3px 3px 0 #111,
+      inset 0 1px 1px rgba(255,255,255,.75),
+      inset 0 -2px 3px rgba(120,80,0,.25) !important;
+
+    position: relative !important;
+    overflow: hidden !important;
+  }
+
+  .header .header-actions .header-user-button::before {
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+
+    background:
+      linear-gradient(
+        105deg,
+        transparent 20%,
+        rgba(255,255,255,0.05) 32%,
+        rgba(255,255,255,0.75) 43%,
+        rgba(255,255,255,0.95) 48%,
+        rgba(255,255,255,0.45) 53%,
+        rgba(255,255,255,0.05) 64%,
+        transparent 78%
+      ) !important;
+
+    transform: translateX(-120%) !important;
+    animation: premiumGoldSweep 3.2s ease-in-out infinite !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+  }
+
+  .header .header-actions .header-user-button::after {
+    content: "" !important;
+    position: absolute !important;
+    inset: 1px !important;
+
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,.28),
+      transparent 35%,
+      transparent 70%,
+      rgba(255,255,255,.08)
+    ) !important;
+
+    pointer-events: none !important;
+    z-index: 1 !important;
+  }
+
+  .header .header-actions .header-user-button > * {
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+}
+
+@keyframes premiumGoldSweep {
+  0% {
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+
+  12% {
+    opacity: 1;
+  }
+
+  45% {
+    transform: translateX(120%);
+    opacity: 1;
+  }
+
+  55% {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+}
+
+
+/* ===== PROFILE BUTTON — FEATURED BADGE GOLD + SUBTLE SHINE ===== */
+@media (min-width: 701px) {
+
+  .header .header-actions .header-user-button {
+    background: #f4c542 !important;
+    color: #111 !important;
+    border: 2px solid #111 !important;
+    border-radius: 12px !important;
+    box-shadow: 3px 3px 0 #111 !important;
+    position: relative !important;
+    overflow: hidden !important;
+    isolation: isolate !important;
+  }
+
+  .header .header-actions .header-user-button::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -45% !important;
+    width: 22% !important;
+    height: 100% !important;
+
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.55),
+      transparent
+    ) !important;
+
+    transform: skewX(-20deg) !important;
+    animation: featuredButtonShine 3.5s ease-in-out infinite !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+  }
+
+  .header .header-actions .header-user-button::after {
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,.18),
+      transparent 35%
+    ) !important;
+
+    pointer-events: none !important;
+    z-index: 1 !important;
+  }
+
+  .header .header-actions .header-user-button > * {
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .header .header-actions .header-user-button:hover {
+    background: #f4c542 !important;
+    color: #111 !important;
+  }
+}
+
+@keyframes featuredButtonShine {
+  0%,
+  55% {
+    left: -45%;
+  }
+
+  75% {
+    left: 125%;
+  }
+
+  100% {
+    left: 125%;
+  }
+}
+
+
+/* ===== PROFILE BUTTON — STRONG VISIBLE GOLD SHINE ===== */
+@media (min-width: 701px) {
+
+  .header .header-actions .header-user-button {
+    background:
+      linear-gradient(
+        105deg,
+        #f4c542 0%,
+        #f4c542 28%,
+        #ffe98a 38%,
+        #ffffff 44%,
+        #fff8c7 48%,
+        #ffe98a 52%,
+        #f4c542 62%,
+        #f4c542 100%
+      ) !important;
+
+    background-size: 300% 100% !important;
+    animation: profileFeaturedShine 2.2s linear infinite !important;
+
+    color: #111 !important;
+    border: 2px solid #111 !important;
+    border-radius: 12px !important;
+    box-shadow: 3px 3px 0 #111 !important;
+  }
+
+  .header .header-actions .header-user-button::before,
+  .header .header-actions .header-user-button::after {
+    display: none !important;
+    content: none !important;
+  }
+}
+
+@keyframes profileFeaturedShine {
+
+  0% {
+    background-position: 150% 0;
+  }
+
+  100% {
+    background-position: -150% 0;
+  }
+
+}
+
+
+/* ===== PROFILE BUTTON — HIGH VISIBILITY GOLD SHIMMER ===== */
+@media (min-width: 701px) {
+
+  .header .header-actions .header-user-button {
+    background:
+      linear-gradient(
+        110deg,
+        #f4c542 0%,
+        #f4c542 20%,
+        #f9d96a 28%,
+        #fff0a0 36%,
+        #ffffff 43%,
+        #fff0a0 50%,
+        #f9d96a 58%,
+        #f4c542 68%,
+        #f4c542 100%
+      ) !important;
+
+    background-size: 320% 100% !important;
+    animation: profileGoldMegaShine 2.8s ease-in-out infinite !important;
+
+    color: #111 !important;
+    border: 2px solid #111 !important;
+    border-radius: 12px !important;
+
+    box-shadow:
+      3px 3px 0 #111,
+      inset 0 1px 2px rgba(255,255,255,.7),
+      inset 0 -2px 3px rgba(120,80,0,.22) !important;
+  }
+
+  .header .header-actions .header-user-button::before,
+  .header .header-actions .header-user-button::after {
+    display: none !important;
+    content: none !important;
+  }
+}
+
+@keyframes profileGoldMegaShine {
+
+  0% {
+    background-position: 160% 0;
+  }
+
+  20% {
+    background-position: 100% 0;
+  }
+
+  45% {
+    background-position: 0% 0;
+  }
+
+  65%,
+  100% {
+    background-position: -60% 0;
+  }
+
+}
+
