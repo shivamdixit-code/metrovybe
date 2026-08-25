@@ -401,3 +401,105 @@ export async function removeOtherActiveSessions(): Promise<{ message: string }> 
 
   return data;
 }
+
+/* ===== REVIEWS & RATINGS ===== */
+
+export type Review = {
+  _id: string;
+  customer: string | { _id: string; name?: string };
+  business: string;
+  listing: string | Listing;
+  booking: string | Booking;
+  rating: number;
+  comment: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export async function getListingReviews(
+  listingId: string
+): Promise<{ reviews: Review[] }> {
+  const response = await fetch(
+    `${API_URL}/api/reviews/listing/${encodeURIComponent(listingId)}`,
+    { cache: "no-store" }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to fetch reviews");
+  }
+
+  return data;
+}
+
+export async function getMyReviews(): Promise<{ reviews: Review[] }> {
+  const response = await authenticatedFetch("/api/reviews/my");
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to fetch your reviews");
+  }
+
+  return data;
+}
+
+export async function createReview(data: {
+  bookingId: string;
+  rating: number;
+  comment?: string;
+}): Promise<{ message: string; review: Review }> {
+  const response = await authenticatedFetch("/api/reviews", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message || "Failed to submit review");
+  }
+
+  return result;
+}
+
+export async function updateReview(
+  reviewId: string,
+  data: { rating?: number; comment?: string }
+): Promise<{ message: string; review: Review }> {
+  const response = await authenticatedFetch(`/api/reviews/${reviewId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message || "Failed to update review");
+  }
+
+  return result;
+}
+
+export async function deleteReview(
+  reviewId: string
+): Promise<{ message: string }> {
+  const response = await authenticatedFetch(`/api/reviews/${reviewId}`, {
+    method: "DELETE",
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message || "Failed to delete review");
+  }
+
+  return result;
+}
