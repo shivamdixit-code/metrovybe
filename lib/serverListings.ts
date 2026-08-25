@@ -4,7 +4,9 @@ import { cookies } from "next/headers";
 import type { Listing } from "@/lib/api";
 
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
+  process.env.NODE_ENV === "production"
+    ? "https://metrovybe-backend.onrender.com"
+    : (process.env.NEXT_PUBLIC_API_URL?.trim() || "http://localhost:5001");
 
 export async function getServerListings(
   params: Record<string, string> = {}
