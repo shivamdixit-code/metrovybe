@@ -21487,3 +21487,11 @@ body {
     margin-left: 30px !important;
   }
 }
+
+/* ===== HEADER — SLIGHTLY SMALLER SEARCH BAR ===== */
+@media (min-width: 701px) {
+  .header .searchbar {
+    flex: 0 1 560px !important;
+    max-width: 560px !important;
+  }
+}
