@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { BottomNav } from "@/components/BottomNav";
+import { Header } from "@/components/Header";
 import { getToken } from "@/lib/auth";
 
 const API_URL =
@@ -140,16 +141,9 @@ export default function BusinessEnquiriesPage() {
 
   return (
     <div className="page">
+      <Header />
       <main className="shell inner business-enquiries-page">
         <div className="business-enquiries-header">
-          <Link
-            href="/business/dashboard"
-            className="business-enquiries-back"
-          >
-            <ArrowLeft size={18} />
-            Dashboard
-          </Link>
-
           <div>
             <div className="panel-kicker">
               CUSTOMER MESSAGES
