@@ -51,6 +51,16 @@ export default function Saved() {
   };
 
   useEffect(() => {
+    const token = getToken();
+    const user = getUser();
+
+    // Don't call the protected API for visitors who aren't customers.
+    if (!token || !user || user.role !== "customer") {
+      setLoading(false);
+      setMessage("Authentication required");
+      return;
+    }
+
     loadSaved();
 
     const handleSavedChanged = () => {
@@ -91,20 +101,86 @@ export default function Saved() {
             </div>
           </div>
         ) : message ? (
-          <div className="mv-light-state">
-            <div className="mv-light-state-title">{message}</div>
-            {!getToken() && (
-              <a
-                href="/login"
-                className="btn btn-black"
+          <div
+            className="mv-light-state"
+            style={{
+              minHeight: "400px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              padding: "40px 24px",
+              boxSizing: "border-box",
+            }}
+          >
+            <div style={{ maxWidth: "480px", margin: "0 auto" }}>
+              <div
+                aria-hidden="true"
                 style={{
-                  display: "inline-block",
-                  marginTop: 14,
+                  width: "76px",
+                  height: "76px",
+                  margin: "0 auto 22px",
+                  borderRadius: "50%",
+                  background: "#29AB87",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#111",
                 }}
               >
-                Login as customer to view saved
-              </a>
-            )}
+                <MapPin size={30} strokeWidth={2.5} />
+              </div>
+
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: "28px",
+                  lineHeight: 1.08,
+                  fontWeight: 850,
+                  letterSpacing: "-0.045em",
+                  color: "#111",
+                }}
+              >
+                Login to view your saved places
+              </h2>
+
+              <p
+                style={{
+                  margin: "14px auto 0",
+                  maxWidth: "430px",
+                  fontSize: "15px",
+                  lineHeight: 1.5,
+                  fontWeight: 600,
+                  color: "#777",
+                }}
+              >
+                Please login as a customer to view and manage the places you've
+                saved for later.
+              </p>
+
+              {!getToken() && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    window.location.href =
+                      "/login?redirect=/saved&role=customer";
+                  }}
+                  style={{
+                    marginTop: 22,
+                    border: "2px solid #111",
+                    background: "#111",
+                    color: "#fff",
+                    borderRadius: 14,
+                    padding: "12px 22px",
+                    fontWeight: 800,
+                    fontSize: 14,
+                    cursor: "pointer",
+                  }}
+                >
+                  Login as Customer
+                </button>
+              )}
+            </div>
           </div>
         ) : saved.length === 0 ? (
           <div
