@@ -1,5 +1,5 @@
 "use client";
-import { CalendarDays, Clock3 } from "lucide-react";
+import { CalendarDays, Clock3, Star } from "lucide-react";
 
 import { Header } from "@/components/Header";
 
@@ -11,6 +11,9 @@ import {
   cancelBooking,
   getCustomerBookings,
   type Booking,
+  getMyReviews,
+  createReview,
+  type Review,
 } from "@/lib/api";
 
 export default function Bookings() {
@@ -18,6 +21,14 @@ export default function Bookings() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [cancelling, setCancelling] = useState<string | null>(null);
+
+  // Reviews
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviewBookingId, setReviewBookingId] = useState<string | null>(null);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewComment, setReviewComment] = useState("");
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [reviewError, setReviewError] = useState("");
   const [authChecked, setAuthChecked] = useState(false);
   const [isCustomer, setIsCustomer] = useState(false);
 
@@ -58,7 +69,62 @@ export default function Bookings() {
     setIsCustomer(true);
     setAuthChecked(true);
     loadBookings();
+
+    getMyReviews()
+      .then((data) => setReviews(Array.isArray(data.reviews) ? data.reviews : []))
+      .catch((err) => console.error("Failed to load reviews:", err));
   }, []);
+
+  const getReviewForBooking = (bookingId: string) =>
+    reviews.find((review: any) => {
+      const reviewBooking =
+        typeof review.booking === "object"
+          ? review.booking?._id
+          : review.booking;
+      return String(reviewBooking) === String(bookingId);
+    });
+
+  const handleSubmitReview = async (bookingId: string) => {
+    if (submittingReview) return;
+
+    if (reviewRating < 1 || reviewRating > 5) {
+      setReviewError("Please select a star rating.");
+      return;
+    }
+
+    try {
+      setSubmittingReview(true);
+      setReviewError("");
+
+      const result = await createReview({
+        bookingId,
+        rating: reviewRating,
+        comment: reviewComment.trim(),
+      });
+
+      setReviews((current) => [
+        ...current.filter((review: any) => {
+          const reviewBooking =
+            typeof review.booking === "object"
+              ? review.booking?._id
+              : review.booking;
+          return String(reviewBooking) !== String(bookingId);
+        }),
+        result.review,
+      ]);
+
+      setReviewBookingId(null);
+      setReviewRating(0);
+      setReviewComment("");
+    } catch (err) {
+      console.error("Failed to submit review:", err);
+      setReviewError(
+        err instanceof Error ? err.message : "Failed to submit your review."
+      );
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
 
   const handleCancel = async (bookingId: string) => {
     if (cancelling) return;
@@ -515,6 +581,327 @@ export default function Bookings() {
                       </div>
                     )}
                   </div>
+
+                  {booking.status === "completed" && (() => {
+                    const existingReview = getReviewForBooking(booking._id);
+                    const isReviewing = reviewBookingId === booking._id;
+
+                    return (
+                      <div
+                        style={{
+                          marginTop: 16,
+                          padding: "18px 20px",
+                          borderRadius: 16,
+                          background: "#FFFCF5",
+                          border: "1px solid #F0D89A",
+                        }}
+                      >
+                        {existingReview ? (
+                          <div>
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                gap: 12,
+                                flexWrap: "wrap",
+                              }}
+                            >
+                              <div>
+                                <div
+                                  style={{
+                                    fontSize: 14,
+                                    fontWeight: 850,
+                                    color: "#181818",
+                                  }}
+                                >
+                                  Your review
+                                </div>
+                                <div
+                                  style={{
+                                    marginTop: 6,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 4,
+                                  }}
+                                >
+                                  {Array.from({ length: 5 }).map((_, index) => (
+                                    <Star
+                                      key={index}
+                                      size={20}
+                                      strokeWidth={2.2}
+                                      fill={
+                                        index < existingReview.rating
+                                          ? "#F5B301"
+                                          : "transparent"
+                                      }
+                                      color="#F5B301"
+                                    />
+                                  ))}
+                                  <span
+                                    style={{
+                                      marginLeft: 5,
+                                      fontSize: 13,
+                                      fontWeight: 800,
+                                      color: "#8A6400",
+                                    }}
+                                  >
+                                    {existingReview.rating}/5
+                                  </span>
+                                </div>
+                              </div>
+
+                              <span
+                                style={{
+                                  padding: "6px 10px",
+                                  borderRadius: 999,
+                                  background: "#FFF3C9",
+                                  color: "#8A6400",
+                                  fontSize: 11,
+                                  fontWeight: 850,
+                                }}
+                              >
+                                REVIEWED
+                              </span>
+                            </div>
+
+                            {existingReview.comment && (
+                              <p
+                                style={{
+                                  margin: "14px 0 0",
+                                  paddingTop: 14,
+                                  borderTop: "1px solid #F0E2BA",
+                                  fontSize: 14,
+                                  lineHeight: 1.55,
+                                  color: "#555",
+                                }}
+                              >
+                                {existingReview.comment}
+                              </p>
+                            )}
+                          </div>
+                        ) : isReviewing ? (
+                          <div className="mv-review-form">
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                gap: 12,
+                                flexWrap: "wrap",
+                              }}
+                            >
+                              <div>
+                                <div
+                                  style={{
+                                    fontSize: 16,
+                                    fontWeight: 850,
+                                    color: "#181818",
+                                  }}
+                                >
+                                  How was your experience?
+                                </div>
+                                <div
+                                  style={{
+                                    marginTop: 4,
+                                    fontSize: 13,
+                                    color: "#777",
+                                  }}
+                                >
+                                  Tap a star to rate your experience.
+                                </div>
+                              </div>
+
+                              {reviewRating > 0 && (
+                                <span
+                                  style={{
+                                    padding: "6px 10px",
+                                    borderRadius: 999,
+                                    background: "#FFF3C9",
+                                    color: "#8A6400",
+                                    fontSize: 12,
+                                    fontWeight: 850,
+                                  }}
+                                >
+                                  {reviewRating} of 5
+                                </span>
+                              )}
+                            </div>
+
+                            <div
+                              className="mv-review-stars"
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 6,
+                                marginTop: 16,
+                              }}
+                            >
+                              {Array.from({ length: 5 }).map((_, index) => {
+                                const value = index + 1;
+                                const active = value <= reviewRating;
+
+                                return (
+                                  <button
+                                    key={value}
+                                    type="button"
+                                    onClick={() => {
+                                      setReviewRating(value);
+                                      setReviewError("");
+                                    }}
+                                    aria-label={`${value} star${value > 1 ? "s" : ""}`}
+                                    style={{
+                                      width: 46,
+                                      height: 46,
+                                      borderRadius: 12,
+                                      border: active
+                                        ? "1px solid #F0B429"
+                                        : "1px solid #E7D9B5",
+                                      background: active ? "#FFF7DF" : "#fff",
+                                      display: "inline-flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      padding: 0,
+                                      cursor: "pointer",
+                                    }}
+                                  >
+                                    <Star
+                                      size={25}
+                                      strokeWidth={2.2}
+                                      fill={active ? "#F5B301" : "transparent"}
+                                      color="#E5A400"
+                                    />
+                                  </button>
+                                );
+                              })}
+                            </div>
+
+                            <textarea
+                              value={reviewComment}
+                              onChange={(event) =>
+                                setReviewComment(event.target.value)
+                              }
+                              placeholder="Tell others about your experience (optional)"
+                              maxLength={1000}
+                              style={{
+                                width: "100%",
+                                minHeight: 88,
+                                marginTop: 16,
+                                padding: "12px 14px",
+                                borderRadius: 12,
+                                border: "1px solid #E4D8BA",
+                                background: "#fff",
+                                color: "#111",
+                                fontSize: 14,
+                                fontFamily: "inherit",
+                                lineHeight: 1.5,
+                                resize: "vertical",
+                                boxSizing: "border-box",
+                                outline: "none",
+                              }}
+                            />
+
+                            {reviewError && (
+                              <div
+                                style={{
+                                  marginTop: 8,
+                                  fontSize: 12,
+                                  fontWeight: 700,
+                                  color: "#B42318",
+                                }}
+                              >
+                                {reviewError}
+                              </div>
+                            )}
+
+                            <div
+                              className="mv-review-actions"
+                              style={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+                                gap: 10,
+                                marginTop: 14,
+                              }}
+                            >
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setReviewBookingId(null);
+                                  setReviewRating(0);
+                                  setReviewComment("");
+                                  setReviewError("");
+                                }}
+                                disabled={submittingReview}
+                                style={{
+                                  border: "1px solid #D8D8D8",
+                                  background: "#fff",
+                                  color: "#555",
+                                  borderRadius: 10,
+                                  padding: "10px 17px",
+                                  fontSize: 13,
+                                  fontWeight: 800,
+                                  cursor: "pointer",
+                                }}
+                              >
+                                Cancel
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => handleSubmitReview(booking._id)}
+                                disabled={submittingReview}
+                                style={{
+                                  border: "1px solid #D99A00",
+                                  background: "#F5B301",
+                                  color: "#1C1605",
+                                  borderRadius: 10,
+                                  padding: "10px 18px",
+                                  fontSize: 13,
+                                  fontWeight: 850,
+                                  cursor: submittingReview ? "wait" : "pointer",
+                                  opacity: submittingReview ? 0.7 : 1,
+                                }}
+                              >
+                                {submittingReview
+                                  ? "Submitting..."
+                                  : "Submit Review"}
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="mv-rate-experience-cta">
+  <div className="mv-rate-experience-info">
+    <div className="mv-rate-experience-icon">
+      <Star size={27} strokeWidth={2.4} />
+    </div>
+
+    <div>
+      <div className="mv-rate-experience-title">
+        Rate your experience
+      </div>
+      <div className="mv-rate-experience-subtitle">
+        Share your feedback and help others.
+      </div>
+    </div>
+  </div>
+
+  <button
+    type="button"
+    className="mv-rate-now-btn"
+    onClick={() => {
+      setReviewBookingId(booking._id);
+      setReviewRating(0);
+      setReviewComment("");
+      setReviewError("");
+    }}
+  >
+    Rate Now <span aria-hidden="true">→</span>
+  </button>
+</div>
+                        )}
+                      </div>
+                    );
+                  })()}
 
                   {booking.status === "pending" && (
                     <button

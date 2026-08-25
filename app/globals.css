@@ -17289,3 +17289,430 @@ body {
   color: #111 !important;
   opacity: 1 !important;
 }
+
+/* ===== PREMIUM BOOKING REVIEW UI — FORCE OVERRIDES ===== */
+.mv-review-form {
+  margin-top: 16px !important;
+  padding: 20px !important;
+  border: 1px solid #f0d78d !important;
+  border-radius: 18px !important;
+  background: #fffdf7 !important;
+  box-sizing: border-box !important;
+}
+
+.mv-review-form button {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  box-shadow: none !important;
+}
+
+/* Star rating buttons */
+.mv-review-form button[aria-label*="star"] {
+  width: 46px !important;
+  height: 46px !important;
+  min-width: 46px !important;
+  padding: 0 !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  border: 1px solid #e7d9b5 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Review textarea */
+.mv-review-form textarea {
+  width: 100% !important;
+  min-height: 100px !important;
+  padding: 13px 14px !important;
+  border-radius: 13px !important;
+  border: 1px solid #e4d8ba !important;
+  background: #ffffff !important;
+  color: #222 !important;
+  box-sizing: border-box !important;
+}
+
+/* Bottom action buttons */
+.mv-review-form button:not([aria-label]) {
+  background: #ffffff !important;
+  color: #555 !important;
+  border: 1px solid #d8d8d8 !important;
+  border-radius: 10px !important;
+  padding: 10px 17px !important;
+  width: auto !important;
+  min-width: unset !important;
+}
+
+.mv-review-form button:last-child {
+  background: #f5b301 !important;
+  color: #1c1605 !important;
+  border-color: #d99a00 !important;
+}
+
+.mv-review-form > div:last-child {
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .mv-review-form {
+    padding: 16px !important;
+    border-radius: 16px !important;
+  }
+
+  .mv-review-form > div:last-child {
+    justify-content: stretch !important;
+  }
+
+  .mv-review-form > div:last-child button {
+    flex: 1 !important;
+    justify-content: center !important;
+  }
+}
+
+/* ===== BOOKING REVIEW — CLEAN SINGLE CARD ===== */
+
+/* The outer booking review area is the ONLY card */
+.mv-booking-review {
+  margin-top: 16px !important;
+}
+
+/* Remove the second/nested card completely */
+.mv-booking-review .mv-review-form {
+  margin-top: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Keep all rating stars together — don't spread them across desktop */
+.mv-review-stars {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  flex-wrap: nowrap !important;
+  width: fit-content !important;
+  gap: 8px !important;
+}
+
+.mv-review-stars button[aria-label*="star"] {
+  flex: 0 0 46px !important;
+  width: 46px !important;
+  height: 46px !important;
+  min-width: 46px !important;
+  padding: 0 !important;
+  background: #fff !important;
+  border: 1px solid #e7d9b5 !important;
+  border-radius: 12px !important;
+}
+
+/* Desktop actions — properly grouped on the right */
+.mv-review-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  width: 100% !important;
+  gap: 10px !important;
+}
+
+/* Cancel stays subtle */
+.mv-review-actions button:first-child {
+  width: auto !important;
+  min-width: 110px !important;
+  background: #fff !important;
+  color: #555 !important;
+  border: 1px solid #d8d8d8 !important;
+  box-shadow: none !important;
+}
+
+/* IMPORTANT: Submit button stays golden */
+.mv-review-actions button:last-child {
+  width: auto !important;
+  min-width: 140px !important;
+  background: #f5b301 !important;
+  color: #1c1605 !important;
+  border: 1px solid #d99a00 !important;
+  box-shadow: none !important;
+}
+
+/* Mobile layout */
+@media (max-width: 600px) {
+  .mv-review-stars {
+    gap: 7px !important;
+  }
+
+  .mv-review-stars button[aria-label*="star"] {
+    flex-basis: 44px !important;
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+  }
+
+  .mv-review-actions {
+    justify-content: stretch !important;
+  }
+
+  .mv-review-actions button:first-child,
+  .mv-review-actions button:last-child {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+  }
+}
+
+/* ===== REVIEW ACTIONS — KEEP BUTTONS TOGETHER ===== */
+.mv-review-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  width: 100% !important;
+  gap: 10px !important;
+}
+
+.mv-review-actions button {
+  flex: 0 0 auto !important;
+}
+
+/* Mobile: keep both buttons together and balanced */
+@media (max-width: 600px) {
+  .mv-review-actions {
+    justify-content: flex-end !important;
+  }
+}
+
+/* ===== REVIEW BUTTONS — KEEP TOGETHER ON ONE SIDE ===== */
+.mv-review-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+.mv-review-actions > button {
+  flex: none !important;
+  width: auto !important;
+  margin: 0 !important;
+}
+
+.mv-review-actions > button:first-child {
+  min-width: 110px !important;
+}
+
+.mv-review-actions > button:last-child {
+  min-width: 140px !important;
+  background: #F5B301 !important;
+  color: #1C1605 !important;
+  border-color: #D99A00 !important;
+}
+
+@media (max-width: 600px) {
+  .mv-review-actions {
+    justify-content: flex-end !important;
+  }
+}
+
+/* ===== BOOKINGS REVIEW — FINAL DESKTOP LAYOUT FIX ===== */
+
+/* Review section should not create another card inside the booking card */
+.mv-booking-card .mv-review-form {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* Keep Cancel + Submit Review together on the right */
+.mv-booking-card .mv-review-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  width: 100% !important;
+  gap: 10px !important;
+  margin-top: 14px !important;
+}
+
+.mv-booking-card .mv-review-actions > button {
+  flex: 0 0 auto !important;
+}
+
+/* Mobile only: buttons remain together */
+@media (max-width: 600px) {
+  .mv-booking-card .mv-review-actions {
+    justify-content: flex-end !important;
+  }
+}
+
+
+/* ===== RATE EXPERIENCE BUTTON ===== */
+
+.mv-rate-experience-btn {
+  transition: transform 0.18s ease, box-shadow 0.18s ease,
+    background 0.18s ease, border-color 0.18s ease !important;
+}
+
+.mv-rate-experience-btn:hover {
+  background: #FFF8E5 !important;
+  border-color: #DDAA22 !important;
+  box-shadow: 0 5px 14px rgba(180, 130, 0, 0.14) !important;
+  transform: translateY(-1px);
+}
+
+.mv-rate-experience-btn:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 600px) {
+  .mv-rate-experience-btn {
+    padding: 10px 14px !important;
+  }
+}
+
+
+/* ===== BOOKINGS: RATE EXPERIENCE CTA ===== */
+.mv-rate-experience-btn {
+  background: #F4FFFB !important;
+  color: #167A60 !important;
+  border: 1.5px solid #8ED7C2 !important;
+  border-radius: 12px !important;
+  padding: 10px 17px !important;
+  min-height: 42px !important;
+  font-weight: 800 !important;
+  box-shadow: 0 3px 10px rgba(41, 171, 135, 0.10) !important;
+  transition: all 0.18s ease !important;
+}
+
+.mv-rate-experience-btn:hover {
+  background: #E5F8F1 !important;
+  border-color: #29AB87 !important;
+  box-shadow: 0 5px 16px rgba(41, 171, 135, 0.18) !important;
+  transform: translateY(-1px) !important;
+}
+
+.mv-rate-experience-btn svg {
+  color: #D89A00 !important;
+  fill: #FFF3C4 !important;
+}
+
+.mv-rate-experience-btn:active {
+  transform: translateY(0) !important;
+}
+
+/* ===== BOOKINGS — FORCE RATE EXPERIENCE BUTTON DESIGN ===== */
+.mv-booking-card .mv-rate-experience-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 9px !important;
+  background: #EAF8F3 !important;
+  color: #167A60 !important;
+  border: 1.5px solid #8EDBC7 !important;
+  border-radius: 14px !important;
+  padding: 11px 18px !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 14px rgba(41, 171, 135, 0.14) !important;
+}
+
+.mv-booking-card .mv-rate-experience-btn svg {
+  color: #E0A000 !important;
+  fill: #F5B301 !important;
+}
+
+
+/* ===== BOOKINGS — RATE EXPERIENCE (FINAL CLEAN COMPACT UI) ===== */
+
+.mv-booking-card .mv-rate-experience-cta {
+  margin-top: 8px !important;
+  padding: 6px 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+}
+
+.mv-booking-card .mv-rate-experience-info {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+}
+
+.mv-booking-card .mv-rate-experience-icon {
+  width: 44px !important;
+  height: 44px !important;
+  flex: 0 0 44px !important;
+  margin: 0 !important;
+  border-radius: 13px !important;
+}
+
+.mv-booking-card .mv-rate-experience-title {
+  margin: 0 !important;
+  font-size: 16px !important;
+  line-height: 1.2 !important;
+}
+
+.mv-booking-card .mv-rate-experience-subtitle {
+  margin-top: 2px !important;
+  font-size: 13px !important;
+  line-height: 1.3 !important;
+}
+
+.mv-booking-card .mv-rate-now-btn {
+  margin-left: auto !important;
+  min-width: 150px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  padding: 0 18px !important;
+  flex: 0 0 auto !important;
+  border: 1px solid #D99A00 !important;
+  border-radius: 12px !important;
+  background: #F5B301 !important;
+  color: #181400 !important;
+  font-size: 15px !important;
+  box-shadow: 0 5px 14px rgba(245, 179, 1, 0.20) !important;
+}
+
+.mv-booking-card .mv-rate-now-btn:hover {
+  background: #E5A700 !important;
+}
+
+@media (max-width: 600px) {
+  .mv-booking-card .mv-rate-experience-cta {
+    padding: 8px 0 !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .mv-booking-card .mv-rate-experience-info {
+    gap: 10px !important;
+  }
+
+  .mv-booking-card .mv-rate-experience-icon {
+    width: 40px !important;
+    height: 40px !important;
+    flex-basis: 40px !important;
+  }
+
+  .mv-booking-card .mv-rate-now-btn {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 44px !important;
+  }
+}
