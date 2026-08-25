@@ -21,12 +21,47 @@ import {
   type AuthUser,
 } from "@/lib/auth";
 
+const PHONE_COUNTRIES = {
+  IN: { code: "+91", label: "🇮🇳 +91", placeholder: "9876543210" },
+  GB: { code: "+44", label: "🇬🇧 +44", placeholder: "7911123456" },
+  US: { code: "+1", label: "🇺🇸 +1", placeholder: "2015550123" },
+  CA: { code: "+1", label: "🇨🇦 +1", placeholder: "4165550123" },
+  AU: { code: "+61", label: "🇦🇺 +61", placeholder: "412345678" },
+  NZ: { code: "+64", label: "🇳🇿 +64", placeholder: "211234567" },
+  SG: { code: "+65", label: "🇸🇬 +65", placeholder: "81234567" },
+  MY: { code: "+60", label: "🇲🇾 +60", placeholder: "123456789" },
+  AE: { code: "+971", label: "🇦🇪 +971", placeholder: "501234567" },
+} as const;
+
+type PhoneCountry = keyof typeof PHONE_COUNTRIES;
+
+function getInternationalPhone(country: PhoneCountry, phone: string) {
+  return `${PHONE_COUNTRIES[country].code}${phone.replace(/\D/g, "")}`;
+}
+
+function parsePhone(phone: string): { country: PhoneCountry; number: string } {
+  const entries = Object.entries(PHONE_COUNTRIES)
+    .sort((a, b) => b[1].code.length - a[1].code.length);
+
+  for (const [country, details] of entries) {
+    if (phone.startsWith(details.code)) {
+      return {
+        country: country as PhoneCountry,
+        number: phone.slice(details.code.length),
+      };
+    }
+  }
+
+  return { country: "IN", number: phone.replace(/^\+/, "") };
+}
+
 export default function ProfileEdit() {
   const router = useRouter();
 
   const [user, setUser] = useState<AuthUser | null>(null);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [phoneCountry, setPhoneCountry] = useState<PhoneCountry>("IN");
   const [email, setEmail] = useState("");
 
   const [phoneOtp, setPhoneOtp] = useState("");
@@ -44,7 +79,11 @@ export default function ProfileEdit() {
   const syncUser = (nextUser: AuthUser) => {
     setUser(nextUser);
     setName(nextUser.name || "");
-    setPhone(nextUser.phone || "");
+
+    const parsedPhone = parsePhone(nextUser.phone || "");
+    setPhoneCountry(parsedPhone.country);
+    setPhone(parsedPhone.number);
+
     setEmail(nextUser.email || "");
 
     localStorage.setItem(
@@ -146,14 +185,15 @@ export default function ProfileEdit() {
   const handleRequestPhoneChange = async () => {
     clearFeedback();
 
-    const cleanPhone = phone.trim();
+    const cleanPhone = phone.replace(/\D/g, "");
+    const internationalPhone = getInternationalPhone(phoneCountry, cleanPhone);
 
-    if (!cleanPhone) {
-      setError("Please enter your new phone number.");
+    if (cleanPhone.length < 7) {
+      setError("Please enter a valid phone number.");
       return;
     }
 
-    if (cleanPhone === user?.phone) {
+    if (internationalPhone === user?.phone) {
       setError("Please enter a different phone number.");
       return;
     }
@@ -169,7 +209,7 @@ export default function ProfileEdit() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            phone: cleanPhone,
+            phone: internationalPhone,
           }),
         }
       );
@@ -408,23 +448,45 @@ export default function ProfileEdit() {
 
                 <label className="field profile-edit-field">
                   <span>Phone</span>
-                  <div className="profile-edit-input-wrap">
-                    <Phone size={18} />
-                    <input
-                      value={phone}
-                      onChange={(event) => {
-                        setPhone(event.target.value);
-                        if (phoneOtpSent) {
-                          setPhoneOtpSent(false);
-                          setPhoneOtp("");
-                        }
-                      }}
-                      autoComplete="tel"
-                      inputMode="tel"
-                      disabled={
-                        sendingPhoneOtp || verifyingPhone
-                      }
-                    />
+                  <div className="profile-edit-phone-wrap">
+                    <div className="profile-edit-input-wrap profile-edit-country-select">
+                      <Phone size={18} />
+                      <select
+                        value={phoneCountry}
+                        onChange={(event) => {
+                          setPhoneCountry(event.target.value as PhoneCountry);
+                          if (phoneOtpSent) {
+                            setPhoneOtpSent(false);
+                            setPhoneOtp("");
+                          }
+                        }}
+                        disabled={sendingPhoneOtp || verifyingPhone}
+                        aria-label="Country code"
+                      >
+                        {Object.entries(PHONE_COUNTRIES).map(([key, item]) => (
+                          <option key={key} value={key}>
+                            {item.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="profile-edit-input-wrap profile-edit-phone-number">
+                      <input
+                        value={phone}
+                        onChange={(event) => {
+                          setPhone(event.target.value.replace(/\D/g, ""));
+                          if (phoneOtpSent) {
+                            setPhoneOtpSent(false);
+                            setPhoneOtp("");
+                          }
+                        }}
+                        autoComplete="tel-national"
+                        inputMode="tel"
+                        placeholder={PHONE_COUNTRIES[phoneCountry].placeholder}
+                        disabled={sendingPhoneOtp || verifyingPhone}
+                      />
+                    </div>
                   </div>
                   <small>
                     Enter your new international phone number to receive a
@@ -439,7 +501,7 @@ export default function ProfileEdit() {
                     disabled={
                       sendingPhoneOtp ||
                       verifyingPhone ||
-                      phone.trim() === user.phone
+                      getInternationalPhone(phoneCountry, phone) === user.phone
                     }
                     className="profile-edit-secondary-action"
                   >
