@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getToken } from "@/lib/auth";
-import { Header } from "@/components/Header";
-import { BottomNav } from "@/components/BottomNav";
 
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
@@ -470,9 +468,7 @@ export default function BusinessDashboard() {
           <strong>Preparing your Business Center</strong>
           <p>Fetching your latest business information...</p>
         </div>
-        <BottomNav active="dashboard" />
-
-      <style jsx>{styles}</style>
+        <style jsx>{styles}</style>
       </main>
     );
   }
@@ -501,19 +497,18 @@ export default function BusinessDashboard() {
 
   return (
     <main className="mv-premium-dashboard">
-      <Header />
       <div className="dashboard-shell">
 
-
-        <div className="business-dashboard-toolbar">
-          <div>
-            <span className="business-dashboard-eyebrow">
-              BUSINESS CENTER
-            </span>
-            <strong>Manage your business</strong>
+        {/* HEADER */}
+        <header className="premium-header">
+          <div className="brand-lockup">
+            <Link href="/" className="brand">
+              metro<span>vybe</span><sup>✦</sup>
+            </Link>
+            <span className="business-center-label">BUSINESS CENTER</span>
           </div>
 
-          <div className="business-dashboard-actions">
+          <div className="header-actions">
             <button
               type="button"
               className="icon-action refresh-action"
@@ -523,7 +518,7 @@ export default function BusinessDashboard() {
               title="Refresh dashboard"
             >
               <span className={refreshing ? "spin" : ""}>
-                <Icon name="refresh" size={19} />
+                <Icon name="refresh" size={20} />
               </span>
             </button>
 
@@ -531,14 +526,12 @@ export default function BusinessDashboard() {
               type="button"
               className="logout-action"
               onClick={logout}
-              aria-label="Log out"
-              title="Log out"
             >
               <Icon name="logout" size={18} />
               <span>Log out</span>
             </button>
           </div>
-        </div>
+        </header>
 
         {/* INTRO */}
         <section className="dashboard-intro">
@@ -920,12 +913,10 @@ export default function BusinessDashboard() {
           </aside>
         </div>
 
-
-
+        {/* FOOTER */}
 
       </div>
 
-      <BottomNav active="dashboard" />
       <style jsx>{styles}</style>
     </main>
   );
@@ -935,111 +926,6 @@ const styles = `
   * {
     box-sizing: border-box;
   }
-
-  .business-dashboard-toolbar {
-    min-height: 54px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 28px;
-    padding: 0 2px;
-  }
-
-  .business-dashboard-eyebrow {
-    display: block;
-    margin-bottom: 4px;
-    color: #188a6e;
-    font-size: 9px;
-    line-height: 1;
-    font-weight: 900;
-    letter-spacing: 1px;
-  }
-
-  .business-dashboard-toolbar strong {
-    display: block;
-    color: #171b19;
-    font-size: 15px;
-    line-height: 1.2;
-    font-weight: 900;
-  }
-
-  .business-dashboard-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 0 0 auto;
-  }
-
-  .business-dashboard-actions .logout-action {
-    gap: 7px;
-    padding: 0 13px;
-  }
-
-  .mv-premium-dashboard .dashboard-shell {
-    padding-bottom: 70px;
-  }
-
-  @media (max-width: 700px) {
-    .mv-premium-dashboard .dashboard-shell {
-      width: calc(100% - 20px);
-      padding-top: 12px;
-      padding-bottom: 118px;
-    }
-
-    .business-dashboard-toolbar {
-      min-height: 48px;
-      margin-bottom: 20px;
-      gap: 10px;
-    }
-
-    .business-dashboard-eyebrow {
-      font-size: 8px;
-      letter-spacing: .8px;
-    }
-
-    .business-dashboard-toolbar strong {
-      font-size: 13px;
-    }
-
-    .business-dashboard-actions {
-      gap: 6px;
-    }
-
-    .business-dashboard-actions .icon-action,
-    .business-dashboard-actions .logout-action {
-      width: 40px;
-      height: 40px;
-      min-width: 40px;
-      padding: 0;
-      border-radius: 12px;
-    }
-
-    .business-dashboard-actions .logout-action span {
-      display: none;
-    }
-
-    .mv-premium-dashboard .site-footer {
-      padding-bottom: 105px !important;
-    }
-  }
-
-  @media (max-width: 420px) {
-    .mv-premium-dashboard .dashboard-shell {
-      width: calc(100% - 16px);
-      padding-bottom: 112px;
-    }
-
-    .business-dashboard-toolbar {
-      margin-bottom: 17px;
-    }
-
-    .business-dashboard-toolbar strong {
-      font-size: 12px;
-    }
-  }
-
-
 
   .mv-premium-dashboard {
     min-height: 100vh;
@@ -2296,306 +2182,6 @@ const styles = `
     margin-top: 1px;
   }
 }
-
-
-
-  /* =========================================================
-     BUSINESS DASHBOARD — RESPONSIVE MASTER PATCH
-     ========================================================= */
-
-  .mv-premium-dashboard {
-    width: 100%;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  .mv-premium-dashboard > .dashboard-shell {
-    width: min(1380px, calc(100% - 48px));
-    margin: 0 auto;
-  }
-
-  .dashboard-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1.65fr) minmax(300px, .75fr);
-    gap: 20px;
-    align-items: start;
-  }
-
-  .listings-panel,
-  .side-column,
-  .panel,
-  .listing-card,
-  .listing-content {
-    min-width: 0;
-  }
-
-  .listing-topline h3,
-  .listing-details span,
-  .detail-row strong {
-    overflow-wrap: anywhere;
-    word-break: break-word;
-  }
-
-  .business-dashboard-actions {
-    flex-shrink: 0;
-  }
-
-  /* TABLET */
-  @media (max-width: 1100px) {
-
-    .dashboard-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .side-column {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 20px;
-    }
-
-  }
-
-  /* MOBILE */
-  @media (max-width: 800px) {
-
-    .mv-premium-dashboard > .dashboard-shell {
-      width: calc(100% - 24px);
-      padding-top: 12px;
-      padding-bottom: 120px;
-    }
-
-    .business-hero {
-      padding: 22px;
-      border-radius: 22px;
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .business-hero-main {
-      gap: 16px;
-    }
-
-    .business-avatar {
-      width: 82px !important;
-      height: 82px !important;
-      min-width: 82px !important;
-      border-radius: 21px !important;
-    }
-
-    .business-avatar span {
-      font-size: 29px;
-    }
-
-    .hero-status {
-      width: 100%;
-    }
-
-    .stats-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .side-column {
-      grid-template-columns: 1fr;
-    }
-
-    .dashboard-intro {
-      align-items: flex-start;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-  }
-
-  @media (max-width: 600px) {
-
-    .mv-premium-dashboard > .dashboard-shell {
-      width: calc(100% - 16px);
-      padding-top: 8px;
-      padding-bottom: 125px;
-    }
-
-    .business-dashboard-toolbar {
-      min-height: 44px;
-      margin-bottom: 16px;
-      gap: 8px;
-    }
-
-    .business-dashboard-toolbar strong {
-      font-size: 12px;
-    }
-
-    .business-dashboard-actions {
-      gap: 6px;
-    }
-
-    .business-dashboard-actions .icon-action,
-    .business-dashboard-actions .logout-action {
-      width: 38px;
-      height: 38px;
-      min-width: 38px;
-      padding: 0;
-      border-radius: 11px;
-    }
-
-    .business-dashboard-actions .logout-action span {
-      display: none;
-    }
-
-    .dashboard-intro h1 {
-      font-size: 31px;
-      letter-spacing: -1.6px;
-    }
-
-    .dashboard-intro p {
-      font-size: 13px;
-    }
-
-    .business-hero {
-      padding: 18px;
-      gap: 16px;
-      border-radius: 20px;
-    }
-
-    .business-title-line h2 {
-      font-size: 24px;
-    }
-
-    .business-meta {
-      gap: 7px 11px;
-      font-size: 12px;
-    }
-
-    .business-description {
-      font-size: 12px;
-    }
-
-    .stats-grid {
-      gap: 8px;
-    }
-
-    .stat-card {
-      min-height: 100px;
-      padding: 14px;
-      gap: 10px;
-      border-radius: 16px;
-    }
-
-    .stat-icon {
-      width: 40px;
-      height: 40px;
-      min-width: 40px;
-      border-radius: 12px;
-    }
-
-    .stat-copy strong {
-      font-size: 20px;
-    }
-
-    .stat-copy span {
-      font-size: 11px;
-    }
-
-    .stat-copy small {
-      font-size: 9px;
-    }
-
-    .panel {
-      border-radius: 18px;
-    }
-
-    .listing-card {
-      grid-template-columns: 52px minmax(0, 1fr) 22px;
-      gap: 10px;
-      padding: 12px;
-    }
-
-    .listing-thumb {
-      width: 52px;
-      height: 52px;
-      min-width: 52px;
-    }
-
-    .listing-topline {
-      gap: 6px;
-      align-items: flex-start;
-      flex-direction: column;
-    }
-
-    .listing-status {
-      align-self: flex-start;
-    }
-
-  }
-
-  @media (max-width: 420px) {
-
-    .mv-premium-dashboard > .dashboard-shell {
-      width: calc(100% - 12px);
-      padding-bottom: 125px;
-    }
-
-    .stats-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .stat-card {
-      min-height: 88px;
-    }
-
-    .business-avatar {
-      width: 68px !important;
-      height: 68px !important;
-      min-width: 68px !important;
-      border-radius: 18px !important;
-    }
-
-    .business-avatar span {
-      font-size: 24px;
-    }
-
-    .business-title-line h2 {
-      font-size: 21px;
-    }
-
-    .panel-header {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .add-listing-button {
-      width: 100%;
-      justify-content: center;
-    }
-
-  }
-
-  /* MOBILE BOTTOM NAV / SAFE AREA */
-
-  @media (max-width: 700px) {
-
-    .mv-premium-dashboard {
-      padding-bottom: env(safe-area-inset-bottom);
-    }
-
-    .mv-premium-dashboard .site-footer {
-      margin-bottom: 8px;
-    }
-
-    .mv-premium-dashboard .bottom-nav {
-      padding-bottom: max(8px, env(safe-area-inset-bottom));
-    }
-
-    .mv-premium-dashboard button,
-    .mv-premium-dashboard select,
-    .mv-premium-dashboard input {
-      font-size: 16px;
-    }
-
-    .mv-premium-dashboard img {
-      max-width: 100%;
-    }
-
-  }
 
 `;
 

@@ -8,7 +8,9 @@ import {
   User,
   LayoutDashboard,
   List,
+  Plus,
   MessageSquare,
+  MessageCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getToken, getUser, type AuthUser } from "@/lib/auth";
@@ -22,6 +24,7 @@ type BottomNavProps = {
     | "profile"
     | "dashboard"
     | "enquiries"
+    | "feedback"
     | "account"
     | "bookings";
 };
@@ -91,28 +94,28 @@ export function BottomNav({ active = "home" }: BottomNavProps) {
       icon: Home,
     },
     {
-      id: "dashboard",
-      label: "Dashboard",
-      href: "/business/dashboard",
-      icon: LayoutDashboard,
+      id: "feedback",
+      label: "Feedback",
+      href: "/business/feedback",
+      icon: MessageCircle,
     },
     {
       id: "list",
-      label: "Listings",
+      label: "List",
       href: "/business/listings/new",
       icon: List,
     },
     {
       id: "enquiries",
       label: "Enquiries",
-      href: "/business/dashboard",
+      href: "/business/enquiries",
       icon: MessageSquare,
     },
     {
-      id: "account",
-      label: "Profile",
+      id: "dashboard",
+      label: "Dashboard",
       href: "/business/dashboard",
-      icon: User,
+      icon: LayoutDashboard,
     },
   ];
 
