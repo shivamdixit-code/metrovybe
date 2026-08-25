@@ -78,7 +78,7 @@ export function Header() {
         : "Profile";
 
   return (
-    <header className="header">
+    <header className={`header ${user?.role === "business" ? "header-business" : ""}`}>
       <div className="header-inner">
         <Link
           href="/"

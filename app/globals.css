@@ -20336,3 +20336,1154 @@ body {
   border-color: #0369a1 !important;
 }
 
+
+/* =========================================================
+   BUSINESS FEEDBACK — MATCH ENQUIRIES UI
+   ========================================================= */
+
+.business-feedback-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 30px 20px 120px;
+}
+
+.business-feedback-header {
+  margin-bottom: 26px;
+}
+
+.business-feedback-page .page-title {
+  font-size: 42px;
+  font-weight: 950;
+  letter-spacing: -2px;
+  line-height: 1;
+  margin: 0;
+}
+
+.business-feedback-page .subtle {
+  color: #666;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 8px 0 0;
+}
+
+.business-feedback-summary,
+.business-feedback-review {
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 16px;
+  box-shadow: 4px 4px 0 #111;
+}
+
+.business-feedback-summary {
+  padding: 22px;
+  margin-bottom: 24px;
+}
+
+.business-feedback-reviews {
+  display: grid;
+  gap: 16px;
+}
+
+.business-feedback-review {
+  padding: 20px;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.business-feedback-review:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 #111;
+}
+
+.business-feedback-review h3,
+.business-feedback-review p {
+  margin-top: 0;
+}
+
+.business-feedback-page .feedback-stars {
+  color: #f5b700;
+}
+
+.business-feedback-loading,
+.business-feedback-empty {
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 16px;
+  padding: 30px 20px;
+  text-align: center;
+  font-weight: 700;
+  box-shadow: 4px 4px 0 #111;
+}
+
+@media (max-width: 700px) {
+  .business-feedback-page {
+    width: calc(100% - 20px);
+    padding: 18px 0 115px;
+  }
+
+  .business-feedback-page .page-title {
+    font-size: 35px;
+    letter-spacing: -1.5px;
+  }
+
+  .business-feedback-summary,
+  .business-feedback-review {
+    border-radius: 14px;
+    box-shadow: 3px 3px 0 #111;
+  }
+
+  .business-feedback-summary {
+    padding: 18px;
+  }
+
+  .business-feedback-review {
+    padding: 16px;
+  }
+}
+
+/* =========================================================
+   BUSINESS FEEDBACK — ENQUIRIES STYLE PREMIUM UI
+   ========================================================= */
+
+.business-feedback-main {
+  max-width: 1100px !important;
+  margin: 0 auto !important;
+  padding: 30px 20px 120px !important;
+}
+
+.business-feedback-top {
+  margin-bottom: 26px;
+}
+
+.business-feedback-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 18px;
+  color: #555;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.business-feedback-top h1 {
+  margin: 6px 0 8px !important;
+  font-size: clamp(34px, 4vw, 48px) !important;
+  line-height: 1 !important;
+  letter-spacing: -2px !important;
+}
+
+.business-feedback-eyebrow {
+  margin: 0 !important;
+  color: #29ab87 !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1.4px !important;
+}
+
+.business-feedback-top > div > p:last-child,
+.business-feedback-top > p:last-child {
+  color: #666;
+  margin: 0;
+}
+
+/* Rating summary */
+.business-feedback-summary {
+  display: grid !important;
+  grid-template-columns: minmax(240px, 0.85fr) minmax(0, 1.5fr) !important;
+  gap: 0 !important;
+  background: #fff !important;
+  border: 2px solid #202020 !important;
+  border-radius: 22px !important;
+  overflow: hidden !important;
+  box-shadow: 5px 6px 0 #202020 !important;
+  margin-bottom: 30px !important;
+}
+
+.business-feedback-score {
+  min-height: 245px;
+  padding: 32px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  border-right: 2px solid #202020 !important;
+  background: linear-gradient(135deg, #f3fffb 0%, #fff 100%) !important;
+}
+
+.business-feedback-score-value {
+  font-size: 58px !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  letter-spacing: -3px;
+}
+
+.business-feedback-stars {
+  display: flex !important;
+  gap: 4px !important;
+  margin: 10px 0 !important;
+}
+
+.business-feedback-score > p,
+.business-feedback-score small {
+  margin: 4px 0 0 !important;
+  color: #666 !important;
+  font-weight: 700;
+}
+
+.business-feedback-breakdown {
+  padding: 27px 32px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 11px !important;
+}
+
+.business-feedback-breakdown-row {
+  display: grid !important;
+  grid-template-columns: 38px minmax(0, 1fr) 28px !important;
+  align-items: center !important;
+  gap: 12px !important;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.business-feedback-bar {
+  height: 10px !important;
+  overflow: hidden !important;
+  background: #e8eceb !important;
+  border-radius: 999px !important;
+}
+
+.business-feedback-bar > div {
+  height: 100% !important;
+  background: #29ab87 !important;
+  border-radius: inherit !important;
+}
+
+/* Reviews */
+.business-feedback-section-heading {
+  margin-bottom: 16px !important;
+}
+
+.business-feedback-section-heading h2 {
+  margin: 0 !important;
+  font-size: 25px !important;
+  letter-spacing: -0.8px;
+}
+
+.business-feedback-section-heading p {
+  margin: 5px 0 0 !important;
+  color: #777;
+}
+
+.business-feedback-review-list {
+  display: grid !important;
+  gap: 16px !important;
+}
+
+.business-feedback-review-card {
+  background: #fff !important;
+  border: 2px solid #202020 !important;
+  border-radius: 20px !important;
+  padding: 22px !important;
+  box-shadow: 4px 5px 0 #202020 !important;
+}
+
+.business-feedback-review-head {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+}
+
+.business-feedback-avatar {
+  width: 48px !important;
+  height: 48px !important;
+  flex: 0 0 48px !important;
+  border: 2px solid #202020 !important;
+  border-radius: 14px !important;
+  background: #b9eee2 !important;
+  display: grid !important;
+  place-items: center !important;
+  font-weight: 900 !important;
+}
+
+.business-feedback-review-person {
+  flex: 1;
+}
+
+.business-feedback-review-person strong {
+  display: block;
+  font-size: 16px;
+}
+
+.business-feedback-review-person span,
+.business-feedback-review-person small {
+  color: #777;
+  font-size: 13px;
+}
+
+.business-feedback-review-rating {
+  display: flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  padding: 7px 11px !important;
+  border: 1.5px solid #29ab87 !important;
+  border-radius: 999px !important;
+  background: #edfff8 !important;
+  font-weight: 900 !important;
+}
+
+.business-feedback-review-comment {
+  margin: 18px 0 0 64px !important;
+  padding-top: 16px !important;
+  border-top: 1px solid #e5e5e5 !important;
+  color: #444;
+  line-height: 1.65;
+}
+
+/* Empty / loading states */
+.business-feedback-state,
+.business-feedback-empty {
+  background: #fff !important;
+  border: 2px solid #202020 !important;
+  border-radius: 20px !important;
+  padding: 36px 24px !important;
+  box-shadow: 4px 5px 0 #202020 !important;
+}
+
+.business-feedback-empty {
+  text-align: center;
+}
+
+.business-feedback-empty-icon {
+  width: 54px !important;
+  height: 54px !important;
+  margin: 0 auto 14px !important;
+  border: 2px solid #202020 !important;
+  border-radius: 16px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: #edfff8 !important;
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+  .business-feedback-main {
+    width: calc(100% - 20px) !important;
+    padding: 18px 0 115px !important;
+  }
+
+  .business-feedback-top h1 {
+    font-size: 35px !important;
+  }
+
+  .business-feedback-summary {
+    grid-template-columns: 1fr !important;
+    border-radius: 18px !important;
+  }
+
+  .business-feedback-score {
+    min-height: auto !important;
+    padding: 25px !important;
+    border-right: 0 !important;
+    border-bottom: 2px solid #202020 !important;
+  }
+
+  .business-feedback-score-value {
+    font-size: 48px !important;
+  }
+
+  .business-feedback-breakdown {
+    padding: 24px 20px !important;
+  }
+
+  .business-feedback-review-card {
+    padding: 17px !important;
+    border-radius: 17px !important;
+  }
+
+  .business-feedback-review-comment {
+    margin-left: 0 !important;
+  }
+}
+
+
+/* =========================================================
+   HEADER — COMPACT PREMIUM DESKTOP FIX
+   ========================================================= */
+
+@media (min-width: 901px) {
+
+  .header {
+    height: 76px !important;
+  }
+
+  .header-inner {
+    height: 76px !important;
+    max-width: 1180px !important;
+    padding: 0 16px !important;
+    gap: 22px !important;
+  }
+
+  .header .brand {
+    width: 190px !important;
+  }
+
+  .header .logo {
+    font-size: 32px !important;
+    letter-spacing: -2.2px !important;
+  }
+
+  .header .tagline {
+    margin-top: 7px !important;
+    font-size: 9px !important;
+  }
+
+  .header .searchbar {
+    height: 46px !important;
+    padding: 0 15px !important;
+    border-radius: 24px !important;
+    box-shadow: 3px 3px 0 #111 !important;
+  }
+
+  .header .searchbar input {
+    font-size: 14px !important;
+  }
+
+  .header-actions {
+    gap: 10px !important;
+    align-items: center !important;
+  }
+
+  .header-notification-button {
+    width: 46px !important;
+    height: 46px !important;
+  }
+
+  .header-user-button {
+    min-height: 46px !important;
+    padding: 7px 13px !important;
+    border-radius: 14px !important;
+    box-shadow: 3px 3px 0 #111 !important;
+  }
+
+  .header-user-name {
+    font-size: 12px !important;
+  }
+
+  .header-user-email {
+    font-size: 9px !important;
+    max-width: 130px !important;
+  }
+}
+
+/* =========================================================
+   BUSINESS FEEDBACK — FRESH PREMIUM REDESIGN
+   Fully scoped: does NOT change global Header or other pages
+   ========================================================= */
+
+.business-feedback-page {
+  min-height: 100vh;
+  background: #f7f7f5;
+}
+
+.business-feedback-page .business-feedback-main {
+  width: min(100% - 40px, 1080px);
+  margin: 0 auto;
+  padding: 34px 0 140px;
+}
+
+/* ---------- Page intro ---------- */
+
+.business-feedback-page .business-feedback-top {
+  margin-bottom: 28px;
+}
+
+.business-feedback-page .business-feedback-back {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 22px;
+  border: 2px solid #111;
+  border-radius: 12px;
+  background: #fff;
+  color: #111;
+  box-shadow: 3px 3px 0 #111;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.business-feedback-page .business-feedback-back:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 #111;
+}
+
+.business-feedback-page .business-feedback-eyebrow {
+  margin: 0 0 8px;
+  color: #318b78;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.business-feedback-page .business-feedback-top h1 {
+  margin: 0;
+  color: #171717;
+  font-size: clamp(42px, 5vw, 58px);
+  line-height: .95;
+  letter-spacing: -2.5px;
+  font-weight: 950;
+}
+
+.business-feedback-page .business-feedback-top > div > p:last-child {
+  margin: 12px 0 0;
+  color: #626262;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* ---------- Rating summary ---------- */
+
+.business-feedback-page .business-feedback-summary {
+  display: grid;
+  grid-template-columns: 0.82fr 1.18fr;
+  overflow: hidden;
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 24px;
+  box-shadow: 7px 8px 0 #111;
+  margin-bottom: 38px;
+}
+
+.business-feedback-page .business-feedback-score {
+  min-height: 270px;
+  padding: 38px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(41,171,135,.18), transparent 38%),
+    linear-gradient(135deg, #eef9f6, #f7f7f5);
+  border-right: 2px solid #111;
+}
+
+.business-feedback-page .business-feedback-score-value {
+  font-size: 68px;
+  line-height: 1;
+  letter-spacing: -4px;
+  font-weight: 950;
+  color: #111;
+}
+
+.business-feedback-page .business-feedback-stars {
+  display: flex;
+  gap: 5px;
+  margin-top: 14px;
+  color: #111;
+}
+
+.business-feedback-page .business-feedback-score > span {
+  margin-top: 14px;
+  color: #4b4b4b;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* ---------- Breakdown ---------- */
+
+.business-feedback-page .business-feedback-breakdown {
+  padding: 30px 38px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 13px;
+}
+
+.business-feedback-page .business-feedback-breakdown-row {
+  display: grid;
+  grid-template-columns: 18px 20px 1fr 26px;
+  align-items: center;
+  gap: 10px;
+  color: #111;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.business-feedback-page .business-feedback-breakdown-row > svg {
+  fill: #29ab87;
+  color: #29ab87;
+}
+
+.business-feedback-page .business-feedback-bar {
+  height: 10px;
+  overflow: hidden;
+  background: #e8eceb;
+  border-radius: 999px;
+}
+
+.business-feedback-page .business-feedback-bar span {
+  display: block;
+  height: 100%;
+  min-width: 0;
+  background: #29ab87;
+  border-radius: inherit;
+  transition: width .35s ease;
+}
+
+.business-feedback-page .business-feedback-breakdown-row strong {
+  text-align: right;
+}
+
+/* ---------- Reviews ---------- */
+
+.business-feedback-page .business-feedback-reviews {
+  margin-top: 8px;
+}
+
+.business-feedback-page .business-feedback-section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 18px;
+}
+
+.business-feedback-page .business-feedback-section-heading h2 {
+  margin: 0;
+  color: #111;
+  font-size: 28px;
+  letter-spacing: -1px;
+  font-weight: 950;
+}
+
+.business-feedback-page .business-feedback-section-heading p {
+  margin: 6px 0 0;
+  color: #666;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.business-feedback-page .business-feedback-section-heading > svg {
+  width: 42px;
+  height: 42px;
+  padding: 10px;
+  border: 2px solid #111;
+  border-radius: 12px;
+  background: #dff5ef;
+}
+
+.business-feedback-page .business-feedback-review-list {
+  display: grid;
+  gap: 16px;
+}
+
+.business-feedback-page .business-feedback-review-card {
+  padding: 22px;
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 20px;
+  box-shadow: 4px 5px 0 #111;
+}
+
+.business-feedback-page .business-feedback-review-head {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.business-feedback-page .business-feedback-avatar {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #111;
+  border-radius: 50%;
+  background: #dff5ef;
+  color: #111;
+  font-weight: 950;
+}
+
+.business-feedback-page .business-feedback-review-person {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.business-feedback-page .business-feedback-review-person strong {
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.business-feedback-page .business-feedback-review-person span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  color: #777;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.business-feedback-page .business-feedback-review-head time {
+  margin-left: auto;
+  color: #777;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.business-feedback-page .business-feedback-review-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 18px;
+  color: #29ab87;
+}
+
+.business-feedback-page .business-feedback-review-rating strong {
+  margin-left: 7px;
+  color: #111;
+  font-size: 14px;
+}
+
+.business-feedback-page .business-feedback-review-comment {
+  margin: 14px 0 0;
+  color: #404040;
+  font-size: 15px;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+/* ---------- Empty / loading / error ---------- */
+
+.business-feedback-page .business-feedback-state,
+.business-feedback-page .business-feedback-empty {
+  padding: 48px 25px;
+  text-align: center;
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 20px;
+  box-shadow: 4px 5px 0 #111;
+  font-weight: 700;
+}
+
+.business-feedback-page .business-feedback-error {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+}
+
+.business-feedback-page .business-feedback-error button {
+  margin-top: 8px;
+  padding: 10px 18px;
+  border: 2px solid #111;
+  border-radius: 10px;
+  background: #29ab87;
+  color: #111;
+  box-shadow: 3px 3px 0 #111;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.business-feedback-page .business-feedback-empty-icon {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 16px;
+  border: 2px solid #111;
+  border-radius: 50%;
+  background: #dff5ef;
+}
+
+.business-feedback-page .business-feedback-empty h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 950;
+}
+
+.business-feedback-page .business-feedback-empty p {
+  max-width: 420px;
+  margin: 8px auto 0;
+  color: #666;
+  font-weight: 600;
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 700px) {
+  .business-feedback-page .business-feedback-main {
+    width: min(100% - 28px, 620px);
+    padding-top: 22px;
+    padding-bottom: 115px;
+  }
+
+  .business-feedback-page .business-feedback-back {
+    margin-bottom: 18px;
+  }
+
+  .business-feedback-page .business-feedback-top h1 {
+    font-size: 43px;
+  }
+
+  .business-feedback-page .business-feedback-summary {
+    grid-template-columns: 1fr;
+    border-radius: 20px;
+    box-shadow: 5px 6px 0 #111;
+  }
+
+  .business-feedback-page .business-feedback-score {
+    min-height: auto;
+    padding: 30px 25px;
+    border-right: 0;
+    border-bottom: 2px solid #111;
+  }
+
+  .business-feedback-page .business-feedback-score-value {
+    font-size: 58px;
+  }
+
+  .business-feedback-page .business-feedback-breakdown {
+    padding: 25px;
+  }
+
+  .business-feedback-page .business-feedback-review-card {
+    padding: 18px;
+  }
+
+  .business-feedback-page .business-feedback-review-head {
+    flex-wrap: wrap;
+  }
+
+  .business-feedback-page .business-feedback-review-head time {
+    width: 100%;
+    margin-left: 59px;
+    margin-top: -5px;
+  }
+}
+
+
+/* =========================================================
+   BUSINESS HEADER — CLEAN METROVYBE EXPERIENCE
+   Scoped only to logged-in Business users.
+   Customer/Home header remains untouched.
+   ========================================================= */
+
+@media (min-width: 701px) {
+
+  .header.header-business {
+    height: 86px !important;
+    background: #f7f6f2 !important;
+    border-bottom: 2px solid #111 !important;
+  }
+
+  .header.header-business .header-inner {
+    width: min(100% - 48px, 1380px) !important;
+    height: 86px !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 24px !important;
+  }
+
+  /* Brand */
+
+  .header.header-business .brand {
+    width: 190px !important;
+    min-width: 190px !important;
+    flex: 0 0 190px !important;
+    display: block !important;
+  }
+
+  .header.header-business .logo {
+    display: block !important;
+    font-size: 35px !important;
+    line-height: .85 !important;
+    letter-spacing: -2.5px !important;
+    white-space: nowrap !important;
+  }
+
+  .header.header-business .tagline {
+    display: block !important;
+    margin-top: 8px !important;
+    font-size: 9px !important;
+    line-height: 1 !important;
+    letter-spacing: .55px !important;
+    white-space: nowrap !important;
+  }
+
+  /* Search — main visual focus */
+
+  .header.header-business .searchbar {
+    height: 52px !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    flex: 1 1 auto !important;
+    margin: 0 !important;
+    padding: 0 18px !important;
+    gap: 11px !important;
+    background: #fff !important;
+    border: 2px solid #111 !important;
+    border-radius: 28px !important;
+    box-shadow: 3px 4px 0 #111 !important;
+  }
+
+  .header.header-business .searchbar input {
+    min-width: 0 !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+  }
+
+  /* Right actions */
+
+  .header.header-business .header-actions {
+    flex: 0 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+  }
+
+  .header.header-business .header-notification-button {
+    width: 50px !important;
+    height: 50px !important;
+    flex: 0 0 50px !important;
+    display: grid !important;
+    place-items: center !important;
+    background: #29ab87 !important;
+    color: #111 !important;
+    border: 2px solid #111 !important;
+    border-radius: 14px !important;
+    box-shadow: 3px 3px 0 #111 !important;
+  }
+
+  .header.header-business .header-notification-button:hover {
+    transform: translate(1px, 1px) !important;
+    box-shadow: 2px 2px 0 #111 !important;
+  }
+
+  .header.header-business .header-user-button {
+    min-width: 170px !important;
+    height: 50px !important;
+    padding: 7px 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 9px !important;
+    background: #fff !important;
+    color: #111 !important;
+    border: 2px solid #111 !important;
+    border-radius: 14px !important;
+    box-shadow: 3px 3px 0 #111 !important;
+    text-decoration: none !important;
+  }
+
+  .header.header-business .header-user-button:hover {
+    background: #fff !important;
+    color: #111 !important;
+    transform: translate(1px, 1px) !important;
+    box-shadow: 2px 2px 0 #111 !important;
+  }
+
+  .header.header-business .header-user-name {
+    font-size: 13px !important;
+    font-weight: 900 !important;
+  }
+
+  .header.header-business .header-user-email {
+    font-size: 10px !important;
+    max-width: 130px !important;
+    color: #555 !important;
+    opacity: 1 !important;
+  }
+}
+
+
+/* BUSINESS HEADER — MOBILE */
+
+@media (max-width: 700px) {
+
+  .header.header-business {
+    height: 72px !important;
+  }
+
+  .header.header-business .header-inner {
+    height: 72px !important;
+  }
+
+  .header.header-business .brand {
+    width: auto !important;
+    min-width: 0 !important;
+  }
+
+  .header.header-business .logo {
+    font-size: 29px !important;
+  }
+
+  .header.header-business .tagline {
+    display: none !important;
+  }
+
+  .header.header-business .searchbar {
+    height: 46px !important;
+  }
+
+  .header.header-business .header-actions {
+    gap: 8px !important;
+  }
+
+  .header.header-business .header-notification-button {
+    width: 44px !important;
+    height: 44px !important;
+    flex-basis: 44px !important;
+  }
+
+  .header.header-business .header-user-button {
+    min-width: 44px !important;
+    width: 44px !important;
+    height: 44px !important;
+    padding: 0 !important;
+    justify-content: center !important;
+  }
+
+  .header.header-business .header-user-details {
+    display: none !important;
+  }
+}
+
+
+/* ===== BUSINESS HEADER — LOGO ALIGNMENT FINAL FIX ===== */
+
+@media (min-width: 701px) {
+  .header.header-business .header-inner {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+    gap: 28px !important;
+  }
+
+  .header.header-business .brand {
+    width: auto !important;
+    min-width: max-content !important;
+    flex: 0 0 auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .header.header-business .logo {
+    font-size: 36px !important;
+    line-height: 0.9 !important;
+    letter-spacing: -2.5px !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+  }
+
+  .header.header-business .logo-star {
+    display: inline-block !important;
+    margin-left: 4px !important;
+  }
+
+  .header.header-business .tagline {
+    margin-top: 6px !important;
+    font-size: 9px !important;
+    letter-spacing: 0.45px !important;
+    white-space: nowrap !important;
+  }
+}
+
+
+/* ===== HEADER LOGO — PREVENT SEARCH OVERLAP FINAL FIX ===== */
+@media (min-width: 701px) {
+  .header .header-inner {
+    gap: 22px !important;
+  }
+
+  .header .brand {
+    width: 225px !important;
+    min-width: 225px !important;
+    flex: 0 0 225px !important;
+    position: relative !important;
+    z-index: 5 !important;
+    overflow: visible !important;
+  }
+
+  .header .logo {
+    white-space: nowrap !important;
+    font-size: 36px !important;
+    line-height: 1 !important;
+  }
+
+  .header .searchbar {
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+}
+
+/* ===== HEADER — LOGO + SEARCH SPACING FINAL ===== */
+@media (min-width: 701px) {
+  .header .header-inner {
+    gap: 16px !important;
+  }
+
+  .header .brand {
+    width: 225px !important;
+    min-width: 225px !important;
+    flex: 0 0 225px !important;
+  }
+
+  .header .searchbar {
+    margin-left: 0 !important;
+    min-width: 0 !important;
+  }
+}
+
+/* ===== HEADER — LOGO FAR LEFT ===== */
+@media (min-width: 701px) {
+  .header .header-inner {
+    max-width: none !important;
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+    width: 100% !important;
+  }
+
+  .header .brand {
+    margin-left: 0 !important;
+  }
+}
+
+
+/* ===== HEADER — MOVE LOGO CLOSER TO SEARCH ===== */
+@media (min-width: 701px) {
+  .header .header-inner {
+    padding-left: 70px !important;
+  }
+
+  .header .brand {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+/* ===== HEADER — MOVE LOGO RIGHT, CLOSER TO SEARCH ===== */
+@media (min-width: 701px) {
+  .header .brand {
+    transform: translateX(80px) !important;
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .header .searchbar {
+    margin-left: 80px !important;
+  }
+}
+
+/* ===== HEADER — LOGO POSITION FINE TUNE ===== */
+@media (min-width: 701px) {
+  .header .brand {
+    transform: translateX(30px) !important;
+  }
+
+  .header .searchbar {
+    margin-left: 30px !important;
+  }
+}
