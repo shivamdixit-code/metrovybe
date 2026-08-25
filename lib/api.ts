@@ -458,13 +458,26 @@ export async function createReview(data: {
     body: JSON.stringify(data),
   });
 
-  const result = await response.json();
+  const text = await response.text();
+  let result: { message?: string; review?: Review } = {};
+
+  try {
+    result = text ? JSON.parse(text) : {};
+  } catch {
+    throw new Error(
+      "The review service returned an unexpected response. Please try again later."
+    );
+  }
 
   if (!response.ok) {
     throw new Error(result.message || "Failed to submit review");
   }
 
-  return result;
+  if (!result.review) {
+    throw new Error("Invalid response received while submitting your review.");
+  }
+
+  return result as { message: string; review: Review };
 }
 
 export async function updateReview(

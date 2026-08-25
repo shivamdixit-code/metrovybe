@@ -18286,3 +18286,83 @@ body {
 
 }
 
+
+/* ===== REVIEW ACTIONS — CLEAN COMPACT UI ===== */
+.mv-review-existing-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+.mv-review-existing-actions button {
+  width: auto !important;
+  min-width: 0 !important;
+  height: 38px !important;
+  padding: 0 15px !important;
+  border-radius: 10px !important;
+  font-size: 13px !important;
+  font-weight: 750 !important;
+  line-height: 1 !important;
+  box-shadow: none !important;
+}
+
+.mv-review-existing-actions button:first-child {
+  background: #fff7df !important;
+  border: 1px solid #e6c15c !important;
+  color: #765500 !important;
+}
+
+.mv-review-existing-actions button:last-child {
+  background: #fff !important;
+  border: 1px solid #e7c5c2 !important;
+  color: #b42318 !important;
+}
+
+.mv-review-existing-actions button:hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+  .mv-review-existing-actions {
+    justify-content: stretch !important;
+  }
+
+  .mv-review-existing-actions button {
+    flex: 1 !important;
+    padding: 0 12px !important;
+  }
+}
+
+/* ===== REVIEW ACTIONS — KEEP BUTTONS TOGETHER ===== */
+.mv-review-existing-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+.mv-review-existing-actions > button {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 600px) {
+  .mv-review-existing-actions {
+    justify-content: flex-end !important;
+  }
+
+  .mv-review-existing-actions > button {
+    flex: 0 0 auto !important;
+  }
+}

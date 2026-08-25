@@ -13,6 +13,8 @@ import {
   type Booking,
   getMyReviews,
   createReview,
+  updateReview,
+  deleteReview,
   type Review,
 } from "@/lib/api";
 
@@ -28,6 +30,7 @@ export default function Bookings() {
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewComment, setReviewComment] = useState("");
   const [submittingReview, setSubmittingReview] = useState(false);
+  const [deletingReview, setDeletingReview] = useState<string | null>(null);
   const [reviewError, setReviewError] = useState("");
   const [authChecked, setAuthChecked] = useState(false);
   const [isCustomer, setIsCustomer] = useState(false);
@@ -96,22 +99,39 @@ export default function Bookings() {
       setSubmittingReview(true);
       setReviewError("");
 
-      const result = await createReview({
-        bookingId,
-        rating: reviewRating,
-        comment: reviewComment.trim(),
-      });
+      const existingReview = getReviewForBooking(bookingId);
 
-      setReviews((current) => [
-        ...current.filter((review: any) => {
-          const reviewBooking =
-            typeof review.booking === "object"
-              ? review.booking?._id
-              : review.booking;
-          return String(reviewBooking) !== String(bookingId);
-        }),
-        result.review,
-      ]);
+      if (existingReview && reviewBookingId === bookingId) {
+        const result = await updateReview(existingReview._id, {
+          rating: reviewRating,
+          comment: reviewComment.trim(),
+        });
+
+        setReviews((current) =>
+          current.map((review: any) =>
+            String(review._id) === String(existingReview._id)
+              ? result.review
+              : review
+          )
+        );
+      } else {
+        const result = await createReview({
+          bookingId,
+          rating: reviewRating,
+          comment: reviewComment.trim(),
+        });
+
+        setReviews((current) => [
+          ...current.filter((review: any) => {
+            const reviewBooking =
+              typeof review.booking === "object"
+                ? review.booking?._id
+                : review.booking;
+            return String(reviewBooking) !== String(bookingId);
+          }),
+          result.review,
+        ]);
+      }
 
       setReviewBookingId(null);
       setReviewRating(0);
@@ -123,6 +143,32 @@ export default function Bookings() {
       );
     } finally {
       setSubmittingReview(false);
+    }
+  };
+
+  const handleDeleteReview = async (reviewId: string) => {
+    if (deletingReview) return;
+
+    const confirmed = window.confirm(
+      "Are you sure you want to delete your review?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setDeletingReview(reviewId);
+      await deleteReview(reviewId);
+
+      setReviews((current) =>
+        current.filter((review: any) => String(review._id) !== String(reviewId))
+      );
+    } catch (err) {
+      console.error("Failed to delete review:", err);
+      window.alert(
+        err instanceof Error ? err.message : "Failed to delete your review."
+      );
+    } finally {
+      setDeletingReview(null);
     }
   };
 
@@ -596,7 +642,7 @@ export default function Bookings() {
                           border: "1px solid #F0D89A",
                         }}
                       >
-                        {existingReview ? (
+                        {existingReview && !isReviewing ? (
                           <div>
                             <div
                               style={{
@@ -679,6 +725,66 @@ export default function Bookings() {
                                 {existingReview.comment}
                               </p>
                             )}
+
+                            <div
+                              className="mv-review-existing-actions"
+                              style={{
+                                display: "flex",
+                                gap: 10,
+                                marginTop: 16,
+                                paddingTop: 14,
+                                borderTop: "1px solid #F0E2BA",
+                              }}
+                            >
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setReviewBookingId(booking._id);
+                                  setReviewRating(existingReview.rating);
+                                  setReviewComment(existingReview.comment || "");
+                                  setReviewError("");
+                                }}
+                                style={{
+                                  border: "1px solid #D8A900",
+                                  background: "#FFF7DF",
+                                  color: "#7A5800",
+                                  borderRadius: 10,
+                                  padding: "9px 15px",
+                                  fontSize: 13,
+                                  fontWeight: 800,
+                                  cursor: "pointer",
+                                }}
+                              >
+                                Edit Review
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteReview(existingReview._id)}
+                                disabled={deletingReview === existingReview._id}
+                                style={{
+                                  border: "1px solid #E7B7B3",
+                                  background: "#FFF5F4",
+                                  color: "#B42318",
+                                  borderRadius: 10,
+                                  padding: "9px 15px",
+                                  fontSize: 13,
+                                  fontWeight: 800,
+                                  cursor:
+                                    deletingReview === existingReview._id
+                                      ? "wait"
+                                      : "pointer",
+                                  opacity:
+                                    deletingReview === existingReview._id
+                                      ? 0.7
+                                      : 1,
+                                }}
+                              >
+                                {deletingReview === existingReview._id
+                                  ? "Deleting..."
+                                  : "Delete"}
+                              </button>
+                            </div>
                           </div>
                         ) : isReviewing ? (
                           <div className="mv-review-form">
