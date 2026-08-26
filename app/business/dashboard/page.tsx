@@ -1,10 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
+
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ChangeEvent,
+} from "react";
 import { getToken } from "@/lib/auth";
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
+
+const ListingLocationPicker = dynamic(
+  () => import("@/components/ListingLocationPicker"),
+  { ssr: false }
+);
 
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
@@ -29,6 +42,10 @@ type Business = {
   city?: string;
   state?: string;
   pincode?: string;
+  location?: {
+    latitude?: number | null;
+    longitude?: number | null;
+  };
   logo?: string;
   images?: string[];
   verificationStatus?: string;
@@ -92,9 +109,20 @@ export default function BusinessDashboard() {
   const [phoneOtp, setPhoneOtp] = useState("");
   const [phoneOtpSent, setPhoneOtpSent] = useState(false);
   const [contactLoading, setContactLoading] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [logoUploadError, setLogoUploadError] = useState("");
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteAccountError, setDeleteAccountError] = useState("");
+  const [deletingAccount, setDeletingAccount] = useState(false);
   const [profileForm, setProfileForm] = useState({
     businessName: "",
+    category: "",
     description: "",
+    logo: "",
+    location: {
+      latitude: "",
+      longitude: "",
+    },
     businessHours: {
       monday: { open: "09:00", close: "18:00", closed: false },
       tuesday: { open: "09:00", close: "18:00", closed: false },
@@ -119,7 +147,21 @@ export default function BusinessDashboard() {
 
     setProfileForm({
       businessName: business.businessName || "",
+      category: business.category || "",
       description: business.description || "",
+      logo: business.logo || "",
+      location: {
+        latitude:
+          business.location?.latitude !== null &&
+          business.location?.latitude !== undefined
+            ? String(business.location.latitude)
+            : "",
+        longitude:
+          business.location?.longitude !== null &&
+          business.location?.longitude !== undefined
+            ? String(business.location.longitude)
+            : "",
+      },
       businessHours: {
         monday: {
           open: business.businessHours?.monday?.open || "09:00",
@@ -274,6 +316,112 @@ export default function BusinessDashboard() {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    if (!deletePassword.trim()) {
+      setDeleteAccountError("Please enter your password.");
+      return;
+    }
+
+    if (!window.confirm("Are you sure? This will permanently delete your account and cannot be undone.")) {
+      return;
+    }
+
+    try {
+      setDeletingAccount(true);
+      setDeleteAccountError("");
+
+      const response = await fetch(`${API_URL}/api/auth/delete-account`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getToken()}`,
+        },
+        body: JSON.stringify({ password: deletePassword }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.message || "Unable to delete account.");
+      }
+
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/";
+    } catch (err) {
+      setDeleteAccountError(
+        err instanceof Error ? err.message : "Unable to delete account."
+      );
+    } finally {
+      setDeletingAccount(false);
+    }
+  };
+
+  const handleLogoUpload = async (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    setLogoUploadError("");
+
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      setLogoUploadError("Please upload a JPG, PNG or WEBP image.");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setLogoUploadError("Image must be smaller than 5MB.");
+      event.target.value = "";
+      return;
+    }
+
+    try {
+      setUploadingLogo(true);
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const response = await fetch(
+        `${API_URL}/api/upload/image`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || !data?.url) {
+        throw new Error(
+          data?.message || "Unable to upload business DP."
+        );
+      }
+
+      setProfileForm((current) => ({
+        ...current,
+        logo: data.url,
+      }));
+    } catch (err) {
+      setLogoUploadError(
+        err instanceof Error
+          ? err.message
+          : "Unable to upload business DP."
+      );
+    } finally {
+      setUploadingLogo(false);
+      event.target.value = "";
+    }
+  };
+
   const saveProfile = async () => {
     try {
       setSavingProfile(true);
@@ -286,9 +434,65 @@ export default function BusinessDashboard() {
         return;
       }
 
+      // Validate all mandatory business profile fields before saving.
+      const requiredFields = [
+        ["Business name", profileForm.businessName],
+        ["Business category", profileForm.category],
+        ["Business description", profileForm.description],
+        ["Address", profileForm.address],
+        ["City", profileForm.city],
+        ["State", profileForm.state],
+        ["Pincode", profileForm.pincode],
+        ["Logo", profileForm.logo],
+      ];
+
+      const missingField = requiredFields.find(
+        ([, value]) => !String(value || "").trim()
+      );
+
+      if (missingField) {
+        throw new Error(`${missingField[0]} is required.`);
+      }
+
+      const latitude = Number(profileForm.location.latitude);
+      const longitude = Number(profileForm.location.longitude);
+
+      if (
+        !Number.isFinite(latitude) ||
+        !Number.isFinite(longitude) ||
+        latitude < -90 ||
+        latitude > 90 ||
+        longitude < -180 ||
+        longitude > 180
+      ) {
+        throw new Error("Valid map latitude and longitude are required.");
+      }
+
+      const openDays = Object.entries(profileForm.businessHours).filter(
+        ([, day]) => !day.closed
+      );
+
+      const invalidHours = openDays.some(
+        ([, day]) => !day.open || !day.close
+      );
+
+      if (invalidHours) {
+        throw new Error(
+          "Opening and closing times are required for every open day."
+        );
+      }
+
       // Contact details require separate verification and cannot be
       // changed directly through the business profile endpoint.
       const { email, phone, ...businessDetails } = profileForm;
+
+      const payload = {
+        ...businessDetails,
+        location: {
+          latitude,
+          longitude,
+        },
+      };
 
       const response = await fetch(`${API_URL}/api/business/me`, {
         method: "PATCH",
@@ -296,7 +500,7 @@ export default function BusinessDashboard() {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(businessDetails),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json().catch(() => ({}));
@@ -312,6 +516,7 @@ export default function BusinessDashboard() {
           ? {
               ...current,
               ...businessDetails,
+              location: payload.location,
             }
           : current
       );
@@ -1148,9 +1353,85 @@ export default function BusinessDashboard() {
               </div>
             )}
 
+                    <div className="profile-business-name-row">
+                      <div className="profile-logo-upload-field">
+                        <div className="profile-logo-upload-preview">
+                        {profileForm.logo ? (
+                          <img
+                            src={profileForm.logo}
+                            alt="Business DP"
+                            className="profile-logo-upload-image"
+                          />
+                        ) : (
+                          <div className="profile-logo-upload-placeholder">
+                            {profileForm.businessName?.charAt(0)?.toUpperCase() || "B"}
+                          </div>
+                        )}
+
+                        <div className="profile-logo-overlay-actions">
+                          <label
+                            htmlFor="business-dp-upload"
+                            className="profile-logo-upload-button"
+                            title="Upload photo"
+                            aria-label="Upload photo"
+                          >
+                            {uploadingLogo ? "…" : "↑"}
+                          </label>
+
+                          {profileForm.logo && (
+                            <button
+                              type="button"
+                              className="profile-logo-remove-button"
+                              title="Remove photo"
+                              aria-label="Remove photo"
+                              onClick={() => {
+                                setProfileForm((current) => ({
+                                  ...current,
+                                  logo: "",
+                                }));
+                                setLogoUploadError("");
+                              }}
+                              disabled={uploadingLogo}
+                            >
+                              ×
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      <input
+                        id="business-dp-upload"
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        onChange={handleLogoUpload}
+                        disabled={uploadingLogo}
+                        hidden
+                      />
+
+                      {logoUploadError && (
+                        <p className="profile-logo-upload-error">
+                          {logoUploadError}
+                        </p>
+                      )}
+                      </div>
+
+                      <label className="profile-inline-field profile-business-name-field">
+                        <span>Business name</span>
+                        <input
+                          value={profileForm.businessName}
+                          onChange={(e) =>
+                            setProfileForm((current) => ({
+                              ...current,
+                              businessName: e.target.value,
+                            }))
+                          }
+                        />
+                      </label>
+                    </div>
+
                     <div className="profile-inline-grid">
 
-                      <label className="profile-inline-field">
+                      <label className="profile-inline-field profile-business-name-hidden">
                         <span>Business name</span>
                         <input
                           value={profileForm.businessName}
@@ -1163,7 +1444,28 @@ export default function BusinessDashboard() {
                         />
                       </label>
 
-                      <label className="profile-inline-field profile-description-field">
+                      <label className="profile-inline-field">
+                <span>Business category *</span>
+                <select
+                  value={profileForm.category}
+                  onChange={(e) =>
+                    setProfileForm((current) => ({
+                      ...current,
+                      category: e.target.value,
+                    }))
+                  }
+                  required
+                >
+                  <option value="">Select a category</option>
+                  <option value="Stay">Stay</option>
+                  <option value="Eat">Eat</option>
+                  <option value="Live">Live</option>
+                  <option value="Move">Move</option>
+                  <option value="Travel">Travel</option>
+                </select>
+              </label>
+
+              <label className="profile-inline-field profile-description-field">
                 <span>Business description</span>
                 <textarea
                   value={profileForm.description}
@@ -1179,6 +1481,42 @@ export default function BusinessDashboard() {
                 />
                 <small>{profileForm.description.length}/500</small>
               </label>
+
+              <div className="profile-inline-field profile-location-fields" style={{ gridColumn: "1 / -1" }}>
+                <span>Business map location *</span>
+
+                <div className="profile-business-map-picker">
+                  <ListingLocationPicker
+                    initialLocation={{
+                      latitude:
+                        Number(profileForm.location.latitude) || 28.6139,
+                      longitude:
+                        Number(profileForm.location.longitude) || 77.209,
+                    }}
+                    onConfirm={(location) => {
+                      setProfileForm((current) => ({
+                        ...current,
+                        location: {
+                          latitude: String(location.latitude),
+                          longitude: String(location.longitude),
+                        },
+                        address:
+                          location.address || current.address,
+                        city:
+                          location.city || current.city,
+                        state:
+                          location.state || current.state,
+                        pincode:
+                          location.pincode || current.pincode,
+                      }));
+                    }}
+                  />
+                </div>
+
+                <small>
+                  Search your business address, tap the map, or drag the pin to set the exact location.
+                </small>
+              </div>
 
               <div className="profile-inline-field profile-hours-field">
                 <div className="profile-hours-heading">
@@ -1280,126 +1618,130 @@ export default function BusinessDashboard() {
                 </div>
               </div>
 
-              <label className="profile-inline-field">
-                        <span>Email</span>
-                        <input
-                          type="email"
-                          value={profileForm.email}
-                          onChange={(e) =>
-                            setProfileForm((current) => ({
-                              ...current,
-                              email: e.target.value,
-                            }))
-                          }
-                        />
-                      </label>
-              <div className="profile-contact-action">
-                <button
-                  type="button"
-                  className="profile-contact-verify"
-                  onClick={requestEmailChange}
-                  disabled={contactLoading}
-                >
-                  Verify new email
-                </button>
-              </div>
-
-
-                      <label className="profile-inline-field">
-                        <span>Phone</span>
-                        <div className="profile-phone-input">
-                          <select
-                            className="profile-phone-code"
-                            value={
-                              profileForm.phone.match(/^\+(91|1|44|61|65|64|971)/)?.[0] ||
-                              "+91"
-                            }
-                            aria-label="Country code"
-                            onChange={(e) => {
-                              const newCode = e.target.value;
-                              const currentPhone = profileForm.phone || "";
-
-                              const number = currentPhone
-                                .replace(/^\+(91|1|44|61|65|64|971)/, "")
-                                .replace(/\\D/g, "")
-                                .slice(0, 10);
-
-                              setProfileForm((current) => ({
-                                ...current,
-                                phone: `${newCode}${number}`,
-                              }));
-                            }}
-                          >
-                            <option value="+91">🇮🇳 +91</option>
-                            <option value="+1">🇺🇸 +1</option>
-                            <option value="+44">🇬🇧 +44</option>
-                            <option value="+61">🇦🇺 +61</option>
-                            <option value="+65">🇸🇬 +65</option>
-                            <option value="+64">🇳🇿 +64</option>
-                            <option value="+971">🇦🇪 +971</option>
-                          </select>
-
-                          <input
-                            type="tel"
-                            inputMode="numeric"
-                            maxLength={10}
-                            value={
-                              profileForm.phone
-                                .replace(/^\+(91|1|44|61|65|64|971)/, "")
-                                .replace(/\\D/g, "")
-                                .slice(0, 10)
-                            }
-                            onChange={(e) => {
-                              const digits = e.target.value
-                                .replace(/\\D/g, "")
-                                .slice(0, 10);
-
-                              const code =
-                                profileForm.phone.match(
-                                  /^\+(91|1|44|61|65|64|971)/
-                                )?.[0] || "+91";
-
-                              setProfileForm((current) => ({
-                                ...current,
-                                phone: `${code}${digits}`,
-                              }));
-                            }}
-                          />
-                        </div>
-                      </label>
-
-                      <div className="profile-contact-action profile-phone-verify">
-                <button
-                  type="button"
-                  className="profile-contact-verify"
-                  onClick={requestPhoneChange}
-                  disabled={contactLoading || !profileForm.phone}
-                >
-                  {contactLoading ? "Sending..." : "Send OTP"}
-                </button>
-
-                {phoneOtpSent && (
-                  <div className="profile-otp-row">
+              <div className="profile-contact-grid">
+                <div className="profile-contact-column profile-email-column">
+                  <label className="profile-inline-field">
+                    <span>Email</span>
                     <input
-                      type="text"
-                      inputMode="numeric"
-                      maxLength={6}
-                      placeholder="Enter 6-digit OTP"
-                      value={phoneOtp}
+                      type="email"
+                      value={profileForm.email}
                       onChange={(e) =>
-                        setPhoneOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+                        setProfileForm((current) => ({
+                          ...current,
+                          email: e.target.value,
+                        }))
                       }
                     />
+                  </label>
+
+                  <div className="profile-contact-action">
                     <button
                       type="button"
                       className="profile-contact-verify"
-                      onClick={verifyPhoneChange}
-                      disabled={contactLoading || phoneOtp.length !== 6}
+                      onClick={requestEmailChange}
+                      disabled={contactLoading}
                     >
-                      {contactLoading ? "Verifying..." : "Verify OTP"}
+                      Verify new email
                     </button>
                   </div>
-                )}
+                </div>
+
+                <div className="profile-contact-column profile-phone-column">
+                  <label className="profile-inline-field">
+                    <span>Phone</span>
+                    <div className="profile-phone-input">
+                      <select
+                        className="profile-phone-code"
+                        value={
+                          profileForm.phone.match(/^\+(91|1|44|61|65|64|971)/)?.[0] ||
+                          "+91"
+                        }
+                        aria-label="Country code"
+                        onChange={(e) => {
+                          const newCode = e.target.value;
+                          const number = (profileForm.phone || "")
+                            .replace(/^\+(91|1|44|61|65|64|971)/, "")
+                            .replace(/\D/g, "")
+                            .slice(0, 10);
+
+                          setProfileForm((current) => ({
+                            ...current,
+                            phone: `${newCode}${number}`,
+                          }));
+                        }}
+                      >
+                        <option value="+91">🇮🇳 +91</option>
+                        <option value="+1">🇺🇸 +1</option>
+                        <option value="+44">🇬🇧 +44</option>
+                        <option value="+61">🇦🇺 +61</option>
+                        <option value="+65">🇸🇬 +65</option>
+                        <option value="+64">🇳🇿 +64</option>
+                        <option value="+971">🇦🇪 +971</option>
+                      </select>
+
+                      <input
+                        type="tel"
+                        inputMode="numeric"
+                        maxLength={10}
+                        value={(profileForm.phone || "")
+                          .replace(/^\+(91|1|44|61|65|64|971)/, "")
+                          .replace(/\D/g, "")
+                          .slice(0, 10)}
+                        onChange={(e) => {
+                          const digits = e.target.value
+                            .replace(/\D/g, "")
+                            .slice(0, 10);
+
+                          const code =
+                            profileForm.phone.match(
+                              /^\+(91|1|44|61|65|64|971)/
+                            )?.[0] || "+91";
+
+                          setProfileForm((current) => ({
+                            ...current,
+                            phone: `${code}${digits}`,
+                          }));
+                        }}
+                      />
+                    </div>
+                  </label>
+
+                  <div className="profile-contact-action profile-phone-verify">
+                    <button
+                      type="button"
+                      className="profile-contact-verify"
+                      onClick={requestPhoneChange}
+                      disabled={contactLoading || !profileForm.phone}
+                    >
+                      {contactLoading ? "Sending..." : "Send OTP"}
+                    </button>
+
+                    {phoneOtpSent && (
+                      <div className="profile-otp-row">
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={6}
+                          placeholder="Enter 6-digit OTP"
+                          value={phoneOtp}
+                          onChange={(e) =>
+                            setPhoneOtp(
+                              e.target.value.replace(/\D/g, "").slice(0, 6)
+                            )
+                          }
+                        />
+                        <button
+                          type="button"
+                          className="profile-contact-verify"
+                          onClick={verifyPhoneChange}
+                          disabled={contactLoading || phoneOtp.length !== 6}
+                        >
+                          {contactLoading ? "Verifying..." : "Verify OTP"}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               <label className="profile-inline-field">
@@ -1541,12 +1883,53 @@ export default function BusinessDashboard() {
                   </div>
                 )}
               </section>
+
+
             )}
 
-          </aside>
+          
+            {/* DELETE ACCOUNT */}
+            <section className="panel profile-delete-panel">
+              <div className="profile-delete-content">
+                <div>
+                  <div className="panel-kicker profile-delete-kicker">DANGER ZONE</div>
+                  <h2>Delete account</h2>
+                  <p>
+                    Permanently delete your MetroVybe account and associated data.
+                    This action cannot be undone.
+                  </p>
+                </div>
+
+                <div className="profile-delete-confirm">
+                  <input
+                    type="password"
+                    value={deletePassword}
+                    onChange={(e) => {
+                      setDeletePassword(e.target.value);
+                      setDeleteAccountError("");
+                    }}
+                    placeholder="Enter your password to confirm"
+                    autoComplete="current-password"
+                  />
+
+                  {deleteAccountError && (
+                    <p className="profile-delete-error">{deleteAccountError}</p>
+                  )}
+
+                  <button
+                    type="button"
+                    className="profile-delete-button"
+                    onClick={handleDeleteAccount}
+                    disabled={deletingAccount}
+                  >
+                    {deletingAccount ? "Deleting account..." : "Delete account"}
+                  </button>
+                </div>
+              </div>
+            </section>
+
+</aside>
         </div>
-
-
 
 
       </div>
@@ -1561,6 +1944,179 @@ export default function BusinessDashboard() {
 }
 
 const styles = `
+  .profile-delete-panel {
+    border: 1.5px solid #f1c7c7 !important;
+    background: #fffafa !important;
+  }
+
+  .profile-delete-content {
+    display: grid;
+    gap: 18px;
+  }
+
+  .profile-delete-kicker {
+    color: #c62828 !important;
+  }
+
+  .profile-delete-content h2 {
+    margin: 5px 0 7px;
+    color: #7f1d1d;
+  }
+
+  .profile-delete-content p {
+    margin: 0;
+    color: #7a5a5a;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .profile-delete-confirm {
+    display: grid;
+    gap: 10px;
+  }
+
+  .profile-delete-confirm input {
+    width: 100%;
+    height: 46px;
+    padding: 0 14px;
+    border: 1px solid #e5baba;
+    border-radius: 10px;
+    background: #fff;
+    font: inherit;
+    outline: none;
+  }
+
+  .profile-delete-confirm input:focus {
+    border-color: #c62828;
+    box-shadow: 0 0 0 3px rgba(198, 40, 40, .08);
+  }
+
+  .profile-delete-button {
+    width: fit-content;
+    min-height: 42px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 10px;
+    background: #c62828;
+    color: #fff;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .profile-delete-button:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+  }
+
+  .profile-delete-error {
+    color: #b42318 !important;
+    font-size: 12px !important;
+    font-weight: 700;
+  }
+
+
+  /* Compact Business Hours day slider */
+  .profile-hours-field {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+
+  .profile-week-hours {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(155px, 190px);
+    grid-template-columns: none;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 4px 2px 12px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .profile-day-hours {
+    scroll-snap-align: start;
+    min-height: 132px;
+    padding: 13px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 9px;
+    border: 1px solid #dce7e3;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 4px 14px rgba(16, 24, 21, .04);
+  }
+
+  .profile-day-hours > strong {
+    font-size: 13px;
+    line-height: 1;
+  }
+
+  .profile-day-closed {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    cursor: pointer;
+  }
+
+  .profile-day-closed input {
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    accent-color: #29ab87;
+  }
+
+  .profile-day-times {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .profile-day-times input {
+    width: 100%;
+    height: 32px;
+    padding: 4px 7px;
+    font-size: 11px;
+  }
+
+  .profile-day-times span {
+    display: none;
+  }
+
+  .profile-day-closed-text {
+    margin-top: auto;
+    padding: 8px;
+    border-radius: 8px;
+    background: #f4f6f5;
+    color: #6b7470;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  @media (max-width: 700px) {
+    .profile-week-hours {
+      grid-auto-columns: minmax(145px, 78vw);
+      gap: 9px;
+      padding-bottom: 10px;
+    }
+
+    .profile-day-hours {
+      min-height: 125px;
+      padding: 12px;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .profile-delete-button {
+      width: 100%;
+    }
+  }
+
+
   * {
     box-sizing: border-box;
   }
@@ -1667,8 +2223,6 @@ const styles = `
       font-size: 12px;
     }
   }
-
-
 
   .profile-inline-editor {
     width: 100%;
@@ -3030,8 +3584,6 @@ const styles = `
         }
       }
 
-
-
 /* ===== FOOTER MOBILE NO-WRAP FIX ===== */
 
 .mv-dashboard-footer,
@@ -3080,8 +3632,6 @@ const styles = `
     font-size: 10px !important;
   }
 }
-
-
 
 
 
@@ -3164,8 +3714,6 @@ const styles = `
     margin-top: 1px;
   }
 }
-
-
 
   /* =========================================================
      BUSINESS DASHBOARD — RESPONSIVE MASTER PATCH
@@ -3615,8 +4163,6 @@ const styles = `
     }
   }
 
-
-
   /* ===== PREMIUM DAILY BUSINESS HOURS ===== */
   .profile-hours-field {
     grid-column: 1 / -1;
@@ -3783,8 +4329,6 @@ const styles = `
     }
   }
 
-
-
   /* ===== BUSINESS HOURS CLEAN PREMIUM LAYOUT ===== */
   .profile-hours-field {
     grid-column: 1 / -1;
@@ -3943,8 +4487,6 @@ const styles = `
     }
   }
 
-
-
   /* ===== BUSINESS HOURS FINAL LAYOUT FIX ===== */
   .profile-week-hours {
     width: 100% !important;
@@ -4030,8 +4572,6 @@ const styles = `
       grid-row: 1 !important;
     }
   }
-
-
 
   /* COMPACT BUSINESS HOURS OVERRIDE */
   .profile-hours-field {
@@ -4280,8 +4820,6 @@ const styles = `
     }
   }
 
-
-
   
 
 
@@ -4300,8 +4838,6 @@ const styles = `
   .profile-day-closed {
     padding: 0 10px !important;
   }
-
-
 
   /* ===== DAY → CLOSED → OPEN → TO → CLOSE ===== */
   .profile-day-hours {
@@ -4334,8 +4870,6 @@ const styles = `
   .profile-day-closed-text {
     order: 3 !important;
   }
-
-
 
   
 /* ===== BUSINESS HOURS GREEN CLOCK ===== */
@@ -4438,6 +4972,150 @@ const styles = `
       flex: 1 !important;
       width: 100% !important;
       min-width: 0 !important;
+    }
+  }
+
+
+  /* ===== FINAL BUSINESS HOURS HORIZONTAL DAY SLIDER ===== */
+  .profile-week-hours {
+    display: grid !important;
+    grid-auto-flow: column !important;
+    grid-auto-columns: minmax(170px, 210px) !important;
+    grid-template-columns: none !important;
+    flex-direction: unset !important;
+    gap: 12px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    width: 100% !important;
+    padding: 4px 2px 14px !important;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .profile-day-hours {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    min-width: 0 !important;
+    min-height: 145px !important;
+    padding: 14px !important;
+    gap: 10px !important;
+    scroll-snap-align: start;
+  }
+
+  .profile-day-hours strong {
+    flex: none !important;
+    width: auto !important;
+    font-size: 14px !important;
+  }
+
+  .profile-day-closed {
+    order: 2 !important;
+    flex: none !important;
+    width: fit-content !important;
+    height: auto !important;
+    padding: 6px 9px !important;
+  }
+
+  .profile-day-times {
+    order: 3 !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+    gap: 5px !important;
+  }
+
+  .profile-day-times input[type="time"] {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .profile-day-times > span {
+    text-align: center;
+  }
+
+  .profile-day-closed-text {
+    order: 3 !important;
+    display: block !important;
+  }
+
+  @media (max-width: 700px) {
+    .profile-week-hours {
+      grid-auto-columns: minmax(150px, 78vw) !important;
+      gap: 10px !important;
+    }
+
+    .profile-day-hours {
+      min-height: 138px !important;
+      padding: 12px !important;
+    }
+  }
+
+
+  /* ===== EMAIL + PHONE CONTACT ROW ===== */
+  .profile-contact-grid {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    align-items: start;
+  }
+
+  .profile-contact-column {
+    min-width: 0;
+  }
+
+  .profile-contact-column .profile-inline-field {
+    width: 100%;
+  }
+
+  .profile-contact-column .profile-contact-action {
+    margin-top: 8px;
+  }
+
+  .profile-contact-column .profile-contact-verify {
+    width: auto;
+  }
+
+  @media (max-width: 700px) {
+    .profile-contact-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .profile-contact-column .profile-contact-verify {
+      width: 100%;
+    }
+  }
+
+
+  /* ===== EMAIL + PHONE SAME ROW — FALLBACK ===== */
+  @media (min-width: 701px) {
+    .profile-inline-grid > label:nth-of-type(n) {
+      min-width: 0;
+    }
+
+    /* Email + its action and Phone + its action */
+    .profile-contact-action {
+      margin-top: -8px;
+    }
+  }
+
+  .profile-contact-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  /* Keep phone input compact and prevent overflow */
+  .profile-phone-input {
+    min-width: 0;
+  }
+
+  @media (max-width: 700px) {
+    .profile-contact-grid {
+      grid-template-columns: 1fr;
     }
   }
 
