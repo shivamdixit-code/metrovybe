@@ -8,6 +8,7 @@ import {
   Star,
   Building2,
   RefreshCw,
+  Send,
 } from "lucide-react";
 
 import { BottomNav } from "@/components/BottomNav";
@@ -30,6 +31,11 @@ type FeedbackReview = {
     _id?: string;
     title?: string;
   };
+  businessReply?: {
+    message?: string;
+    repliedAt?: string;
+  };
+
 };
 
 type RatingItem = {
@@ -77,6 +83,10 @@ export default function BusinessFeedbackPage() {
   const [ratingBreakdown, setRatingBreakdown] = useState<RatingItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState("");
+  const [sendingReply, setSendingReply] = useState(false);
+  const [replyError, setReplyError] = useState("");
 
   const loadFeedback = useCallback(async () => {
     const token = getToken();
@@ -115,6 +125,56 @@ export default function BusinessFeedbackPage() {
     }
   }, []);
 
+  const submitReply = async (reviewId: string) => {
+    const message = replyText.trim();
+
+    if (!message) {
+      setReplyError("Please write a reply first.");
+      return;
+    }
+
+    const token = getToken();
+
+    if (!token) {
+      window.location.href = "/login";
+      return;
+    }
+
+    try {
+      setSendingReply(true);
+      setReplyError("");
+
+      const response = await fetch(
+        `${API_URL}/api/reviews/${reviewId}/reply`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ message }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to send reply.");
+      }
+
+      setReplyingTo(null);
+      setReplyText("");
+      await loadFeedback();
+    } catch (err) {
+      console.error("Send review reply error:", err);
+      setReplyError(
+        err instanceof Error ? err.message : "Failed to send reply."
+      );
+    } finally {
+      setSendingReply(false);
+    }
+  };
+
   useEffect(() => {
     loadFeedback();
   }, [loadFeedback]);
@@ -128,15 +188,6 @@ export default function BusinessFeedbackPage() {
 
       <main className="mv-feedback-main">
         <div className="mv-feedback-heading">
-          <Link
-            href="/business/dashboard"
-            className="mv-feedback-back"
-            aria-label="Back to dashboard"
-          >
-            <ArrowLeft size={20} />
-            <span>Dashboard</span>
-          </Link>
-
           <div className="mv-feedback-title-row">
             <div>
               <p className="mv-feedback-kicker">CUSTOMER VOICE</p>
@@ -284,7 +335,66 @@ export default function BusinessFeedbackPage() {
                           {review.comment}
                         </p>
                       )}
-                    </article>
+                    
+              {review.businessReply?.message ? (
+                <div className="mv-feedback-business-reply">
+                  <div className="mv-feedback-business-reply-label">
+                    <MessageCircle size={15} />
+                    <span>Your reply</span>
+                  </div>
+                  <p>{review.businessReply.message}</p>
+                  {review.businessReply.repliedAt && (
+                    <time>
+                      Replied {formatDate(review.businessReply.repliedAt)}
+                    </time>
+                  )}
+                </div>
+              ) : replyingTo === review._id ? (
+                <div className="mv-feedback-reply-box">
+                  <textarea
+                    value={replyText}
+                    onChange={(e) => setReplyText(e.target.value)}
+                    placeholder="Write a thoughtful reply..."
+                    maxLength={2000}
+                    autoFocus
+                  />
+                  <div className="mv-feedback-reply-actions">
+                    <button
+                      type="button"
+                      className="mv-feedback-reply-cancel"
+                      onClick={() => {
+                        setReplyingTo(null);
+                        setReplyText("");
+                      }}
+                      disabled={sendingReply}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className="mv-feedback-reply-send"
+                      onClick={() => submitReply(review._id)}
+                      disabled={!replyText.trim() || sendingReply}
+                    >
+                      {sendingReply ? "Sending..." : "Send reply"}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  className="mv-feedback-reply-trigger"
+                  onClick={() => {
+                    setReplyingTo(review._id);
+                    setReplyText("");
+                  }}
+                >
+                  <MessageCircle size={16} />
+                  Reply
+                </button>
+              )}
+
+              </article>
                   ))}
                 </div>
               )}
