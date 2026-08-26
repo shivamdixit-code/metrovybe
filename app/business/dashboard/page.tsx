@@ -13,6 +13,15 @@ type Business = {
   _id?: string;
   businessName: string;
   description?: string;
+  businessHours?: {
+    monday?: { open?: string; close?: string; closed?: boolean };
+    tuesday?: { open?: string; close?: string; closed?: boolean };
+    wednesday?: { open?: string; close?: string; closed?: boolean };
+    thursday?: { open?: string; close?: string; closed?: boolean };
+    friday?: { open?: string; close?: string; closed?: boolean };
+    saturday?: { open?: string; close?: string; closed?: boolean };
+    sunday?: { open?: string; close?: string; closed?: boolean };
+  };
   category?: string;
   phone?: string;
   email?: string;
@@ -75,6 +84,250 @@ export default function BusinessDashboard() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [profileSaveError, setProfileSaveError] = useState("");
+  const [contactMessage, setContactMessage] = useState("");
+  const [contactError, setContactError] = useState("");
+  const [phoneOtp, setPhoneOtp] = useState("");
+  const [phoneOtpSent, setPhoneOtpSent] = useState(false);
+  const [contactLoading, setContactLoading] = useState(false);
+  const [profileForm, setProfileForm] = useState({
+    businessName: "",
+    description: "",
+    businessHours: {
+      monday: { open: "09:00", close: "18:00", closed: false },
+      tuesday: { open: "09:00", close: "18:00", closed: false },
+      wednesday: { open: "09:00", close: "18:00", closed: false },
+      thursday: { open: "09:00", close: "18:00", closed: false },
+      friday: { open: "09:00", close: "18:00", closed: false },
+      saturday: { open: "09:00", close: "18:00", closed: false },
+      sunday: { open: "", close: "", closed: true },
+    },
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    state: "",
+    pincode: "",
+  });
+
+  const startProfileEdit = () => {
+    if (!business) return;
+
+    setProfileSaveError("");
+
+    setProfileForm({
+      businessName: business.businessName || "",
+      description: business.description || "",
+      businessHours: {
+        monday: {
+          open: business.businessHours?.monday?.open || "09:00",
+          close: business.businessHours?.monday?.close || "18:00",
+          closed: Boolean(business.businessHours?.monday?.closed),
+        },
+        tuesday: {
+          open: business.businessHours?.tuesday?.open || "09:00",
+          close: business.businessHours?.tuesday?.close || "18:00",
+          closed: Boolean(business.businessHours?.tuesday?.closed),
+        },
+        wednesday: {
+          open: business.businessHours?.wednesday?.open || "09:00",
+          close: business.businessHours?.wednesday?.close || "18:00",
+          closed: Boolean(business.businessHours?.wednesday?.closed),
+        },
+        thursday: {
+          open: business.businessHours?.thursday?.open || "09:00",
+          close: business.businessHours?.thursday?.close || "18:00",
+          closed: Boolean(business.businessHours?.thursday?.closed),
+        },
+        friday: {
+          open: business.businessHours?.friday?.open || "09:00",
+          close: business.businessHours?.friday?.close || "18:00",
+          closed: Boolean(business.businessHours?.friday?.closed),
+        },
+        saturday: {
+          open: business.businessHours?.saturday?.open || "09:00",
+          close: business.businessHours?.saturday?.close || "18:00",
+          closed: Boolean(business.businessHours?.saturday?.closed),
+        },
+        sunday: {
+          open: business.businessHours?.sunday?.open || "",
+          close: business.businessHours?.sunday?.close || "",
+          closed:
+            business.businessHours?.sunday?.closed !== undefined
+              ? Boolean(business.businessHours.sunday.closed)
+              : true,
+        },
+      },
+      email: business.email || business.owner?.email || "",
+      phone: business.phone || business.owner?.phone || "",
+      address: business.address || "",
+      city: business.city || "",
+      state: business.state || "",
+      pincode: business.pincode || "",
+    });
+
+    setEditingProfile(true);
+  };
+
+  const requestPhoneChange = async () => {
+    try {
+      setContactLoading(true);
+      setContactError("");
+      setContactMessage("");
+
+      const token = getToken();
+      if (!token) {
+        window.location.href = "/login";
+        return;
+      }
+
+      const response = await fetch(`${API_URL}/api/auth/request-phone-change`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ phone: profileForm.phone }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data?.message || "Unable to send OTP.");
+
+      setPhoneOtpSent(true);
+      setContactMessage(data?.message || "OTP sent to your WhatsApp number.");
+    } catch (err) {
+      setContactError(err instanceof Error ? err.message : "Unable to send OTP.");
+    } finally {
+      setContactLoading(false);
+    }
+  };
+
+  const verifyPhoneChange = async () => {
+    try {
+      setContactLoading(true);
+      setContactError("");
+      setContactMessage("");
+
+      const token = getToken();
+      const response = await fetch(`${API_URL}/api/auth/verify-phone-change`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ otp: phoneOtp }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data?.message || "Invalid OTP.");
+
+      setPhoneOtpSent(false);
+      setPhoneOtp("");
+      setContactMessage("Phone number verified and updated successfully.");
+      setBusiness((current) =>
+        current ? { ...current, phone: profileForm.phone } : current
+      );
+    } catch (err) {
+      setContactError(err instanceof Error ? err.message : "Unable to verify OTP.");
+    } finally {
+      setContactLoading(false);
+    }
+  };
+
+  const requestEmailChange = async () => {
+    try {
+      setContactLoading(true);
+      setContactError("");
+      setContactMessage("");
+
+      const token = getToken();
+      if (!token) {
+        window.location.href = "/login";
+        return;
+      }
+
+      const response = await fetch(`${API_URL}/api/auth/request-email-change`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: profileForm.email }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data?.message || "Unable to send verification email.");
+      }
+
+      setContactMessage(
+        data?.message || "Verification link sent to your new email address."
+      );
+    } catch (err) {
+      setContactError(
+        err instanceof Error ? err.message : "Unable to request email change."
+      );
+    } finally {
+      setContactLoading(false);
+    }
+  };
+
+  const saveProfile = async () => {
+    try {
+      setSavingProfile(true);
+      setProfileSaveError("");
+
+      const token = getToken();
+
+      if (!token) {
+        window.location.href = "/login";
+        return;
+      }
+
+      // Contact details require separate verification and cannot be
+      // changed directly through the business profile endpoint.
+      const { email, phone, ...businessDetails } = profileForm;
+
+      const response = await fetch(`${API_URL}/api/business/me`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(businessDetails),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          data?.message || "Unable to update business details."
+        );
+      }
+
+      setBusiness((current) =>
+        current
+          ? {
+              ...current,
+              ...businessDetails,
+            }
+          : current
+      );
+
+      setEditingProfile(false);
+      setLastUpdated(new Date());
+    } catch (err) {
+      setProfileSaveError(
+        err instanceof Error
+          ? err.message
+          : "Unable to update business details."
+      );
+    } finally {
+      setSavingProfile(false);
+    }
+  };
 
   const loadDashboard = useCallback(async (manual = false) => {
     try {
@@ -855,65 +1108,438 @@ export default function BusinessDashboard() {
                     <h2>Business details</h2>
                   </div>
 
-                  <div className="small-icon">
-                    <Icon name="edit" size={17} />
-                  </div>
+                  {!editingProfile ? (
+                    <button
+                      type="button"
+                      className="small-icon"
+                      onClick={startProfileEdit}
+                      aria-label="Edit business details"
+                      title="Edit business details"
+                    >
+                      <Icon name="edit" size={17} />
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="small-icon"
+                      onClick={() => {
+                        setEditingProfile(false);
+                        setProfileSaveError("");
+                      }}
+                      aria-label="Cancel editing"
+                      title="Cancel"
+                    >
+                      <span aria-hidden="true" style={{ fontSize: "20px", lineHeight: 1 }}>×</span>
+                    </button>
+                  )}
                 </div>
 
-                <div className="profile-details">
+                {editingProfile ? (
+                  <div className="profile-inline-editor">
+            {(contactMessage || contactError) && (
+              <div
+                className={
+                  contactError
+                    ? "profile-contact-message profile-contact-error"
+                    : "profile-contact-message profile-contact-success"
+                }
+              >
+                {contactError || contactMessage}
+              </div>
+            )}
 
-                  <div className="detail-row">
-                    <div className="detail-icon">
-                      <Icon name="mail" size={17} />
-                    </div>
-                    <div>
-                      <span>Email</span>
-                      <strong>
-                        {business.email ||
-                          business.owner?.email ||
-                          "Not provided"}
-                      </strong>
-                    </div>
-                  </div>
+                    <div className="profile-inline-grid">
 
-                  <div className="detail-row">
-                    <div className="detail-icon">
-                      <Icon name="phone" size={17} />
-                    </div>
-                    <div>
-                      <span>Phone</span>
-                      <strong>
-                        {business.phone ||
-                          business.owner?.phone ||
-                          "Not provided"}
-                      </strong>
-                    </div>
-                  </div>
+                      <label className="profile-inline-field">
+                        <span>Business name</span>
+                        <input
+                          value={profileForm.businessName}
+                          onChange={(e) =>
+                            setProfileForm((current) => ({
+                              ...current,
+                              businessName: e.target.value,
+                            }))
+                          }
+                        />
+                      </label>
 
-                  <div className="detail-row">
-                    <div className="detail-icon">
-                      <Icon name="pin" size={17} />
-                    </div>
-                    <div>
-                      <span>Location</span>
-                      <strong>{locationText}</strong>
-                    </div>
-                  </div>
+                      <label className="profile-inline-field profile-description-field">
+                <span>Business description</span>
+                <textarea
+                  value={profileForm.description}
+                  onChange={(e) =>
+                    setProfileForm((current) => ({
+                      ...current,
+                      description: e.target.value.slice(0, 500),
+                    }))
+                  }
+                  placeholder="Tell customers about your business..."
+                  maxLength={500}
+                  rows={4}
+                />
+                <small>{profileForm.description.length}/500</small>
+              </label>
 
-                  <div className="detail-row">
-                    <div className="detail-icon">
-                      <Icon name="building" size={17} />
-                    </div>
-                    <div>
-                      <span>Address</span>
-                      <strong>
-                        {business.address ||
-                          "Address not provided"}
-                      </strong>
-                    </div>
-                  </div>
-
+              <div className="profile-inline-field profile-hours-field">
+                <div className="profile-hours-heading">
+                  <span className="profile-hours-title">
+                    <span className="profile-hours-clock" aria-hidden="true">◷</span>
+                    Business hours
+                  </span>
+                  <small>Set your opening hours for each day</small>
                 </div>
+
+                <div className="profile-week-hours">
+                  {[
+                    ["monday", "Monday"],
+                    ["tuesday", "Tuesday"],
+                    ["wednesday", "Wednesday"],
+                    ["thursday", "Thursday"],
+                    ["friday", "Friday"],
+                    ["saturday", "Saturday"],
+                    ["sunday", "Sunday"],
+                  ].map(([dayKey, dayLabel]) => {
+                    const day = profileForm.businessHours[dayKey as keyof typeof profileForm.businessHours];
+
+                    return (
+                      <div className="profile-day-hours" key={dayKey}>
+                        <strong>{dayLabel}</strong>
+
+                        <label className="profile-day-closed">
+                          <input
+                            type="checkbox"
+                            checked={Boolean(day?.closed)}
+                            onChange={(e) =>
+                              setProfileForm((current) => ({
+                                ...current,
+                                businessHours: {
+                                  ...current.businessHours,
+                                  [dayKey]: {
+                                    ...(current.businessHours[
+                                      dayKey as keyof typeof current.businessHours
+                                    ] as { open?: string; close?: string; closed?: boolean }),
+                                    closed: e.target.checked,
+                                  },
+                                },
+                              }))
+                            }
+                          />
+                          <span>Closed</span>
+                        </label>
+
+                        {!day?.closed && (
+                          <div className="profile-day-times">
+                            <input
+                              type="time"
+                              aria-label={`${dayLabel} opening time`}
+                              value={day?.open || ""}
+                              onChange={(e) =>
+                                setProfileForm((current) => ({
+                                  ...current,
+                                  businessHours: {
+                                    ...current.businessHours,
+                                    [dayKey]: {
+                                      ...(current.businessHours[
+                                        dayKey as keyof typeof current.businessHours
+                                      ] as object),
+                                      open: e.target.value,
+                                    },
+                                  },
+                                }))
+                              }
+                            />
+                            <span>to</span>
+                            <input
+                              type="time"
+                              aria-label={`${dayLabel} closing time`}
+                              value={day?.close || ""}
+                              onChange={(e) =>
+                                setProfileForm((current) => ({
+                                  ...current,
+                                  businessHours: {
+                                    ...current.businessHours,
+                                    [dayKey]: {
+                                      ...(current.businessHours[
+                                        dayKey as keyof typeof current.businessHours
+                                      ] as object),
+                                      close: e.target.value,
+                                    },
+                                  },
+                                }))
+                              }
+                            />
+                          </div>
+                        )}
+
+                        {day?.closed && (
+                          <span className="profile-day-closed-text">Closed</span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <label className="profile-inline-field">
+                        <span>Email</span>
+                        <input
+                          type="email"
+                          value={profileForm.email}
+                          onChange={(e) =>
+                            setProfileForm((current) => ({
+                              ...current,
+                              email: e.target.value,
+                            }))
+                          }
+                        />
+                      </label>
+              <div className="profile-contact-action">
+                <button
+                  type="button"
+                  className="profile-contact-verify"
+                  onClick={requestEmailChange}
+                  disabled={contactLoading}
+                >
+                  Verify new email
+                </button>
+              </div>
+
+
+                      <label className="profile-inline-field">
+                        <span>Phone</span>
+                        <div className="profile-phone-input">
+                          <select
+                            className="profile-phone-code"
+                            value={
+                              profileForm.phone.match(/^\+(91|1|44|61|65|64|971)/)?.[0] ||
+                              "+91"
+                            }
+                            aria-label="Country code"
+                            onChange={(e) => {
+                              const newCode = e.target.value;
+                              const currentPhone = profileForm.phone || "";
+
+                              const number = currentPhone
+                                .replace(/^\+(91|1|44|61|65|64|971)/, "")
+                                .replace(/\\D/g, "")
+                                .slice(0, 10);
+
+                              setProfileForm((current) => ({
+                                ...current,
+                                phone: `${newCode}${number}`,
+                              }));
+                            }}
+                          >
+                            <option value="+91">🇮🇳 +91</option>
+                            <option value="+1">🇺🇸 +1</option>
+                            <option value="+44">🇬🇧 +44</option>
+                            <option value="+61">🇦🇺 +61</option>
+                            <option value="+65">🇸🇬 +65</option>
+                            <option value="+64">🇳🇿 +64</option>
+                            <option value="+971">🇦🇪 +971</option>
+                          </select>
+
+                          <input
+                            type="tel"
+                            inputMode="numeric"
+                            maxLength={10}
+                            value={
+                              profileForm.phone
+                                .replace(/^\+(91|1|44|61|65|64|971)/, "")
+                                .replace(/\\D/g, "")
+                                .slice(0, 10)
+                            }
+                            onChange={(e) => {
+                              const digits = e.target.value
+                                .replace(/\\D/g, "")
+                                .slice(0, 10);
+
+                              const code =
+                                profileForm.phone.match(
+                                  /^\+(91|1|44|61|65|64|971)/
+                                )?.[0] || "+91";
+
+                              setProfileForm((current) => ({
+                                ...current,
+                                phone: `${code}${digits}`,
+                              }));
+                            }}
+                          />
+                        </div>
+                      </label>
+
+                      <div className="profile-contact-action profile-phone-verify">
+                <button
+                  type="button"
+                  className="profile-contact-verify"
+                  onClick={requestPhoneChange}
+                  disabled={contactLoading || !profileForm.phone}
+                >
+                  {contactLoading ? "Sending..." : "Send OTP"}
+                </button>
+
+                {phoneOtpSent && (
+                  <div className="profile-otp-row">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={6}
+                      placeholder="Enter 6-digit OTP"
+                      value={phoneOtp}
+                      onChange={(e) =>
+                        setPhoneOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+                      }
+                    />
+                    <button
+                      type="button"
+                      className="profile-contact-verify"
+                      onClick={verifyPhoneChange}
+                      disabled={contactLoading || phoneOtp.length !== 6}
+                    >
+                      {contactLoading ? "Verifying..." : "Verify OTP"}
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <label className="profile-inline-field">
+                        <span>Address</span>
+                        <input
+                          value={profileForm.address}
+                          onChange={(e) =>
+                            setProfileForm((current) => ({
+                              ...current,
+                              address: e.target.value,
+                            }))
+                          }
+                        />
+                      </label>
+
+                      <label className="profile-inline-field">
+                        <span>City</span>
+                        <input
+                          value={profileForm.city}
+                          onChange={(e) =>
+                            setProfileForm((current) => ({
+                              ...current,
+                              city: e.target.value,
+                            }))
+                          }
+                        />
+                      </label>
+
+                      <label className="profile-inline-field">
+                        <span>State</span>
+                        <input
+                          value={profileForm.state}
+                          onChange={(e) =>
+                            setProfileForm((current) => ({
+                              ...current,
+                              state: e.target.value,
+                            }))
+                          }
+                        />
+                      </label>
+
+                      <label className="profile-inline-field">
+                        <span>Pincode</span>
+                        <input
+                          value={profileForm.pincode}
+                          onChange={(e) =>
+                            setProfileForm((current) => ({
+                              ...current,
+                              pincode: e.target.value,
+                            }))
+                          }
+                        />
+                      </label>
+
+                    </div>
+
+                    {profileSaveError && (
+                      <div className="profile-inline-error">
+                        {profileSaveError}
+                      </div>
+                    )}
+
+                    <div className="profile-inline-actions">
+                      <button
+                        type="button"
+                        className="profile-inline-cancel"
+                        onClick={() => {
+                          setEditingProfile(false);
+                          setProfileSaveError("");
+                        }}
+                        disabled={savingProfile}
+                      >
+                        Cancel
+                      </button>
+
+                      <button
+                        type="button"
+                        className="profile-inline-save"
+                        onClick={saveProfile}
+                        disabled={savingProfile}
+                      >
+                        {savingProfile ? "Saving..." : "Save changes"}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="profile-details">
+
+                    <div className="detail-row">
+                      <div className="detail-icon">
+                        <Icon name="mail" size={17} />
+                      </div>
+                      <div>
+                        <span>Email</span>
+                        <strong>
+                          {business.email ||
+                            business.owner?.email ||
+                            "Not provided"}
+                        </strong>
+                      </div>
+                    </div>
+
+                    <div className="detail-row">
+                      <div className="detail-icon">
+                        <Icon name="phone" size={17} />
+                      </div>
+                      <div>
+                        <span>Phone</span>
+                        <strong>
+                          {business.phone ||
+                            business.owner?.phone ||
+                            "Not provided"}
+                        </strong>
+                      </div>
+                    </div>
+
+                    <div className="detail-row">
+                      <div className="detail-icon">
+                        <Icon name="pin" size={17} />
+                      </div>
+                      <div>
+                        <span>Location</span>
+                        <strong>{locationText}</strong>
+                      </div>
+                    </div>
+
+                    <div className="detail-row">
+                      <div className="detail-icon">
+                        <Icon name="building" size={17} />
+                      </div>
+                      <div>
+                        <span>Address</span>
+                        <strong>
+                          {business.address || "Address not provided"}
+                        </strong>
+                      </div>
+                    </div>
+
+                  </div>
+                )}
               </section>
             )}
 
@@ -926,7 +1552,10 @@ export default function BusinessDashboard() {
       </div>
 
       <BottomNav active="dashboard" />
-      <style jsx>{styles}</style>
+      <style jsx>{styles}
+
+
+</style>
     </main>
   );
 }
@@ -1040,6 +1669,245 @@ const styles = `
   }
 
 
+
+  .profile-inline-editor {
+    width: 100%;
+    margin-top: 18px;
+  }
+
+  .profile-inline-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px 16px;
+  }
+
+  .profile-inline-field {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .profile-inline-field span {
+    display: block;
+    color: #66716d;
+    font-size: 10px;
+    line-height: 1;
+    font-weight: 850;
+    letter-spacing: .75px;
+    text-transform: uppercase;
+  }
+
+  .profile-phone-input {
+    width: 100%;
+    height: 43px;
+    display: flex;
+    align-items: center;
+    border: 1.5px solid #dfe5e2;
+    border-radius: 11px;
+    background: #f9fbfa;
+    overflow: hidden;
+    box-sizing: border-box;
+    transition:
+      border-color .16s ease,
+      background .16s ease,
+      box-shadow .16s ease;
+  }
+
+  .profile-phone-input:focus-within {
+    border-color: #29ab87;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(41,171,135,.10);
+  }
+
+  .profile-phone-code {
+    height: 100%;
+    display: block;
+    flex: 0 0 70px;
+    width: 70px;
+    min-width: 0;
+    max-width: 70px;
+    box-sizing: border-box;
+    align-items: center;
+    padding: 0 6px;
+    border: 0 !important;
+    border-right: 0 !important;
+    outline: none !important;
+    color: #39413e;
+    background: transparent !important;
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+    box-shadow: none !important;
+  }
+
+  .profile-phone-input input {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    padding: 0 11px;
+    border: 0 !important;
+    border-radius: 0 !important;
+    outline: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .profile-inline-field input {
+    width: 100%;
+    height: 43px;
+    min-width: 0;
+    padding: 0 12px;
+    border: 1.5px solid #dfe5e2;
+    border-radius: 11px;
+    outline: none;
+    background: #f9fbfa;
+    color: #151817;
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1;
+    font-weight: 650;
+    box-sizing: border-box;
+    transition:
+      border-color .16s ease,
+      background .16s ease,
+      box-shadow .16s ease;
+  }
+
+  .profile-inline-field input:hover {
+    border-color: #cbd5d1;
+    background: #fff;
+  }
+
+  .profile-inline-field input:focus {
+    border-color: #29ab87;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(41,171,135,.10);
+  }
+
+  .profile-inline-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 9px;
+    margin-top: 18px;
+    padding-top: 15px;
+    border-top: 1px solid #edf0ef;
+  }
+
+  .profile-inline-cancel,
+  .profile-inline-save {
+    height: 38px;
+    padding: 0 16px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 850;
+    cursor: pointer;
+    transition: all .16s ease;
+  }
+
+  .profile-inline-cancel {
+    border: 1.5px solid #dfe5e2;
+    background: #fff;
+    color: #59625f;
+  }
+
+  .profile-inline-cancel:hover {
+    border-color: #c7d0cc;
+    background: #f7f9f8;
+  }
+
+  .profile-inline-save {
+    border: 1.5px solid #29ab87;
+    background: #29ab87;
+    color: #fff;
+    box-shadow: 0 5px 14px rgba(41,171,135,.16);
+  }
+
+  .profile-inline-save:hover {
+    background: #218f72;
+    border-color: #218f72;
+    transform: translateY(-1px);
+    box-shadow: 0 7px 18px rgba(41,171,135,.22);
+  }
+
+  .profile-inline-cancel:disabled,
+  .profile-inline-save:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .profile-inline-error {
+    margin-top: 12px;
+    padding: 9px 11px;
+    border: 1px solid #f0cccc;
+    border-radius: 9px;
+    background: #fff6f6;
+    color: #b42318;
+    font-size: 11px;
+    line-height: 1.4;
+    font-weight: 700;
+  }
+
+  .profile-panel .small-icon {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    padding: 0;
+    border: 1.5px solid #aeb5b2;
+    border-radius: 16px;
+    background: #fff;
+    color: #68716e;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .18s ease;
+  }
+
+  .profile-panel .small-icon:hover {
+    color: #29ab87;
+    border-color: #29ab87;
+    background: #f4fbf8;
+    transform: translateY(-1px);
+    box-shadow: 0 7px 18px rgba(0,0,0,.07);
+  }
+
+  @media (max-width: 700px) {
+    .profile-inline-editor {
+      margin-top: 14px;
+    }
+
+    .profile-inline-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .profile-inline-field input {
+      height: 44px;
+    }
+
+    .profile-inline-actions {
+      justify-content: stretch;
+    }
+
+    .profile-inline-cancel,
+    .profile-inline-save {
+      flex: 1;
+    }
+
+    .profile-panel .small-icon {
+      width: 42px;
+      height: 42px;
+      flex-basis: 42px;
+      border-radius: 13px;
+    }
+  }
 
   .mv-premium-dashboard {
     min-height: 100vh;
@@ -2595,6 +3463,982 @@ const styles = `
       max-width: 100%;
     }
 
+  }
+
+
+  /* Secure contact verification UI */
+  .profile-contact-action {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: -8px;
+    margin-bottom: 4px;
+  }
+
+  .profile-contact-verify {
+    appearance: none;
+    border: 1.5px solid #29ab87;
+    background: #f1fbf7;
+    color: #168064;
+    border-radius: 9px;
+    padding: 8px 13px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .profile-contact-verify:hover:not(:disabled) {
+    background: #29ab87;
+    color: #fff;
+  }
+
+  .profile-contact-verify:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+  }
+
+  .profile-phone-verify {
+    margin-top: -6px;
+  }
+
+  .profile-otp-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .profile-otp-row input {
+    width: 155px;
+    height: 36px;
+    padding: 0 11px;
+    border: 1.5px solid #d7dfda;
+    border-radius: 9px;
+    outline: none;
+    font-size: 13px;
+    font-weight: 600;
+    background: #fff;
+  }
+
+  .profile-otp-row input:focus {
+    border-color: #29ab87;
+    box-shadow: 0 0 0 3px rgba(41,171,135,.10);
+  }
+
+  @media (max-width: 640px) {
+    .profile-contact-action {
+      margin-top: -4px;
+    }
+
+    .profile-otp-row {
+      width: 100%;
+    }
+
+    .profile-otp-row input {
+      flex: 1;
+      min-width: 140px;
+    }
+  }
+
+
+  /* Business description & hours */
+  .profile-description-field {
+    grid-column: 1 / -1;
+  }
+
+  .profile-description-field textarea {
+    width: 100%;
+    min-height: 105px;
+    resize: vertical;
+    padding: 13px 14px;
+    border: 1px solid #e1e5e9;
+    border-radius: 12px;
+    font: inherit;
+    color: inherit;
+    outline: none;
+    background: #fff;
+  }
+
+  .profile-description-field textarea:focus {
+    border-color: #29ab87;
+    box-shadow: 0 0 0 3px rgba(41, 171, 135, 0.12);
+  }
+
+  .profile-hours-field {
+    grid-column: 1 / -1;
+    padding: 15px;
+    border: 1px solid #e8ecef;
+    border-radius: 14px;
+    background: #fafcfb;
+  }
+
+  .profile-hours-field > span {
+    display: block;
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+
+  .profile-hours-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .profile-hours-row input[type="time"] {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .profile-hours-separator {
+    color: #6b7280;
+    font-weight: 600;
+  }
+
+  .profile-hours-24 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 13px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  @media (max-width: 600px) {
+    .profile-hours-row {
+      gap: 8px;
+    }
+
+    .profile-hours-field {
+      padding: 13px;
+    }
+  }
+
+
+
+  /* ===== PREMIUM DAILY BUSINESS HOURS ===== */
+  .profile-hours-field {
+    grid-column: 1 / -1;
+    padding: 20px !important;
+    border: 1px solid #e6ece9 !important;
+    border-radius: 18px !important;
+    background: linear-gradient(145deg, #ffffff, #f7fbf9) !important;
+  }
+
+  .profile-hours-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .profile-hours-heading > span {
+    font-size: 16px !important;
+    font-weight: 750 !important;
+    color: #17211d !important;
+  }
+
+  .profile-hours-heading small {
+    color: #78847f;
+    font-size: 12px;
+  }
+
+  .profile-week-hours {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .profile-day-hours {
+    display: grid;
+    grid-template-columns: 110px minmax(210px, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+    min-height: 54px;
+    padding: 7px 12px;
+    border: 1px solid #edf1ef;
+    border-radius: 12px;
+    background: #fff;
+    transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+  }
+
+  .profile-day-hours:hover {
+    border-color: rgba(41, 171, 135, .35);
+    box-shadow: 0 5px 16px rgba(22, 45, 35, .05);
+    transform: translateY(-1px);
+  }
+
+  .profile-day-hours > strong {
+    font-size: 14px;
+    font-weight: 700;
+    color: #26332d;
+  }
+
+  .profile-day-times {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .profile-day-times input[type="time"] {
+    width: 130px;
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid #e2e8e5;
+    border-radius: 9px;
+    background: #fbfdfc;
+    font: inherit;
+    font-size: 13px;
+    color: #26332d;
+    outline: none;
+  }
+
+  .profile-day-times input[type="time"]:focus {
+    border-color: #29ab87;
+    box-shadow: 0 0 0 3px rgba(41, 171, 135, .1);
+    background: #fff;
+  }
+
+  .profile-day-times > span {
+    color: #9aa49f;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .profile-day-closed {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin: 0 !important;
+    padding: 7px 10px;
+    border: 1px solid #e5e9e7;
+    border-radius: 999px;
+    background: #fafbfb;
+    color: #68736e;
+    font-size: 12px !important;
+    font-weight: 650 !important;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all .15s ease;
+  }
+
+  .profile-day-closed:has(input:checked) {
+    border-color: #f0caca;
+    background: #fff7f7;
+    color: #b45353;
+  }
+
+  .profile-day-closed input {
+    width: 14px !important;
+    height: 14px !important;
+    margin: 0 !important;
+    accent-color: #b45353;
+  }
+
+  .profile-day-closed-text {
+    grid-column: 2;
+    color: #b45353;
+    font-size: 13px;
+    font-weight: 650;
+  }
+
+  @media (max-width: 700px) {
+    .profile-hours-field {
+      padding: 15px !important;
+      border-radius: 15px !important;
+    }
+
+    .profile-hours-heading {
+      display: block;
+      margin-bottom: 14px;
+    }
+
+    .profile-hours-heading small {
+      display: block;
+      margin-top: 4px;
+    }
+
+    .profile-day-hours {
+      grid-template-columns: 1fr auto;
+      gap: 9px;
+      padding: 10px;
+    }
+
+    .profile-day-times {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+
+    .profile-day-times input[type="time"] {
+      flex: 1;
+      width: auto;
+    }
+
+    .profile-day-closed-text {
+      grid-column: 1;
+      grid-row: 2;
+    }
+  }
+
+
+
+  /* ===== BUSINESS HOURS CLEAN PREMIUM LAYOUT ===== */
+  .profile-hours-field {
+    grid-column: 1 / -1;
+    width: 100%;
+    padding: 22px !important;
+    border: 1px solid rgba(41, 171, 135, 0.18);
+    border-radius: 22px;
+    background: linear-gradient(135deg, #ffffff 0%, #f7fbfa 100%);
+  }
+
+  .profile-hours-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+
+  .profile-hours-heading > span {
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .profile-hours-heading small {
+    color: #74807d;
+    font-size: 13px;
+  }
+
+  .profile-week-hours {
+    display: flex !important;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .profile-day-hours {
+    display: grid !important;
+    grid-template-columns: 135px minmax(0, 1fr) auto !important;
+    align-items: center;
+    gap: 14px !important;
+    width: 100%;
+    min-width: 0;
+    padding: 12px 14px !important;
+    border: 1px solid #e7ecea;
+    border-radius: 14px;
+    background: #fff;
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+
+  .profile-day-hours:hover {
+    border-color: rgba(41, 171, 135, 0.4);
+    box-shadow: 0 5px 16px rgba(20, 50, 43, 0.05);
+  }
+
+  .profile-day-hours > strong {
+    font-size: 15px;
+    font-weight: 700;
+    color: #26312f;
+  }
+
+  .profile-day-times {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .profile-day-times input[type="time"] {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 42px;
+    padding: 0 10px;
+    border: 1px solid #dfe6e3;
+    border-radius: 10px;
+    background: #fafcfb;
+    color: #26312f;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+
+  .profile-day-times > span {
+    color: #9aa5a1;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .profile-day-closed {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-width: auto !important;
+    width: auto !important;
+    padding: 8px 11px !important;
+    margin: 0 !important;
+    border: 1px solid #e0e6e3;
+    border-radius: 10px;
+    background: #fafcfb;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .profile-day-closed input {
+    width: 17px !important;
+    height: 17px !important;
+    margin: 0 !important;
+    accent-color: #29ab87;
+  }
+
+  .profile-day-closed span {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em;
+    color: #65706d !important;
+  }
+
+  /* The row already shows the Closed control, so don't show it twice */
+  .profile-day-closed-text {
+    display: none !important;
+  }
+
+  @media (max-width: 700px) {
+    .profile-hours-field {
+      padding: 16px !important;
+      border-radius: 18px;
+    }
+
+    .profile-hours-heading {
+      display: block;
+      margin-bottom: 14px;
+    }
+
+    .profile-hours-heading small {
+      display: block;
+      margin-top: 5px;
+    }
+
+    .profile-day-hours {
+      grid-template-columns: 1fr auto !important;
+      gap: 10px !important;
+      padding: 12px !important;
+    }
+
+    .profile-day-times {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+
+    .profile-day-closed {
+      grid-column: 2;
+      grid-row: 1;
+    }
+  }
+
+
+
+  /* ===== BUSINESS HOURS FINAL LAYOUT FIX ===== */
+  .profile-week-hours {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .profile-day-hours {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    gap: 16px !important;
+    padding: 14px 18px !important;
+  }
+
+  .profile-day-hours > strong {
+    flex: 0 0 150px !important;
+    min-width: 120px !important;
+  }
+
+  .profile-day-times {
+    display: flex !important;
+    align-items: center !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    gap: 8px !important;
+  }
+
+  .profile-day-times input[type="time"] {
+    flex: 1 1 0 !important;
+    width: auto !important;
+    min-width: 105px !important;
+    max-width: 145px !important;
+    height: 44px !important;
+    padding: 0 10px !important;
+    font-size: 14px !important;
+  }
+
+  .profile-day-times > span {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+  }
+
+  .profile-day-closed {
+    flex: 0 0 auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    width: auto !important;
+    min-width: 92px !important;
+    padding: 9px 12px !important;
+    position: static !important;
+  }
+
+  .profile-day-closed span {
+    display: inline !important;
+    white-space: nowrap !important;
+  }
+
+  @media (max-width: 760px) {
+    .profile-day-hours {
+      display: grid !important;
+      grid-template-columns: 1fr auto !important;
+      gap: 12px !important;
+    }
+
+    .profile-day-hours > strong {
+      min-width: 0 !important;
+    }
+
+    .profile-day-times {
+      grid-column: 1 / -1 !important;
+      width: 100% !important;
+    }
+
+    .profile-day-times input[type="time"] {
+      max-width: none !important;
+    }
+
+    .profile-day-closed {
+      grid-column: 2 !important;
+      grid-row: 1 !important;
+    }
+  }
+
+
+
+  /* COMPACT BUSINESS HOURS OVERRIDE */
+  .profile-hours-field {
+    grid-column: 1 / -1;
+    padding: 20px !important;
+    border-radius: 22px !important;
+  }
+
+  .profile-hours-heading {
+    display: flex !important;
+    align-items: baseline !important;
+    gap: 14px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .profile-hours-heading > span {
+    font-size: 18px !important;
+    letter-spacing: 0.04em !important;
+  }
+
+  .profile-hours-heading small {
+    font-size: 13px !important;
+  }
+
+  .profile-week-hours {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .profile-day-hours {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    min-height: 64px !important;
+    padding: 10px 14px !important;
+    border-radius: 16px !important;
+  }
+
+  .profile-day-hours strong {
+    width: 130px !important;
+    flex: 0 0 130px !important;
+    font-size: 16px !important;
+  }
+
+  .profile-day-closed {
+    width: 112px !important;
+    min-height: 38px !important;
+    padding: 7px 11px !important;
+    border-radius: 12px !important;
+    font-size: 12px !important;
+    letter-spacing: 0.08em !important;
+    flex: 0 0 112px !important;
+    margin: 0 !important;
+  }
+
+  .profile-day-closed input {
+    width: 17px !important;
+    height: 17px !important;
+  }
+
+  .profile-day-times {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  .profile-day-times input {
+    width: 112px !important;
+    min-width: 0 !important;
+    height: 40px !important;
+    padding: 6px 10px !important;
+    border-radius: 11px !important;
+    font-size: 14px !important;
+  }
+
+  .profile-day-times span {
+    font-size: 12px !important;
+    padding: 0 2px !important;
+  }
+
+  .profile-day-closed-text {
+    font-size: 12px !important;
+    margin-left: auto !important;
+  }
+
+  @media (max-width: 760px) {
+    .profile-hours-field {
+      padding: 16px !important;
+    }
+
+    .profile-hours-heading {
+      display: block !important;
+    }
+
+    .profile-hours-heading small {
+      display: block !important;
+      margin-top: 4px !important;
+    }
+
+    .profile-day-hours {
+      flex-wrap: wrap !important;
+      padding: 12px !important;
+    }
+
+    .profile-day-hours strong {
+      width: calc(100% - 124px) !important;
+      flex: 1 !important;
+    }
+
+    .profile-day-closed {
+      flex: 0 0 112px !important;
+    }
+
+    .profile-day-times {
+      width: 100% !important;
+      flex-basis: 100% !important;
+      margin-top: 2px !important;
+    }
+
+    .profile-day-times input {
+      flex: 1 !important;
+      width: auto !important;
+    }
+  }
+
+
+  /* ===== COMPACT BUSINESS HOURS OVERRIDE ===== */
+  .profile-hours-field {
+    grid-column: 1 / -1 !important;
+    padding: 20px !important;
+    border-radius: 18px !important;
+  }
+
+  .profile-hours-heading {
+    display: flex !important;
+    align-items: baseline !important;
+    gap: 12px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .profile-hours-heading > span {
+    font-size: 17px !important;
+    line-height: 1.1 !important;
+    letter-spacing: .08em !important;
+  }
+
+  .profile-hours-heading small {
+    font-size: 13px !important;
+  }
+
+  .profile-week-hours {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 7px !important;
+  }
+
+  .profile-day-hours {
+    display: grid !important;
+    grid-template-columns: 120px 135px minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 10px !important;
+    min-height: 58px !important;
+    padding: 8px 12px !important;
+    border-radius: 13px !important;
+  }
+
+  .profile-day-hours strong {
+    font-size: 15px !important;
+    white-space: nowrap !important;
+  }
+
+  .profile-day-closed {
+    height: 38px !important;
+    padding: 0 10px !important;
+    margin: 0 !important;
+    border-radius: 10px !important;
+    font-size: 11px !important;
+    letter-spacing: .08em !important;
+    gap: 7px !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+  }
+
+  .profile-day-closed input {
+    width: 17px !important;
+    height: 17px !important;
+    margin: 0 !important;
+  }
+
+  .profile-day-times {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 18px minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 5px !important;
+    min-width: 0 !important;
+  }
+
+  .profile-day-times input[type="time"] {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 38px !important;
+    padding: 0 7px !important;
+    font-size: 13px !important;
+    border-radius: 10px !important;
+  }
+
+  .profile-day-times > span {
+    font-size: 11px !important;
+    text-align: center !important;
+  }
+
+  .profile-day-closed-text {
+    font-size: 11px !important;
+  }
+
+  @media (max-width: 700px) {
+    .profile-hours-field {
+      padding: 15px !important;
+    }
+
+    .profile-hours-heading {
+      display: block !important;
+    }
+
+    .profile-hours-heading > span {
+      display: block !important;
+      margin-bottom: 4px !important;
+    }
+
+    .profile-day-hours {
+      grid-template-columns: 1fr auto !important;
+      gap: 8px !important;
+      padding: 10px !important;
+    }
+
+    .profile-day-times {
+      grid-column: 1 / -1 !important;
+      width: 100% !important;
+    }
+
+    .profile-day-closed {
+      width: auto !important;
+    }
+  }
+
+
+
+  
+
+
+  /* ===== SMALL DAY & CLOSED LABELS ONLY ===== */
+  .profile-day-hours strong {
+    font-size: 12px !important;
+    line-height: 1.1 !important;
+  }
+
+  .profile-day-closed span,
+  .profile-day-closed-text {
+    font-size: 9px !important;
+    letter-spacing: 0.06em !important;
+  }
+
+  .profile-day-closed {
+    padding: 0 10px !important;
+  }
+
+
+
+  /* ===== DAY → CLOSED → OPEN → TO → CLOSE ===== */
+  .profile-day-hours {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+
+  .profile-day-hours strong {
+    flex: 0 0 105px !important;
+  }
+
+  .profile-day-closed {
+    flex: 0 0 auto !important;
+    order: 2 !important;
+  }
+
+  .profile-day-times {
+    flex: 0 1 auto !important;
+    order: 3 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  .profile-day-times input[type="time"] {
+    width: 125px !important;
+  }
+
+  .profile-day-closed-text {
+    order: 3 !important;
+  }
+
+
+
+  
+/* ===== BUSINESS HOURS GREEN CLOCK ===== */
+.profile-hours-title {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+}
+
+.profile-hours-clock {
+  width: 26px !important;
+  height: 26px !important;
+  min-width: 26px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 8px !important;
+  background: #e8f8f2 !important;
+  color: #29ab87 !important;
+  border: 1px solid #bdebd9 !important;
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+}
+
+
+/* ===== BUSINESS HOURS: DAY ON TOP, CONTROLS BELOW ===== */
+  .profile-day-hours {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 7px !important;
+    align-items: start !important;
+    padding: 10px 14px !important;
+  }
+
+  .profile-day-hours strong {
+    display: block !important;
+    font-size: 13px !important;
+    line-height: 1.1 !important;
+    margin: 0 !important;
+  }
+
+  .profile-day-closed {
+    display: inline-flex !important;
+    width: fit-content !important;
+    height: 30px !important;
+    padding: 0 9px !important;
+    margin: 0 !important;
+    border-radius: 8px !important;
+    font-size: 10px !important;
+  }
+
+  .profile-day-closed input {
+    width: 14px !important;
+    height: 14px !important;
+    margin: 0 !important;
+  }
+
+  .profile-day-closed span {
+    font-size: 9px !important;
+  }
+
+  .profile-day-times {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    width: fit-content !important;
+    max-width: 100% !important;
+  }
+
+  .profile-day-times input[type="time"] {
+    width: 115px !important;
+    height: 30px !important;
+    padding: 0 7px !important;
+    font-size: 12px !important;
+    border-radius: 8px !important;
+  }
+
+  .profile-day-times > span {
+    font-size: 10px !important;
+  }
+
+  /* Keep CLOSED + timings together below the day */
+  .profile-day-hours .profile-day-closed,
+  .profile-day-hours .profile-day-times {
+    align-self: start !important;
+  }
+
+  @media (max-width: 600px) {
+    .profile-day-hours {
+      padding: 9px 10px !important;
+    }
+
+    .profile-day-times {
+      width: 100% !important;
+    }
+
+    .profile-day-times input[type="time"] {
+      flex: 1 !important;
+      width: 100% !important;
+      min-width: 0 !important;
+    }
   }
 
 `;
