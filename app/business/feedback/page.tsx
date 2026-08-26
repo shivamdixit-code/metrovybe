@@ -9,6 +9,8 @@ import {
   Building2,
   RefreshCw,
   Send,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 
 import { BottomNav } from "@/components/BottomNav";
@@ -87,6 +89,8 @@ export default function BusinessFeedbackPage() {
   const [replyText, setReplyText] = useState("");
   const [sendingReply, setSendingReply] = useState(false);
   const [replyError, setReplyError] = useState("");
+  const [editingReply, setEditingReply] = useState<string | null>(null);
+  const [deletingReply, setDeletingReply] = useState<string | null>(null);
 
   const loadFeedback = useCallback(async () => {
     const token = getToken();
@@ -172,6 +176,97 @@ export default function BusinessFeedbackPage() {
       );
     } finally {
       setSendingReply(false);
+    }
+  };
+
+  const updateReply = async (reviewId: string) => {
+    const message = replyText.trim();
+
+    if (!message) {
+      setReplyError("Please write a reply first.");
+      return;
+    }
+
+    const token = getToken();
+    if (!token) {
+      window.location.href = "/login";
+      return;
+    }
+
+    try {
+      setSendingReply(true);
+      setReplyError("");
+
+      const response = await fetch(
+        `${API_URL}/api/reviews/${reviewId}/reply`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ message }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to update reply.");
+      }
+
+      setEditingReply(null);
+      setReplyText("");
+      await loadFeedback();
+    } catch (err) {
+      console.error("Update review reply error:", err);
+      setReplyError(
+        err instanceof Error ? err.message : "Failed to update reply."
+      );
+    } finally {
+      setSendingReply(false);
+    }
+  };
+
+  const deleteReply = async (reviewId: string) => {
+    if (!window.confirm("Delete this reply? This cannot be undone.")) {
+      return;
+    }
+
+    const token = getToken();
+    if (!token) {
+      window.location.href = "/login";
+      return;
+    }
+
+    try {
+      setDeletingReply(reviewId);
+      setReplyError("");
+
+      const response = await fetch(
+        `${API_URL}/api/reviews/${reviewId}/reply`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to delete reply.");
+      }
+
+      await loadFeedback();
+    } catch (err) {
+      console.error("Delete review reply error:", err);
+      setReplyError(
+        err instanceof Error ? err.message : "Failed to delete reply."
+      );
+    } finally {
+      setDeletingReply(null);
     }
   };
 
@@ -336,18 +431,91 @@ export default function BusinessFeedbackPage() {
                         </p>
                       )}
                     
-              {review.businessReply?.message ? (
+              {review.businessReply?.message && editingReply !== review._id ? (
                 <div className="mv-feedback-business-reply">
-                  <div className="mv-feedback-business-reply-label">
-                    <MessageCircle size={15} />
-                    <span>Your reply</span>
+                  <div className="mv-feedback-business-reply-head">
+                    <div className="mv-feedback-business-reply-label">
+                      <MessageCircle size={15} />
+                      <span>Your reply</span>
+                    </div>
+
+                    <div className="mv-feedback-reply-tools">
+                      <button
+                        type="button"
+                        className="mv-feedback-reply-edit"
+                        aria-label="Edit reply"
+                        onClick={() => {
+                          setEditingReply(review._id);
+                          setReplyingTo(null);
+                          setReplyText(review.businessReply?.message || "");
+                          setReplyError("");
+                        }}
+                        disabled={deletingReply === review._id}
+                      >
+                        <Pencil size={14} />
+                        <span>Edit</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        className="mv-feedback-reply-delete"
+                        aria-label="Delete reply"
+                        onClick={() => deleteReply(review._id)}
+                        disabled={deletingReply === review._id}
+                      >
+                        <Trash2 size={14} />
+                        <span>
+                          {deletingReply === review._id ? "Deleting..." : "Delete"}
+                        </span>
+                      </button>
+                    </div>
                   </div>
+
                   <p>{review.businessReply.message}</p>
+
                   {review.businessReply.repliedAt && (
                     <time>
                       Replied {formatDate(review.businessReply.repliedAt)}
                     </time>
                   )}
+                </div>
+              ) : editingReply === review._id ? (
+                <div className="mv-feedback-reply-box mv-feedback-reply-edit-box">
+                  <textarea
+                    value={replyText}
+                    onChange={(e) => setReplyText(e.target.value)}
+                    placeholder="Update your reply..."
+                    maxLength={2000}
+                    autoFocus
+                  />
+
+                  {replyError && (
+                    <p className="mv-feedback-reply-error">{replyError}</p>
+                  )}
+
+                  <div className="mv-feedback-reply-actions">
+                    <button
+                      type="button"
+                      className="mv-feedback-reply-cancel"
+                      onClick={() => {
+                        setEditingReply(null);
+                        setReplyText("");
+                        setReplyError("");
+                      }}
+                      disabled={sendingReply}
+                    >
+                      Cancel
+                    </button>
+
+                    <button
+                      type="button"
+                      className="mv-feedback-reply-send"
+                      onClick={() => updateReply(review._id)}
+                      disabled={!replyText.trim() || sendingReply}
+                    >
+                      {sendingReply ? "Saving..." : "Save changes"}
+                    </button>
+                  </div>
                 </div>
               ) : replyingTo === review._id ? (
                 <div className="mv-feedback-reply-box">
