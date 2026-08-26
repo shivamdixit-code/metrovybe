@@ -22479,3 +22479,191 @@ body {
     padding-bottom: 0 !important;
   }
 }
+
+/* ===== BUSINESS ENQUIRIES — MOBILE NAV CLEARANCE ===== */
+@media (max-width: 700px) {
+  .business-enquiries-page {
+    padding-bottom: 96px !important;
+    scroll-padding-bottom: 96px;
+  }
+
+  .business-enquiries-page > :last-child {
+    margin-bottom: 0 !important;
+  }
+}
+
+/* ===== BUSINESS ENQUIRIES — LIGHTER, SUBTLE CARDS ===== */
+
+.business-enquiries-page .business-enquiry-card {
+  border: 1px solid #d9e1de !important;
+  box-shadow: 0 2px 8px rgba(20, 40, 33, 0.06) !important;
+  border-radius: 18px !important;
+}
+
+.business-enquiries-page .business-enquiry-card:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 5px 14px rgba(20, 40, 33, 0.08) !important;
+}
+
+/* Inner sections shouldn't create heavy boxed appearance */
+.business-enquiries-page .business-enquiry-card > * {
+  border-color: rgba(30, 60, 50, 0.14) !important;
+}
+
+/* Make message/content blocks softer */
+.business-enquiries-page .business-enquiry-message,
+.business-enquiries-page .business-enquiry-details {
+  box-shadow: none !important;
+}
+
+/* Mobile: even cleaner and lighter */
+@media (max-width: 700px) {
+  .business-enquiries-page .business-enquiry-card {
+    border-radius: 16px !important;
+    box-shadow: 0 2px 7px rgba(20, 40, 33, 0.05) !important;
+  }
+}
+
+/* ===== BUSINESS ENQUIRIES — LIGHTWEIGHT INNER UI ===== */
+
+.business-enquiries-page .business-enquiry-card {
+  background: #ffffff !important;
+}
+
+/* Soften every inner boxed section */
+.business-enquiries-page .business-enquiry-card > *,
+.business-enquiries-page .business-enquiry-card .business-enquiry-message,
+.business-enquiries-page .business-enquiry-card .business-enquiry-details {
+  border-width: 1px !important;
+  border-color: #e2e8e5 !important;
+  box-shadow: none !important;
+}
+
+/* Remove the heavy card-within-card feeling */
+.business-enquiries-page .business-enquiry-card .business-enquiry-message,
+.business-enquiries-page .business-enquiry-card .business-enquiry-details {
+  background: #fafcfb !important;
+  border-radius: 12px !important;
+}
+
+/* Softer dividers and metadata */
+.business-enquiries-page .business-enquiry-card hr,
+.business-enquiries-page .business-enquiry-card [class*="divider"] {
+  border-color: #edf1ef !important;
+}
+
+/* Lighter typography hierarchy */
+.business-enquiries-page .business-enquiry-card p {
+  color: #58615d;
+}
+
+/* Mobile refinement */
+@media (max-width: 700px) {
+  .business-enquiries-page .business-enquiry-card > * {
+    border-width: 1px !important;
+  }
+
+  .business-enquiries-page .business-enquiry-message,
+  .business-enquiries-page .business-enquiry-details {
+    padding: 14px !important;
+  }
+}
+
+/* ===== BUSINESS ENQUIRIES — COMPACT CUSTOMER CONTACT ===== */
+.business-enquiries-page .business-enquiry-inline-contact {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px 10px;
+  margin-top: 3px;
+}
+
+.business-enquiries-page .business-enquiry-inline-contact a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #7a8580;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.3;
+  text-decoration: none;
+  transition: color .18s ease;
+}
+
+.business-enquiries-page .business-enquiry-inline-contact a:hover {
+  color: #168b69;
+}
+
+.business-enquiries-page .business-enquiry-inline-contact svg {
+  flex: 0 0 auto;
+  opacity: .75;
+}
+
+.business-enquiries-page .business-enquiry-contact {
+  display: none !important;
+}
+
+@media (max-width: 700px) {
+  .business-enquiries-page .business-enquiry-inline-contact {
+    gap: 4px 8px;
+  }
+
+  .business-enquiries-page .business-enquiry-inline-contact a {
+    font-size: 10px;
+  }
+}
+
+/* ===== BUSINESS ENQUIRIES — COMPACT CUSTOMER CONTACT ===== */
+.business-enquiries-page .business-enquiry-inline-contact {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 4px;
+}
+
+.business-enquiries-page .business-enquiry-inline-contact a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #7d8783;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.3;
+  text-decoration: none;
+}
+
+.business-enquiries-page .business-enquiry-inline-contact a:hover {
+  color: #168b69;
+}
+
+.business-enquiries-page .business-enquiry-inline-contact svg {
+  flex: 0 0 auto;
+  opacity: .7;
+}
+
+@media (max-width: 700px) {
+  .business-enquiries-page .business-enquiry-inline-contact {
+    gap: 3px 8px;
+  }
+
+  .business-enquiries-page .business-enquiry-inline-contact a {
+    font-size: 10px;
+  }
+}
+
+/* ===== BUSINESS ENQUIRIES — MOBILE COUNT / SUBTITLE FIX ===== */
+@media (max-width: 700px) {
+  .business-enquiries-page .business-enquiries-count {
+    right: 20px !important;
+    bottom: 20px !important;
+    z-index: 4 !important;
+  }
+
+  /* Reserve space so subtitle never goes behind the count */
+  .business-enquiries-page .business-enquiries-title-row .subtle {
+    padding-right: 92px !important;
+    box-sizing: border-box;
+  }
+}
+

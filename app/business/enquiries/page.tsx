@@ -244,7 +244,24 @@ export default function BusinessEnquiriesPage() {
                       <div>
                         <h2>{customerName}</h2>
 
-                        <div className="business-enquiry-meta">
+                        {(customerEmail || customerPhone) && (
+                          <div className="business-enquiry-inline-contact">
+                            {customerEmail && (
+                              <a href={`mailto:${customerEmail}`}>
+                                <Mail size={12} />
+                                <span>{customerEmail}</span>
+                              </a>
+                            )}
+                            {customerPhone && (
+                              <a href={`tel:${customerPhone}`}>
+                                <Phone size={12} />
+                                <span>{customerPhone}</span>
+                              </a>
+                            )}
+                          </div>
+                        )}
+
+<div className="business-enquiry-meta">
                           <Clock3 size={13} />
                           <span>
                             {formatDate(enquiry.createdAt)}
@@ -292,26 +309,7 @@ export default function BusinessEnquiriesPage() {
                   <div className="business-enquiry-message">
                     <p>{enquiry.message}</p>
                   </div>
-
-                  {(customerEmail || customerPhone) && (
-                    <div className="business-enquiry-contact">
-                      {customerEmail && (
-                        <a href={`mailto:${customerEmail}`}>
-                          <Mail size={16} />
-                          <span>{customerEmail}</span>
-                        </a>
-                      )}
-
-                      {customerPhone && (
-                        <a href={`tel:${customerPhone}`}>
-                          <Phone size={16} />
-                          <span>{customerPhone}</span>
-                        </a>
-                      )}
-                    </div>
-                  )}
-
-                  {isNew && (
+{isNew && (
                     <button
                       type="button"
                       className="business-enquiry-read"
