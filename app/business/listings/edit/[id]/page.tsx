@@ -1295,10 +1295,71 @@ export default function EditBusinessListing() {
   if (loadingBusiness || loadingListing) {
     return (
       <main className="listing-page">
-        <div className="loading">
-          <div className="spinner" />
-          <p>Loading your business profile...</p>
+        <div className="listing-container">
+          <div className="listing-edit-loader">
+            <div className="listing-edit-loader-spinner" />
+            <div>
+              <span>BUSINESS CENTER</span>
+              <strong>Loading your listing</strong>
+              <p>Just a moment...</p>
+            </div>
+          </div>
         </div>
+
+        <style>{`
+          .listing-page {
+            min-height: 100vh;
+            background: #f7f8f7;
+            padding: 40px 20px;
+          }
+
+          .listing-container {
+            width: min(1120px, 100%);
+            margin: 0 auto;
+          }
+
+          .listing-edit-loader {
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            color: #151918;
+          }
+
+          .listing-edit-loader-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #dce8e3;
+            border-top-color: #29ab87;
+            border-radius: 50%;
+            animation: listingEditSpin .8s linear infinite;
+          }
+
+          .listing-edit-loader span {
+            display: block;
+            margin-bottom: 4px;
+            color: #29ab87;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: .12em;
+          }
+
+          .listing-edit-loader strong {
+            display: block;
+            font-size: 18px;
+          }
+
+          .listing-edit-loader p {
+            margin: 3px 0 0;
+            color: #707975;
+            font-size: 13px;
+          }
+
+          @keyframes listingEditSpin {
+            to { transform: rotate(360deg); }
+          }
+        `}</style>
       </main>
     );
   }
@@ -2292,6 +2353,67 @@ export default function EditBusinessListing() {
           text-decoration: none;
           font-weight: 800;
           font-size: 13px;
+        }
+
+        .listing-edit-skeleton {
+          display: grid;
+          gap: 18px;
+          padding-top: 8px;
+        }
+
+        .skeleton-line,
+        .skeleton-field {
+          border-radius: 10px;
+          background: linear-gradient(
+            90deg,
+            #eef2f0 25%,
+            #f7f9f8 50%,
+            #eef2f0 75%
+          );
+          background-size: 200% 100%;
+          animation: listingSkeletonPulse 1.2s ease-in-out infinite;
+        }
+
+        .skeleton-business {
+          width: 100%;
+          height: 76px;
+          border-radius: 16px;
+        }
+
+        .skeleton-card {
+          padding: 24px;
+          border: 1px solid #e4ebe7;
+          border-radius: 18px;
+          background: #fff;
+          display: grid;
+          gap: 14px;
+        }
+
+        .skeleton-title {
+          width: 38%;
+          height: 24px;
+        }
+
+        .skeleton-text {
+          width: 62%;
+          height: 14px;
+        }
+
+        .skeleton-grid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 14px;
+          margin-top: 8px;
+        }
+
+        .skeleton-field {
+          height: 52px;
+        }
+
+        @keyframes listingSkeletonPulse {
+          to {
+            background-position: -200% 0;
+          }
         }
 
         .loading {
