@@ -149,7 +149,11 @@ export default function ProfileSettings() {
 
           <section className="settings-account-card">
             <div className="settings-avatar" aria-label={`${displayName} profile`}>
-              <span>{initials}</span>
+              {user.image ? (
+                <img src={user.image} alt={`${displayName} profile`} />
+              ) : (
+                <span>{initials}</span>
+              )}
             </div>
 
             <div className="settings-account-info">

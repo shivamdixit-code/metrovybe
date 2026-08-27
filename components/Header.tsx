@@ -151,7 +151,15 @@ export function Header() {
                 textAlign: "left",
               }}
             >
-              <UserRound size={18} />
+              {user.image ? (
+                <img
+                  src={user.image}
+                  alt="Profile"
+                  className="header-user-avatar"
+                />
+              ) : (
+                <UserRound size={18} />
+              )}
 
               <span
                 className="header-user-details"

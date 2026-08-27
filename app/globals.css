@@ -26994,3 +26994,209 @@ body {
   cursor: default;
   transform: none;
 }
+
+/* ===== PROFILE DP ===== */
+
+.profile-edit-avatar-upload {
+  position: relative;
+  width: 82px !important;
+  height: 82px !important;
+  min-width: 82px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4f7f6;
+  border: 2px solid #29ab87;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.profile-edit-avatar-upload:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+}
+
+.profile-edit-avatar-upload img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.profile-edit-avatar-action {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  min-width: 30px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .2px;
+  border: 2px solid #fff;
+}
+
+.profile-edit-avatar-upload:hover .profile-edit-avatar-action {
+  background: #29ab87;
+}
+
+@media (max-width: 768px) {
+  .profile-edit-avatar-upload {
+    width: 74px !important;
+    height: 74px !important;
+    min-width: 74px;
+  }
+}
+
+
+/* ===== DP UPLOAD OVERRIDE ===== */
+
+.profile-edit-identity .profile-edit-avatar-upload {
+  position: relative !important;
+  width: 82px !important;
+  height: 82px !important;
+  min-width: 82px !important;
+  flex: 0 0 82px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #f4f7f6 !important;
+  border: 2px solid #29ab87 !important;
+  box-shadow: 0 5px 18px rgba(0,0,0,.08) !important;
+}
+
+.profile-edit-identity .profile-edit-avatar-upload img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
+}
+
+.profile-edit-avatar-upload input[type="file"] {
+  display: none !important;
+}
+
+.profile-edit-avatar-action {
+  position: absolute !important;
+  right: 2px !important;
+  bottom: 2px !important;
+  width: 27px !important;
+  height: 27px !important;
+  min-width: 27px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #1a1a1a !important;
+  color: #fff !important;
+  border: 2px solid #fff !important;
+  z-index: 5 !important;
+}
+
+.profile-edit-avatar-upload:hover .profile-edit-avatar-action {
+  background: #29ab87 !important;
+}
+
+@media (max-width: 768px) {
+  .profile-edit-identity .profile-edit-avatar-upload {
+    width: 74px !important;
+    height: 74px !important;
+    min-width: 74px !important;
+    flex-basis: 74px !important;
+  }
+}
+
+
+/* ===== PROFILE DP UPLOAD ICON — CENTER ===== */
+.profile-edit-avatar-upload .profile-edit-avatar-action {
+  top: 50% !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+.profile-edit-avatar-upload:hover .profile-edit-avatar-action {
+  transform: translate(-50%, -50%) !important;
+}
+
+
+/* ===== PROFILE DP UPLOAD ICON — BOTTOM CENTER ===== */
+.profile-edit-avatar-upload .profile-edit-avatar-action {
+  top: auto !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: 2px !important;
+  transform: translateX(-50%) !important;
+}
+
+.profile-edit-avatar-upload:hover .profile-edit-avatar-action {
+  transform: translateX(-50%) !important;
+}
+
+
+/* ===== PROFILE DP CANCEL — BOTTOM CENTER ===== */
+.profile-edit-identity {
+  position: relative;
+}
+
+.profile-edit-avatar-cancel {
+  position: absolute;
+  left: 41px;
+  bottom: 2px;
+  transform: translateX(-50%);
+  z-index: 10;
+  padding: 4px 9px;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0,0,0,.14);
+}
+
+.profile-edit-avatar-cancel:hover:not(:disabled) {
+  background: #29ab87;
+}
+
+.profile-edit-avatar-cancel:disabled {
+  opacity: .6;
+  cursor: default;
+}
+
+
+
+/* Profile photos across account UI */
+.profile-avatar-large img,
+.settings-avatar img,
+.header-user-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.header-user-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  flex: 0 0 30px;
+}

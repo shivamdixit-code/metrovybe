@@ -297,16 +297,20 @@ export default function Profile() {
               className="profile-avatar-large"
               aria-label={`${displayName} profile`}
             >
-              <span
-                style={{
-                  fontWeight: 800,
-                  fontSize: 25,
-                  lineHeight: 1,
-                  letterSpacing: "-0.04em",
-                }}
-              >
-                {initials}
-              </span>
+              {user.image ? (
+                <img src={user.image} alt={`${displayName} profile`} />
+              ) : (
+                <span
+                  style={{
+                    fontWeight: 800,
+                    fontSize: 25,
+                    lineHeight: 1,
+                    letterSpacing: "-0.04em",
+                  }}
+                >
+                  {initials}
+                </span>
+              )}
             </div>
 
             <div className="profile-person-info">

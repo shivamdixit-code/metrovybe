@@ -10,6 +10,8 @@ import {
   Phone,
   Mail,
   ShieldCheck,
+  Upload,
+  X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/Header";
@@ -63,6 +65,7 @@ export default function ProfileEdit() {
   const [phone, setPhone] = useState("");
   const [phoneCountry, setPhoneCountry] = useState<PhoneCountry>("IN");
   const [email, setEmail] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const [phoneOtp, setPhoneOtp] = useState("");
   const [phoneOtpSent, setPhoneOtpSent] = useState(false);
@@ -137,6 +140,94 @@ export default function ProfileEdit() {
   const clearFeedback = () => {
     setMessage("");
     setError("");
+  };
+
+  const handleProfileImageChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    clearFeedback();
+
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      setError("Please select a JPG, PNG or WEBP image.");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setError("Profile photo must be smaller than 10 MB.");
+      event.target.value = "";
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const response = await authenticatedFetch("/api/auth/me/image", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Unable to update profile photo.");
+      }
+
+      if (user) {
+        syncUser({
+          ...user,
+          image: data.image || "",
+        });
+      }
+
+      setMessage(data.message || "Profile photo updated successfully.");
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Unable to update profile photo."
+      );
+    } finally {
+      event.target.value = "";
+    }
+  };
+
+  const handleRemoveProfileImage = async () => {
+    if (!user?.image) return;
+
+    clearFeedback();
+    setUploadingImage(true);
+
+    try {
+      const response = await authenticatedFetch("/api/auth/me/image", {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Unable to remove profile photo.");
+      }
+
+      syncUser({
+        ...user,
+        image: "",
+      });
+
+      setMessage(data.message || "Profile photo removed successfully.");
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Unable to remove profile photo."
+      );
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const handleSaveName = async (event: React.FormEvent) => {
@@ -384,9 +475,42 @@ export default function ProfileEdit() {
           </header>
 
           <section className="profile-edit-identity">
-            <div className="profile-edit-avatar">
-              <UserRound size={25} strokeWidth={2.3} />
-            </div>
+            <label className="profile-edit-avatar profile-edit-avatar-upload">
+              {user.image ? (
+                <img src={user.image} alt="Profile" />
+              ) : (
+                <UserRound size={25} strokeWidth={2.3} />
+              )}
+
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleProfileImageChange}
+                disabled={uploadingImage}
+                hidden
+              />
+
+              <button
+                type="button"
+                className="profile-edit-avatar-action"
+                disabled={uploadingImage}
+                onClick={(event) => {
+                  if (!user.image || uploadingImage) return;
+                  event.preventDefault();
+                  event.stopPropagation();
+                  handleRemoveProfileImage();
+                }}
+                aria-label={user.image ? "Remove profile photo" : "Upload profile photo"}
+              >
+                {uploadingImage ? (
+                  <X size={14} strokeWidth={2.5} />
+                ) : user.image ? (
+                  <X size={14} strokeWidth={2.5} />
+                ) : (
+                  <Upload size={13} strokeWidth={2.5} />
+                )}
+              </button>
+            </label>
 
             <div className="profile-edit-identity-copy">
               <span>YOUR METROVYBE ACCOUNT</span>
