@@ -303,6 +303,17 @@ export type EnquiryResponse = {
   unread?: number;
 };
 
+export async function getCustomerEnquiries(): Promise<EnquiryResponse> {
+  const response = await authenticatedFetch("/api/enquiries/customer");
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to fetch customer enquiries");
+  }
+
+  return data;
+}
+
 export async function getBusinessEnquiries(): Promise<EnquiryResponse> {
   const response = await authenticatedFetch("/api/enquiries/business");
   const data = await response.json();
