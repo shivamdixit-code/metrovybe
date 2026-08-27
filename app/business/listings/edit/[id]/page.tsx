@@ -153,6 +153,9 @@ export default function EditBusinessListing() {
   const [business, setBusiness] = useState<Business | null>(null);
   const [loadingBusiness, setLoadingBusiness] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [uploadingMainImage, setUploadingMainImage] = useState(false);
+  const [uploadingAdditionalImages, setUploadingAdditionalImages] = useState(false);
+  const [photoUploadError, setPhotoUploadError] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -252,37 +255,89 @@ export default function EditBusinessListing() {
           throw new Error("Listing not found");
         }
 
-        const serviceDetails = listing.serviceDetails || {};
-        const existingOffering = serviceDetails.offering || "";
+        const serviceDetails =
+          listing.serviceDetails && typeof listing.serviceDetails === "object"
+            ? listing.serviceDetails
+            : {};
 
-        setCategory(listing.category || "");
+        const rawCategory = String(listing.category || "")
+          .trim()
+          .toLowerCase();
+
+        const validCategories: Category[] = [
+          "stay", "eat", "live", "move", "go",
+        ];
+
+        const loadedCategory = validCategories.includes(
+          rawCategory as Category
+        )
+          ? (rawCategory as Category)
+          : "";
+
+        const existingOffering = String(
+          serviceDetails.offering ||
+          listing.offering ||
+          listing.type ||
+          listing.subcategory ||
+          ""
+        ).trim();
+
+        setCategory(loadedCategory);
         setOffering(existingOffering);
 
+        const additionalImages = Array.isArray(listing.images)
+          ? listing.images
+          : typeof listing.images === "string"
+            ? listing.images.split(",")
+            : [];
+
+        const allTags = Array.isArray(listing.tags)
+          ? listing.tags
+          : typeof listing.tags === "string"
+            ? listing.tags.split(",")
+            : [];
+
         setForm({
-          title: listing.title || "",
-          description: listing.description || "",
-          location: listing.location || "",
-          price: listing.price || "",
-          image: listing.image || "",
-          images: Array.isArray(listing.images)
-            ? listing.images.join(", ")
-            : "",
-          tags: Array.isArray(listing.tags)
-            ? listing.tags.join(", ")
-            : "",
+          title: String(listing.title || ""),
+          description: String(listing.description || ""),
+          location: String(listing.location || listing.address || ""),
+          price: String(listing.price || ""),
+          image: String(
+            listing.image ||
+            listing.mainImage ||
+            listing.thumbnail ||
+            ""
+          ),
+          images: additionalImages
+            .map((url: unknown) => String(url).trim())
+            .filter(Boolean)
+            .join(", "),
+          tags: allTags
+            .map((tag: unknown) => String(tag).trim())
+            .filter(Boolean)
+            .join(", "),
         });
 
         const { offering: _offering, ...otherDetails } = serviceDetails;
         setDetails(otherDetails);
 
-        if (
-          typeof listing.latitude === "number" &&
-          typeof listing.longitude === "number"
-        ) {
+        const latitude = Number(
+          listing.latitude ?? listing.location?.latitude
+        );
+        const longitude = Number(
+          listing.longitude ?? listing.location?.longitude
+        );
+
+        if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
           setSelectedLocation({
-            latitude: listing.latitude,
-            longitude: listing.longitude,
-            address: listing.location || "",
+            latitude,
+            longitude,
+            address: String(
+              listing.location ||
+              listing.address ||
+              listing.location?.address ||
+              ""
+            ),
           });
         }
       } catch (err) {
@@ -318,6 +373,118 @@ export default function EditBusinessListing() {
     setDetails((current) => ({
       ...current,
       [field]: value,
+    }));
+  }
+
+  async function uploadListingImage(file: File): Promise<string> {
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+
+    if (!allowedTypes.includes(file.type)) {
+      throw new Error("Please upload a JPG, PNG or WEBP image.");
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      throw new Error("Each image must be smaller than 5MB.");
+    }
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const response = await fetch(`${API_URL}/api/upload/image`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || !data?.url) {
+      throw new Error(data?.message || "Unable to upload image.");
+    }
+
+    return data.url;
+  }
+
+  async function handleMainImageUpload(
+    event: React.ChangeEvent<HTMLInputElement>
+  ) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setPhotoUploadError("");
+
+    try {
+      setUploadingMainImage(true);
+      const url = await uploadListingImage(file);
+      updateField("image", url);
+    } catch (err) {
+      setPhotoUploadError(
+        err instanceof Error ? err.message : "Unable to upload image."
+      );
+    } finally {
+      setUploadingMainImage(false);
+      event.target.value = "";
+    }
+  }
+
+  async function handleAdditionalImagesUpload(
+    event: React.ChangeEvent<HTMLInputElement>
+  ) {
+    const files = Array.from(event.target.files || []);
+    if (!files.length) return;
+
+    const existingImages = form.images
+      .split(",")
+      .map((url) => url.trim())
+      .filter(Boolean);
+
+    const remainingSlots = 4 - existingImages.length;
+
+    setPhotoUploadError("");
+
+    if (remainingSlots <= 0) {
+      setPhotoUploadError("You can upload a maximum of 4 additional images.");
+      event.target.value = "";
+      return;
+    }
+
+    const filesToUpload = files.slice(0, remainingSlots);
+
+    try {
+      setUploadingAdditionalImages(true);
+
+      const urls = await Promise.all(
+        filesToUpload.map((file) => uploadListingImage(file))
+      );
+
+      setForm((current) => {
+        const existing = current.images
+          .split(",")
+          .map((url) => url.trim())
+          .filter(Boolean);
+
+        return {
+          ...current,
+          images: [...existing, ...urls].slice(0, 4).join(", "),
+        };
+      });
+    } catch (err) {
+      setPhotoUploadError(
+        err instanceof Error ? err.message : "Unable to upload images."
+      );
+    } finally {
+      setUploadingAdditionalImages(false);
+      event.target.value = "";
+    }
+  }
+
+  function removeAdditionalImage(urlToRemove: string) {
+    setForm((current) => ({
+      ...current,
+      images: current.images
+        .split(",")
+        .map((url) => url.trim())
+        .filter((url) => url && url !== urlToRemove)
+        .join(", "),
     }));
   }
 
@@ -1455,12 +1622,11 @@ export default function EditBusinessListing() {
                     type="button"
                     className={
                       category === item.id
-                        ? "category-card active"
-                        : "category-card"
+                        ? "category-card active category-card-locked"
+                        : "category-card category-card-locked"
                     }
-                    onClick={() =>
-                      chooseCategory(item.id)
-                    }
+                    disabled={category !== item.id}
+                    aria-disabled={category !== item.id}
                   >
                     <span className="category-icon">
                       {item.icon}
@@ -1681,27 +1847,93 @@ export default function EditBusinessListing() {
                   </div>
                 </div>
 
-                <div className="grid">
-                  <Field
-                    label="Main image URL"
-                    value={form.image}
-                    onChange={(v) =>
-                      updateField("image", v)
-                    }
-                    placeholder="https://..."
-                    full
-                  />
+                <div className="listing-photo-upload-grid">
+                  <div className="listing-photo-field">
+                    <label>Main image <i>*</i></label>
 
-                  <Field
-                    label="Additional image URLs"
-                    value={form.images}
-                    onChange={(v) =>
-                      updateField("images", v)
-                    }
-                    placeholder="https://..., https://..."
-                    full
-                  />
+                    {form.image ? (
+                      <div className="listing-main-image-preview">
+                        <img src={form.image} alt="Main listing preview" />
+                        <button
+                          type="button"
+                          onClick={() => updateField("image", "")}
+                          aria-label="Remove main image"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ) : (
+                      <label className="listing-upload-dropzone">
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          onChange={handleMainImageUpload}
+                          disabled={uploadingMainImage}
+                        />
+                        <span className="listing-upload-icon">↑</span>
+                        <strong>
+                          {uploadingMainImage
+                            ? "Uploading..."
+                            : "Upload main image"}
+                        </strong>
+                        <small>JPG, PNG or WEBP · Max 5MB</small>
+                      </label>
+                    )}
+                  </div>
+
+                  <div className="listing-photo-field">
+                    <label>Additional images</label>
+
+                    <label className="listing-upload-dropzone additional">
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        multiple
+                        onChange={handleAdditionalImagesUpload}
+                        disabled={uploadingAdditionalImages}
+                      />
+                      <span className="listing-upload-icon">+</span>
+                      <strong>
+                        {uploadingAdditionalImages
+                          ? "Uploading images..."
+                          : "Add more photos"}
+                      </strong>
+                      <small>Maximum 4 photos · JPG, PNG or WEBP · Max 5MB each</small>
+                    </label>
+
+                    {form.images && (
+                      <div className="listing-additional-previews">
+                        {form.images
+                          .split(",")
+                          .map((url) => url.trim())
+                          .filter(Boolean)
+                          .map((url) => (
+                            <div
+                              className="listing-additional-preview"
+                              key={url}
+                            >
+                              <img src={url} alt="Listing preview" />
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  removeAdditionalImage(url)
+                                }
+                                aria-label="Remove image"
+                              >
+                                ×
+                              </button>
+                            </div>
+                          ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
+
+                {photoUploadError && (
+                  <div className="listing-photo-upload-error">
+                    {photoUploadError}
+                  </div>
+                )}
               </section>
             )}
 
