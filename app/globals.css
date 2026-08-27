@@ -26896,3 +26896,12 @@ body {
   }
 }
 
+
+/* Highlight activity opened from a notification */
+.profile-activity-item.is-highlighted {
+  background: rgba(41, 171, 135, 0.055);
+  box-shadow: inset 3px 0 0 rgba(41, 171, 135, 0.85);
+  border-radius: 10px;
+  transition: background 0.35s ease, box-shadow 0.35s ease;
+}
+

@@ -23,7 +23,7 @@ import {
   Sparkles,
   UserRound,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
 import { getToken, getUser, logout, type AuthUser } from "@/lib/auth";
@@ -45,6 +45,8 @@ type ProfileActivity = {
 
 export default function Profile() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [highlightedActivity, setHighlightedActivity] = useState<string | null>(null);
 
   const [user, setUser] = useState<AuthUser | null>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
@@ -52,6 +54,22 @@ export default function Profile() {
   const [activityLoading, setActivityLoading] = useState(true);
   const [showAllActivities, setShowAllActivities] = useState(false);
   const [activities, setActivities] = useState<ProfileActivity[]>([]);
+
+  useEffect(() => {
+    const activityId = searchParams.get("activity");
+    if (!activityId || activityLoading) return;
+
+    const timer = window.setTimeout(() => {
+      const el = document.getElementById(`profile-activity-${activityId}`);
+      if (!el) return;
+
+      setHighlightedActivity(activityId);
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      window.setTimeout(() => setHighlightedActivity(null), 2500);
+    }, 200);
+
+    return () => window.clearTimeout(timer);
+  }, [searchParams, activityLoading, activities]);
 
   useEffect(() => {
     const token = getToken();
@@ -413,7 +431,11 @@ export default function Profile() {
                 {activities
                   .slice(0, showAllActivities ? activities.length : 5)
                   .map((activity) => (
-                  <div className="profile-activity-item" key={activity.id}>
+                  <div
+                    id={`profile-activity-${activity.id}`}
+                    className={`profile-activity-item ${highlightedActivity === activity.id ? "is-highlighted" : ""}`}
+                    key={activity.id}
+                  >
                     <div
                       className={`profile-activity-item-icon activity-${activity.type}`}
                     >

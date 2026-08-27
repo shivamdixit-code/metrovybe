@@ -81,7 +81,14 @@ export default function NotificationCenterPage() {
       console.error("Failed to mark notification as read:", error);
     }
 
-    if (notification.link) {
+    const enquiryId = notification.metadata?.enquiryId;
+    const reviewId = notification.metadata?.reviewId;
+
+    if (enquiryId) {
+      window.location.href = `/profile?activity=enquiry-reply-${enquiryId}`;
+    } else if (reviewId) {
+      window.location.href = `/profile?activity=review-reply-${reviewId}`;
+    } else if (notification.link) {
       window.location.href = notification.link;
     }
   }
