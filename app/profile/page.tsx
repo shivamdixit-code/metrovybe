@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Activity,
@@ -43,7 +43,7 @@ type ProfileActivity = {
   date?: string | null;
 };
 
-export default function Profile() {
+function ProfileContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [highlightedActivity, setHighlightedActivity] = useState<string | null>(null);
@@ -603,5 +603,20 @@ export default function Profile() {
 
       <BottomNav active="profile" />
     </div>
+  );
+}
+
+
+export default function Profile() {
+  return (
+    <Suspense
+      fallback={
+        <main className="shell inner profile-page">
+          <div className="profile-loading">Loading your profile...</div>
+        </main>
+      }
+    >
+      <ProfileContent />
+    </Suspense>
   );
 }
