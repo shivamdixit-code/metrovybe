@@ -26905,3 +26905,39 @@ body {
   transition: background 0.35s ease, box-shadow 0.35s ease;
 }
 
+
+/* Notification → specific booking highlight */
+.booking-notification-highlight {
+  position: relative;
+  border-radius: 18px;
+  outline: 2px solid #29ab87;
+  outline-offset: 3px;
+  animation: bookingNotificationPulse 1.2s ease-in-out 2;
+}
+
+@keyframes bookingNotificationPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(41, 171, 135, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgba(41, 171, 135, 0.14);
+  }
+}
+
+.booking-notification-highlight {
+  animation: bookingNotificationPulse 1.2s ease-in-out 3;
+  border-color: #29AB87 !important;
+  transform: translateY(-2px);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+@keyframes bookingNotificationPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(41, 171, 135, 0);
+  }
+
+  50% {
+    box-shadow: 0 0 0 7px rgba(41, 171, 135, 0.14);
+  }
+}
+
