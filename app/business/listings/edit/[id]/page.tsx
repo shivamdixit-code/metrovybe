@@ -268,10 +268,13 @@ export default function EditBusinessListing() {
           "stay", "eat", "live", "move", "go",
         ];
 
+        const normalizedCategory =
+          rawCategory === "travel" ? "go" : rawCategory;
+
         const loadedCategory = validCategories.includes(
-          rawCategory as Category
+          normalizedCategory as Category
         )
-          ? (rawCategory as Category)
+          ? (normalizedCategory as Category)
           : "";
 
         const existingOffering = String(
@@ -1373,13 +1376,6 @@ export default function EditBusinessListing() {
       return;
     }
 
-    if (!selectedLocation) {
-      setError(
-        "Please select your business location on the map."
-      );
-      return;
-    }
-
     setSubmitting(true);
 
     try {
@@ -1401,8 +1397,12 @@ export default function EditBusinessListing() {
           .map((x) => x.trim())
           .filter(Boolean),
 
-        latitude: selectedLocation.latitude,
-        longitude: selectedLocation.longitude,
+        ...(selectedLocation
+          ? {
+              latitude: selectedLocation.latitude,
+              longitude: selectedLocation.longitude,
+            }
+          : {}),
 
         serviceDetails: {
           offering,
@@ -1434,20 +1434,8 @@ export default function EditBusinessListing() {
         "Listing updated and submitted for MetroVybe review."
       );
 
-      setForm({
-        title: "",
-        description: "",
-        location: "",
-        price: "",
-        image: "",
-        images: "",
-        tags: "",
-      });
-
-      setCategory("");
-      setOffering("");
-      setDetails({});
-      setSelectedLocation(null);
+      // Keep the edited data visible after saving.
+      // This is an edit page, so clearing the form would be confusing.
     } catch (err) {
       setError(
         err instanceof Error
