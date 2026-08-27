@@ -461,6 +461,7 @@ export default function Bookings() {
           </div>
         ) : (
           <div
+            className="mv-bookings-grid"
             style={{
               display: "grid",
               gap: 12,
@@ -771,51 +772,28 @@ export default function Bookings() {
                             >
                               <button
                                 type="button"
+                                className="mv-review-icon-btn mv-review-edit-btn"
+                                title="Edit review"
+                                aria-label="Edit review"
                                 onClick={() => {
                                   setReviewBookingId(booking._id);
                                   setReviewRating(existingReview.rating);
                                   setReviewComment(existingReview.comment || "");
                                   setReviewError("");
                                 }}
-                                style={{
-                                  border: "1px solid #D8A900",
-                                  background: "#FFF7DF",
-                                  color: "#7A5800",
-                                  borderRadius: 10,
-                                  padding: "9px 15px",
-                                  fontSize: 13,
-                                  fontWeight: 800,
-                                  cursor: "pointer",
-                                }}
                               >
-                                Edit Review
+                                ✎
                               </button>
 
                               <button
                                 type="button"
+                                className="mv-review-icon-btn mv-review-delete-btn"
+                                title="Delete review"
+                                aria-label="Delete review"
                                 onClick={() => handleDeleteReview(existingReview._id)}
                                 disabled={deletingReview === existingReview._id}
-                                style={{
-                                  border: "1px solid #E7B7B3",
-                                  background: "#FFF5F4",
-                                  color: "#B42318",
-                                  borderRadius: 10,
-                                  padding: "9px 15px",
-                                  fontSize: 13,
-                                  fontWeight: 800,
-                                  cursor:
-                                    deletingReview === existingReview._id
-                                      ? "wait"
-                                      : "pointer",
-                                  opacity:
-                                    deletingReview === existingReview._id
-                                      ? 0.7
-                                      : 1,
-                                }}
                               >
-                                {deletingReview === existingReview._id
-                                  ? "Deleting..."
-                                  : "Delete"}
+                                {deletingReview === existingReview._id ? "…" : "⌫"}
                               </button>
                             </div>
                           </div>

@@ -26941,3 +26941,56 @@ body {
   }
 }
 
+
+/* Bookings: 3 cards per row on desktop */
+@media (min-width: 769px) {
+  .mv-bookings-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+/* Bookings: single column on mobile */
+@media (max-width: 768px) {
+  .mv-bookings-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Minimal review action icons */
+.mv-review-icon-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid #D9E1E7;
+  border-radius: 8px;
+  background: #FFFFFF;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1;
+  transition: all 0.16s ease;
+}
+
+.mv-review-edit-btn {
+  color: #2878A8;
+  font-size: 17px;
+}
+
+.mv-review-delete-btn {
+  color: #A85A5A;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.mv-review-icon-btn:hover {
+  transform: translateY(-1px);
+  border-color: currentColor;
+}
+
+.mv-review-icon-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+  transform: none;
+}
