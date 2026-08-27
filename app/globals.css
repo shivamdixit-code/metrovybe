@@ -23361,57 +23361,6 @@ body {
   }
 }
 
-/* Business dashboard phone country code — show flag + code clearly */
-.profile-phone-input {
-  display: flex;
-  width: 100%;
-  gap: 8px;
-}
-
-.profile-phone-input .profile-phone-code {
-  flex: 0 0 82px;
-  width: 82px !important;
-  min-width: 82px;
-  padding: 0 6px !important;
-  font-size: 14px;
-  white-space: nowrap;
-}
-
-.profile-phone-input input[type="tel"] {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-@media (max-width: 640px) {
-  .profile-phone-input .profile-phone-code {
-    flex-basis: 78px;
-    width: 78px !important;
-    min-width: 78px;
-    font-size: 13px;
-  }
-}
-
-/* Compact country code selector */
-.profile-phone-input {
-  gap: 4px !important;
-}
-
-.profile-phone-input .profile-phone-code {
-  flex: 0 0 62px !important;
-  width: 62px !important;
-  min-width: 62px !important;
-  padding: 0 2px !important;
-  font-size: 12px !important;
-}
-
-@media (max-width: 640px) {
-  .profile-phone-input .profile-phone-code {
-    flex-basis: 58px !important;
-    width: 58px !important;
-    min-width: 58px !important;
-  }
-}
-
 /* ===== BUSINESS BOOKINGS ===== */
 
 .business-bookings-page {
@@ -26431,3 +26380,519 @@ body {
   font-size: 12px;
   font-weight: 600;
 }
+
+
+
+
+/* Business dashboard phone field — single final layout */
+.profile-contact-column .profile-phone-input {
+  display: flex !important;
+  width: 100% !important;
+  gap: 0 !important;
+}
+
+.profile-contact-column .profile-phone-input .profile-phone-code {
+  flex: 0 0 58px !important;
+  width: 58px !important;
+  min-width: 58px !important;
+  max-width: 58px !important;
+  padding: 0 2px !important;
+}
+
+.profile-contact-column .profile-phone-input > input.profile-phone-number {
+  flex: 1 1 0 !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 4px !important;
+  box-sizing: border-box !important;
+  text-align: left !important;
+  text-indent: 0 !important;
+  letter-spacing: 0 !important;
+  font-size: 15px !important;
+}
+
+/* Move phone number closer to country code */
+.profile-contact-column .profile-phone-input > input.profile-phone-number {
+  margin-left: -10px !important;
+  padding-left: 0 !important;
+}
+
+/* Match country code size with phone number and align it closer */
+.profile-contact-column .profile-phone-input .profile-phone-code {
+  font-size: 15px !important;
+  padding-left: 6px !important;
+  padding-right: 0 !important;
+}
+
+/* Divider between country code and phone number */
+.profile-contact-column .profile-phone-input .profile-phone-code {
+  border-right: 1px solid #d5ddda !important;
+  margin-right: 4px !important;
+}
+
+/* Fix divider overlap with phone number */
+.profile-contact-column .profile-phone-input > input.profile-phone-number {
+  margin-left: 0 !important;
+  padding-left: 8px !important;
+}
+
+.profile-contact-column .profile-phone-input .profile-phone-code {
+  border-right: 1px solid #d5ddda !important;
+  margin-right: 0 !important;
+}
+
+/* Match business email text size with phone number */
+.profile-contact-column .profile-inline-field input[type="email"] {
+  font-size: 15px !important;
+  letter-spacing: 0 !important;
+}
+
+/* iPhone Safari: prevent automatic zoom when typing */
+@media screen and (max-width: 768px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+/* iPhone Safari: keep viewport stable across form navigation */
+@media screen and (max-width: 768px) {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: max(16px, 1em) !important;
+  }
+}
+
+/* iPhone: treat country code + phone number as one stable phone field */
+.profile-contact-column .profile-phone-input {
+  display: flex !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  isolation: isolate;
+}
+
+.profile-contact-column .profile-phone-input .profile-phone-code {
+  flex: 0 0 58px !important;
+  width: 58px !important;
+  min-width: 58px !important;
+  max-width: 58px !important;
+  height: 100% !important;
+  font-size: 16px !important;
+  -webkit-text-size-adjust: 100%;
+}
+
+.profile-contact-column .profile-phone-input .profile-phone-number {
+  flex: 1 1 0 !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  font-size: 16px !important;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media screen and (max-width: 768px) {
+  .profile-contact-column .profile-phone-input {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+}
+
+/* Customer Profile — My Activity */
+.profile-my-activity-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 20px;
+  text-decoration: none;
+  color: inherit;
+  background: #fff;
+  border: 1px solid rgba(17, 17, 17, 0.09);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-my-activity-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(17, 17, 17, 0.08);
+}
+
+.profile-my-activity-card > svg:last-child {
+  margin-left: auto;
+  opacity: 0.55;
+}
+
+.profile-my-activity-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.profile-my-activity-copy strong {
+  font-size: 16px;
+  font-weight: 750;
+}
+
+.profile-my-activity-copy span {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.profile-stat-icon.purple {
+  background: rgba(124, 58, 237, 0.12);
+  color: #7c3aed;
+}
+
+/* Profile – My Activity card layout fix */
+.profile-page .profile-my-activity-card {
+  display: block !important;
+  width: 100% !important;
+}
+
+.profile-page .profile-my-activity-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+
+.profile-page .profile-my-activity-copy {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+  min-width: 0 !important;
+}
+
+.profile-page .profile-my-activity-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  width: 100% !important;
+  margin-top: 18px !important;
+  border-top: 1px solid rgba(17, 17, 17, 0.08) !important;
+}
+
+.profile-page .profile-activity-item {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  width: 100% !important;
+  padding: 16px 0 !important;
+  border-bottom: 1px solid rgba(17, 17, 17, 0.08) !important;
+}
+
+.profile-page .profile-activity-item:last-child {
+  border-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.profile-page .profile-activity-item-icon {
+  flex: 0 0 38px !important;
+  width: 38px !important;
+  height: 38px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 12px !important;
+  background: rgba(124, 58, 237, 0.1) !important;
+  color: #7c3aed !important;
+}
+
+.profile-page .profile-activity-item-copy {
+  min-width: 0 !important;
+  flex: 1 !important;
+}
+
+.profile-page .profile-activity-item-copy strong {
+  display: block !important;
+}
+
+.profile-page .profile-activity-item-copy p {
+  margin: 5px 0 6px !important;
+  line-height: 1.45 !important;
+}
+
+.profile-page .profile-activity-item-copy span {
+  font-size: 13px !important;
+  opacity: 0.65 !important;
+}
+
+.profile-page .profile-activity-empty {
+  margin-top: 18px !important;
+  padding-top: 16px !important;
+  border-top: 1px solid rgba(17, 17, 17, 0.08) !important;
+}
+
+/* =========================================================
+   PROFILE ACTIVITY – ACTION-SPECIFIC ICON COLOURS
+   ========================================================= */
+
+.profile-page .profile-activity-item-icon.activity-booking {
+  background: rgba(41, 171, 135, 0.12) !important;
+  color: #16856a !important;
+}
+
+.profile-page .profile-activity-item-icon.activity-enquiry {
+  background: rgba(0, 55, 255, 0.10) !important;
+  color: #0037ff !important;
+}
+
+.profile-page .profile-activity-item-icon.activity-enquiry_reply {
+  background: rgba(124, 58, 237, 0.10) !important;
+  color: #7c3aed !important;
+}
+
+.profile-page .profile-activity-item-icon.activity-review {
+  background: rgba(245, 158, 11, 0.13) !important;
+  color: #d97706 !important;
+}
+
+.profile-page .profile-activity-item-icon.activity-review_reply {
+  background: rgba(236, 72, 153, 0.10) !important;
+  color: #db2777 !important;
+}
+
+/* =========================================================
+   PROFILE – MY ACTIVITY BLACK HEADING
+   ========================================================= */
+
+.profile-page .profile-my-activity-header {
+  background: #111 !important;
+  color: #fff !important;
+  padding: 18px 20px !important;
+  border-radius: 18px !important;
+  margin: -2px -2px 0 !important;
+}
+
+.profile-page .profile-my-activity-header .profile-stat-icon {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #00e676 !important;
+}
+
+.profile-page .profile-my-activity-header .profile-my-activity-copy strong {
+  color: #fff !important;
+  font-size: 17px !important;
+}
+
+.profile-page .profile-my-activity-header .profile-my-activity-copy span {
+  color: rgba(255, 255, 255, 0.62) !important;
+  font-size: 13px !important;
+}
+
+/* =========================================================
+   PROFILE ACTIVITY – SHOW MORE
+   ========================================================= */
+
+.profile-page .profile-activity-show-more {
+  width: 100%;
+  margin-top: 14px;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #f6f6f4;
+  color: #171717;
+  border: 1px solid rgba(17, 17, 17, 0.1);
+  border-radius: 14px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+
+.profile-page .profile-activity-show-more:hover {
+  background: #eeeeeb;
+  transform: translateY(-1px);
+}
+
+.profile-page .profile-activity-show-more svg {
+  transition: transform 0.2s ease;
+}
+
+/* Minimal My Activity – Show More */
+.profile-page .profile-activity-show-more {
+  margin: 14px auto 0;
+  padding: 9px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: fit-content;
+
+  background: rgba(41, 171, 135, 0.08);
+  color: #18785f;
+  border: 1px solid rgba(41, 171, 135, 0.2);
+  border-radius: 999px;
+
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.profile-page .profile-activity-show-more:hover {
+  background: rgba(41, 171, 135, 0.14);
+  border-color: rgba(41, 171, 135, 0.35);
+  transform: translateY(-1px);
+}
+
+.profile-page .profile-activity-show-more:active {
+  transform: translateY(0);
+}
+
+.profile-page .profile-activity-show-more svg {
+  opacity: 0.8;
+  transition: transform 0.2s ease;
+}
+
+/* Desktop — reduce Activities width */
+@media (min-width: 769px) {
+  .profile-activities {
+    max-width: 760px !important;
+  }
+}
+
+
+/* Desktop — Activities slightly narrower */
+@media (min-width: 769px) {
+  .profile-activities {
+    max-width: 680px !important;
+  }
+}
+
+
+/* Desktop — make Activities card narrower */
+@media (min-width: 769px) {
+  .profile-activities {
+    width: 650px !important;
+    max-width: 650px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+
+/* Desktop — make Activities card more compact */
+@media (min-width: 769px) {
+  .profile-activities {
+    width: 560px !important;
+    max-width: 560px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+/* Desktop — actual My Activity card width */
+@media (min-width: 769px) {
+  .profile-my-activity-card {
+    width: 560px !important;
+    max-width: 560px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* Desktop — My Activity + Discover side by side */
+@media (min-width: 769px) {
+  .profile-activity-discover-layout {
+    display: grid !important;
+    grid-template-columns: 650px minmax(0, 1fr) !important;
+    gap: 28px !important;
+    align-items: start !important;
+  }
+
+  .profile-activity-discover-layout > section {
+    min-width: 0 !important;
+  }
+
+  .profile-activity-discover-layout .profile-my-activity-card {
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .profile-activity-discover-layout .profile-discover {
+    margin-top: 34px !important;
+  }
+
+  .profile-activity-discover-layout .vybe-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* Mobile — preserve existing vertical layout */
+@media (max-width: 768px) {
+  .profile-activity-discover-layout {
+    display: block !important;
+  }
+}
+
+
+/* Profile: Discover left, My Activity right on desktop */
+@media (min-width: 769px) {
+  .profile-activity-discover-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .profile-activity-discover-layout .profile-discover {
+    order: 1;
+    margin-top: 0 !important;
+  }
+
+  .profile-activity-discover-layout .profile-my-activity-card {
+    order: 2;
+    margin-top: 0 !important;
+  }
+}
+
+/* Profile: Match My Activity height with Discover section on desktop */
+@media (min-width: 769px) {
+  .profile-activity-discover-layout {
+    align-items: stretch !important;
+  }
+
+  .profile-activity-discover-layout > .profile-my-activity-card {
+    height: auto !important;
+    min-height: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* Desktop: Keep My Activity equal to Discover section height */
+@media (min-width: 769px) {
+  .profile-activity-discover-layout .profile-my-activity-card {
+    height: 620px !important;
+    max-height: 620px !important;
+    overflow-y: auto !important;
+  }
+}
+
+
+/* Profile: slightly more breathing room above footer */
+.profile-page {
+  padding-bottom: 28px !important;
+}
+
+@media (max-width: 768px) {
+  .profile-page {
+    padding-bottom: 96px !important;
+  }
+}
+

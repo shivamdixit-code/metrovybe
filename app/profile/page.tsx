@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
+  Activity,
   ArrowRight,
   Bell,
   Bookmark,
@@ -12,6 +13,9 @@ import {
   HelpCircle,
   LogOut,
   MapPin,
+  MessageCircle,
+  Star,
+  CheckCircle2,
   Pencil,
   Search,
   Settings,
@@ -23,6 +27,21 @@ import { useRouter } from "next/navigation";
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
 import { getToken, getUser, logout, type AuthUser } from "@/lib/auth";
+import {
+  getCustomerBookings,
+  getCustomerEnquiries,
+  getMyReviews,
+  type Enquiry,
+  type Review,
+} from "@/lib/api";
+
+type ProfileActivity = {
+  id: string;
+  type: "booking" | "enquiry" | "enquiry_reply" | "review" | "review_reply";
+  title: string;
+  message: string;
+  date?: string | null;
+};
 
 export default function Profile() {
   const router = useRouter();
@@ -30,6 +49,9 @@ export default function Profile() {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [activityLoading, setActivityLoading] = useState(true);
+  const [showAllActivities, setShowAllActivities] = useState(false);
+  const [activities, setActivities] = useState<ProfileActivity[]>([]);
 
   useEffect(() => {
     const token = getToken();
@@ -50,6 +72,109 @@ export default function Profile() {
     setUser(currentUser);
     setCheckingAuth(false);
   }, [router]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    let active = true;
+
+    const loadActivity = async () => {
+      try {
+        setActivityLoading(true);
+
+        const [enquiryResult, reviewResult, bookingResult] =
+          await Promise.all([
+            getCustomerEnquiries(),
+            getMyReviews(),
+            getCustomerBookings(),
+          ]);
+
+        const timeline: ProfileActivity[] = [];
+
+        // Bookings made by the customer
+        (bookingResult.bookings || []).forEach((booking: any) => {
+          timeline.push({
+            id: `booking-${booking._id}`,
+            type: "booking",
+            title: "Booking request sent",
+            message: `You requested a booking for ${booking.listingTitle || booking.listing?.title || "a place"}.`,
+            date: booking.createdAt || booking.bookingDate,
+          });
+        });
+
+        // Enquiries sent + business replies
+        (enquiryResult.enquiries || []).forEach((enquiry: Enquiry) => {
+          const listingTitle =
+            typeof enquiry.listing === "object" && enquiry.listing
+              ? enquiry.listing.title
+              : "a place";
+
+          timeline.push({
+            id: `enquiry-${enquiry._id}`,
+            type: "enquiry",
+            title: "Enquiry sent",
+            message: `You asked about ${listingTitle || "a place"}.`,
+            date: enquiry.createdAt,
+          });
+
+          if (enquiry.businessReply?.message) {
+            timeline.push({
+              id: `enquiry-reply-${enquiry._id}`,
+              type: "enquiry_reply",
+              title: "Business replied to your enquiry",
+              message: enquiry.businessReply.message,
+              date: enquiry.businessReply.repliedAt || enquiry.updatedAt,
+            });
+          }
+        });
+
+        // Reviews given + business replies
+        (reviewResult.reviews || []).forEach((review: any) => {
+          const listingTitle =
+            typeof review.listing === "object" && review.listing
+              ? review.listing.title
+              : "a place";
+
+          timeline.push({
+            id: `review-${review._id}`,
+            type: "review",
+            title: "Feedback shared",
+            message: `You shared your feedback for ${listingTitle || "your experience"}.`,
+            date: review.createdAt,
+          });
+
+          if (review.businessReply?.message) {
+            timeline.push({
+              id: `review-reply-${review._id}`,
+              type: "review_reply",
+              title: "Business replied to your feedback",
+              message: review.businessReply.message,
+              date: review.businessReply.repliedAt || review.updatedAt,
+            });
+          }
+        });
+
+        timeline.sort(
+          (a, b) =>
+            new Date(b.date || 0).getTime() -
+            new Date(a.date || 0).getTime()
+        );
+
+        if (active) setActivities(timeline);
+      } catch (error) {
+        console.error("Failed to load profile activity:", error);
+        if (active) setActivities([]);
+      } finally {
+        if (active) setActivityLoading(false);
+      }
+    };
+
+    loadActivity();
+
+    return () => {
+      active = false;
+    };
+  }, [user]);
 
   const handleLogout = () => {
     setLoggingOut(true);
@@ -181,8 +306,8 @@ export default function Profile() {
               <Settings size={19} />
             </button>
           </div>
-        </section>
 
+        </section>
         {/* ACTIVITY */}
         <section style={{ marginTop: 34 }}>
           <div className="profile-heading-row">
@@ -253,7 +378,97 @@ export default function Profile() {
               <ChevronRight size={19} />
             </Link>
           </div>
-        </section>
+
+        <div className="profile-activity-discover-layout">
+          <div
+            className="profile-my-activity-card"
+            style={{
+              marginTop: 16,
+              borderRadius: 22,
+              padding: 20,
+            }}
+          >
+            <div className="profile-my-activity-header">
+              <div className="profile-stat-icon purple">
+                <Activity size={21} />
+              </div>
+              <div className="profile-my-activity-copy">
+                <strong>My Activity</strong>
+                <span>Enquiry replies & review responses</span>
+              </div>
+            </div>
+
+            {activityLoading ? (
+              <div className="profile-activity-empty">
+                Loading your latest activity...
+              </div>
+            ) : activities.length === 0 ? (
+              <div className="profile-activity-empty">
+                No replies yet. Business responses to your enquiries and reviews
+                will appear here.
+              </div>
+            ) : (
+              <>
+                <div className="profile-activity-list">
+                {activities
+                  .slice(0, showAllActivities ? activities.length : 5)
+                  .map((activity) => (
+                  <div className="profile-activity-item" key={activity.id}>
+                    <div
+                      className={`profile-activity-item-icon activity-${activity.type}`}
+                    >
+                      {activity.type === "booking" ? (
+                        <CalendarDays size={17} />
+                      ) : activity.type === "enquiry" ? (
+                        <MessageCircle size={17} />
+                      ) : activity.type === "enquiry_reply" ? (
+                        <MessageCircle size={17} />
+                      ) : activity.type === "review" ? (
+                        <Star size={17} />
+                      ) : (
+                        <Heart size={17} />
+                      )}
+                    </div>
+                    <div className="profile-activity-item-copy">
+                      <strong>{activity.title}</strong>
+                      <p>{activity.message}</p>
+                      {activity.date ? (
+                        <span>
+                          {new Date(activity.date).toLocaleDateString("en-IN", {
+                            day: "numeric",
+                            month: "short",
+                          })}
+                        </span>
+                      ) : null}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {activities.length > 5 ? (
+                <button
+                  type="button"
+                  className="profile-activity-show-more"
+                  onClick={() => setShowAllActivities((current) => !current)}
+                >
+                  <span>
+                    {showAllActivities
+                      ? "Show less"
+                      : `Show all ${activities.length} activities`}
+                  </span>
+                  <ChevronRight
+                    size={17}
+                    style={{
+                      transform: showAllActivities
+                        ? "rotate(-90deg)"
+                        : "rotate(90deg)",
+                    }}
+                  />
+                </button>
+              ) : null}
+              </>
+            )}
+          </div>
 
         {/* DISCOVER */}
         <section className="profile-discover" style={{ marginTop: 42 }}>
@@ -353,6 +568,9 @@ export default function Profile() {
               </div>
             </Link>
           </div>
+        </section>
+
+        </div>
         </section>
 
       </main>
