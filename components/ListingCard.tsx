@@ -34,7 +34,7 @@ type Listing = {
 
 export function ListingCard({
   item,
-  featured = true,
+  featured = false,
 }: {
   item: Listing;
   featured?: boolean;

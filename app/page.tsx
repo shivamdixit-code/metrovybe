@@ -98,7 +98,11 @@ export default async function Home() {
 
           <div className="cards">
             {listings.slice(0, 3).map((x) => (
-              <ListingCard key={x.id} item={x} />
+              <ListingCard
+                key={x.id}
+                item={x}
+                featured={x.featured === true}
+              />
             ))}
           </div>
 
