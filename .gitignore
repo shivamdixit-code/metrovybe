@@ -5,3 +5,9 @@ node_modules/
 .env.local
 .vercel
 .env*
+
+# Local TypeScript/build artifacts
+*.tsbuildinfo
+
+# Local code backups
+*.backup.tsx
