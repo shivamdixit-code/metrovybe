@@ -9,6 +9,8 @@ import {
   MapPin,
   Clock3,
   Check,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import { BottomNav } from "@/components/BottomNav";
@@ -37,6 +39,10 @@ type Enquiry = {
     email?: string;
     phone?: string;
   };
+  businessReply?: {
+    message?: string;
+    repliedAt?: string | null;
+  };
 };
 
 function formatDate(value: string) {
@@ -57,6 +63,182 @@ export default function BusinessEnquiriesPage() {
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [replyText, setReplyText] = useState<Record<string, string>>({});
+  const [replyLoading, setReplyLoading] = useState<string | null>(null);
+  const [editingReply, setEditingReply] = useState<string | null>(null);
+  const [editReplyText, setEditReplyText] = useState<Record<string, string>>({});
+
+  const sendReply = async (id: string) => {
+    const token = getToken();
+    const message = (replyText[id] || "").trim();
+
+    if (!token || !message || replyLoading === id) return;
+
+    try {
+      setReplyLoading(id);
+
+      const response = await fetch(
+        `${API_URL}/api/enquiries/${id}/reply`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to send reply");
+      }
+
+      setEnquiries((current) =>
+        current.map((item) =>
+          item._id === id
+            ? {
+                ...item,
+                status: "replied",
+                businessReply: data?.enquiry?.businessReply || {
+                  message,
+                  repliedAt: new Date().toISOString(),
+                },
+              }
+            : item
+        )
+      );
+
+      setReplyText((current) => ({
+        ...current,
+        [id]: "",
+      }));
+    } catch (err) {
+      console.error(err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to send reply"
+      );
+    } finally {
+      setReplyLoading(null);
+    }
+  };
+
+
+  const editReply = async (id: string) => {
+    const token = getToken();
+    const message = (editReplyText[id] || "").trim();
+
+    if (!token || !message || replyLoading === id) return;
+
+    try {
+      setReplyLoading(id);
+
+      const response = await fetch(
+        `${API_URL}/api/enquiries/${id}/reply`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to update reply");
+      }
+
+      setEnquiries((current) =>
+        current.map((item) =>
+          item._id === id
+            ? {
+                ...item,
+                status: "replied",
+                businessReply:
+                  data?.enquiry?.businessReply || {
+                    message,
+                    repliedAt:
+                      item.businessReply?.repliedAt ||
+                      new Date().toISOString(),
+                  },
+              }
+            : item
+        )
+      );
+
+      setEditingReply(null);
+    } catch (err) {
+      console.error(err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to update reply"
+      );
+    } finally {
+      setReplyLoading(null);
+    }
+  };
+
+  const deleteReply = async (id: string) => {
+    const token = getToken();
+
+    if (!token || replyLoading === id) return;
+
+    if (!window.confirm("Delete this reply?")) return;
+
+    try {
+      setReplyLoading(id);
+
+      const response = await fetch(
+        `${API_URL}/api/enquiries/${id}/reply`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to delete reply");
+      }
+
+      setEnquiries((current) =>
+        current.map((item) =>
+          item._id === id
+            ? {
+                ...item,
+                status: "read",
+                businessReply: undefined,
+              }
+            : item
+        )
+      );
+
+      setEditReplyText((current) => ({
+        ...current,
+        [id]: "",
+      }));
+      setEditingReply(null);
+    } catch (err) {
+      console.error(err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to delete reply"
+      );
+    } finally {
+      setReplyLoading(null);
+    }
+  };
 
   const loadEnquiries = useCallback(async () => {
     const token = getToken();
@@ -270,11 +452,25 @@ export default function BusinessEnquiriesPage() {
                       </div>
                     </div>
 
-                    <span
-                      className={`business-enquiry-status ${enquiry.status}`}
-                    >
-                      {isNew ? "New" : enquiry.status}
-                    </span>
+                    <div className="business-enquiry-status-column">
+                      <span
+                        className={`business-enquiry-status ${enquiry.status}`}
+                      >
+                        {isNew ? "New" : enquiry.status}
+                      </span>
+
+                      {isNew && (
+                        <button
+                          type="button"
+                          className="business-enquiry-read"
+                          onClick={() => markRead(enquiry._id)}
+                          aria-label="Mark as read"
+                          title="Mark as read"
+                        >
+                          <Check size={15} strokeWidth={2.2} />
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   {enquiry.listing?.title && (
@@ -309,16 +505,146 @@ export default function BusinessEnquiriesPage() {
                   <div className="business-enquiry-message">
                     <p>{enquiry.message}</p>
                   </div>
-{isNew && (
-                    <button
-                      type="button"
-                      className="business-enquiry-read"
-                      onClick={() => markRead(enquiry._id)}
-                    >
-                      <Check size={16} />
-                      Mark as read
-                    </button>
+
+                  {enquiry.businessReply?.message ? (
+                    <div className="business-enquiry-reply">
+                      {editingReply === enquiry._id ? (
+                        <>
+                          <div className="business-enquiry-reply-header">
+                            <strong>Edit reply</strong>
+                          </div>
+
+                          <textarea
+                            className="business-enquiry-edit-reply-input"
+                            value={
+                              editReplyText[enquiry._id] ??
+                              enquiry.businessReply.message
+                            }
+                            onChange={(event) =>
+                              setEditReplyText((current) => ({
+                                ...current,
+                                [enquiry._id]: event.target.value,
+                              }))
+                            }
+                            maxLength={2000}
+                            rows={3}
+                            disabled={replyLoading === enquiry._id}
+                          />
+
+                          <div className="business-enquiry-reply-actions">
+                            <button
+                              type="button"
+                              className="business-enquiry-reply-cancel"
+                              onClick={() => setEditingReply(null)}
+                              disabled={replyLoading === enquiry._id}
+                            >
+                              Cancel
+                            </button>
+
+                            <button
+                              type="button"
+                              className="business-enquiry-reply-save"
+                              onClick={() => editReply(enquiry._id)}
+                              disabled={
+                                replyLoading === enquiry._id ||
+                                !(editReplyText[enquiry._id] ??
+                                  enquiry.businessReply.message).trim()
+                              }
+                            >
+                              {replyLoading === enquiry._id
+                                ? "Saving..."
+                                : "Save"}
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="business-enquiry-reply-header">
+                            <strong>Your reply</strong>
+
+                            <div className="business-enquiry-reply-tools">
+                              {enquiry.businessReply.repliedAt && (
+                                <span>
+                                  {formatDate(
+                                    enquiry.businessReply.repliedAt
+                                  )}
+                                </span>
+                              )}
+
+                              <button
+                                type="button"
+                                className="business-enquiry-reply-edit"
+                                onClick={() => {
+                                  setEditingReply(enquiry._id);
+                                  setEditReplyText((current) => ({
+                                    ...current,
+                                    [enquiry._id]:
+                                      enquiry.businessReply?.message || "",
+                                  }));
+                                }}
+                                aria-label="Edit reply"
+                                title="Edit reply"
+                              >
+                                <Pencil size={14} strokeWidth={2} />
+                              </button>
+
+                              <button
+                                type="button"
+                                className="business-enquiry-reply-delete"
+                                onClick={() => deleteReply(enquiry._id)}
+                                disabled={replyLoading === enquiry._id}
+                                aria-label="Delete reply"
+                                title="Delete reply"
+                              >
+                                <Trash2 size={14} strokeWidth={2} />
+                              </button>
+                            </div>
+                          </div>
+
+                          <p>{enquiry.businessReply.message}</p>
+                        </>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="business-enquiry-reply-box">
+                      <textarea
+                        value={replyText[enquiry._id] || ""}
+                        onChange={(event) =>
+                          setReplyText((current) => ({
+                            ...current,
+                            [enquiry._id]: event.target.value,
+                          }))
+                        }
+                        placeholder="Write a reply to this customer..."
+                        maxLength={2000}
+                        rows={3}
+                        disabled={replyLoading === enquiry._id}
+                      />
+
+                      <div className="business-enquiry-reply-footer">
+                        <span>
+                          {(replyText[enquiry._id] || "").length}/2000
+                        </span>
+
+                        <button
+                          type="button"
+                          className="business-enquiry-send-reply"
+                          disabled={
+                            replyLoading === enquiry._id ||
+                            !(replyText[enquiry._id] || "").trim()
+                          }
+                          onClick={() => sendReply(enquiry._id)}
+                        >
+                          <MessageSquare size={15} />
+                          {replyLoading === enquiry._id
+                            ? "Sending..."
+                            : "Send Reply"}
+                        </button>
+                      </div>
+                    </div>
                   )}
+
+
                 </article>
               );
             })}

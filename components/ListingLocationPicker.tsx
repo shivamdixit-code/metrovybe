@@ -532,6 +532,18 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
 
 
 
+      <div className="mv-listing-location-confirm-wrap">
+        <button
+          type="button"
+          className="mv-listing-location-confirm"
+          onClick={confirmLocation}
+          disabled={saving}
+        >
+          {saving ? "Saving..." : "Confirm Location"}
+          {saving ? null : <span>→</span>}
+        </button>
+      </div>
+
       <style jsx global>{`
         .mv-step5 {
           width: 100%;
@@ -539,10 +551,42 @@ const ListingLocationPicker = forwardRef<ListingLocationPickerHandle, Props>(
           color: #151918;
         }
 
+        .mv-listing-location-confirm-wrap {
+          padding: 12px 0 2px;
+          flex: 0 0 auto;
+        }
+
+        .mv-listing-location-confirm {
+          width: min(420px, 82%);
+          min-height: 48px;
+          margin: 0 auto;
+          border: 0;
+          border-radius: 14px;
+          background: #176b55;
+          color: #fff;
+          font-size: 14px;
+          font-weight: 800;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+        }
+
+        .mv-listing-location-confirm:disabled {
+          opacity: .65;
+          cursor: wait;
+        }
+
+        .mv-listing-location-confirm span {
+          font-size: 19px;
+          line-height: 1;
+        }
+
         .mv-step5-map-shell {
           position: relative;
           width: 100%;
-          height: 180px;
+          height: 220px;
           overflow: hidden;
           border-radius: 20px;
           background: #f4f7f6;

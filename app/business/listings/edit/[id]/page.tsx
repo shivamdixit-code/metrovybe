@@ -3,6 +3,7 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { FormEvent, useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { getToken } from "@/lib/auth";
 
 const LocationPicker = dynamic(
@@ -15,9 +16,7 @@ const API_URL =
 
 type Business = {
   businessName: string;
-  category?: Category;
   verificationStatus?: string;
-  phone?: string;
 };
 
 type SelectedLocation = {
@@ -27,22 +26,6 @@ type SelectedLocation = {
 };
 
 type Category = "stay" | "eat" | "live" | "move" | "go";
-
-const getCurrencySymbol = (phone?: string) => {
-  const value = String(phone || "").replace(/[^+0-9]/g, "");
-
-  if (value.startsWith("+91")) return "₹";
-  if (value.startsWith("+1")) return "$";
-  if (value.startsWith("+44")) return "£";
-  if (value.startsWith("+971")) return "د.إ";
-  if (value.startsWith("+65")) return "S$";
-  if (value.startsWith("+61")) return "A$";
-  if (value.startsWith("+64")) return "NZ$";
-  if (value.startsWith("+353")) return "€";
-  if (value.startsWith("+49") || value.startsWith("+33") || value.startsWith("+39") || value.startsWith("+34")) return "€";
-
-  return "₹";
-};
 
 const CATEGORIES: {
   id: Category;
@@ -136,7 +119,6 @@ function Field({
   placeholder,
   type = "text",
   full = false,
-  currencySymbol,
 }: {
   label: string;
   required?: boolean;
@@ -145,7 +127,6 @@ function Field({
   placeholder?: string;
   type?: string;
   full?: boolean;
-  currencySymbol?: string;
 }) {
   return (
     <div className={full ? "field full" : "field"}>
@@ -154,38 +135,24 @@ function Field({
         {required && <i> *</i>}
       </label>
 
-      {currencySymbol ? (
-        <div className="currency-input">
-          <span className="currency-symbol">{currencySymbol}</span>
-          <input
-            type={type}
-            required={required}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder={placeholder}
-            inputMode="numeric"
-          />
-        </div>
-      ) : (
-        <input
-          type={type}
-          required={required}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-        />
-      )}
+      <input
+        type={type}
+        required={required}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+      />
     </div>
   );
 }
 
-export default function NewBusinessListing() {
+export default function EditBusinessListing() {
+  const params = useParams<{ id: string }>();
+  const listingId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const [loadingListing, setLoadingListing] = useState(true);
   const [business, setBusiness] = useState<Business | null>(null);
   const [loadingBusiness, setLoadingBusiness] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [uploadingMainImage, setUploadingMainImage] = useState(false);
-  const [uploadingAdditionalImages, setUploadingAdditionalImages] = useState(false);
-  const [photoUploadError, setPhotoUploadError] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -210,8 +177,6 @@ export default function NewBusinessListing() {
 
   const [details, setDetails] =
     useState<Record<string, string>>({});
-
-  const currencySymbol = getCurrencySymbol(business?.phone);
 
   useEffect(() => {
     async function loadBusiness() {
@@ -240,25 +205,6 @@ export default function NewBusinessListing() {
 
         const data = await response.json();
         setBusiness(data.business);
-
-        const savedCategory = String(
-          data.business?.category || ""
-        )
-          .trim()
-          .toLowerCase();
-
-        const validCategories: Category[] = [
-          "stay", "eat", "live", "move", "go"
-        ];
-
-        if (validCategories.includes(savedCategory as Category)) {
-          setCategory(savedCategory as Category);
-        } else {
-          console.warn(
-            "Business category received:",
-            data.business?.category
-          );
-        }
       } catch (err) {
         setError(
           err instanceof Error
@@ -273,24 +219,95 @@ export default function NewBusinessListing() {
     loadBusiness();
   }, []);
 
-  function sanitizeCurrency(value: string) {
-    const cleaned = value.replace(/[^0-9.]/g, "");
-    const parts = cleaned.split(".");
-    return parts.length > 1
-      ? `${parts[0]}.${parts.slice(1).join("")}`
-      : cleaned;
-  }
+  useEffect(() => {
+    async function loadListing() {
+      try {
+        const token = getToken();
+
+        if (!token) {
+          window.location.href = "/login";
+          return;
+        }
+
+        const response = await fetch(
+          `${API_URL}/api/listings/business/mine`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Unable to load listing");
+        }
+
+        const listing = data.find(
+          (item: any) => item._id === listingId
+        );
+
+        if (!listing) {
+          throw new Error("Listing not found");
+        }
+
+        const serviceDetails = listing.serviceDetails || {};
+        const existingOffering = serviceDetails.offering || "";
+
+        setCategory(listing.category || "");
+        setOffering(existingOffering);
+
+        setForm({
+          title: listing.title || "",
+          description: listing.description || "",
+          location: listing.location || "",
+          price: listing.price || "",
+          image: listing.image || "",
+          images: Array.isArray(listing.images)
+            ? listing.images.join(", ")
+            : "",
+          tags: Array.isArray(listing.tags)
+            ? listing.tags.join(", ")
+            : "",
+        });
+
+        const { offering: _offering, ...otherDetails } = serviceDetails;
+        setDetails(otherDetails);
+
+        if (
+          typeof listing.latitude === "number" &&
+          typeof listing.longitude === "number"
+        ) {
+          setSelectedLocation({
+            latitude: listing.latitude,
+            longitude: listing.longitude,
+            address: listing.location || "",
+          });
+        }
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Unable to load listing"
+        );
+      } finally {
+        setLoadingListing(false);
+      }
+    }
+
+    if (listingId) {
+      loadListing();
+    }
+  }, [listingId]);
 
   function updateField(
     field: keyof typeof form,
     value: string
   ) {
-        const cleanedValue =
-      field === "price" ? sanitizeCurrency(value) : value;
-
     setForm((current) => ({
       ...current,
-      [field]: cleanedValue,
+      [field]: value,
     }));
   }
 
@@ -311,124 +328,6 @@ export default function NewBusinessListing() {
     setForm((current) => ({
       ...current,
       title: "",
-    }));
-  }
-
-  async function uploadListingImage(file: File): Promise<string> {
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
-
-    if (!allowedTypes.includes(file.type)) {
-      throw new Error("Please upload a JPG, PNG or WEBP image.");
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      throw new Error("Each image must be smaller than 5MB.");
-    }
-
-    const formData = new FormData();
-    formData.append("image", file);
-
-    const response = await fetch(`${API_URL}/api/upload/image`, {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok || !data?.url) {
-      throw new Error(data?.message || "Unable to upload image.");
-    }
-
-    return data.url;
-  }
-
-  async function handleMainImageUpload(
-    event: React.ChangeEvent<HTMLInputElement>
-  ) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setPhotoUploadError("");
-
-    try {
-      setUploadingMainImage(true);
-      const url = await uploadListingImage(file);
-      updateField("image", url);
-    } catch (err) {
-      setPhotoUploadError(
-        err instanceof Error ? err.message : "Unable to upload image."
-      );
-    } finally {
-      setUploadingMainImage(false);
-      event.target.value = "";
-    }
-  }
-
-  async function handleAdditionalImagesUpload(
-    event: React.ChangeEvent<HTMLInputElement>
-  ) {
-    const files = Array.from(event.target.files || []);
-    if (!files.length) return;
-
-    const existingImages = form.images
-      .split(",")
-      .map((url) => url.trim())
-      .filter(Boolean);
-
-    const remainingSlots = 4 - existingImages.length;
-
-    setPhotoUploadError("");
-
-    if (remainingSlots <= 0) {
-      setPhotoUploadError("You can upload a maximum of 4 additional images.");
-      event.target.value = "";
-      return;
-    }
-
-    const filesToUpload = files.slice(0, remainingSlots);
-
-    if (files.length > remainingSlots) {
-      setPhotoUploadError(
-        `Only ${remainingSlots} more image${remainingSlots === 1 ? "" : "s"} can be added (maximum 4).`
-      );
-    }
-
-    try {
-      setUploadingAdditionalImages(true);
-
-      const urls = await Promise.all(
-        filesToUpload.map((file) => uploadListingImage(file))
-      );
-
-      setForm((current) => {
-        const existing = current.images
-          .split(",")
-          .map((url) => url.trim())
-          .filter(Boolean);
-
-        return {
-          ...current,
-          images: [...existing, ...urls].slice(0, 4).join(", "),
-        };
-      });
-    } catch (err) {
-      setPhotoUploadError(
-        err instanceof Error ? err.message : "Unable to upload images."
-      );
-    } finally {
-      setUploadingAdditionalImages(false);
-      event.target.value = "";
-    }
-  }
-
-  function removeAdditionalImage(urlToRemove: string) {
-    setForm((current) => ({
-      ...current,
-      images: current.images
-        .split(",")
-        .map((url) => url.trim())
-        .filter((url) => url && url !== urlToRemove)
-        .join(", "),
     }));
   }
 
@@ -1011,17 +910,15 @@ export default function NewBusinessListing() {
           <Field
             label="Monthly rent"
             value={details.rent || ""}
-            onChange={(v) => updateDetail("rent", v.replace(/[^\d]/g, ""))}
-            placeholder={`e.g. ${currencySymbol}8,500`}
-            currencySymbol={currencySymbol}
+            onChange={(v) => updateDetail("rent", v)}
+            placeholder="e.g. ₹8,500"
           />
 
           <Field
             label="Security deposit"
             value={details.deposit || ""}
-            onChange={(v) => updateDetail("deposit", v.replace(/[^\d]/g, ""))}
-            placeholder={`e.g. ${currencySymbol}10,000`}
-            currencySymbol={currencySymbol}
+            onChange={(v) => updateDetail("deposit", v)}
+            placeholder="e.g. ₹10,000"
           />
 
           <SelectField
@@ -1082,10 +979,9 @@ export default function NewBusinessListing() {
             label="Price per meal"
             value={details.pricePerMeal || ""}
             onChange={(v) =>
-              updateDetail("pricePerMeal", v.replace(/[^\d]/g, ""))
+              updateDetail("pricePerMeal", v)
             }
-            placeholder={`e.g. ${currencySymbol}80`}
-            currencySymbol={currencySymbol}
+            placeholder="e.g. ₹80"
           />
 
           <SelectField
@@ -1132,10 +1028,9 @@ export default function NewBusinessListing() {
             label="Starting price"
             value={details.startingPrice || ""}
             onChange={(v) =>
-              updateDetail("startingPrice", v.replace(/[^\d]/g, ""))
+              updateDetail("startingPrice", v)
             }
-            placeholder={`e.g. ${currencySymbol}299`}
-            currencySymbol={currencySymbol}
+            placeholder="e.g. ₹299"
           />
 
           <Field
@@ -1189,10 +1084,9 @@ export default function NewBusinessListing() {
             label="Starting price"
             value={details.startingPrice || ""}
             onChange={(v) =>
-              updateDetail("startingPrice", v.replace(/[^\d]/g, ""))
+              updateDetail("startingPrice", v)
             }
-            placeholder={`e.g. ${currencySymbol}1,499`}
-            currencySymbol={currencySymbol}
+            placeholder="e.g. ₹1,499"
           />
 
           <SelectField
@@ -1245,10 +1139,9 @@ export default function NewBusinessListing() {
           label="Price"
           value={details.rentalPrice || ""}
           onChange={(v) =>
-            updateDetail("rentalPrice", v.replace(/[^\d]/g, ""))
+            updateDetail("rentalPrice", v)
           }
-          placeholder={`e.g. ${currencySymbol}200/day`}
-            currencySymbol={currencySymbol}
+          placeholder="e.g. ₹200/day"
         />
 
         <SelectField
@@ -1263,10 +1156,9 @@ export default function NewBusinessListing() {
           label="Security deposit"
           value={details.deposit || ""}
           onChange={(v) =>
-            updateDetail("deposit", v.replace(/[^\d]/g, ""))
+            updateDetail("deposit", v)
           }
-          placeholder={`e.g. ${currencySymbol}2,000`}
-            currencySymbol={currencySymbol}
+          placeholder="e.g. ₹2,000"
         />
 
         <Field
@@ -1352,9 +1244,9 @@ export default function NewBusinessListing() {
       };
 
       const response = await fetch(
-        `${API_URL}/api/listings`,
+        `${API_URL}/api/listings/${listingId}`,
         {
-          method: "POST",
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -1367,12 +1259,12 @@ export default function NewBusinessListing() {
 
       if (!response.ok) {
         throw new Error(
-          data.message || "Failed to submit listing"
+          data.message || "Failed to update listing"
         );
       }
 
       setMessage(
-        "Your listing has been submitted for MetroVybe review."
+        "Listing updated and submitted for MetroVybe review."
       );
 
       setForm({
@@ -1393,22 +1285,19 @@ export default function NewBusinessListing() {
       setError(
         err instanceof Error
           ? err.message
-          : "Failed to submit listing"
+          : "Failed to update listing"
       );
     } finally {
       setSubmitting(false);
     }
   }
 
-  if (loadingBusiness) {
+  if (loadingBusiness || loadingListing) {
     return (
       <main className="listing-page">
-        <div className="loading listing-page-loader">
-          <div className="listing-loader-dots" aria-label="Loading">
-            <span />
-            <span />
-            <span />
-          </div>
+        <div className="loading">
+          <div className="spinner" />
+          <p>Loading your business profile...</p>
         </div>
       </main>
     );
@@ -1429,10 +1318,9 @@ export default function NewBusinessListing() {
 
         <header className="page-header">
           <span>BUSINESS CENTER</span>
-          <h1>Create a listing</h1>
+          <h1>Edit listing</h1>
           <p>
-            Help nearby customers discover what your business
-            offers.
+            Update your listing details and keep your information accurate.
           </p>
         </header>
 
@@ -1504,14 +1392,14 @@ export default function NewBusinessListing() {
                   <button
                     key={item.id}
                     type="button"
-                    disabled
-                    aria-disabled="true"
                     className={
                       category === item.id
-                        ? "category-card active category-card-locked"
-                        : "category-card category-card-locked"
+                        ? "category-card active"
+                        : "category-card"
                     }
-                    title="Category is locked based on your business profile"
+                    onClick={() =>
+                      chooseCategory(item.id)
+                    }
                   >
                     <span className="category-icon">
                       {item.icon}
@@ -1627,10 +1515,9 @@ export default function NewBusinessListing() {
                     label="Starting price"
                     value={form.price}
                     onChange={(v) =>
-                      updateField("price", v.replace(/[^\d]/g, ""))
+                      updateField("price", v)
                     }
-                    placeholder={`e.g. ${currencySymbol}499`}
-            currencySymbol={currencySymbol}
+                    placeholder="e.g. ₹499"
                   />
 
                   <MultiSelectField
@@ -1733,93 +1620,27 @@ export default function NewBusinessListing() {
                   </div>
                 </div>
 
-                <div className="listing-photo-upload-grid">
-                  <div className="listing-photo-field">
-                    <label>Main image <i>*</i></label>
+                <div className="grid">
+                  <Field
+                    label="Main image URL"
+                    value={form.image}
+                    onChange={(v) =>
+                      updateField("image", v)
+                    }
+                    placeholder="https://..."
+                    full
+                  />
 
-                    {form.image ? (
-                      <div className="listing-main-image-preview">
-                        <img src={form.image} alt="Main listing preview" />
-                        <button
-                          type="button"
-                          onClick={() => updateField("image", "")}
-                          aria-label="Remove main image"
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ) : (
-                      <label className="listing-upload-dropzone">
-                        <input
-                          type="file"
-                          accept="image/jpeg,image/png,image/webp"
-                          onChange={handleMainImageUpload}
-                          disabled={uploadingMainImage}
-                        />
-                        <span className="listing-upload-icon">↑</span>
-                        <strong>
-                          {uploadingMainImage
-                            ? "Uploading..."
-                            : "Upload main image"}
-                        </strong>
-                        <small>JPG, PNG or WEBP · Max 5MB</small>
-                      </label>
-                    )}
-                  </div>
-
-                  <div className="listing-photo-field">
-                    <label>Additional images</label>
-
-                    <label className="listing-upload-dropzone additional">
-                      <input
-                        type="file"
-                        accept="image/jpeg,image/png,image/webp"
-                        multiple
-                        onChange={handleAdditionalImagesUpload}
-                        disabled={uploadingAdditionalImages}
-                      />
-                      <span className="listing-upload-icon">+</span>
-                      <strong>
-                        {uploadingAdditionalImages
-                          ? "Uploading images..."
-                          : "Add more photos"}
-                      </strong>
-                      <small>Maximum 4 photos · JPG, PNG or WEBP · Max 5MB each</small>
-                    </label>
-
-                    {form.images && (
-                      <div className="listing-additional-previews">
-                        {form.images
-                          .split(",")
-                          .map((url) => url.trim())
-                          .filter(Boolean)
-                          .map((url) => (
-                            <div
-                              className="listing-additional-preview"
-                              key={url}
-                            >
-                              <img src={url} alt="Listing preview" />
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  removeAdditionalImage(url)
-                                }
-                                aria-label="Remove image"
-                              >
-                                ×
-                              </button>
-                            </div>
-                          ))}
-                      </div>
-                    )}
-                  </div>
+                  <Field
+                    label="Additional image URLs"
+                    value={form.images}
+                    onChange={(v) =>
+                      updateField("images", v)
+                    }
+                    placeholder="https://..., https://..."
+                    full
+                  />
                 </div>
-
-                {photoUploadError && (
-                  <div className="listing-photo-upload-error">
-                    {photoUploadError}
-                  </div>
-                )}
               </section>
             )}
 
@@ -2504,9 +2325,8 @@ export default function NewBusinessListing() {
         }
 
         .location-modal {
-          width: min(760px, calc(100vw - 32px));
-          height: auto;
-          max-height: 92vh;
+          width: min(900px, 100%);
+          height: min(760px, 92vh);
           overflow: hidden;
           display: flex;
           flex-direction: column;
@@ -2548,7 +2368,7 @@ export default function NewBusinessListing() {
         }
 
         .picker-map {
-          flex: none;
+          flex: 1;
           min-height: 0;
         }
 
@@ -2561,31 +2381,6 @@ export default function NewBusinessListing() {
           to {
             transform: rotate(360deg);
           }
-        }
-
-        /* Compact location picker modal */
-        .location-modal {
-          width: min(760px, calc(100vw - 32px)) !important;
-          height: auto !important;
-          max-height: 92vh !important;
-        }
-
-        .picker-map {
-          flex: none !important;
-        }
-
-        .location-modal :global(.mv-step5-map-shell) {
-          height: 250px !important;
-        }
-
-        .location-modal :global(.mv-listing-location-confirm-wrap) {
-          padding: 12px 0 0 !important;
-          display: flex !important;
-          justify-content: center !important;
-        }
-
-        .location-modal :global(.mv-listing-location-confirm) {
-          width: min(420px, 70%) !important;
         }
 
         @media (max-width: 700px) {

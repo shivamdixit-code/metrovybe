@@ -23411,3 +23411,3023 @@ body {
     min-width: 58px !important;
   }
 }
+
+/* ===== BUSINESS BOOKINGS ===== */
+
+.business-bookings-page {
+  padding-bottom: 110px;
+}
+
+.business-bookings-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.business-bookings-back,
+.business-bookings-login,
+.business-bookings-retry {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #111;
+  background: #111;
+  color: #fff;
+  border-radius: 14px;
+  padding: 11px 18px;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.business-booking-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 24px 0 16px;
+  border: 2px solid #111;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.business-booking-summary > div {
+  padding: 18px 20px;
+  border-right: 1px solid #ddd;
+}
+
+.business-booking-summary > div:last-child {
+  border-right: 0;
+}
+
+.business-booking-summary strong,
+.business-booking-summary span {
+  display: block;
+}
+
+.business-booking-summary strong {
+  font-size: 24px;
+  line-height: 1;
+  font-weight: 900;
+}
+
+.business-booking-summary span {
+  margin-top: 6px;
+  color: #777;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.business-booking-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.business-booking-filters button {
+  border: 1px solid #d7d7d7;
+  background: #fff;
+  color: #555;
+  border-radius: 999px;
+  padding: 8px 13px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.business-booking-filters button.active {
+  background: #29AB87;
+  border-color: #111;
+  color: #111;
+}
+
+.business-booking-list {
+  display: grid;
+  gap: 14px;
+}
+
+.business-booking-card {
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 5px 5px 0 #111;
+}
+
+.business-booking-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.business-booking-kicker {
+  display: block;
+  margin-bottom: 5px;
+  color: #777;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .09em;
+}
+
+.business-booking-card h2 {
+  margin: 0;
+  color: #111;
+  font-size: 21px;
+  line-height: 1.1;
+  font-weight: 900;
+  letter-spacing: -.035em;
+}
+
+.business-booking-location {
+  margin: 7px 0 0;
+  color: #777;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.business-booking-status {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.business-booking-status.pending {
+  background: #fff3c4;
+  color: #805d00;
+}
+
+.business-booking-status.confirmed {
+  background: #dff8ec;
+  color: #08744e;
+}
+
+.business-booking-status.rejected,
+.business-booking-status.cancelled {
+  background: #ffe4e4;
+  color: #b42318;
+}
+
+.business-booking-status.completed {
+  background: #e5efff;
+  color: #175cd3;
+}
+
+.business-booking-details {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.business-booking-details > div {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  background: #fafafa;
+}
+
+.business-booking-details svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: #29AB87;
+}
+
+.business-booking-details span {
+  min-width: 0;
+}
+
+.business-booking-details small,
+.business-booking-details strong,
+.business-booking-details em {
+  display: block;
+}
+
+.business-booking-details small {
+  color: #888;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.business-booking-details strong {
+  margin-top: 3px;
+  color: #111;
+  font-size: 13px;
+  line-height: 1.25;
+  font-weight: 800;
+}
+
+.business-booking-details em {
+  margin-top: 2px;
+  color: #777;
+  font-size: 11px;
+  font-style: normal;
+  overflow-wrap: anywhere;
+}
+
+.business-booking-message,
+.business-booking-note {
+  margin-top: 14px;
+  padding: 13px 15px;
+  border-radius: 12px;
+}
+
+.business-booking-message {
+  background: #f6f6f6;
+  border-left: 3px solid #29AB87;
+}
+
+.business-booking-note {
+  background: #eef4ff;
+  border-left: 3px solid #1767d8;
+}
+
+.business-booking-message small,
+.business-booking-note small {
+  color: #777;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.business-booking-message p,
+.business-booking-note p {
+  margin: 5px 0 0;
+  color: #333;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.business-booking-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 18px;
+}
+
+.business-booking-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 42px;
+  border-radius: 12px;
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.business-booking-actions button:disabled {
+  opacity: .65;
+  cursor: wait;
+}
+
+.business-booking-confirm,
+.business-booking-complete {
+  border: 2px solid #111;
+  background: #29AB87;
+  color: #111;
+}
+
+.business-booking-reject {
+  border: 2px solid #111;
+  background: #fff;
+  color: #b42318;
+}
+
+.business-bookings-empty {
+  flex-direction: column;
+  text-align: center;
+}
+
+.business-bookings-empty svg {
+  color: #29AB87;
+}
+
+.business-bookings-empty h2 {
+  margin: 14px 0 0;
+}
+
+.business-bookings-empty p {
+  margin: 8px 0 0;
+}
+
+.business-bookings-login {
+  margin-top: 20px;
+}
+
+.business-bookings-spinner {
+  animation: business-booking-spin .8s linear infinite;
+}
+
+@keyframes business-booking-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 700px) {
+  .business-bookings-page {
+    padding-bottom: 100px;
+  }
+
+  .business-bookings-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .business-booking-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .business-booking-summary > div:nth-child(2) {
+    border-right: 0;
+  }
+
+  .business-booking-summary > div:nth-child(-n+2) {
+    border-bottom: 1px solid #ddd;
+  }
+
+  .business-booking-card {
+    padding: 17px;
+    box-shadow: 4px 4px 0 #111;
+  }
+
+  .business-booking-card-top {
+    flex-direction: column;
+  }
+
+  .business-booking-details {
+    grid-template-columns: 1fr;
+  }
+
+  .business-booking-actions button {
+    flex: 1;
+  }
+}
+
+/* =========================================================
+   BUSINESS DASHBOARD — STABLE 2-COLUMN LAYOUT
+   Listings + Customer Bookings LEFT
+   Business Details RIGHT
+   ========================================================= */
+
+.mv-premium-dashboard .dashboard-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 360px !important;
+  gap: 20px !important;
+  align-items: start !important;
+}
+
+.mv-premium-dashboard .dashboard-grid > .listings-panel {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  min-width: 0 !important;
+}
+
+.mv-premium-dashboard .dashboard-grid > .bookings-panel {
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+  min-width: 0 !important;
+  margin-top: 0 !important;
+}
+
+.mv-premium-dashboard .dashboard-grid > .side-column {
+  grid-column: 2 !important;
+  grid-row: 1 / span 2 !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  align-self: start !important;
+}
+
+.mv-premium-dashboard .dashboard-grid > .side-column .profile-panel {
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+.mv-premium-dashboard .bookings-panel {
+  width: 100% !important;
+}
+
+@media (max-width: 900px) {
+  .mv-premium-dashboard .dashboard-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .mv-premium-dashboard .dashboard-grid > .listings-panel,
+  .mv-premium-dashboard .dashboard-grid > .bookings-panel,
+  .mv-premium-dashboard .dashboard-grid > .side-column {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    width: 100% !important;
+  }
+
+  .mv-premium-dashboard .dashboard-grid > .bookings-panel {
+    margin-top: 0 !important;
+  }
+}
+
+/* Tighten My Listings → Customer Bookings spacing */
+.mv-premium-dashboard .dashboard-grid {
+  row-gap: 10px !important;
+}
+
+.mv-premium-dashboard .dashboard-grid > .listings-panel {
+  margin-bottom: 0 !important;
+  padding-bottom: 16px !important;
+}
+
+.mv-premium-dashboard .dashboard-grid > .bookings-panel {
+  margin-top: 0 !important;
+}
+
+
+/* FIX: remove forced grid-row height causing gap above Customer Bookings */
+@media (min-width: 901px) {
+  .mv-premium-dashboard .dashboard-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 360px !important;
+    grid-template-rows: auto auto !important;
+    align-items: start !important;
+    row-gap: 10px !important;
+  }
+
+  .mv-premium-dashboard .dashboard-grid > .listings-panel {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    align-self: start !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  .mv-premium-dashboard .dashboard-grid > .bookings-panel {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    align-self: start !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  .mv-premium-dashboard .dashboard-grid > .side-column {
+    grid-column: 2 !important;
+    grid-row: 1 / 3 !important;
+    align-self: start !important;
+    height: auto !important;
+  }
+}
+
+
+/* Fix large gap between My Listings and Customer Bookings */
+.mv-premium-dashboard .dashboard-grid {
+  align-items: start !important;
+}
+
+.mv-premium-dashboard .dashboard-grid > .side-column {
+  grid-column: 2 !important;
+  grid-row: 1 / span 2 !important;
+  align-self: start !important;
+}
+
+.mv-premium-dashboard .dashboard-grid > .bookings-panel {
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+  margin-top: 0 !important;
+}
+
+/* ONLY reduce gap between My Listings and Customer Bookings */
+.mv-premium-dashboard .dashboard-grid {
+  row-gap: 4px !important;
+}
+
+
+/* ONLY remove extra bottom space from My Listings */
+.mv-premium-dashboard .dashboard-grid > .listings-panel {
+  padding-bottom: 0 !important;
+}
+
+
+/* ===== FIX: REMOVE EMPTY GRID SPACE BETWEEN LISTINGS & BOOKINGS ===== */
+@media (min-width: 901px) {
+  .mv-premium-dashboard .dashboard-grid {
+    display: block !important;
+    position: relative !important;
+    padding-right: 380px !important;
+  }
+
+  .mv-premium-dashboard .dashboard-grid > .listings-panel,
+  .mv-premium-dashboard .dashboard-grid > .bookings-panel {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .mv-premium-dashboard .dashboard-grid > .bookings-panel {
+    margin-top: 10px !important;
+  }
+
+  .mv-premium-dashboard .dashboard-grid > .side-column {
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    width: 360px !important;
+    margin: 0 !important;
+    grid-column: unset !important;
+    grid-row: unset !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .mv-premium-dashboard .dashboard-grid {
+    display: grid !important;
+    padding-right: 0 !important;
+  }
+
+  .mv-premium-dashboard .dashboard-grid > .side-column {
+    position: static !important;
+    width: 100% !important;
+  }
+}
+
+
+/* Minimal Customer Bookings expand toggle */
+.mv-premium-dashboard .bookings-expand-wrap {
+  display: flex;
+  justify-content: center;
+  padding-top: 6px;
+}
+
+.mv-premium-dashboard .bookings-show-more {
+  appearance: none;
+  width: auto;
+  min-width: 42px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 999px;
+  background: transparent;
+  color: #555;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.mv-premium-dashboard .bookings-show-more:hover {
+  background: rgba(41, 171, 135, 0.08);
+  border-color: rgba(41, 171, 135, 0.35);
+  transform: translateY(-1px);
+}
+
+.mv-premium-dashboard .bookings-show-more svg {
+  transition: transform 0.25s ease;
+}
+
+.mv-premium-dashboard .bookings-show-more.is-open svg {
+  transform: rotate(180deg);
+}
+
+.mv-premium-dashboard .bookings-show-more-count {
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0.7;
+}
+
+@media (max-width: 640px) {
+  .mv-premium-dashboard .bookings-expand-wrap {
+    padding-top: 4px;
+  }
+}
+
+/* Enhanced minimal Customer Bookings expand control */
+.mv-premium-dashboard .bookings-expand-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  padding-top: 14px;
+}
+
+.mv-premium-dashboard .bookings-expand-wrap::before,
+.mv-premium-dashboard .bookings-expand-wrap::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  max-width: 120px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 0, 0, 0.1)
+  );
+}
+
+.mv-premium-dashboard .bookings-expand-wrap::after {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.1),
+    transparent
+  );
+}
+
+.mv-premium-dashboard .bookings-show-more {
+  appearance: none;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  padding: 0;
+  margin: 0 10px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  background: #fff;
+  color: #29AB87;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.22s ease, box-shadow 0.22s ease,
+    background 0.22s ease;
+}
+
+.mv-premium-dashboard .bookings-show-more:hover {
+  transform: translateY(-2px);
+  background: #f5fffb;
+  border-color: rgba(41, 171, 135, 0.35);
+  box-shadow: 0 6px 18px rgba(41, 171, 135, 0.16);
+}
+
+.mv-premium-dashboard .bookings-show-more:active {
+  transform: translateY(0) scale(0.94);
+}
+
+.mv-premium-dashboard .bookings-show-more svg {
+  transition: transform 0.28s ease;
+}
+
+.mv-premium-dashboard .bookings-show-more.is-open svg {
+  transform: rotate(180deg);
+}
+
+/* Hide redundant count — interaction stays icon-first and minimal */
+.mv-premium-dashboard .bookings-show-more-count {
+  display: none;
+}
+
+.mv-premium-dashboard .bookings-show-more:focus-visible {
+  outline: 3px solid rgba(41, 171, 135, 0.22);
+  outline-offset: 3px;
+}
+
+@media (max-width: 640px) {
+  .mv-premium-dashboard .bookings-expand-wrap {
+    padding-top: 12px;
+  }
+
+  .mv-premium-dashboard .bookings-expand-wrap::before,
+  .mv-premium-dashboard .bookings-expand-wrap::after {
+    max-width: 80px;
+  }
+
+  .mv-premium-dashboard .bookings-show-more {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+  }
+}
+
+/* My Listings — minimal edit action */
+.mv-premium-dashboard .listing-edit-button {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 34px;
+  padding: 0 11px;
+  border: 1px solid #dfe5e2;
+  border-radius: 10px;
+  background: #fff;
+  color: #3d4943;
+  font-size: 11px;
+  font-weight: 750;
+  text-decoration: none;
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.mv-premium-dashboard .listing-edit-button:hover {
+  transform: translateY(-1px);
+  border-color: #29ab87;
+  background: #f3fbf8;
+  color: #168467;
+}
+
+@media (max-width: 640px) {
+  .mv-premium-dashboard .listing-edit-button {
+    min-height: 30px;
+    padding: 0 9px;
+    font-size: 10px;
+  }
+}
+
+/* My Listings — edit + delete actions */
+.mv-premium-dashboard .listing-actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.mv-premium-dashboard .listing-delete-button {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid #f0dddd;
+  border-radius: 10px;
+  background: #fff;
+  color: #c94a4a;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+
+.mv-premium-dashboard .listing-delete-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: #fff5f5;
+}
+
+.mv-premium-dashboard .listing-delete-button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+@media (max-width: 640px) {
+  .mv-premium-dashboard .listing-actions {
+    gap: 5px;
+  }
+
+  .mv-premium-dashboard .listing-delete-button {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    font-size: 18px;
+  }
+}
+
+/* My Listings — minimal pencil edit icon */
+.mv-premium-dashboard .listing-edit-button {
+  width: 34px;
+  min-height: 34px;
+  padding: 0;
+  gap: 0;
+}
+
+.mv-premium-dashboard .listing-edit-pencil {
+  font-size: 19px;
+  line-height: 1;
+  font-weight: 600;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 640px) {
+  .mv-premium-dashboard .listing-edit-button {
+    width: 30px;
+    min-height: 30px;
+    padding: 0;
+  }
+
+  .mv-premium-dashboard .listing-edit-pencil {
+    font-size: 17px;
+  }
+}
+
+/* My Listings — minimal Show More toggle */
+.mv-premium-dashboard .listings-expand-wrap {
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
+}
+
+.mv-premium-dashboard .listings-show-more {
+  min-width: 42px;
+  height: 30px;
+  padding: 0 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px solid #e1e7e4;
+  border-radius: 999px;
+  background: #fff;
+  color: #65706a;
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+
+.mv-premium-dashboard .listings-show-more:hover {
+  background: #f3fbf8;
+  transform: translateY(-1px);
+}
+
+.mv-premium-dashboard .listings-show-more.is-open svg {
+  transform: rotate(180deg);
+}
+
+.mv-premium-dashboard .listings-show-more-count {
+  font-size: 11px;
+  font-weight: 750;
+  line-height: 1;
+}
+
+.mv-premium-dashboard .listings-show-more svg {
+  transition: transform 0.18s ease;
+}
+
+/* Business Dashboard — clean Business Details layout on mobile */
+@media (max-width: 640px) {
+  .mv-premium-dashboard .profile-panel {
+    min-width: 0 !important;
+    overflow: hidden;
+  }
+
+  .mv-premium-dashboard .profile-details {
+    width: 100%;
+    min-width: 0;
+    margin-top: 16px;
+  }
+
+  .mv-premium-dashboard .detail-row {
+    width: 100%;
+    min-width: 0;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 0;
+  }
+
+  .mv-premium-dashboard .detail-row > div:last-child {
+    flex: 1 1 0;
+    width: 0;
+    min-width: 0;
+  }
+
+  .mv-premium-dashboard .detail-row strong {
+    width: 100%;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    line-height: 1.45;
+  }
+
+  .mv-premium-dashboard .detail-icon {
+    flex: 0 0 34px;
+  }
+
+  /* Keep dashboard content clear of the fixed mobile navigation */
+  .mv-premium-dashboard {
+    padding-bottom: 100px;
+  }
+}
+
+
+/* FINAL Business Dashboard mobile layout — never squeeze desktop columns */
+@media screen and (max-width: 700px) {
+  .mv-premium-dashboard,
+  .mv-premium-dashboard .dashboard-shell,
+  .mv-premium-dashboard .dashboard-content {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .mv-premium-dashboard .dashboard-grid {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding-bottom: 110px !important;
+  }
+
+  .mv-premium-dashboard .dashboard-grid > *,
+  .mv-premium-dashboard .side-column,
+  .mv-premium-dashboard .listings-panel,
+  .mv-premium-dashboard .bookings-panel {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .mv-premium-dashboard .dashboard-grid > * {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-bottom: 16px !important;
+  }
+
+  .mv-premium-dashboard .side-column {
+    display: block !important;
+  }
+
+  /* Prevent text/content from being compressed into tiny columns */
+  .mv-premium-dashboard .listing-card,
+  .mv-premium-dashboard .booking-card,
+  .mv-premium-dashboard .panel {
+    min-width: 0 !important;
+  }
+}
+
+/* Business Dashboard — remove outer horizontal gap on mobile */
+@media screen and (max-width: 700px) {
+  .mv-premium-dashboard,
+  .mv-premium-dashboard .dashboard-shell,
+  .mv-premium-dashboard .dashboard-content,
+  .mv-premium-dashboard .dashboard-grid {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .mv-premium-dashboard .dashboard-grid > .panel,
+  .mv-premium-dashboard .dashboard-grid > * {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+/* Business Dashboard — balanced mobile side spacing */
+@media screen and (max-width: 700px) {
+  .mv-premium-dashboard .dashboard-shell,
+  .mv-premium-dashboard .dashboard-content,
+  .mv-premium-dashboard .dashboard-grid {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+}
+
+/* Business Dashboard — reduce empty space above mobile bottom navigation */
+@media (max-width: 640px) {
+  .mv-premium-dashboard {
+    padding-bottom: calc(78px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .mv-premium-dashboard .dashboard-grid {
+    padding-bottom: calc(68px + env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* Business Dashboard — reduce extra space above mobile bottom navigation */
+@media (max-width: 640px) {
+  .mv-premium-dashboard .dashboard-grid {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .mv-premium-dashboard {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* Business Dashboard — remove stacked bottom spacing */
+@media (max-width: 640px) {
+  .mv-premium-dashboard .dashboard-grid {
+    padding-bottom: 0 !important;
+  }
+
+  .mv-premium-dashboard {
+    padding-bottom: calc(52px + env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* Business Dashboard — tighter final spacing above mobile nav */
+@media (max-width: 640px) {
+  .mv-premium-dashboard {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* Business Dashboard — remove excess footer gap on mobile */
+@media (max-width: 640px) {
+  .mv-premium-dashboard > .dashboard-shell {
+    padding-bottom: calc(60px + env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* Business Dashboard — lift desktop bottom navigation slightly */
+@media (min-width: 701px) {
+  .mv-premium-dashboard .bottom-nav {
+    bottom: 12px !important;
+  }
+}
+
+
+/* Desktop — add a little more space below the bottom navigation */
+@media (min-width: 701px) {
+  .bottom-nav {
+    margin-bottom: 10px !important;
+  }
+}
+
+/* Business Dashboard — slightly more desktop space below bottom navigation */
+@media (min-width: 701px) {
+  .mv-premium-dashboard .bottom-nav {
+    bottom: 20px !important;
+    margin-bottom: 0 !important;
+  }
+}
+
+/* Business Dashboard — clean desktop bottom navigation position */
+@media (min-width: 701px) {
+  .mv-premium-dashboard .bottom-nav {
+    bottom: 12px !important;
+    margin-bottom: 0 !important;
+  }
+}
+
+/* Business Dashboard — keep 90px space between Customer Bookings and bottom navigation */
+.mv-premium-dashboard .dashboard-grid {
+  padding-bottom: 90px !important;
+}
+
+
+
+/* Business Dashboard — keep 45px space between Customer Bookings and bottom navigation */
+
+.mv-premium-dashboard .dashboard-grid {
+
+  padding-bottom: 45px !important;
+
+}
+
+
+
+
+/* Business Dashboard — keep 30px space between Customer Bookings and bottom navigation */
+
+.mv-premium-dashboard .dashboard-grid {
+
+  padding-bottom: 30px !important;
+
+}
+
+
+
+
+/* Business Dashboard — keep 25px space between Customer Bookings and bottom navigation */
+
+.mv-premium-dashboard .dashboard-grid {
+
+  padding-bottom: 25px !important;
+
+}
+
+
+
+
+/* Business Dashboard — keep 20px space between Customer Bookings and bottom navigation */
+
+.mv-premium-dashboard .dashboard-grid {
+
+  padding-bottom: 20px !important;
+
+}
+
+
+/* =========================================================
+   BUSINESS DASHBOARD — CUSTOMER ENQUIRIES
+   ========================================================= */
+
+.mv-premium-dashboard .dashboard-grid > .enquiries-panel {
+  grid-column: 1 / -1;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.mv-premium-dashboard .enquiries-panel .panel-header {
+  align-items: center;
+}
+
+.mv-premium-dashboard .enquiries-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.mv-premium-dashboard .enquiry-card {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 14px;
+  padding: 15px;
+  background: #fff;
+}
+
+.mv-premium-dashboard .enquiry-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.mv-premium-dashboard .enquiry-listing-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #29ab87;
+  margin-bottom: 4px;
+}
+
+.mv-premium-dashboard .enquiry-customer-name {
+  font-size: 16px;
+  font-weight: 800;
+  color: #111;
+}
+
+.mv-premium-dashboard .enquiry-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-top: 7px;
+  font-size: 12px;
+  color: #666;
+}
+
+.mv-premium-dashboard .enquiry-message {
+  margin-top: 12px;
+  padding: 11px 12px;
+  border-radius: 10px;
+  background: #f7f8f8;
+  color: #222;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.mv-premium-dashboard .enquiry-status-badge {
+  flex: 0 0 auto;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.mv-premium-dashboard .enquiry-status-badge-new {
+  background: #fff4d6;
+  color: #8a6200;
+}
+
+.mv-premium-dashboard .enquiry-status-badge-read {
+  background: #edf3f5;
+  color: #52656d;
+}
+
+.mv-premium-dashboard .enquiry-status-badge-replied {
+  background: #e4f7ef;
+  color: #167451;
+}
+
+.mv-premium-dashboard .enquiry-status-badge-closed {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.mv-premium-dashboard .enquiry-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.mv-premium-dashboard .enquiry-primary-button,
+.mv-premium-dashboard .enquiry-secondary-button {
+  border-radius: 9px;
+  padding: 8px 13px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.mv-premium-dashboard .enquiry-primary-button {
+  border: 1px solid #29ab87;
+  background: #29ab87;
+  color: #fff;
+}
+
+.mv-premium-dashboard .enquiry-secondary-button {
+  border: 1px solid #d8dddd;
+  background: #fff;
+  color: #333;
+}
+
+.mv-premium-dashboard .enquiry-primary-button:disabled,
+.mv-premium-dashboard .enquiry-secondary-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.mv-premium-dashboard .enquiry-reply {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-left: 3px solid #29ab87;
+  border-radius: 8px;
+  background: #f1faf6;
+  color: #222;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.mv-premium-dashboard .enquiry-reply-label {
+  margin-bottom: 3px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #16805f;
+}
+
+.mv-premium-dashboard .enquiry-reply-form {
+  margin-top: 12px;
+}
+
+.mv-premium-dashboard .enquiry-reply-form textarea {
+  width: 100%;
+  min-height: 90px;
+  resize: vertical;
+  border: 1px solid #d8dddd;
+  border-radius: 10px;
+  padding: 11px 12px;
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.mv-premium-dashboard .enquiry-reply-form textarea:focus {
+  border-color: #29ab87;
+  box-shadow: 0 0 0 2px rgba(41, 171, 135, 0.12);
+}
+
+.mv-premium-dashboard .enquiry-reply-form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 7px;
+  font-size: 11px;
+  color: #777;
+}
+
+@media (max-width: 700px) {
+  .mv-premium-dashboard .enquiry-card-top {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mv-premium-dashboard .enquiry-status-badge {
+    align-self: flex-start;
+  }
+
+  .mv-premium-dashboard .enquiry-contact {
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .mv-premium-dashboard .enquiry-actions {
+    justify-content: stretch;
+  }
+
+  .mv-premium-dashboard .enquiry-actions button {
+    flex: 1;
+  }
+}
+
+
+/* ===== DASHBOARD CUSTOMER ENQUIRIES ===== */
+
+.mv-premium-dashboard .enquiries-panel {
+  width: 100%;
+}
+
+.mv-premium-dashboard .enquiries-list {
+  display: grid;
+  gap: 14px;
+}
+
+.mv-premium-dashboard .enquiry-card {
+  position: relative;
+  padding: 18px;
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 18px;
+  box-shadow: 3px 4px 0 #111;
+}
+
+.mv-premium-dashboard .enquiry-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.mv-premium-dashboard .enquiry-listing-title {
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1.25;
+  color: #111;
+}
+
+.mv-premium-dashboard .enquiry-customer-name {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #555;
+}
+
+.mv-premium-dashboard .enquiry-status-badge {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  border: 1.5px solid #111;
+  border-radius: 999px;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 900;
+  text-transform: capitalize;
+  box-shadow: 2px 2px 0 #111;
+}
+
+.mv-premium-dashboard .enquiry-status-badge-new {
+  background: var(--green);
+  color: #111;
+}
+
+.mv-premium-dashboard .enquiry-status-badge-read {
+  background: #f1f1ee;
+  color: #111;
+}
+
+.mv-premium-dashboard .enquiry-status-badge-replied {
+  background: var(--cyan);
+  color: #111;
+}
+
+.mv-premium-dashboard .enquiry-status-badge-closed {
+  background: #e9e9e6;
+  color: #111;
+}
+
+.mv-premium-dashboard .enquiry-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.mv-premium-dashboard .enquiry-contact span {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 7px 10px;
+  border: 1px solid #ddd;
+  border-radius: 9px;
+  background: #f8f8f8;
+  color: #333;
+  font-size: 11px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.mv-premium-dashboard .enquiry-message {
+  margin-top: 12px;
+  padding: 13px;
+  background: #f7f7f5;
+  border: 1.5px solid #111;
+  border-radius: 12px;
+  color: #222;
+  font-size: 12px;
+  line-height: 1.55;
+  font-weight: 600;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.mv-premium-dashboard .enquiry-reply {
+  margin-top: 10px;
+  padding: 12px 13px;
+  background: #eef3ff;
+  border: 1.5px solid #111;
+  border-radius: 12px;
+  color: #222;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.mv-premium-dashboard .enquiry-reply-label {
+  margin-bottom: 4px;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+}
+
+.mv-premium-dashboard .enquiry-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.mv-premium-dashboard .enquiry-primary-button,
+.mv-premium-dashboard .enquiry-secondary-button {
+  min-height: 36px;
+  padding: 8px 13px;
+  border: 2px solid #111;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: .15s ease;
+}
+
+.mv-premium-dashboard .enquiry-primary-button {
+  background: var(--green);
+  color: #111;
+  box-shadow: 2px 2px 0 #111;
+}
+
+.mv-premium-dashboard .enquiry-secondary-button {
+  background: #fff;
+  color: #111;
+  box-shadow: 2px 2px 0 #111;
+}
+
+.mv-premium-dashboard .enquiry-primary-button:hover,
+.mv-premium-dashboard .enquiry-secondary-button:hover {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 #111;
+}
+
+.mv-premium-dashboard .enquiry-primary-button:disabled,
+.mv-premium-dashboard .enquiry-secondary-button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.mv-premium-dashboard .enquiry-reply-form {
+  margin-top: 12px;
+  padding: 12px;
+  background: #fafafa;
+  border: 1.5px solid #111;
+  border-radius: 12px;
+}
+
+.mv-premium-dashboard .enquiry-reply-form textarea {
+  width: 100%;
+  min-height: 90px;
+  resize: vertical;
+  padding: 11px;
+  border: 1.5px solid #111;
+  border-radius: 9px;
+  background: #fff;
+  color: #111;
+  font: inherit;
+  font-size: 12px;
+  outline: none;
+}
+
+.mv-premium-dashboard .enquiry-reply-form textarea:focus {
+  box-shadow: 2px 2px 0 #111;
+}
+
+.mv-premium-dashboard .enquiry-reply-form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 9px;
+}
+
+.mv-premium-dashboard .enquiry-reply-form-footer > span {
+  font-size: 10px;
+  font-weight: 800;
+  color: #777;
+}
+
+@media (max-width: 700px) {
+  .mv-premium-dashboard .enquiry-card {
+    padding: 15px;
+    border-radius: 15px;
+  }
+
+  .mv-premium-dashboard .enquiry-card-top {
+    gap: 9px;
+  }
+
+  .mv-premium-dashboard .enquiry-status-badge {
+    padding: 5px 8px;
+    font-size: 9px;
+  }
+
+  .mv-premium-dashboard .enquiry-contact {
+    flex-direction: column;
+  }
+
+  .mv-premium-dashboard .enquiry-contact span {
+    width: 100%;
+  }
+
+  .mv-premium-dashboard .enquiry-actions {
+    width: 100%;
+  }
+
+  .mv-premium-dashboard .enquiry-primary-button,
+  .mv-premium-dashboard .enquiry-secondary-button {
+    flex: 1;
+  }
+
+  .mv-premium-dashboard .enquiry-reply-form-footer {
+    align-items: flex-end;
+  }
+}
+
+
+
+
+
+/* ===== BUSINESS ENQUIRIES — LIGHTWEIGHT REPLY UI ===== */
+
+.business-enquiries-page .business-enquiry-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.business-enquiries-page .business-enquiry-reply-button,
+.business-enquiries-page .business-enquiry-read {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 30px;
+  padding: 5px 10px;
+  border: 1px solid #dfe5e2;
+  border-radius: 7px;
+  background: #fff;
+  color: #37413d;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.business-enquiries-page .business-enquiry-reply-button:hover,
+.business-enquiries-page .business-enquiry-read:hover {
+  background: #f6faf8;
+  border-color: #c9d8d2;
+}
+
+.business-enquiries-page .business-enquiry-reply-box {
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #e5ebe8;
+  border-radius: 10px;
+  background: #f9fbfa;
+}
+
+.business-enquiries-page .business-enquiry-reply-box textarea {
+  display: block;
+  width: 100%;
+  min-height: 68px;
+  box-sizing: border-box;
+  resize: vertical;
+  padding: 9px 10px;
+  border: 1px solid #d9e1dd;
+  border-radius: 7px;
+  background: #fff;
+  color: #202522;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.45;
+  outline: none;
+}
+
+.business-enquiries-page .business-enquiry-reply-box textarea:focus {
+  border-color: #29ab87;
+  box-shadow: 0 0 0 2px rgba(41,171,135,.08);
+}
+
+.business-enquiries-page .business-enquiry-reply-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 7px;
+}
+
+.business-enquiries-page .business-enquiry-reply-footer > span {
+  color: #929b97;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.business-enquiries-page .business-enquiry-send-reply {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 5px 11px;
+  border: 0;
+  border-radius: 7px;
+  background: #29ab87;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.business-enquiries-page .business-enquiry-send-reply:hover:not(:disabled) {
+  background: #239a79;
+}
+
+.business-enquiries-page .business-enquiry-send-reply:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.business-enquiries-page .business-enquiry-reply {
+  margin-top: 10px;
+  padding: 9px 11px;
+  border-left: 2px solid #29ab87;
+  border-radius: 0 8px 8px 0;
+  background: #f3faf7;
+}
+
+.business-enquiries-page .business-enquiry-reply-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.business-enquiries-page .business-enquiry-reply-header strong {
+  font-size: 11px;
+  font-weight: 750;
+  color: #168263;
+}
+
+.business-enquiries-page .business-enquiry-reply-header span {
+  font-size: 10px;
+  color: #929b97;
+}
+
+.business-enquiries-page .business-enquiry-reply p {
+  margin: 0;
+  color: #46504c;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.business-enquiries-page .business-enquiry-reply-error {
+  margin-top: 6px;
+  color: #c62828;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Compact customer avatar */
+.business-enquiries-page .business-enquiry-avatar {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #eef4f1;
+  color: #397664;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* Lightweight status pills */
+.business-enquiries-page .business-enquiry-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 22px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 750;
+  text-transform: capitalize;
+  border: 1px solid transparent;
+}
+
+.business-enquiries-page .business-enquiry-status.new {
+  background: #fff7df;
+  color: #92701c;
+  border-color: #f0dfad;
+}
+
+.business-enquiries-page .business-enquiry-status.read {
+  background: #f1f4f3;
+  color: #69736f;
+  border-color: #e1e6e4;
+}
+
+.business-enquiries-page .business-enquiry-status.replied {
+  background: #eaf8f2;
+  color: #168263;
+  border-color: #ccebdd;
+}
+
+.business-enquiries-page .business-enquiry-status.closed {
+  background: #f3f3f3;
+  color: #707070;
+  border-color: #e4e4e4;
+}
+
+@media (max-width: 600px) {
+  .business-enquiries-page .business-enquiry-actions {
+    width: 100%;
+  }
+
+  .business-enquiries-page .business-enquiry-reply-button,
+  .business-enquiries-page .business-enquiry-read {
+    flex: 1;
+  }
+
+  .business-enquiries-page .business-enquiry-reply-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .business-enquiries-page .business-enquiry-send-reply {
+    width: 100%;
+  }
+
+  .business-enquiries-page .business-enquiry-avatar {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+  }
+}
+
+/* ===== ENQUIRY DP — RESTORE ORIGINAL SQUARE STYLE ===== */
+
+.business-enquiries-page .business-enquiry-avatar {
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  border-radius: 8px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: #29ab87 !important;
+  color: #fff !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+}
+
+@media (max-width: 600px) {
+  .business-enquiries-page .business-enquiry-avatar {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    border-radius: 8px !important;
+  }
+}
+
+
+/* Remove enquiry DP shadow */
+.business-enquiries-page .business-enquiry-avatar {
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+
+/* ===== ENQUIRY UI — NO SHADOW / NO BORDER ===== */
+
+.business-enquiries-page .business-enquiry-avatar {
+  box-shadow: none !important;
+  filter: none !important;
+  border: 0 !important;
+}
+
+.business-enquiries-page .business-enquiry-status {
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+.business-enquiries-page .business-enquiry-status.new {
+  border: 0 !important;
+}
+
+.business-enquiries-page .business-enquiry-status.read {
+  border: 0 !important;
+}
+
+.business-enquiries-page .business-enquiry-status.replied {
+  border: 0 !important;
+}
+
+.business-enquiries-page .business-enquiry-status.closed {
+  border: 0 !important;
+}
+
+
+/* ===== BUSINESS ENQUIRIES — 3 CARDS PER ROW DESKTOP ===== */
+
+.business-enquiries-page .business-enquiries-list {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  align-items: start;
+}
+
+.business-enquiries-page .business-enquiry-card {
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+@media (max-width: 1000px) {
+  .business-enquiries-page .business-enquiries-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 650px) {
+  .business-enquiries-page .business-enquiries-list {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+}
+
+
+/* ===== BUSINESS ENQUIRIES — MINIMAL REPLY ICONS ===== */
+
+.business-enquiries-page .business-enquiry-reply-tools {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.business-enquiries-page .business-enquiry-reply-edit,
+.business-enquiries-page .business-enquiry-reply-delete {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #8b9290;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+}
+
+.business-enquiries-page .business-enquiry-reply-edit:hover {
+  background: #eef8f4;
+  color: #168263;
+}
+
+.business-enquiries-page .business-enquiry-reply-delete:hover {
+  background: #fff1f1;
+  color: #c62828;
+}
+
+.business-enquiries-page .business-enquiry-reply-edit:disabled,
+.business-enquiries-page .business-enquiry-reply-delete:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.business-enquiries-page .business-enquiry-reply-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.business-enquiries-page .business-enquiry-reply-header > span {
+  margin-left: auto;
+}
+
+@media (max-width: 600px) {
+  .business-enquiries-page .business-enquiry-reply-tools {
+    gap: 3px;
+  }
+
+  .business-enquiries-page .business-enquiry-reply-edit,
+  .business-enquiries-page .business-enquiry-reply-delete {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+
+/* FINAL — MINIMAL REPLY ACTION ICONS */
+.business-enquiries-page .business-enquiry-reply-tools {
+  display: flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+}
+
+.business-enquiries-page .business-enquiry-reply-edit,
+.business-enquiries-page .business-enquiry-reply-delete {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  width: 25px !important;
+  height: 25px !important;
+  min-width: 25px !important;
+  min-height: 25px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  border-radius: 6px !important;
+  background: transparent !important;
+  color: #8b9290 !important;
+  cursor: pointer !important;
+}
+
+.business-enquiries-page .business-enquiry-reply-edit:hover {
+  background: #eef8f4 !important;
+  color: #168263 !important;
+}
+
+.business-enquiries-page .business-enquiry-reply-delete:hover {
+  background: #fff2f2 !important;
+  color: #c62828 !important;
+}
+
+.business-enquiries-page .business-enquiry-reply-tools span {
+  font-size: 10px !important;
+  color: #9aa09d !important;
+}
+
+
+/* ===== BUSINESS ENQUIRIES — MINIMAL MARK AS READ ===== */
+
+.business-enquiries-page .business-enquiry-read {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  width: 27px !important;
+  height: 27px !important;
+  min-width: 27px !important;
+  min-height: 27px !important;
+  padding: 0 !important;
+  margin-top: 8px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  border-radius: 7px !important;
+  background: transparent !important;
+  color: #8b9290 !important;
+  cursor: pointer !important;
+  transition: background .15s ease, color .15s ease !important;
+}
+
+.business-enquiries-page .business-enquiry-read:hover {
+  background: #eef8f4 !important;
+  color: #168263 !important;
+}
+
+
+/* FINAL — MARK AS READ AT TOP */
+.business-enquiries-page .business-enquiry-read {
+  position: absolute !important;
+  top: 14px !important;
+  right: 48px !important;
+  margin: 0 !important;
+  width: 27px !important;
+  height: 27px !important;
+  min-width: 27px !important;
+  min-height: 27px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 7px !important;
+  background: transparent !important;
+  color: #8b9290 !important;
+}
+
+.business-enquiries-page .business-enquiry-read:hover {
+  background: #eef8f4 !important;
+  color: #168263 !important;
+}
+
+@media (max-width: 700px) {
+  .business-enquiries-page .business-enquiry-read {
+    top: 12px !important;
+    right: 42px !important;
+  }
+}
+
+
+/* MARK AS READ — DIRECTLY UNDER NEW STATUS */
+.business-enquiries-page .business-enquiry-card {
+  position: relative !important;
+}
+
+.business-enquiries-page .business-enquiry-read {
+  position: absolute !important;
+  top: 43px !important;
+  right: 14px !important;
+  margin: 0 !important;
+  width: 27px !important;
+  height: 27px !important;
+  min-width: 27px !important;
+  min-height: 27px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 7px !important;
+  background: transparent !important;
+  color: #8b9290 !important;
+}
+
+.business-enquiries-page .business-enquiry-read:hover {
+  background: #eef8f4 !important;
+  color: #168263 !important;
+}
+
+@media (max-width: 700px) {
+  .business-enquiries-page .business-enquiry-read {
+    top: 41px !important;
+    right: 12px !important;
+  }
+}
+
+
+/* FINAL — MARK AS READ BELOW NEW BADGE */
+.business-enquiries-page .business-enquiry-read {
+  position: absolute !important;
+  top: 91px !important;
+  right: 18px !important;
+  margin: 0 !important;
+  width: 26px !important;
+  height: 26px !important;
+  min-width: 26px !important;
+  min-height: 26px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 7px !important;
+  background: transparent !important;
+  color: #8b9290 !important;
+}
+
+.business-enquiries-page .business-enquiry-read:hover {
+  background: #eef8f4 !important;
+  color: #168263 !important;
+}
+
+@media (max-width: 700px) {
+  .business-enquiries-page .business-enquiry-read {
+    top: 88px !important;
+    right: 15px !important;
+  }
+}
+
+
+/* ===== FINAL — NEW + MARK AS READ STACK ===== */
+
+.business-enquiries-page .business-enquiry-status-column {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  gap: 3px !important;
+  flex: 0 0 auto !important;
+}
+
+.business-enquiries-page .business-enquiry-read {
+  position: static !important;
+  width: 25px !important;
+  height: 25px !important;
+  min-width: 25px !important;
+  min-height: 25px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 6px !important;
+  background: transparent !important;
+  color: #8b9290 !important;
+  cursor: pointer !important;
+}
+
+.business-enquiries-page .business-enquiry-read:hover {
+  background: #eef8f4 !important;
+  color: #168263 !important;
+}
+
+
+/* Enquiry: center NEW above the PG A1 listing card */
+.business-enquiries-page .enquiry-card {
+  position: relative !important;
+}
+
+.business-enquiries-page .enquiry-status-badge-new {
+  position: absolute !important;
+  top: 188px !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  margin: 0 !important;
+  z-index: 5 !important;
+}
+
+/* Keep the PG A1 card below the centered NEW badge */
+.business-enquiries-page .enquiry-card .enquiry-listing-card {
+  margin-top: 34px !important;
+}
+
+@media (max-width: 768px) {
+  .business-enquiries-page .enquiry-status-badge-new {
+    top: 182px !important;
+  }
+
+  .business-enquiries-page .enquiry-card .enquiry-listing-card {
+    margin-top: 32px !important;
+  }
+}
+
+
+/* EXACT ENQUIRY CARD — center NEW above PG A1 */
+.business-enquiries-page .business-enquiry-card {
+  position: relative !important;
+}
+
+.business-enquiries-page .business-enquiry-card .enquiry-status-badge-new {
+  position: absolute !important;
+  top: 188px !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  margin: 0 !important;
+  z-index: 20 !important;
+}
+
+/* PG A1 card starts below NEW */
+.business-enquiries-page .business-enquiry-card .enquiry-listing-card {
+  margin-top: 42px !important;
+}
+
+
+/* FIX: Enquiry status centered above the Regarding card */
+.mv-enquiry-card,
+.enquiry-card,
+.enquiry-item {
+  position: relative !important;
+}
+
+.mv-enquiry-card .enquiry-status,
+.enquiry-card .enquiry-status,
+.enquiry-item .enquiry-status {
+  position: absolute !important;
+  top: 20px !important;
+  right: 50% !important;
+  transform: translateX(50%) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.mv-enquiry-card .enquiry-mark-read,
+.enquiry-card .enquiry-mark-read,
+.enquiry-item .enquiry-mark-read {
+  position: static !important;
+  margin: 0 !important;
+  width: 24px !important;
+  height: 24px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+
+/* =========================================================
+   BUSINESS ENQUIRIES — FINAL NEW BADGE PLACEMENT
+   ========================================================= */
+
+.business-enquiries-page .business-enquiry-card {
+  position: relative !important;
+}
+
+/* New badge: centered horizontally, sitting directly above listing card */
+.business-enquiries-page .business-enquiry-card.is-new .enquiry-listing-card {
+  position: relative !important;
+  margin-top: 42px !important;
+}
+
+.business-enquiries-page .business-enquiry-card.is-new .enquiry-status-badge,
+.business-enquiries-page .business-enquiry-card.is-new .new-badge {
+  position: absolute !important;
+  top: 0 !important;
+  left: 50% !important;
+  transform: translate(-50%, 0) !important;
+  margin: 0 !important;
+  z-index: 20 !important;
+}
+
+/* If NEW is inside the card-top, center it independently */
+.business-enquiries-page .business-enquiry-card.is-new .business-enquiry-card-top {
+  position: relative !important;
+}
+
+.business-enquiries-page .business-enquiry-card.is-new .business-enquiry-card-top .enquiry-status-badge,
+.business-enquiries-page .business-enquiry-card.is-new .business-enquiry-card-top .new-badge {
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .business-enquiries-page .business-enquiry-card.is-new .enquiry-listing-card {
+    margin-top: 40px !important;
+  }
+}
+
+
+/* Move Mark as read tick slightly downward */
+.business-enquiries-page .business-enquiry-card button[aria-label="Mark as read"] {
+  position: relative !important;
+  top: 6px !important;
+}
+
+
+/* Move Mark as read tick further down */
+.business-enquiries-page .business-enquiry-card button[aria-label="Mark as read"] {
+  position: relative !important;
+  top: 14px !important;
+}
+
+
+
+
+/* Move Mark as read tick further down */
+
+.business-enquiries-page .business-enquiry-card button[aria-label="Mark as read"] {
+
+  position: relative !important;
+
+  top: 10px !important;
+
+}
+
+
+
+
+/* Move Mark as read tick further down */
+.business-enquiries-page .business-enquiry-card button[aria-label="Mark as read"] {
+  position: relative !important;
+  top: 15px !important;
+}
+
+
+/* Move Mark as read tick further down */
+.business-enquiries-page .business-enquiry-card button[aria-label="Mark as read"] {
+  position: relative !important;
+  top: 25px !important;
+}
+
+
+/* Center Mark as read tick under New badge */
+.business-enquiries-page .business-enquiry-card button[aria-label="Mark as read"] {
+  position: relative !important;
+  top: 25px !important;
+  left: 20px !important;
+}
+
+
+
+
+/* Center Mark as read tick under New badge */
+
+.business-enquiries-page .business-enquiry-card button[aria-label="Mark as read"] {
+
+  position: relative !important;
+
+  top: 25px !important;
+
+  left: 10px !important;
+
+}
+
+
+
+
+
+
+/* Center Mark as read tick under New badge */
+
+.business-enquiries-page .business-enquiry-card button[aria-label="Mark as read"] {
+
+  position: relative !important;
+
+  top: 25px !important;
+
+  left: 5px !important;
+
+}
+
+
+
+
+
+
+/* Center Mark as read tick under New badge */
+
+.business-enquiries-page .business-enquiry-card button[aria-label="Mark as read"] {
+
+  position: relative !important;
+
+  top: 25px !important;
+
+  left: 0px !important;
+
+}
+
+
+
+
+/* Business Enquiries – Chat-style conversation bubbles */
+.business-enquiries-page .business-enquiry-message,
+.business-enquiries-page .business-enquiry-reply {
+  width: fit-content !important;
+  max-width: min(78%, 680px) !important;
+  margin-bottom: 14px !important;
+  padding: 12px 16px !important;
+  border-radius: 18px !important;
+  position: relative !important;
+}
+
+/* Customer message – left bubble */
+.business-enquiries-page .business-enquiry-message {
+  margin-right: auto !important;
+  background: #f3f4f6 !important;
+  border: 1px solid #e5e7eb !important;
+  border-bottom-left-radius: 5px !important;
+}
+
+/* Business reply – right bubble */
+.business-enquiries-page .business-enquiry-reply {
+  margin-left: auto !important;
+  background: #e1f7ef !important;
+  border: 1px solid #b9e8d7 !important;
+  border-bottom-right-radius: 5px !important;
+}
+
+/* Clean chat message text */
+.business-enquiries-page .business-enquiry-message p,
+.business-enquiries-page .business-enquiry-reply p {
+  margin: 0 !important;
+  line-height: 1.5 !important;
+}
+
+/* Keep reply header/tools clean inside business bubble */
+.business-enquiries-page .business-enquiry-reply-header {
+  margin-bottom: 6px !important;
+}
+
+
+/* =========================================================
+   BUSINESS ENQUIRIES – REAL CHAT MESSAGE BOX DESIGN
+   ========================================================= */
+
+/* Conversation area */
+.business-enquiries-page .business-enquiry-message,
+.business-enquiries-page .business-enquiry-reply {
+  display: block !important;
+  width: fit-content !important;
+  max-width: 72% !important;
+  box-sizing: border-box !important;
+  padding: 14px 16px !important;
+  margin-top: 10px !important;
+  margin-bottom: 12px !important;
+  border-radius: 16px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* CUSTOMER → incoming message, LEFT */
+.business-enquiries-page .business-enquiry-message {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  border-bottom-left-radius: 4px !important;
+}
+
+/* BUSINESS → outgoing message, RIGHT */
+.business-enquiries-page .business-enquiry-reply {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+  background: #e7f8f1 !important;
+  border: 1px solid #b8e7d5 !important;
+  border-bottom-right-radius: 4px !important;
+}
+
+/* Message text */
+.business-enquiries-page .business-enquiry-message p,
+.business-enquiries-page .business-enquiry-reply p {
+  margin: 0 !important;
+  font-size: 14px !important;
+  line-height: 1.55 !important;
+}
+
+/* Mobile – use more available width */
+@media (max-width: 768px) {
+  .business-enquiries-page .business-enquiry-message,
+  .business-enquiries-page .business-enquiry-reply {
+    max-width: 88% !important;
+  }
+}
+
+
+/* =====================================================
+   BUSINESS ENQUIRIES – ACTUAL CHAT MESSAGE BUBBLES
+   ===================================================== */
+
+/* Make each enquiry card a conversation layout */
+.business-enquiries-page .business-enquiry-card {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Customer message bubble */
+.business-enquiries-page .business-enquiry-card > .business-enquiry-message {
+  align-self: flex-start !important;
+  width: auto !important;
+  max-width: 70% !important;
+  padding: 12px 16px !important;
+  margin: 16px 0 10px !important;
+  background: #f1f3f5 !important;
+  border: 1px solid #e1e4e8 !important;
+  border-radius: 18px 18px 18px 5px !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,.06) !important;
+}
+
+/* Business reply bubble */
+.business-enquiries-page .business-enquiry-card > .business-enquiry-reply {
+  align-self: flex-end !important;
+  width: auto !important;
+  max-width: 70% !important;
+  padding: 12px 16px !important;
+  margin: 4px 0 14px !important;
+  background: #dff7ee !important;
+  border: 1px solid #b7e7d4 !important;
+  border-radius: 18px 18px 5px 18px !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,.06) !important;
+}
+
+/* Clean message text */
+.business-enquiries-page .business-enquiry-message p,
+.business-enquiries-page .business-enquiry-reply > p {
+  margin: 0 !important;
+  line-height: 1.55 !important;
+}
+
+/* Reply header inside outgoing bubble */
+.business-enquiries-page .business-enquiry-reply-header {
+  margin-bottom: 7px !important;
+}
+
+/* Mobile chat width */
+@media (max-width: 768px) {
+  .business-enquiries-page .business-enquiry-card > .business-enquiry-message,
+  .business-enquiries-page .business-enquiry-card > .business-enquiry-reply {
+    max-width: 85% !important;
+  }
+}
+
+
+/* Customer chat bubble – subtle yellow */
+.business-enquiries-page .business-enquiry-card > .business-enquiry-message {
+  background: #fff9e6 !important;
+  border-color: #f3e3a3 !important;
+}
+
+
+/* New Listing page – animated loading dots */
+.listing-page .listing-page-loader {
+  min-height: 70vh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.listing-page .listing-loader-dots {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+
+.listing-page .listing-loader-dots span {
+  display: block !important;
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50% !important;
+  background: #29AB87 !important;
+  animation: listingLoaderBounce 0.9s ease-in-out infinite !important;
+}
+
+.listing-page .listing-loader-dots span:nth-child(2) {
+  animation-delay: 0.15s !important;
+}
+
+.listing-page .listing-loader-dots span:nth-child(3) {
+  animation-delay: 0.3s !important;
+}
+
+@keyframes listingLoaderBounce {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(-8px);
+    opacity: 1;
+  }
+}
+
+
+/* Keep locked listing categories readable */
+.category-card-locked {
+  opacity: 1 !important;
+}
+
+.category-card-locked .category-icon {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+.category-card-locked:disabled .category-icon {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* Locked cards stay non-interactive without looking disabled */
+.category-card-locked:disabled {
+  cursor: not-allowed;
+}
+
+
+/* Fix selected STAY category emoji visibility */
+.category-card.active .category-icon {
+  opacity: 1 !important;
+  filter: none !important;
+  color: initial !important;
+  background: transparent !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+  font-style: normal !important;
+  -webkit-text-fill-color: initial !important;
+  text-shadow: none !important;
+}
+
+/* Prevent active card styling from washing out the emoji */
+.category-card.active .category-icon,
+.category-card.active .category-icon * {
+  visibility: visible !important;
+}
+
+
+/* =========================================
+   LISTING PHOTOS — CLEAN PREMIUM UPLOAD UI
+========================================= */
+
+.listing-photo-upload-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px;
+  width: 100%;
+}
+
+.listing-photo-field {
+  min-width: 0;
+}
+
+.listing-photo-field > label:first-child {
+  display: block;
+  margin-bottom: 9px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #17211d;
+}
+
+.listing-photo-field > label:first-child i {
+  color: #e05252;
+  font-style: normal;
+}
+
+/* Upload area */
+.listing-upload-dropzone {
+  min-height: 190px;
+  width: 100%;
+  padding: 24px 18px;
+  box-sizing: border-box;
+  border: 1.5px dashed #b8ccc4;
+  border-radius: 14px;
+  background: #f8fbf9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.2s ease, background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.listing-upload-dropzone:hover {
+  border-color: #176b55;
+  background: #f1f8f4;
+  transform: translateY(-1px);
+}
+
+.listing-upload-dropzone input {
+  display: none;
+}
+
+.listing-upload-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: #e5f3ed;
+  color: #176b55;
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+
+.listing-upload-dropzone strong {
+  color: #17211d;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.listing-upload-dropzone small {
+  color: #78837e;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* Main image preview */
+.listing-main-image-preview {
+  position: relative;
+  width: 100%;
+  height: 190px;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid #dce8e3;
+  background: #f5f7f6;
+}
+
+.listing-main-image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.listing-main-image-preview button,
+.listing-additional-preview button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 27px;
+  height: 27px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(25, 30, 28, 0.78);
+  color: #fff;
+  font-size: 19px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.listing-main-image-preview button:hover,
+.listing-additional-preview button:hover {
+  background: #d94b4b;
+}
+
+/* Additional images */
+.listing-upload-dropzone.additional {
+  min-height: 112px;
+}
+
+.listing-additional-previews {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.listing-additional-preview {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 9px;
+  border: 1px solid #dce8e3;
+  background: #f5f7f6;
+}
+
+.listing-additional-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.listing-additional-preview button {
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  font-size: 16px;
+}
+
+/* Upload error */
+.listing-photo-upload-error {
+  margin-top: 12px;
+  padding: 10px 13px;
+  border-radius: 10px;
+  background: #fff3f3;
+  border: 1px solid #f1cccc;
+  color: #b23b3b;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+  .listing-photo-upload-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .listing-upload-dropzone {
+    min-height: 155px;
+  }
+
+  .listing-main-image-preview {
+    height: 210px;
+  }
+
+  .listing-additional-previews {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Premium listing currency input */
+.currency-input {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+.currency-symbol {
+  position: absolute !important;
+  left: 14px !important;
+  z-index: 2 !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: #176b55 !important;
+  pointer-events: none !important;
+}
+
+.currency-input input {
+  width: 100% !important;
+  padding-left: 38px !important;
+  box-sizing: border-box !important;
+}
+
+/* =========================================================
+   MetroVybe Category Checkbox Selectors
+   ========================================================= */
+
+.mv-checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.mv-checkbox-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 42px;
+  padding: 9px 12px;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease,
+    box-shadow 0.15s ease;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.mv-checkbox-option:hover {
+  border-color: #29ab87;
+  background: #f7fffc;
+}
+
+.mv-checkbox-option input {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  flex: 0 0 auto;
+  accent-color: #29ab87;
+  cursor: pointer;
+}
+
+.mv-checkbox-option:has(input:checked) {
+  border-color: #29ab87;
+  background: #edfff8;
+  box-shadow: 0 0 0 1px rgba(41, 171, 135, 0.12);
+}
+
+.mv-checkbox-option:has(input:checked) span {
+  color: #168466;
+  font-weight: 600;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .mv-checkbox-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .mv-checkbox-option {
+    min-height: 44px;
+    padding: 10px 12px;
+  }
+}
+
+
+
+/* MetroVybe category single-select */
+.mv-category-select {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 42px 0 14px;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 10px;
+  background: #fff;
+  color: #171717;
+  font-size: 14px;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  appearance: auto;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mv-category-select:hover {
+  border-color: #29ab87;
+}
+
+.mv-category-select:focus {
+  border-color: #29ab87;
+  box-shadow: 0 0 0 3px rgba(41, 171, 135, 0.10);
+}
+
+.mv-category-select option {
+  color: #171717;
+  background: #fff;
+}
+
+
+/* MetroVybe multi-select dropdown */
+.mv-multi-select {
+  position: relative;
+  width: 100%;
+}
+
+.mv-multi-select summary {
+  min-height: 46px;
+  box-sizing: border-box;
+  padding: 0 14px;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 10px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #555;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  list-style: none;
+}
+
+.mv-multi-select summary::-webkit-details-marker {
+  display: none;
+}
+
+.mv-multi-select[open] summary {
+  border-color: #29ab87;
+  box-shadow: 0 0 0 3px rgba(41, 171, 135, 0.10);
+}
+
+.mv-multi-select-arrow {
+  font-size: 16px;
+}
+
+.mv-multi-select-menu {
+  position: absolute;
+  z-index: 50;
+  left: 0;
+  right: 0;
+  top: calc(100% + 6px);
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 7px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.mv-multi-select-option {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.mv-multi-select-option:hover {
+  background: #f3fbf8;
+}
+
+.mv-multi-select-option input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #29ab87;
+}
+
+.mv-selected-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.mv-selected-chip {
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #edfff8;
+  color: #168466;
+  font-size: 12px;
+  font-weight: 600;
+}

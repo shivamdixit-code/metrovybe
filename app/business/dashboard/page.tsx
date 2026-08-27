@@ -11,6 +11,8 @@ import {
   type ChangeEvent,
 } from "react";
 import { getToken } from "@/lib/auth";
+import { getBusinessEnquiries, markEnquiryRead, replyToEnquiry } from "@/lib/api";
+import type { Booking, Enquiry } from "@/lib/api";
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
 
@@ -95,6 +97,17 @@ function statusClass(value?: string) {
 export default function BusinessDashboard() {
   const [business, setBusiness] = useState<Business | null>(null);
   const [listings, setListings] = useState<Listing[]>([]);
+  const [showAllListings, setShowAllListings] = useState(false);
+  const [businessBookings, setBusinessBookings] = useState<Booking[]>([]);
+  const [businessEnquiries, setBusinessEnquiries] = useState<Enquiry[]>([]);
+  const [showAllEnquiries, setShowAllEnquiries] = useState(false);
+  const [enquiryReplyId, setEnquiryReplyId] = useState<string | null>(null);
+  const [enquiryReplyText, setEnquiryReplyText] = useState("");
+  const [enquiryActionLoading, setEnquiryActionLoading] = useState<string | null>(null);
+
+  const [showAllBookings, setShowAllBookings] = useState(false);
+  const [bookingActionLoading, setBookingActionLoading] = useState<string | null>(null);
+  const [listingDeleteLoading, setListingDeleteLoading] = useState<string | null>(null);
   const [verification, setVerification] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [hydrated, setHydrated] = useState(false);
@@ -534,6 +547,118 @@ export default function BusinessDashboard() {
     }
   };
 
+
+  const handleEnquiryRead = async (enquiryId: string) => {
+    try {
+      setEnquiryActionLoading(enquiryId);
+      const result = await markEnquiryRead(enquiryId);
+
+      setBusinessEnquiries((current) =>
+        current.map((enquiry) =>
+          enquiry._id === enquiryId
+            ? { ...enquiry, status: result.enquiry.status }
+            : enquiry
+        )
+      );
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Unable to mark enquiry as read."
+      );
+    } finally {
+      setEnquiryActionLoading(null);
+    }
+  };
+
+  const handleEnquiryReply = async (enquiryId: string) => {
+    const message = enquiryReplyText.trim();
+
+    if (!message) {
+      setError("Please enter a reply.");
+      return;
+    }
+
+    try {
+      setEnquiryActionLoading(enquiryId);
+
+      const result = await replyToEnquiry(enquiryId, message);
+
+      setBusinessEnquiries((current) =>
+        current.map((enquiry) =>
+          enquiry._id === enquiryId
+            ? {
+                ...enquiry,
+                ...result.enquiry,
+                status: "replied",
+              }
+            : enquiry
+        )
+      );
+
+      setEnquiryReplyText("");
+      setEnquiryReplyId(null);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Unable to send enquiry reply."
+      );
+    } finally {
+      setEnquiryActionLoading(null);
+    }
+  };
+
+  const updateBookingStatus = async (
+    bookingId: string,
+    status: "confirmed" | "rejected" | "completed"
+  ) => {
+    try {
+      setBookingActionLoading(bookingId);
+
+      const token = getToken();
+
+      if (!token) {
+        window.location.href = "/login";
+        return;
+      }
+
+      const response = await fetch(
+        `${API_URL}/api/bookings/${bookingId}/status`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status }),
+        }
+      );
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Unable to update booking.");
+      }
+
+      setBusinessBookings((current) =>
+        current.map((booking) =>
+          booking._id === bookingId
+            ? { ...booking, status }
+            : booking
+        )
+      );
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Unable to update booking."
+      );
+    } finally {
+      setBookingActionLoading(null);
+    }
+  };
+
   const loadDashboard = useCallback(async (manual = false) => {
     try {
       if (manual) {
@@ -585,7 +710,8 @@ export default function BusinessDashboard() {
         Pragma: "no-cache",
       };
 
-      const [businessResponse, listingsResponse] = await Promise.all([
+      const [businessResponse, listingsResponse, bookingsResponse, enquiriesResponse] =
+        await Promise.all([
         fetchWithTimeout(
           `${API_URL}/api/business/me?_t=${cacheBust}`,
           {
@@ -596,6 +722,21 @@ export default function BusinessDashboard() {
 
         fetchWithTimeout(
           `${API_URL}/api/listings/business/mine?_t=${cacheBust}`,
+          {
+            cache: "no-store",
+            headers,
+          }
+        ),
+        fetchWithTimeout(
+          `${API_URL}/api/bookings/business?_t=${cacheBust}`,
+          {
+            cache: "no-store",
+            headers,
+          }
+        ),
+
+        fetchWithTimeout(
+          `${API_URL}/api/enquiries/business?_t=${cacheBust}`,
           {
             cache: "no-store",
             headers,
@@ -615,8 +756,36 @@ export default function BusinessDashboard() {
         );
       }
 
+      if (!bookingsResponse.ok) {
+        throw new Error(
+          `Unable to load bookings (${bookingsResponse.status})`
+        );
+      }
+
+      if (!enquiriesResponse.ok) {
+        throw new Error(
+          `Unable to load enquiries (${enquiriesResponse.status})`
+        );
+      }
+
       const businessData = await businessResponse.json();
       const listingsData = await listingsResponse.json();
+      const bookingsData = await bookingsResponse.json();
+      const enquiriesData = await enquiriesResponse.json();
+
+      setBusinessBookings(
+        Array.isArray(bookingsData)
+          ? bookingsData
+          : Array.isArray(bookingsData?.bookings)
+            ? bookingsData.bookings
+            : []
+      );
+
+      setBusinessEnquiries(
+        Array.isArray(enquiriesData?.enquiries)
+          ? enquiriesData.enquiries
+          : []
+      );
 
       setBusiness(businessData.business || null);
       setVerification(businessData.verification || null);
@@ -957,6 +1126,53 @@ export default function BusinessDashboard() {
     );
   }
 
+  async function deleteListing(listingId: string, listingTitle: string) {
+    const confirmed = window.confirm(
+      `Delete "${listingTitle}"? This action cannot be undone.`
+    );
+
+    if (!confirmed) return;
+
+    const token = getToken();
+
+    if (!token) {
+      window.location.href = "/login";
+      return;
+    }
+
+    setListingDeleteLoading(listingId);
+
+    try {
+      const response = await fetch(
+        `${API_URL}/api/listings/${listingId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to delete listing");
+      }
+
+      setListings((current) =>
+        current.filter((listing) => listing._id !== listingId)
+      );
+    } catch (err) {
+      window.alert(
+        err instanceof Error
+          ? err.message
+          : "Failed to delete listing"
+      );
+    } finally {
+      setListingDeleteLoading(null);
+    }
+  }
+
   return (
     <main className="mv-premium-dashboard">
       <Header />
@@ -1178,8 +1394,9 @@ export default function BusinessDashboard() {
                 </Link>
               </div>
             ) : (
+              <>
               <div className="listing-stack">
-                {listings.map((listing) => {
+                {(showAllListings ? listings : listings.slice(0, 3)).map((listing) => {
                   const status =
                     (listing.status || "pending").toLowerCase();
 
@@ -1237,13 +1454,62 @@ export default function BusinessDashboard() {
                         </div>
                       </div>
 
-                      <div className="listing-arrow">
-                        <Icon name="arrow" size={18} />
-                      </div>
+                      <div className="listing-actions">
+                <Link
+                  href={`/business/listings/edit/${listing._id}`}
+                  className="listing-edit-button"
+                  aria-label={`Edit ${listing.title}`}
+                  title="Edit listing"
+                >
+                  <span className="listing-edit-pencil" aria-hidden="true">✎</span>
+                </Link>
+
+                <button
+                  type="button"
+                  className="listing-delete-button"
+                  onClick={() =>
+                    deleteListing(listing._id, listing.title)
+                  }
+                  disabled={listingDeleteLoading === listing._id}
+                  aria-label={`Delete ${listing.title}`}
+                  title="Delete listing"
+                >
+                  {listingDeleteLoading === listing._id
+                    ? "..."
+                    : "×"}
+                </button>
+              </div>
                     </article>
                   );
                 })}
               </div>
+
+              {listings.length > 3 && (
+                <div className="listings-expand-wrap">
+                  <button
+                    type="button"
+                    className={`listings-show-more ${showAllListings ? "is-open" : ""}`}
+                    onClick={() =>
+                      setShowAllListings((current) => !current)
+                    }
+                    aria-label={
+                      showAllListings
+                        ? "Show fewer listings"
+                        : "Show more listings"
+                    }
+                    title={showAllListings ? "Show less" : "Show more"}
+                  >
+                    <span className="listings-show-more-count">
+                      {showAllListings
+                        ? "−"
+                        : `+${listings.length - 3}`}
+                    </span>
+                    <Icon name="arrow" size={15} />
+                  </button>
+                </div>
+              )}
+
+              </>
             )}
 
             {otherCount > 0 && (
@@ -1253,6 +1519,207 @@ export default function BusinessDashboard() {
               </div>
             )}
           </section>
+
+          {/* CUSTOMER BOOKINGS */}
+          <section className="panel bookings-panel">
+            <div className="panel-header">
+              <div>
+                <div className="panel-kicker">CUSTOMER ACTIVITY</div>
+                <h2>Customer Bookings</h2>
+                <p>
+                  Manage booking requests from your customers.
+                </p>
+              </div>
+
+              <span className="booking-count-badge">
+                {businessBookings.length}{" "}
+                {businessBookings.length === 1 ? "booking" : "bookings"}
+              </span>
+            </div>
+
+            {businessBookings.length === 0 ? (
+              <div className="empty-bookings">
+                <div className="empty-booking-icon">
+                  <Icon name="clock" size={28} />
+                </div>
+                <h3>No bookings yet</h3>
+                <p>
+                  Customer booking requests will appear here.
+                </p>
+              </div>
+            ) : (
+              <div className="booking-stack">
+                {(showAllBookings
+                  ? businessBookings
+                  : businessBookings.slice(0, 3)
+                ).map((booking) => {
+                  const customer =
+                    typeof booking.customer === "object" &&
+                    booking.customer
+                      ? booking.customer
+                      : null;
+
+                  const listing =
+                    typeof booking.listing === "object" &&
+                    booking.listing
+                      ? booking.listing
+                      : null;
+
+                  const customerName =
+                    customer?.name || "Customer";
+
+                  const listingName =
+                    listing?.title ||
+                    booking.listingTitle ||
+                    "Listing";
+
+                  const bookingStatus =
+                    (booking.status || "pending").toLowerCase();
+
+                  const statusTone =
+                    bookingStatus === "confirmed"
+                      ? "confirmed"
+                      : bookingStatus === "rejected" ||
+                          bookingStatus === "cancelled"
+                        ? "rejected"
+                        : bookingStatus === "completed"
+                          ? "completed"
+                          : "pending";
+
+                  return (
+                    <article
+                      key={booking._id}
+                      className="booking-card"
+                    >
+                      <div className="booking-avatar">
+                        {customerName.charAt(0).toUpperCase()}
+                      </div>
+
+                      <div className="booking-content">
+                        <div className="booking-topline">
+                          <div>
+                            <h3>{customerName}</h3>
+                            <span className="booking-listing-name">
+                              {listingName}
+                            </span>
+                          </div>
+
+                          <span
+                            className={`booking-status ${statusTone}`}
+                          >
+                            <i />
+                            {bookingStatus}
+                          </span>
+                        </div>
+
+                        <div className="booking-details">
+                          {booking.bookingDate && (
+                            <span>
+                              <Icon name="clock" size={13} />
+                              {new Date(
+                                booking.bookingDate
+                              ).toLocaleDateString()}
+                            </span>
+                          )}
+
+                          {customer?.email && (
+                            <span>{customer.email}</span>
+                          )}
+
+                          {customer?.phone && (
+                            <span>{customer.phone}</span>
+                          )}
+                        </div>
+
+                        {booking.message && (
+                          <div className="booking-message">
+                            "{booking.message}"
+                          </div>
+                        )}
+
+                        {bookingStatus === "pending" && (
+                          <div className="booking-actions">
+                            <button
+                              type="button"
+                              className="booking-action confirm"
+                              disabled={
+                                bookingActionLoading === booking._id
+                              }
+                              onClick={() =>
+                                updateBookingStatus(
+                                  booking._id,
+                                  "confirmed"
+                                )
+                              }
+                            >
+                              {bookingActionLoading === booking._id
+                                ? "Updating..."
+                                : "Confirm"}
+                            </button>
+
+                            <button
+                              type="button"
+                              className="booking-action reject"
+                              disabled={
+                                bookingActionLoading === booking._id
+                              }
+                              onClick={() =>
+                                updateBookingStatus(
+                                  booking._id,
+                                  "rejected"
+                                )
+                              }
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        )}
+
+                        {bookingStatus === "confirmed" && (
+                          <div className="booking-actions">
+                            <button
+                              type="button"
+                              className="booking-action complete"
+                              disabled={
+                                bookingActionLoading === booking._id
+                              }
+                              onClick={() =>
+                                updateBookingStatus(
+                                  booking._id,
+                                  "completed"
+                                )
+                              }
+                            >
+                              Mark completed
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+
+
+            )}
+            {businessBookings.length > 3 && (
+              <div className="bookings-expand-wrap">
+                <button
+                  type="button"
+                  className={`bookings-show-more ${showAllBookings ? "is-open" : ""}`}
+                  onClick={() => setShowAllBookings((current) => !current)}
+                  aria-label={showAllBookings ? "Show fewer bookings" : "Show more bookings"}
+                  title={showAllBookings ? "Show less" : "Show more"}
+                >
+                  <span className="bookings-show-more-count">
+                    {businessBookings.length}
+                  </span>
+                  <Icon name="arrow" size={16} />
+                </button>
+              </div>
+            )}
+
+</section>
 
           {/* RIGHT COLUMN */}
           <aside className="side-column">
@@ -2919,6 +3386,202 @@ const styles = `
     background: #218d70;
   }
 
+  .bookings-panel {
+    margin-top: 18px;
+  }
+
+  .booking-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    padding: 7px 11px;
+    border-radius: 999px;
+    background: #e3f7f0;
+    color: #178764;
+    font-size: 10px;
+    font-weight: 900;
+  }
+
+  .booking-stack {
+    display: grid;
+    gap: 10px;
+  }
+
+  .booking-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    padding: 14px;
+    border: 1px solid #e8ecea;
+    border-radius: 17px;
+  }
+
+  .booking-avatar {
+    width: 43px;
+    height: 43px;
+    min-width: 43px;
+    border-radius: 13px;
+    background: #edf5f2;
+    color: #239b78;
+    display: grid;
+    place-items: center;
+    font-size: 15px;
+    font-weight: 900;
+  }
+
+  .booking-content {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .booking-topline {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .booking-topline h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 900;
+  }
+
+  .booking-listing-name {
+    display: block;
+    margin-top: 3px;
+    color: #69736f;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .booking-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 8px;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 900;
+    text-transform: capitalize;
+    flex-shrink: 0;
+  }
+
+  .booking-status i {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .booking-status.pending {
+    background: #fff3d9;
+    color: #b77a0b;
+  }
+
+  .booking-status.confirmed {
+    background: #e3f7f0;
+    color: #178764;
+  }
+
+  .booking-status.rejected {
+    background: #fee8e8;
+    color: #c34242;
+  }
+
+  .booking-status.completed {
+    background: #eeeafd;
+    color: #6855b8;
+  }
+
+  .booking-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px 13px;
+    margin-top: 8px;
+    color: #707975;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .booking-details span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .booking-message {
+    margin-top: 9px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    background: #f7f9f8;
+    color: #555f5b;
+    font-size: 10px;
+    line-height: 1.5;
+  }
+
+  .booking-actions {
+    display: flex;
+    gap: 7px;
+    margin-top: 10px;
+  }
+
+  .booking-action {
+    border: 0;
+    border-radius: 9px;
+    padding: 7px 11px;
+    font-size: 10px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .booking-action:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+  }
+
+  .booking-action.confirm,
+  .booking-action.complete {
+    background: #29ab87;
+    color: #fff;
+  }
+
+  .booking-action.reject {
+    background: #fee8e8;
+    color: #c34242;
+  }
+
+  .empty-bookings {
+    padding: 26px 16px;
+    text-align: center;
+    border: 1px dashed #dfe7e3;
+    border-radius: 16px;
+  }
+
+  .empty-booking-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 10px;
+    border-radius: 14px;
+    background: #edf5f2;
+    color: #239b78;
+    display: grid;
+    place-items: center;
+  }
+
+  .empty-bookings h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 900;
+  }
+
+  .empty-bookings p {
+    margin: 5px 0 0;
+    color: #737c78;
+    font-size: 11px;
+  }
+
   .listing-stack {
     display: grid;
     gap: 10px;
@@ -4548,6 +5211,24 @@ const styles = `
   }
 
   @media (max-width: 760px) {
+    .booking-card {
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .booking-topline {
+      display: block;
+    }
+
+    .booking-status {
+      margin-top: 7px;
+    }
+
+    .booking-actions {
+      flex-wrap: wrap;
+    }
+
+
     .profile-day-hours {
       display: grid !important;
       grid-template-columns: 1fr auto !important;

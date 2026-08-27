@@ -221,6 +221,143 @@ export async function cancelBooking(
 }
 
 
+export async function getBusinessBookings(): Promise<BookingResponse> {
+  const response = await authenticatedFetch("/api/bookings/business");
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to fetch business bookings");
+  }
+
+  return data;
+}
+
+export async function updateBookingStatus(
+  bookingId: string,
+  status: "confirmed" | "rejected" | "completed",
+  businessNote?: string
+): Promise<{ message: string; booking: Booking }> {
+  const response = await authenticatedFetch(
+    `/api/bookings/${bookingId}/status`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status, businessNote }),
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to update booking");
+  }
+
+  return data;
+}
+
+
+
+/* ===== ENQUIRIES ===== */
+
+export type Enquiry = {
+  _id: string;
+  listing:
+    | string
+    | {
+        _id: string;
+        title?: string;
+        category?: string;
+        location?: any;
+        image?: string;
+      }
+    | null;
+  business?: string | any;
+  customer:
+    | string
+    | {
+        _id: string;
+        name?: string;
+        email?: string;
+        phone?: string;
+      }
+    | null;
+  message: string;
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  businessReply?: {
+    message?: string;
+    repliedAt?: string | null;
+  };
+  status: "new" | "read" | "replied" | "closed";
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type EnquiryResponse = {
+  enquiries: Enquiry[];
+  total: number;
+  unread?: number;
+};
+
+export async function getBusinessEnquiries(): Promise<EnquiryResponse> {
+  const response = await authenticatedFetch("/api/enquiries/business");
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to fetch enquiries");
+  }
+
+  return data;
+}
+
+export async function markEnquiryRead(
+  enquiryId: string
+): Promise<{ message: string; enquiry: Enquiry }> {
+  const response = await authenticatedFetch(
+    `/api/enquiries/${enquiryId}/read`,
+    {
+      method: "PATCH",
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to mark enquiry as read");
+  }
+
+  return data;
+}
+
+export async function replyToEnquiry(
+  enquiryId: string,
+  message: string
+): Promise<{ message: string; enquiry: Enquiry }> {
+  const response = await authenticatedFetch(
+    `/api/enquiries/${enquiryId}/reply`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message }),
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to send reply");
+  }
+
+  return data;
+}
+
+
 /* ===== NOTIFICATIONS ===== */
 
 export type AppNotification = {
