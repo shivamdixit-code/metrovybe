@@ -83,11 +83,14 @@ export default function NotificationCenterPage() {
 
     const enquiryId = notification.metadata?.enquiryId;
     const reviewId = notification.metadata?.reviewId;
+    const bookingId = notification.metadata?.bookingId;
 
     if (enquiryId) {
       window.location.href = `/profile?activity=enquiry-reply-${enquiryId}`;
     } else if (reviewId) {
       window.location.href = `/profile?activity=review-reply-${reviewId}`;
+    } else if (bookingId) {
+      window.location.href = `/bookings?bookingId=${encodeURIComponent(String(bookingId))}`;
     } else if (notification.link) {
       window.location.href = notification.link;
     }

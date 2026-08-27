@@ -21,6 +21,7 @@ import {
 export default function Bookings() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [highlightedBookingId, setHighlightedBookingId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [cancelling, setCancelling] = useState<string | null>(null);
 
@@ -46,7 +47,34 @@ export default function Bookings() {
       console.log("Bookings response:", data);
       console.log("Bookings array:", data.bookings);
 
-      setBookings(Array.isArray(data.bookings) ? data.bookings : []);
+      const loadedBookings = Array.isArray(data.bookings) ? data.bookings : [];
+      setBookings(loadedBookings);
+
+      const params = new URLSearchParams(window.location.search);
+      const bookingId = params.get("bookingId");
+
+      if (bookingId) {
+        const matchedBooking = loadedBookings.find(
+          (booking) => String(booking._id) === String(bookingId)
+        );
+
+        if (matchedBooking) {
+          setHighlightedBookingId(String(bookingId));
+
+          window.setTimeout(() => {
+            document
+              .getElementById(`booking-${bookingId}`)
+              ?.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+              });
+          }, 150);
+
+          window.setTimeout(() => {
+            setHighlightedBookingId(null);
+          }, 3500);
+        }
+      }
     } catch (err) {
       console.error("Failed to load bookings:", err);
       setError(
@@ -459,8 +487,13 @@ export default function Bookings() {
 
               return (
                 <div
+                  id={`booking-${booking._id}`}
                   key={booking._id}
-                  className="mv-booking-card"
+                  className={`mv-booking-card${
+                    highlightedBookingId === String(booking._id)
+                      ? " booking-notification-highlight"
+                      : ""
+                  }`}
                 >
                   <div
                     style={{
