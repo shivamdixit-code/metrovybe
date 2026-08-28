@@ -285,8 +285,23 @@ export default function EditBusinessListing() {
           ""
         ).trim();
 
+        // Older listings may not have an offering saved. Give them a
+        // sensible category-based default so their existing form data
+        // remains editable.
+        const legacyOffering: Partial<Record<Category, string>> = {
+          stay: "PG",
+          eat: "Tiffin Service",
+          live: "Laundry",
+          move: "Movers",
+          go: "Parking",
+        };
+
+        const loadedOffering =
+          existingOffering ||
+          (loadedCategory ? legacyOffering[loadedCategory] || "" : "");
+
         setCategory(loadedCategory);
-        setOffering(existingOffering);
+        setOffering(loadedOffering);
 
         const additionalImages = Array.isArray(listing.images)
           ? listing.images
