@@ -445,7 +445,10 @@ export default function Listing({
               <button
                 type="button"
                 className="btn btn-black"
-                onClick={() => setBookingOpen(true)}
+                onClick={() => {
+                  setEnquiryOpen(false);
+                  setBookingOpen(true);
+                }}
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -481,7 +484,10 @@ export default function Listing({
               <button
                 type="button"
                 className="btn"
-                onClick={() => setEnquiryOpen(true)}
+                onClick={() => {
+                  setBookingOpen(false);
+                  setEnquiryOpen(true);
+                }}
                 style={{
                   display: "inline-block",
                   cursor: "pointer",
