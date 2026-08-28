@@ -18795,7 +18795,6 @@ body {
   background: #e9fff5;
 }
 
-.business-enquiries-loading,
 .business-enquiries-empty {
   min-height: 280px;
   display: flex;
@@ -18811,12 +18810,32 @@ body {
 }
 
 .business-enquiries-loading {
-  flex-direction: row;
-  gap: 10px;
-  min-height: 120px;
-  color: #555;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+  color: #666;
   font-size: 13px;
   font-weight: 800;
+}
+
+.business-enquiries-loader {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e5e5e5;
+  border-top-color: #29AB87;
+  border-radius: 50%;
+  animation: business-enquiries-spin 0.75s linear infinite;
+}
+
+@keyframes business-enquiries-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .business-enquiries-empty-icon {
@@ -27199,4 +27218,28 @@ body {
   height: 30px;
   border-radius: 50%;
   flex: 0 0 30px;
+}
+
+/* Lightweight MetroVybe loading state for Business Enquiries */
+.mv-enquiries-loading-status {
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+  color: #666;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.mv-enquiries-loading-status .business-enquiries-loader {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e5e5e5;
+  border-top-color: #29AB87;
+  border-radius: 50%;
+  animation: business-enquiries-spin 0.75s linear infinite;
 }

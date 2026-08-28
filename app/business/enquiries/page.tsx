@@ -350,8 +350,8 @@ export default function BusinessEnquiriesPage() {
         </div>
 
         {loading ? (
-          <div className="panel business-enquiries-loading">
-            <MessageSquare size={24} />
+          <div className="mv-enquiries-loading-status">
+            <div className="business-enquiries-loader" />
             <span>Loading your enquiries...</span>
           </div>
         ) : error ? (
