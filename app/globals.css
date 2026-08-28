@@ -27247,3 +27247,44 @@ body {
   border-radius: 50%;
   animation: business-enquiries-spin 0.75s linear infinite;
 }
+
+/* Business enquiries – lightweight loading text like Feedback */
+.mv-enquiries-loading-status {
+  color: #666;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.mv-enquiries-loading-status span {
+  color: #666;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+/* Final: Business Enquiries loader — match Feedback loading state */
+.mv-enquiries-loading-status {
+  min-height: 220px;
+  padding: 35px;
+  gap: 0;
+  border: 1px solid #e2e7e4;
+  border-radius: 20px;
+  background: #fff;
+  color: #68716d;
+  font-size: inherit;
+  font-weight: 400;
+}
+
+.mv-enquiries-loading-status .business-enquiries-loader {
+  width: 28px;
+  height: 28px;
+  margin-bottom: 12px;
+  border: 3px solid #dce9e4;
+  border-top-color: #29ab87;
+  animation: mv-feedback-spin 0.8s linear infinite;
+}
+
+.mv-enquiries-loading-status span {
+  color: #68716d;
+  font-size: inherit;
+  font-weight: 400;
+}
